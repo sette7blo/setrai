@@ -1,0 +1,59 @@
+* { box-sizing: border-box; }
+html {
+  min-height: 100%;
+  background: var(--color-bg);
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+body {
+  min-height: 100vh;
+  margin: 0;
+  color: var(--color-text);
+  background:
+    linear-gradient(150deg, rgba(255,255,255,0.035), transparent 18rem),
+    radial-gradient(circle at 26% -12%, rgba(var(--color-primary-rgb), 0.18), transparent 28rem),
+    radial-gradient(circle at 94% 0%, rgba(42, 112, 130, 0.16), transparent 24rem),
+    radial-gradient(circle at 52% 105%, rgba(255, 83, 31, 0.08), transparent 28rem),
+    var(--color-bg);
+}
+a { color: inherit; text-decoration: none; }
+button, a { -webkit-tap-highlight-color: transparent; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 3px;
+}
+#app { min-height: 100vh; }
+.button {
+  --btn-tint: 255, 255, 255;
+  --btn-fill: 0.055;
+  --btn-edge: 0.16;
+  --btn-lip: rgba(255, 255, 255, 0.07);
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  border-radius: 0.95rem;
+  padding: 0 var(--space-5);
+  border: 1px solid rgba(var(--btn-tint), var(--btn-edge));
+  color: var(--color-text);
+  background:
+    linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0) 58%),
+    rgba(var(--btn-tint), var(--btn-fill));
+  box-shadow: inset 0 1px 0 var(--btn-lip), 0 10px 22px -16px rgba(var(--btn-tint), 0.7);
+  backdrop-filter: blur(10px);
+  font: 800 0.9rem/1 Inter, ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: -0.01em;
+  cursor: pointer;
+  transition: transform 0.08s ease, border-color 0.16s ease, background 0.16s ease, box-shadow 0.16s ease;
+}
+.button:hover { border-color: rgba(var(--btn-tint), calc(var(--btn-edge) + 0.18)); }
+.button:active { transform: translateY(1px) scale(0.985); }
+.button--primary {
+  --btn-tint: var(--color-primary-rgb);
+  --btn-fill: 0.2;
+  --btn-edge: 0.64;
+  --btn-lip: rgba(var(--color-primary-rgb), 0.5);
+  color: var(--color-text);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), 0 0 26px rgba(var(--color-primary-rgb), 0.22);
+}
+.button--secondary { color: var(--color-muted-strong); }

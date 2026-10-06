@@ -1,0 +1,357 @@
+.workouts-page,
+.program-detail,
+.live-session {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.workout-hero,
+.program-detail__hero,
+.live-session__header,
+.session-summary {
+  display: grid;
+  gap: var(--space-4);
+  align-items: end;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: clamp(1.25rem, 4vw, 2.2rem);
+  background:
+    radial-gradient(circle at 85% 10%, rgba(255, 91, 46, 0.14), transparent 20rem),
+    linear-gradient(145deg, rgba(17, 35, 31, 0.94), rgba(7, 17, 15, 0.94));
+  box-shadow: var(--shadow-soft);
+}
+
+.workout-hero h1,
+.program-detail h1,
+.live-session h1,
+.session-summary h1,
+.workouts-empty h1 {
+  max-width: 12ch;
+  font-size: clamp(2.25rem, 10vw, 4.8rem);
+}
+
+.workout-section {
+  display: grid;
+  gap: var(--space-4);
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  color: var(--color-muted-strong);
+}
+
+.section-heading h2 {
+  margin: 0;
+}
+
+.program-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-4);
+}
+
+.program-card,
+.program-exercise-row,
+.current-exercise,
+.logged-set,
+.finish-panel,
+.rest-timer,
+.recent-session,
+.workouts-empty,
+.session-summary {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: rgba(12, 23, 20, 0.86);
+}
+
+.program-card {
+  display: grid;
+  gap: var(--space-4);
+  padding: var(--space-5);
+}
+
+.program-card__link {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.program-card h2,
+.current-exercise h2,
+.program-exercise-row h3 {
+  margin: 0;
+  letter-spacing: -0.04em;
+}
+
+.program-card p,
+.program-card small,
+.program-exercise-row p,
+.program-exercise-row small,
+.muted-line,
+.session-progress {
+  margin: 0;
+  color: var(--color-muted-strong);
+  line-height: 1.55;
+}
+
+.program-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.program-difficulty {
+  color: var(--color-muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.recent-session-list {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.recent-session {
+  display: grid;
+  gap: var(--space-1);
+  padding: var(--space-4);
+}
+
+.recent-session--active {
+  border-color: var(--color-border-strong);
+  background: rgba(72, 242, 207, 0.08);
+}
+
+.program-exercise-list,
+.logged-sets {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.program-exercise-list h2,
+.logged-sets h2 {
+  margin: 0;
+}
+
+.program-exercise-row {
+  display: grid;
+  grid-template-columns: 7rem minmax(0, 1fr);
+  overflow: hidden;
+}
+
+.program-exercise-row__image {
+  border-radius: 0;
+}
+
+.program-exercise-row__body {
+  display: grid;
+  gap: 0.25rem;
+  padding: var(--space-4);
+}
+
+.program-exercise-row em {
+  color: var(--color-muted);
+  font-style: normal;
+}
+
+.live-session__header {
+  gap: var(--space-2);
+}
+
+.rest-timer {
+  position: sticky;
+  top: var(--space-3);
+  z-index: 4;
+  display: flex;
+  min-height: 4rem;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  color: var(--color-muted-strong);
+  backdrop-filter: blur(16px);
+}
+
+.rest-timer--active {
+  border-color: var(--color-border-strong);
+  background: rgba(7, 17, 15, 0.94);
+}
+
+.rest-timer strong {
+  color: var(--color-primary);
+  font-size: 1.6rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.rest-timer__controls {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.rest-timer button,
+.session-nav button,
+.logged-set button {
+  min-height: 40px;
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-text);
+  background: rgba(255, 255, 255, 0.04);
+  padding: 0 var(--space-3);
+}
+
+.current-exercise {
+  overflow: hidden;
+}
+
+.current-exercise__image {
+  max-height: 15rem;
+}
+
+.current-exercise__body {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+}
+
+.current-exercise__body > span,
+.finish-panel span,
+.set-log-form span {
+  color: var(--color-muted);
+  font-size: 0.78rem;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.set-log-form,
+.finish-panel {
+  display: grid;
+  gap: var(--space-3);
+}
+
+.set-log-form label,
+.finish-panel label {
+  display: grid;
+  gap: var(--space-2);
+}
+
+.set-log-form input,
+.finish-panel textarea,
+.logged-set input {
+  width: 100%;
+  min-height: 48px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  padding: 0 var(--space-3);
+  color: var(--color-text);
+  background: rgba(255, 255, 255, 0.04);
+  font: inherit;
+}
+
+.finish-panel {
+  padding: var(--space-4);
+}
+
+.finish-panel textarea {
+  min-height: 6rem;
+  padding-block: var(--space-3);
+}
+
+.session-nav {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3);
+}
+
+.logged-set {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-3);
+}
+
+.logged-set__summary {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.logged-set__summary span {
+  color: var(--color-muted-strong);
+}
+
+.logged-set__edit {
+  display: grid;
+  grid-template-columns: 1fr 1fr auto auto;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.button-danger {
+  color: var(--color-error) !important;
+}
+
+.session-summary dl {
+  display: grid;
+  gap: var(--space-3);
+  margin: 0;
+}
+
+.session-summary div {
+  border-top: 1px solid var(--color-border);
+  padding-top: var(--space-3);
+}
+
+.session-summary dt {
+  color: var(--color-muted);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+}
+
+.session-summary dd {
+  margin: var(--space-1) 0 0;
+  font-weight: 800;
+}
+
+.workouts-empty {
+  padding: var(--space-5);
+}
+
+.workouts-page--loading .workout-hero div,
+.workouts-page--loading article,
+.program-detail--loading div,
+.live-session--loading div {
+  min-height: 5rem;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.07);
+  animation: exercisePulse 1.4s ease-in-out infinite;
+}
+
+@media (min-width: 720px) {
+  .program-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .workout-hero,
+  .program-detail__hero {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .current-exercise {
+    display: grid;
+    grid-template-columns: minmax(15rem, 0.85fr) minmax(0, 1.15fr);
+  }
+
+  .current-exercise__image {
+    max-height: none;
+  }
+}
+
+@media (min-width: 1120px) {
+  .program-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}

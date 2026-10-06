@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Setrai icon">
+  <rect width="128" height="128" rx="28" fill="#050807"/>
+  <path d="M24 81c18 12 62 12 80 0" fill="none" stroke="#48f2cf" stroke-width="8" stroke-linecap="round"/>
+  <path d="M34 64h60" stroke="#f4fff9" stroke-width="10" stroke-linecap="round"/>
+  <path d="M42 45l44 38" stroke="#ff5b2e" stroke-width="7" stroke-linecap="round" opacity="0.9"/>
+  <circle cx="32" cy="64" r="10" fill="#48f2cf"/>
+  <circle cx="96" cy="64" r="10" fill="#48f2cf"/>
+</svg>

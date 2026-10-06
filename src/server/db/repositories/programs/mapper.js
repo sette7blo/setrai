@@ -1,0 +1,72 @@
+// src/server/db/repositories/programs/mapper.js
+
+function parseJson(value, fallback = []) {
+  if (!value) {
+    return fallback
+  }
+
+  try {
+    return JSON.parse(value)
+  } catch {
+    return fallback
+  }
+}
+
+function serializeJson(value) {
+  return JSON.stringify(value ?? [])
+}
+
+export function mapProgramRow(row, exercises = []) {
+  if (!row) {
+    return null
+  }
+
+  return {
+    id: row.id,
+    slug: row.slug,
+    name: row.name,
+    description: row.description,
+    difficulty: row.difficulty,
+    tags: parseJson(row.tags),
+    blocks: parseJson(row.blocks),
+    isTemporary: Boolean(row.is_temporary),
+    exercises,
+    nostrEventId: row.nostr_event_id ?? null,
+    nostrPubkey: row.nostr_pubkey ?? null,
+    nostrAddress: row.nostr_address ?? null,
+    nostrPublishedAt: row.nostr_published_at ?? null,
+    createdAt: row.created_at,
+    updatedAt: row.updated_at
+  }
+}
+
+export function mapProgramExercise(row) {
+  return {
+    id: row.id,
+    exerciseId: row.exercise_id,
+    exerciseSlug: row.exercise_slug,
+    exerciseName: row.exercise_name ?? '',
+    position: row.position,
+    sets: row.sets,
+    reps: row.reps,
+    restSeconds: row.rest_sec,
+    targetWeight: row.weight,
+    notes: row.notes
+  }
+}
+
+export function normalizeProgramInput(input) {
+  return {
+    name: input.name?.trim(),
+    slug: input.slug,
+    description: input.description ?? '',
+    difficulty: input.difficulty ?? '',
+    tags: serializeJson(input.tags ?? []),
+    blocks: serializeJson(input.blocks ?? []),
+    is_temporary: input.isTemporary ? 1 : 0,
+    nostr_event_id: input.nostrEventId ?? null,
+    nostr_pubkey: input.nostrPubkey ?? null,
+    nostr_address: input.nostrAddress ?? null,
+    nostr_published_at: input.nostrPublishedAt ?? null
+  }
+}
