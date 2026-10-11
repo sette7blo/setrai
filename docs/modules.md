@@ -1987,8 +1987,7 @@ supplied at runtime and never enter the Docker build context.
 with a temporary environment and volume, without importing feature internals or
 using operator data. `.github/workflows/docker-publish.yml` checks the application
 and container before publishing `dockersette/setrai` for amd64/arm64 on releases
-or explicit manual runs, and on pushes to the dedicated `release/docker-compose`
-publication branch. Docker Hub credentials exist only as Actions secrets.
+or explicit manual runs. Docker Hub credentials exist only as Actions secrets.
 
 Source installation remains independent. Installation, network exposure,
 updates, backups, and publication instructions live in `docs/deployment.md`.
