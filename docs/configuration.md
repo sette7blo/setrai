@@ -1129,9 +1129,9 @@ Setrai does not need to implement live configuration mutation for these settings
 
 The expected self-hosted deployment model is Docker Compose.
 
-The distributed installer is `docker-compose.yml` with the public
+The distributed installer is `compose.yaml` with the public
 `dockersette/setrai` image and the minimal `deploy/.env.example` template. The
-optional `docker-compose.build.yml` override builds a local image from source.
+optional `compose.build.yaml` override builds a local image from source.
 See [deployment instructions](deployment.md) for installation and publication.
 
 The container uses a named volume at `/data`, runs as UID/GID 1000, and listens on

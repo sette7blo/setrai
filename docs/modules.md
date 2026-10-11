@@ -1976,8 +1976,8 @@ the module architecture has degraded and should be corrected.
 
 # 42. Deployment packaging
 
-Deployment owns `Dockerfile`, `.dockerignore`, `docker-compose.yml`, the optional
-source-build override `docker-compose.build.yml`, and `deploy/.env.example`.
+Deployment owns `Dockerfile`, `.dockerignore`, `compose.yaml`, the optional
+source-build override `compose.build.yaml`, and `deploy/.env.example`.
 The multi-stage image builds the client and runs the existing server as a non-root
 user; persistent application data lives in the `/data` named volume. Secrets are
 supplied at runtime and never enter the Docker build context.
@@ -1985,9 +1985,9 @@ supplied at runtime and never enter the Docker build context.
 `scripts/docker-healthcheck.mjs` consumes the public capability HTTP endpoint.
 `scripts/test-docker.mjs` (`npm run test:docker`) owns isolated Compose smoke tests
 with a temporary environment and volume, without importing feature internals or
-using operator data. `.github/workflows/docker-publish.yml` checks the application
-and container before publishing `dockersette/setrai` for amd64/arm64 on releases
-or explicit manual runs. Docker Hub credentials exist only as Actions secrets.
+using operator data. `.github/workflows/docker.yml` checks the application
+and container before publishing `dockersette/setrai` for amd64/arm64 on main,
+version tags, or explicit manual runs. Docker Hub credentials exist only as Actions secrets.
 
 Source installation remains independent. Installation, network exposure,
 updates, backups, and publication instructions live in `docs/deployment.md`.

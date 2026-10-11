@@ -10,9 +10,9 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..')
 const image = process.argv[2] || 'setrai:local'
 const project = `setrai-smoke-${process.pid}-${Date.now()}`
 const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'setrai-docker-'))
-const composeFile = path.join(directory, 'docker-compose.yml')
+const composeFile = path.join(directory, 'compose.yaml')
 const envFile = path.join(directory, '.env')
-fs.copyFileSync(path.join(root, 'docker-compose.yml'), composeFile)
+fs.copyFileSync(path.join(root, 'compose.yaml'), composeFile)
 fs.writeFileSync(envFile, [
   `SETRAI_IMAGE=${image}`, 'SETRAI_BIND_ADDRESS=127.0.0.1', 'SETRAI_HTTP_PORT=0',
   'AI_ENABLED=false', 'NOSTR_ENABLED=false', 'NOSTR_NSEC=', 'MONERO_WALLET_ENABLED=false'

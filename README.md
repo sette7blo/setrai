@@ -5,7 +5,7 @@ in your SQLite database; Nostr, AI, and Monero are optional.
 
 ## Install with Docker Compose
 
-Once `dockersette/setrai` is published, download `docker-compose.yml` and
+Download `compose.yaml` and
 `deploy/.env.example` from the same release into an empty installation directory.
 Rename the example to `.env`, then run:
 
@@ -33,5 +33,6 @@ Configure the existing `.env` for your host, including `SETRAI_DATA_DIR=./data`
 and your chosen port. To build an optional local container instead, see the
 [container build instructions](docs/deployment.md#build-the-container-from-source).
 
-The public Compose installer pulls the published image; it does not require
+The public Compose installer pulls the published image; it does not build from
+source and does not require
 Node.js or a source checkout.

@@ -23,7 +23,7 @@ storage. The Docker installation template is separate from your host settings.
 Requires Docker Engine with the Compose v2 plugin (or Docker Desktop). No Node.js,
 Git checkout, Ollama, Nostr identity, or wallet is required.
 
-After the first image is published, download `docker-compose.yml` and
+Download `compose.yaml` and
 `deploy/.env.example` from the same Setrai release. Put them in an empty directory
 and rename `.env.example` to `.env`. For a source checkout, the equivalent is:
 
@@ -42,7 +42,7 @@ docker compose ps
 docker compose logs --tail=100 setrai
 ```
 
-`docker-compose.yml` uses `dockersette/setrai:latest` by default. For controlled
+`compose.yaml` uses `dockersette/setrai:latest` by default. For controlled
 updates, set `SETRAI_IMAGE=dockersette/setrai:0.1.0` to a version that has actually
 been published, or pin an image digest. Version examples are not a claim that the
 Docker Hub image already exists.
@@ -140,7 +140,7 @@ and selected consistently. Test the restoration before removing old data.
 With the Docker buildx plugin available:
 
 ```bash
-docker compose -f docker-compose.yml -f docker-compose.build.yml up -d --build --wait
+docker compose -f compose.yaml -f compose.build.yaml up -d --build --wait
 ```
 
 This override builds `setrai:local` from your checkout without pulling the Setrai
