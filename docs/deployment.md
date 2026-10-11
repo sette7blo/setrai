@@ -176,6 +176,11 @@ version tags; stable releases also update `latest`. The workflow runs the full
 check suite and a real amd64 Compose smoke test before publishing Linux amd64 and
 arm64 images. ARM64 is built in CI; the local host tests amd64.
 
+The dedicated `release/docker-compose` branch also publishes `latest` and a
+commit-specific `sha-…` tag when pushed. This allows publication of a tested
+source snapshot without merging it into `main`. Push to that branch only when
+you intend to publish its current application state.
+
 For a manual publication, sign in interactively and build both architectures:
 
 ```bash
