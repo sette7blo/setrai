@@ -1,0 +1,20 @@
+.recovery-quick-panel { display: grid; gap: 14px; min-width: 0; padding: 16px; border: 1px solid var(--color-border); border-radius: 16px; background: var(--color-surface); }
+.recovery-quick-heading { display: flex; align-items: center; gap: 12px; }
+.recovery-quick-heading h2 { margin: 0 0 4px; font-size: 16px; font-weight: 650; }
+.recovery-quick-heading p { margin: 0; color: var(--color-muted); font-size: 13px; line-height: 1.5; }
+.recovery-quick-duration { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
+.recovery-quick-duration button, .recovery-quick-icon { min-height: 44px; border: 1px solid var(--color-border); border-radius: 12px; color: var(--color-text); background: var(--color-surface-strong); font: inherit; cursor: pointer; }
+.recovery-quick-duration button { padding: 6px; font-size: 13px; font-weight: 600; }
+.recovery-quick-duration button[aria-pressed="true"] { color: #fff; background: #000; border-color: #000; }
+.recovery-quick-status { margin: 0; color: var(--color-muted); font-size: 13px; }
+.recovery-quick-status:empty, .recovery-quick-result:empty { display: none; }
+.recovery-quick-result, .recovery-quick-list { display: grid; gap: 10px; min-width: 0; }
+.recovery-quick-summary { margin: 0; color: var(--color-muted); font-size: 13px; line-height: 1.5; }
+.recovery-quick-row { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding-block: 10px; border-top: 1px solid var(--color-border); }
+.recovery-quick-index { color: var(--color-muted); font-size: 12px; font-variant-numeric: tabular-nums; }
+.recovery-quick-info h3 { margin: 0 0 4px; font-size: 14px; font-weight: 650; overflow-wrap: anywhere; }
+.recovery-quick-info p { margin: 0; color: var(--color-muted); font-size: 12px; line-height: 1.5; }
+.recovery-quick-row-actions { display: flex; gap: 4px; }
+.recovery-quick-icon { display: grid; place-items: center; width: 44px; padding: 0; background: var(--color-surface); }
+.recovery-quick-icon svg { width: 16px; height: 16px; }
+.recovery-quick-panel button:disabled { opacity: .5; cursor: wait; }

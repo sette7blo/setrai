@@ -1,15 +1,13 @@
 import type { Capabilities } from '../shared/api/types.js'
 import { readableApiError } from '../shared/api/errors.js'
+import { loadCatalog, importCatalogExercise } from '../discover/api.js'
 import { renderExerciseDetail } from '../exercises/detail-page.js'
 import { renderExerciseLibrary } from '../exercises/page.js'
-import { renderHomePage } from './home-page.js'
 import { renderProgramDetail } from '../workouts/program-detail-page.js'
 import { renderSessionPage } from '../workouts/session-page.js'
 import { renderWorkoutsPage } from '../workouts/page.js'
 import { renderStatisticsPage } from '../statistics/page.js'
-import { renderRecoveryPage } from '../recovery/page.js'
 import { renderProfilePage } from '../profile/page.js'
-import { renderQuickWorkoutPage } from '../quick-workout/page.js'
 import {
   iconElement,
   NAVIGATION_ITEMS
@@ -21,9 +19,9 @@ import {
   primaryNavPath
 } from './router.js'
 import {
-  errorState,
-  loadingState
+  errorState
 } from './shell-states.js'
+import { installMenuNavigation } from './menu-navigation.js'
 import { loadCapabilities } from './capabilities.js'
 
 function navLink(itemPath: string, activePath: string): HTMLAnchorElement {
@@ -68,7 +66,7 @@ function mobileNavigation(activePath: string): HTMLElement {
   nav.className = 'bottom-nav'
   nav.setAttribute('aria-label', 'Primary navigation')
 
-  for (const item of NAVIGATION_ITEMS.filter((entry) => entry.path !== '/')) {
+  for (const item of NAVIGATION_ITEMS) {
     nav.append(navLink(item.path, activePath))
   }
 
@@ -113,22 +111,39 @@ async function renderRoute(container: HTMLElement, capabilities: Capabilities): 
   const path = currentPath()
 
   if (path === '/') {
-    await renderHomePage(container)
+    await renderStatisticsPage(container)
     return
   }
 
-  if (path === '/exercises') {
-    await renderExerciseLibrary(container)
+  if (path === '/exercises' || path === '/exercises/discover') {
+    if (path === '/exercises/discover') window.history.replaceState({}, '', `/exercises${window.location.search}`)
+    await renderExerciseLibrary(container, capabilities.nostr ? { load: loadCatalog, save: importCatalogExercise } : undefined)
     return
   }
 
   if (path === '/workouts') {
-    await renderWorkoutsPage(container)
+    await renderWorkoutsPage(container, capabilities.nostr)
+    return
+  }
+
+  if (path === '/workouts/discover') {
+    await renderWorkoutsPage(container, capabilities.nostr, 'discover')
+    return
+  }
+
+  if (path === '/workouts/history') {
+    await renderWorkoutsPage(container, capabilities.nostr, 'history')
+    return
+  }
+
+  if (path === '/workouts/recovery') {
+    await renderWorkoutsPage(container, capabilities.nostr, 'recovery')
     return
   }
 
   if (path === '/quick-workout') {
-    await renderQuickWorkoutPage(container)
+    window.history.replaceState({}, '', '/workouts/recovery')
+    await renderWorkoutsPage(container, capabilities.nostr, 'recovery')
     return
   }
 
@@ -138,12 +153,12 @@ async function renderRoute(container: HTMLElement, capabilities: Capabilities): 
   }
 
   if (path === '/recovery') {
-    await renderRecoveryPage(container)
+    await renderWorkoutsPage(container, capabilities.nostr, 'recovery')
     return
   }
 
   if (path === '/profile') {
-    await renderProfilePage(container)
+    await renderProfilePage(container, capabilities.nostrIdentity === true)
     return
   }
 
@@ -178,8 +193,8 @@ async function renderShell(root: HTMLElement, capabilities: Capabilities): Promi
   const sidebar = document.createElement('aside')
   sidebar.className = 'app-sidebar'
   sidebar.innerHTML = `
-    <a class="brand-mark" href="/" aria-label="Setrai home">
-      <img class="brand-mark__logo" src="/brand/setrai-logo-reference.jpg" alt="" aria-hidden="true">
+    <a class="brand-mark" href="/statistics" aria-label="Setrai home">
+      <img class="brand-mark__logo" src="/brand/setrai-logo-mark.jpg" alt="" aria-hidden="true">
       <span>
         <strong>Setrai</strong>
         <small>AI Training Coach</small>
@@ -195,26 +210,40 @@ async function renderShell(root: HTMLElement, capabilities: Capabilities): Promi
   const top = document.createElement('header')
   top.className = 'top-bar'
   top.innerHTML = `
-    <a class="mobile-brand" href="/" aria-label="Setrai home">
-      <img class="mobile-brand__logo" src="/brand/setrai-logo-reference.jpg" alt="" aria-hidden="true">
+    <a class="mobile-brand" href="/statistics" aria-label="Setrai home">
+      <img class="mobile-brand__logo" src="/brand/setrai-logo-mark.jpg" alt="" aria-hidden="true">
       <span><strong>Setrai</strong><small>AI Training Coach</small></span>
     </a>
-    <a class="profile-pill" href="/profile" aria-label="Open profile">
-      <img class="profile-pill__avatar" src="/avatars/settebello-reference.jpg" alt="" aria-hidden="true">
-      <strong>Settebello</strong>
+    <a class="profile-pill profile-pill--settings" href="/profile" aria-label="Open settings">
+      <strong>Settings</strong>
       <span class="profile-pill__gear" aria-hidden="true">⚙</span>
     </a>
   `
 
-  const container = routeContainer()
+  let container = routeContainer()
   main.append(top, container)
   frame.append(sidebar, main, mobileNavigation(activePath))
   root.append(frame)
+  installMenuNavigation(root, async () => {
+    const next = routeContainer()
+    container.replaceWith(next)
+    container = next
+    try {
+      await renderRoute(next, capabilities)
+    } catch (error) {
+      next.innerHTML = errorState(readableApiError(error))
+      next.querySelector('[data-retry]')?.addEventListener('click', () => {
+        void renderRoute(next, capabilities)
+      })
+    }
+  })
   await renderRoute(container, capabilities)
 }
 
 export async function bootSetraiApp(root: HTMLElement): Promise<void> {
-  root.innerHTML = loadingState()
+  if (window.location.pathname === '/') {
+    window.history.replaceState({}, '', '/statistics')
+  }
 
   try {
     await renderShell(root, await loadCapabilities())

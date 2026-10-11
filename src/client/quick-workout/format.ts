@@ -7,6 +7,7 @@ export const MAX_DURATION = 90
 
 export function normalizeQuickWorkoutExercise(payload: QuickWorkoutExerciseApiPayload): QuickWorkoutExercise {
   return {
+    ...(payload.muscleGroup ? { muscleGroup: payload.muscleGroup } : {}),
     exerciseId: Number(payload.exerciseId ?? payload.exercise_id ?? 0),
     exerciseSlug: payload.exerciseSlug ?? payload.exercise_slug ?? '',
     exerciseName: payload.exerciseName ?? payload.exercise_name ?? displayName(payload.exerciseSlug ?? payload.exercise_slug ?? ''),
@@ -18,6 +19,8 @@ export function normalizeQuickWorkoutExercise(payload: QuickWorkoutExerciseApiPa
 
 export function normalizeQuickWorkout(payload: QuickWorkoutApiPayload): QuickWorkout {
   return {
+    pool: Object.fromEntries(Object.entries(payload.pool ?? {}).map(([muscle, items]) => [muscle, items.map(normalizeQuickWorkoutExercise)])),
+    estimatedDurationMinutes: payload.estimatedDurationMinutes ?? (payload.exercises ?? []).length * 9,
     name: payload.name || 'Quick Workout',
     durationMinutes: Number(payload.durationMinutes ?? payload.duration_minutes ?? 30),
     goal: payload.goal || 'general-fitness',

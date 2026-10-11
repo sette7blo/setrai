@@ -99,6 +99,7 @@ src/server/config/
 - environment validation;
 - typed application configuration;
 - feature capability evaluation;
+- Workstr catalog relay defaults and secure overrides in `nostr-relays.js`;
 - startup configuration errors.
 
 ## Typical files
@@ -395,8 +396,11 @@ src/server/exercises/
 - exercise detail;
 - exercise validation;
 - exercise availability;
-- exercise service contracts;
+- exercise service contracts, including idempotent `importDiscoveredExercise`
+  for validated server-side discovery data;
 - publishable exercise representation when needed.
+- reviewed `updateDiscoveredExercise` updates in `catalog-update.js`, preserving
+  edited fields with a persisted import baseline (database migration 3).
 
 ## Typical files
 
@@ -456,6 +460,11 @@ src/server/programs/
 - program detail;
 - program service contracts;
 - publishable program representation.
+- atomic discovered-program import through `discovery-import.js` and the program
+  repository's `importWithExercises` transaction contract;
+- read-only program update review and edit-preserving application in
+  `catalog-update.js`, with persisted program baselines (database migration 4);
+- bounded program metadata and prescription validation in `validation.js`.
 
 ## Typical files
 
@@ -506,6 +515,10 @@ src/server/sessions/
 - historical session retrieval;
 - session summaries;
 - workout timing.
+- snapshot plans and bounded live-state/set-location validation in `live-state.js`;
+- additive session-plan, clock and timed-set persistence through migration 2 and
+  the Session repository; `PATCH /api/sessions/:id` saves live state and `DELETE`
+  discards active sessions only.
 
 ## Typical files
 
@@ -753,7 +766,10 @@ Session service and exercise muscle metadata through the Exercise service.
 Recovery must not query feature repositories directly while service contracts
 exist. The initial model uses a 7-day lookback and a simple stimulus-decay
 calculation; AI may consume recovery state, but Recovery must never require AI
-to function.
+to function. Readiness becomes ready at 80%. The public `recoveryMuscleGroup`
+and `workoutReadiness` exports in `service.js` (implemented by `readiness.js`)
+canonicalize primary groups and aggregate readiness conservatively for Quick
+Workout; absent groups are treated as fresh by the generator.
 
 ---
 
@@ -771,7 +787,7 @@ src/server/quick-workout/
 - exercise scoring and tie-breaking;
 - duration constraints;
 - goal-based prescriptions;
-- selection fallback rules;
+- ready-only eligibility and same-muscle alternative pools;
 - Quick Workout HTTP routes.
 
 ## Typical files
@@ -806,7 +822,9 @@ session service
 Quick Workout is deterministic and works with AI disabled. It consumes Recovery
 readiness rather than recalculating recovery, consumes Profile equipment and
 goal preferences rather than duplicating settings, and generates preview plans
-without persisting them automatically.
+without persisting them automatically. Ready-only selection uses primary groups
+at 80% or higher, round-robin group balancing, completed-before/compound scoring,
+and same-group alternative pools. It never fills the plan with tired muscles.
 
 ---
 
@@ -884,7 +902,16 @@ src/server/nostr/
 - public-key derivation;
 - relay connections;
 - profile loading;
-- discovery;
+- public exercise discovery in `discovery-service.js`;
+- official/creator workout discovery in `program-discovery.js` through Program
+  and Exercise service contracts;
+- verified kind 33402 parsing in `program-event.js` and bounded structured block
+  parsing in `program-blocks.js`;
+- bounded read-only relay queries in `relay-query.js`;
+- signature verification and Workstr event parsing in `exercise-event.js`;
+- catalog/import HTTP endpoints and verified program review/update endpoints in
+  `routes.js`; `program-discovery.js` checks the selected verified event before
+  calling Program service review/update contracts;
 - event construction;
 - event signing;
 - event publishing;
@@ -1059,9 +1086,13 @@ src/client/app/
 
 - application startup;
 - routing;
-- navigation;
+- navigation and browser history in `menu-navigation.ts`;
 - capability loading;
-- top-level layout;
+- top-level layout and compact header/navigation styling;
+- shared typography, spacing, and radius tokens in `styles/tokens.css`;
+  feature styles consume these tokens while owning their page layout;
+- warm light theme in `styles/editorial.css` and shared header, surface, control,
+  and focus treatments in `styles/design-system.css`;
 - global app state;
 - feature registration.
 
@@ -1099,12 +1130,26 @@ src/client/exercises/
 ## Owns
 
 - exercise library UI;
+- unified local-first list and Local/Update/Web strips with a direct Update action in
+  `catalog.ts`; optional loading/saving is injected by the app shell through
+  the public `ExerciseCatalog` contract;
 - exercise cards;
 - search UI;
 - filter UI;
+- exercise filter facets and sheet/chip adapters in `filter-sheet.ts`, using the
+  shared client filter sheet presentation contract;
 - favorites UI;
-- exercise detail;
-- exercise selection surfaces.
+- exercise detail loading/API state in `detail-page.ts`;
+- detail card layout and collapsed instructions in `detail-view.ts`;
+- exercise detail front/back muscle map;
+- feature-owned body geometry in `body-map.ts` and highlighting in `muscle-map.ts`;
+- exercise selection surfaces;
+- public tabs, image, formatting, filter controls, and detail card components
+  consumed by Discover without relay logic entering Exercises.
+- public informational `statusLabel` presentation contract consumed by Workouts
+  to keep Local/Update/Web card strips consistent;
+- public `muscleRegion` and `muscleMapMarkup` presentation contracts consumed by
+  Workouts for aggregate front/back muscle maps and focus labels.
 
 ## Typical files
 
@@ -1145,13 +1190,35 @@ src/client/workouts/
 ## Owns
 
 - program library;
+- shared client filter sheet presentation contract for program facets and chips;
+- History/Recovery routing and legacy Discover redirects in `page.ts`; unified
+  local-first Library orchestration in `program-library.ts`, address deduplication
+  and Local/Update/Web ordering in `program-catalog.ts`; compact chrome and filter
+  sheet in `program-browser.ts`, and styles in `browser.css`;
+- read-only comparison and explicit update application in `program-update.ts`;
+- program discovery HTTP client in `discovery-api.ts` (no browser relay SDK);
+- expandable local/remote cards in `program-card.ts` and `program-preview.ts`;
+- derived program taxonomy/search in `program-taxonomy.ts`;
 - program editor;
+- program builder dialog in `program-builder.ts`, pure prescription/block
+  planning in `builder-plan.ts`, and styles in `builder.css`;
 - exercise selection for programs;
 - live workout runner;
+- runner lifecycle, saved clocks and training mutations in `session-page.ts`;
+- deadline-based five-second countdown sound scheduling and cancellation in
+  `live-audio.ts`, independent of UI polling and using device output timing;
+- pure strength/superset planning and EMOM schedule/phase clocks in `live-plan.ts`;
+- full-screen chrome and clock painting in `live-shell.ts`, strength and EMOM
+  worksheets in `live-strength-view.ts`/`live-emom-view.ts`, image sizing and
+  device-local compact/expanded preference in `live-media.ts`, shared training
+  elements in `live-components.ts`, corrections in `live-edit.ts`, and styling in
+  `live-session.css`;
+- rest overlay presentation and keyboard controls in `live-rest-view.ts` and
+  shared countdown/rest styling in `live-rest.css`;
 - set logging UI;
 - rest timer;
 - workout completion;
-- Quick Workout UI.
+- Recovery composition through the public Quick Workout panel;
 
 ## Typical files
 
@@ -1171,6 +1238,10 @@ types.ts
 client shared
 exercise client public components where appropriate
 program/session APIs
+public local profile API for saved equipment and weight units
+public profile weight-unit conversion helpers
+program discovery API
+Quick Workout public recovery panel
 ```
 
 ## Must not depend on
@@ -1223,12 +1294,14 @@ src/client/recovery/
 - muscle recovery/readiness presentation;
 - recovery status labels;
 - recovery card ordering for display;
-- recovery empty/loading/error states.
+- recovery empty/loading/error states;
+- composition of the public Quick Workout panel below readiness.
 
 ## May depend on
 
 ```text
 recovery API
+Quick Workout public recovery panel
 client shared formatting
 ```
 
@@ -1260,6 +1333,11 @@ src/client/profile/
 
 When Nostr is enabled, this feature may display Nostr-derived identity information
 returned safely by the server.
+The application shell passes the safe `nostrIdentity` capability to Settings.
+The Profile identity section requires both Nostr enabled and a nonempty
+`NOSTR_NSEC` configured; public discovery (`nostr`) does not imply identity.
+Training and Equipment remain available. Configuration retains only an
+`identityEnabled` boolean for this visibility contract, never the key value.
 
 ## Must not
 
@@ -1281,6 +1359,10 @@ src/client/quick-workout/
 ## Owns
 
 - Quick Workout form and preview;
+- public `createRecoveryWorkoutPanel` entry in `recovery-panel.ts`, composed by
+  Workouts/Recovery, with duration choices and ready-muscle preview;
+- pure same-muscle swap/removal state in `recovery-plan.ts` and panel styling in
+  `recovery-panel.css`;
 - target-muscle selection presentation;
 - deterministic Quick Workout API client;
 - start-workout action that creates a canonical Session through the server;
@@ -1316,7 +1398,9 @@ src/client/discover/
 - discovery UI;
 - creator browsing;
 - remote program browsing;
-- remote exercise browsing where supported;
+- official Workstr catalog API adapter in `api.ts`, consumed by the app shell
+  to inject the optional `ExerciseCatalog` contract into Exercises;
+- catalog loading and local import API contracts in `api.ts`;
 - import actions;
 - publish status presentation;
 - creator tip entry points.
@@ -1329,6 +1413,7 @@ This feature may be hidden or inactive when Nostr is disabled.
 
 ```text
 safe Nostr-backed server APIs
+Exercise client public types, image, tabs, filters, formatting and detail components
 Monero wallet public client API for tipping
 client shared
 ```
@@ -1356,6 +1441,9 @@ Only genuinely shared UI/infrastructure such as:
 
 - API client;
 - modal primitives;
+- filter sheet and removable chip presentation in `filter-sheet.ts` and
+  `filter-sheet.css`, consumed by Exercises and Workouts; feature adapters own
+  facet values, filtering, persistence, and result counts;
 - buttons;
 - icons;
 - formatting;
@@ -1884,3 +1972,22 @@ integration internals
 ```
 
 the module architecture has degraded and should be corrected.
+
+
+# 42. Deployment packaging
+
+Deployment owns `Dockerfile`, `.dockerignore`, `docker-compose.yml`, the optional
+source-build override `docker-compose.build.yml`, and `deploy/.env.example`.
+The multi-stage image builds the client and runs the existing server as a non-root
+user; persistent application data lives in the `/data` named volume. Secrets are
+supplied at runtime and never enter the Docker build context.
+
+`scripts/docker-healthcheck.mjs` consumes the public capability HTTP endpoint.
+`scripts/test-docker.mjs` (`npm run test:docker`) owns isolated Compose smoke tests
+with a temporary environment and volume, without importing feature internals or
+using operator data. `.github/workflows/docker-publish.yml` checks the application
+and container before publishing `dockersette/setrai` for amd64/arm64 on releases
+or explicit manual runs. Docker Hub credentials exist only as Actions secrets.
+
+Source installation remains independent. Installation, network exposure,
+updates, backups, and publication instructions live in `docs/deployment.md`.

@@ -1,3 +1,5 @@
+import { parseNostrRelays } from './nostr-relays.js'
+
 function parseBoolean(value, fallback = false) {
   if (value === undefined || value === '') {
     return fallback
@@ -44,10 +46,11 @@ export function loadConfig() {
 
     nostr: {
       enabled: parseBoolean(process.env.NOSTR_ENABLED, false),
-      relays: (process.env.NOSTR_RELAYS || '')
-        .split(',')
-        .map((relay) => relay.trim())
-        .filter(Boolean)
+      identityEnabled: parseBoolean(process.env.NOSTR_ENABLED, false) &&
+        Boolean(process.env.NOSTR_NSEC?.trim()),
+      relays: parseBoolean(process.env.NOSTR_ENABLED, false)
+        ? parseNostrRelays(process.env.NOSTR_RELAYS || '')
+        : []
     },
 
     monero: {

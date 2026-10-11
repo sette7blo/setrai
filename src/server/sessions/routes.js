@@ -126,6 +126,17 @@ export function createSessionRoutes(sessionService) {
       return true
     }
 
+    if (req.method === 'PATCH') {
+      sendJson(res, 200, { session: sessionService.updateLiveState(sessionId, await readJsonBody(req)) })
+      return true
+    }
+    if (req.method === 'DELETE') {
+      sessionService.discardSession(sessionId)
+      res.writeHead(204)
+      res.end()
+      return true
+    }
+
     return false
   }
 

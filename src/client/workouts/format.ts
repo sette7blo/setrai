@@ -1,4 +1,4 @@
-import { displayName } from '../exercises/format.js'
+import { displayName, normalizeExercise } from '../exercises/format.js'
 import type {
   Program,
   ProgramApiPayload,
@@ -19,13 +19,14 @@ export function normalizeProgramExercise(payload: ProgramExerciseApiPayload): Pr
     id: payload.id ?? null,
     exerciseId: Number(payload.exerciseId ?? payload.exercise_id ?? 0),
     exerciseSlug: payload.exerciseSlug ?? payload.exercise_slug ?? '',
-    exerciseName: payload.exerciseName ?? payload.exercise_name ?? displayName(payload.exerciseSlug ?? payload.exercise_slug ?? ''),
+    exerciseName: payload.exerciseName?.trim() || payload.exercise_name?.trim() || payload.exercise?.name?.trim() || displayName(payload.exerciseSlug ?? payload.exercise_slug ?? '') || 'Exercise',
     position: Number(payload.position ?? 0),
     sets: Number(payload.sets ?? 3),
     reps: String(payload.reps ?? '8-12'),
     restSec: Number(payload.restSec ?? payload.restSeconds ?? payload.rest_sec ?? 90),
     weight: payload.weight ?? payload.targetWeight ?? null,
-    notes: payload.notes ?? ''
+    notes: payload.notes ?? '',
+    exercise: payload.exercise ? normalizeExercise(payload.exercise) : undefined
   }
 }
 
@@ -38,6 +39,10 @@ export function normalizeProgram(payload: ProgramApiPayload): Program {
     difficulty: payload.difficulty || '',
     tags: textArray(payload.tags),
     isTemporary: Boolean(payload.isTemporary ?? payload.is_temporary),
+    blocks: payload.blocks ?? [],
+    nostrAddress: payload.nostrAddress ?? null,
+    nostrPubkey: payload.nostrPubkey ?? null,
+    nostrEventId: payload.nostrEventId ?? null,
     exercises: (payload.exercises ?? [])
       .map(normalizeProgramExercise)
       .sort((a, b) => a.position - b.position)
@@ -55,7 +60,12 @@ export function normalizeSessionSet(payload: SessionSetApiPayload): SessionSet {
     reps: Number(payload.reps ?? 0),
     weight: payload.weight ?? null,
     done: Boolean(payload.done),
-    loggedAt: payload.loggedAt ?? payload.logged_at ?? ''
+    loggedAt: payload.loggedAt ?? payload.logged_at ?? '',
+    durationSec: payload.durationSec,
+    blockIndex: payload.blockIndex,
+    roundIndex: payload.roundIndex,
+    intervalIndex: payload.intervalIndex,
+    stepIndex: payload.stepIndex
   }
 }
 
@@ -67,6 +77,8 @@ export function normalizeSession(payload: SessionApiPayload): Session {
     startedAt: payload.startedAt ?? payload.started_at ?? '',
     finishedAt: payload.finishedAt ?? payload.finished_at ?? null,
     notes: payload.notes ?? '',
+    blocks: payload.blocks ?? [],
+    runtime: payload.runtime ?? {},
     sets: (payload.sets ?? []).map(normalizeSessionSet),
     plannedExercises: (payload.plannedExercises ?? []).map(normalizeProgramExercise)
   }

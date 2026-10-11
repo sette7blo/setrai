@@ -6,15 +6,10 @@ import {
 } from './constraints.js'
 import {
   exerciseMatchesEquipment,
-  exerciseMuscles,
   scoreExercise
 } from './scoring.js'
 
-const RECOVERY_STAGES = [
-  { name: 'ready', minimum: 0.7 },
-  { name: 'moderate', minimum: 0.4 },
-  { name: 'recovering', minimum: 0 }
-]
+import { recoveryMuscleGroup, workoutReadiness } from '../recovery/service.js'
 
 function clientError(message) {
   const error = new Error(message)
@@ -22,22 +17,9 @@ function clientError(message) {
   return error
 }
 
-function buildRecoveryMap(recovery) {
-  return new Map(
-    recovery.muscles.map((item) => [item.muscle, item])
-  )
-}
-
-function recentExerciseSlugs(sessions) {
-  const mostRecent = sessions[0]
-
-  if (!mostRecent) {
-    return new Set()
-  }
-
-  return new Set(
-    (mostRecent.sets ?? []).map((set) => set.exerciseSlug)
-  )
+function loggedExerciseSlugs(sessions) {
+  return new Set(sessions.flatMap(session => (session.sets ?? [])
+    .filter(set => set.done).map(set => set.exerciseSlug)))
 }
 
 function exercisePrescription(exercise, goal) {
@@ -63,6 +45,7 @@ function buildWorkoutExercise(exercise, goal) {
     exerciseId: exercise.id,
     exerciseSlug: exercise.slug,
     exerciseName: exercise.name,
+    muscleGroup: recoveryMuscleGroup(exercise.muscle_group),
     ...exercisePrescription(exercise, goal)
   }
 }
@@ -75,44 +58,20 @@ function sortScoredExercises(items) {
   )
 }
 
-function primaryMuscle(exercise) {
-  return exerciseMuscles(exercise)[0] ?? 'unknown'
-}
-
-function selectBalanced(scored, count, targetMuscles) {
+function selectBalanced(scored, count) {
+  const pools = new Map()
+  for (const item of scored) {
+    if (!pools.has(item.muscle)) pools.set(item.muscle, [])
+    pools.get(item.muscle).push(item)
+  }
   const selected = []
-  const primaryCounts = new Map()
-  const limit = targetMuscles.length > 0 ? count : 2
-
-  for (const item of scored) {
-    const primary = primaryMuscle(item.exercise)
-    const current = primaryCounts.get(primary) ?? 0
-
-    if (current >= limit) {
-      continue
-    }
-
-    selected.push(item)
-    primaryCounts.set(primary, current + 1)
-
-    if (selected.length >= count) {
-      return selected
+  while (selected.length < count && [...pools.values()].some(pool => pool.length)) {
+    for (const pool of pools.values()) {
+      if (pool.length) selected.push(pool.shift())
+      if (selected.length === count) break
     }
   }
-
-  for (const item of scored) {
-    if (selected.includes(item)) {
-      continue
-    }
-
-    selected.push(item)
-
-    if (selected.length >= count) {
-      break
-    }
-  }
-
-  return selected
+  return { selected, pools }
 }
 
 export function generateQuickWorkout({
@@ -124,17 +83,20 @@ export function generateQuickWorkout({
   goal,
   targetMuscles
 }) {
-  const recoveryMap = buildRecoveryMap(recovery)
-  const recentSlugs = recentExerciseSlugs(recentSessions)
+  targetMuscles = targetMuscles.map(recoveryMuscleGroup).filter(Boolean)
+  const recoveryMap = workoutReadiness(recovery)
+  const recentSlugs = loggedExerciseSlugs(recentSessions)
   const desiredCount = workoutExerciseCount(durationMinutes)
   const eligible = exercises.filter((exercise) =>
     exercise.status === 'active' &&
+    recoveryMuscleGroup(exercise.muscle_group) &&
+    (recoveryMap.get(recoveryMuscleGroup(exercise.muscle_group)) ?? 1) >= 0.8 &&
     exerciseMatchesEquipment(exercise, equipment)
   )
 
   if (eligible.length === 0) {
     throw clientError(
-      'Not enough eligible exercises for the selected equipment'
+      'No ready muscle groups with exercises for your equipment. Try again after recovery or add exercises.'
     )
   }
 
@@ -151,36 +113,17 @@ export function generateQuickWorkout({
     }))
   )
 
-  let selected = []
-  let stageUsed = RECOVERY_STAGES.at(-1).name
-
-  for (const stage of RECOVERY_STAGES) {
-    const stageCandidates = scored.filter((item) =>
-      item.recovery >= stage.minimum
-    )
-    selected = selectBalanced(
-      stageCandidates,
-      desiredCount,
-      targetMuscles
-    )
-    stageUsed = stage.name
-
-    if (selected.length >= Math.min(desiredCount, eligible.length)) {
-      break
-    }
-  }
-
-  if (selected.length === 0) {
-    throw clientError(
-      'Not enough eligible exercises for the selected equipment'
-    )
-  }
+  const { selected, pools } = selectBalanced(scored, desiredCount)
 
   return {
     name: 'Quick Workout',
     durationMinutes,
     goal,
-    recoveryFallback: stageUsed,
+    recoveryFallback: 'ready',
+    estimatedDurationMinutes: selected.length * 9,
+    targetMuscles: [...new Set(selected.map(item => item.muscle))],
+    pool: Object.fromEntries([...pools].map(([muscle, items]) => [muscle,
+      items.map(item => buildWorkoutExercise(item.exercise, goal))])),
     exercises: selected.map((item) =>
       buildWorkoutExercise(item.exercise, goal)
     )

@@ -7,6 +7,7 @@ import {
 import type {
   LogSetInput,
   Program,
+  ProgramInput,
   ProgramListResponse,
   ProgramResponse,
   Session,
@@ -25,6 +26,22 @@ export async function listPrograms(client: ApiClient = apiClient): Promise<Progr
 export async function getProgram(id: number, client: ApiClient = apiClient): Promise<Program> {
   const response = await client.get<ProgramResponse>(`/api/programs/${id}`)
   return normalizeProgram(response.program)
+}
+
+export async function saveProgram(input: ProgramInput, id?: number, client: ApiClient = apiClient): Promise<Program> {
+  const response = await client.request<ProgramResponse>(id ? `/api/programs/${id}` : '/api/programs', {
+    method: id ? 'PATCH' : 'POST', body: input
+  })
+  return normalizeProgram(response.program)
+}
+
+export async function duplicateProgram(id: number, client: ApiClient = apiClient): Promise<Program> {
+  const response = await client.request<ProgramResponse>(`/api/programs/${id}/duplicate`, { method: 'POST' })
+  return normalizeProgram(response.program)
+}
+
+export async function deleteProgram(id: number, client: ApiClient = apiClient): Promise<void> {
+  await client.request(`/api/programs/${id}`, { method: 'DELETE' })
 }
 
 export async function listSessions(client: ApiClient = apiClient): Promise<Session[]> {
@@ -73,4 +90,13 @@ export async function finishSession(sessionId: number, notes: string, client: Ap
     body: notes.trim() ? { notes: notes.trim() } : {}
   })
   return normalizeSession(response.session)
+}
+
+export async function saveLiveState(id: number, state: import('./types.js').LiveRuntime): Promise<Session> {
+  const response = await apiClient.request<SessionResponse>(`/api/sessions/${id}`, { method: 'PATCH', body: state })
+  return normalizeSession(response.session)
+}
+
+export async function discardSession(id: number): Promise<void> {
+  await apiClient.request(`/api/sessions/${id}`, { method: 'DELETE' })
 }

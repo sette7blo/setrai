@@ -23,7 +23,7 @@ export const ARMS_EXERCISES = [
       "Curl the bar toward the shoulders.",
       "Lower under control."
     ],
-    image_url: "/images/exercises/barbell-curl.webp",
+    image_url: "/images/exercises/ink/barbell-curl.svg",
     default_sets: 3,
     default_reps: "10-15",
     default_rest: 60,
@@ -54,7 +54,7 @@ export const ARMS_EXERCISES = [
       "Keep the upper arms mostly still.",
       "Lower slowly to full extension."
     ],
-    image_url: "/images/exercises/dumbbell-curl.webp",
+    image_url: "/images/exercises/ink/dumbbell-curl.svg",
     default_sets: 3,
     default_reps: "10-15",
     default_rest: 60,
@@ -85,7 +85,7 @@ export const ARMS_EXERCISES = [
       "Squeeze at the top.",
       "Lower under control."
     ],
-    image_url: "/images/exercises/hammer-curl.webp",
+    image_url: "/images/exercises/ink/hammer-curl.svg",
     default_sets: 3,
     default_reps: "10-15",
     default_rest: 60,
@@ -117,7 +117,7 @@ export const ARMS_EXERCISES = [
       "Curl while keeping shoulders back.",
       "Lower slowly to the stretched position."
     ],
-    image_url: "/images/exercises/incline-dumbbell-curl.webp",
+    image_url: "/images/exercises/ink/incline-dumbbell-curl.svg",
     default_sets: 3,
     default_reps: "10-15",
     default_rest: 60,
@@ -148,7 +148,7 @@ export const ARMS_EXERCISES = [
       "Curl the handle toward the chest.",
       "Return slowly to full extension."
     ],
-    image_url: "/images/exercises/cable-curl.webp",
+    image_url: "/images/exercises/ink/cable-curl.svg",
     default_sets: 3,
     default_reps: "10-15",
     default_rest: 60,
@@ -179,7 +179,7 @@ export const ARMS_EXERCISES = [
       "Curl the handle or bar upward.",
       "Lower slowly to the start."
     ],
-    image_url: "/images/exercises/preacher-curl.webp",
+    image_url: "/images/exercises/ink/preacher-curl.svg",
     default_sets: 3,
     default_reps: "10-15",
     default_rest: 60,
@@ -208,7 +208,7 @@ export const ARMS_EXERCISES = [
       "Push the handle down until arms extend.",
       "Return slowly without moving the upper arms."
     ],
-    image_url: "/images/exercises/triceps-pushdown.webp",
+    image_url: "/images/exercises/ink/triceps-pushdown.svg",
     default_sets: 3,
     default_reps: "10-15",
     default_rest: 60,
@@ -237,7 +237,7 @@ export const ARMS_EXERCISES = [
       "Lower the weight behind the head.",
       "Extend the arms back overhead."
     ],
-    image_url: "/images/exercises/overhead-triceps-extension.webp",
+    image_url: "/images/exercises/ink/overhead-triceps-extension.svg",
     default_sets: 3,
     default_reps: "10-15",
     default_rest: 60,
@@ -267,7 +267,7 @@ export const ARMS_EXERCISES = [
       "Bend elbows to lower the weight toward the head.",
       "Extend the elbows to return."
     ],
-    image_url: "/images/exercises/skull-crusher.webp",
+    image_url: "/images/exercises/ink/skull-crusher.svg",
     default_sets: 3,
     default_reps: "10-15",
     default_rest: 60,
@@ -300,7 +300,7 @@ export const ARMS_EXERCISES = [
       "Keep elbows closer to the body.",
       "Press up until arms extend."
     ],
-    image_url: "/images/exercises/close-grip-bench-press.webp",
+    image_url: "/images/exercises/ink/close-grip-bench-press.svg",
     default_sets: 3,
     default_reps: "6-10",
     default_rest: 120,
@@ -333,7 +333,7 @@ export const ARMS_EXERCISES = [
       "Bend elbows to lower the body.",
       "Press through the hands to return."
     ],
-    image_url: "/images/exercises/bench-dip.webp",
+    image_url: "/images/exercises/ink/bench-dip.svg",
     default_sets: 3,
     default_reps: "8-15",
     default_rest: 75,
@@ -362,7 +362,7 @@ export const ARMS_EXERCISES = [
       "Curl the wrists upward.",
       "Lower slowly through the full range."
     ],
-    image_url: "/images/exercises/wrist-curl.webp",
+    image_url: "/images/exercises/ink/wrist-curl.svg",
     default_sets: 3,
     default_reps: "10-15",
     default_rest: 60,

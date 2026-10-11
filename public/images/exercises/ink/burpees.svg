@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 240" role="img" aria-label="Burpees ink exercise illustration">
+  <rect width="320" height="240" rx="0" fill="#fffdf7"/>
+  <g transform="rotate(-11 160 120)"><path d="M38 78 C92 60, 172 64, 268 80" stroke="#d82020" stroke-width="22" stroke-linecap="round" opacity=".94"/><path d="M56 104 C128 86, 206 88, 244 100" stroke="#d82020" stroke-width="6" stroke-linecap="round" opacity=".82"/></g>
+  <g fill="none" stroke="#050505" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M38 211 C94 196 194 200 280 214" opacity=".28"/>
+    <circle cx="128" cy="76" r="17" fill="none" stroke="#050505" stroke-width="7"/>
+    <path d="M118 94 C154 102 178 130 186 168"/><path d="M126 112 L86 142"/><path d="M152 126 L208 126"/><path d="M176 164 L130 196"/><path d="M180 166 L222 200"/><circle cx="82" cy="148" r="18" fill="none" stroke="#050505" stroke-width="7"/><circle cx="216" cy="172" r="18" fill="none" stroke="#050505" stroke-width="7"/>
+  </g>
+  <g fill="none" stroke="#050505" stroke-width="3" stroke-linecap="round" opacity=".35">
+    <path d="M42 36 L278 36"/><path d="M42 206 L278 206"/>
+  </g>
+</svg>

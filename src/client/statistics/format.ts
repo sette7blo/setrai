@@ -15,6 +15,8 @@ export function normalizeStatistics(payload: StatisticsApiPayload): StatisticsOv
     volumeByMuscle: payload.volumeByMuscle ?? [],
     personalRecords: payload.personalRecords ?? [],
     trainingStreak: {
+      currentStreakDays: payload.trainingStreak?.currentStreakDays === undefined ? undefined : Number(payload.trainingStreak.currentStreakDays),
+      longestStreakDays: payload.trainingStreak?.longestStreakDays === undefined ? undefined : Number(payload.trainingStreak.longestStreakDays),
       currentStreakWeeks: Number(payload.trainingStreak?.currentStreakWeeks ?? 0),
       longestStreakWeeks: Number(payload.trainingStreak?.longestStreakWeeks ?? 0)
     },
@@ -29,7 +31,7 @@ export function hasTrainingHistory(stats: StatisticsOverview): boolean {
 export function overviewItems(stats: StatisticsOverview, unit: WeightUnit): Array<{ label: string, value: string }> {
   return [
     { label: 'This week', value: `${stats.trainingFrequency.thisWeek} workouts` },
-    { label: 'Training streak', value: `${stats.trainingStreak.currentStreakWeeks} weeks` },
+    { label: 'Training streak', value: `${stats.trainingStreak.currentStreakDays ?? stats.trainingStreak.currentStreakWeeks} ${stats.trainingStreak.currentStreakDays === undefined ? 'weeks' : 'days'}` },
     { label: 'Total volume', value: formatVolumeKg(stats.totalVolume, unit) }
   ]
 }

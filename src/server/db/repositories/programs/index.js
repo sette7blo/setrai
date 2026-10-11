@@ -43,9 +43,10 @@ function insertProgram(db, values, slug) {
         nostr_event_id,
         nostr_pubkey,
         nostr_address,
-        nostr_published_at
+        nostr_published_at,
+        catalog_baseline
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `)
     .run(
       slug,
@@ -58,7 +59,8 @@ function insertProgram(db, values, slug) {
       values.nostr_event_id,
       values.nostr_pubkey,
       values.nostr_address,
-      values.nostr_published_at
+      values.nostr_published_at,
+      values.catalog_baseline
     )
 }
 
@@ -132,6 +134,7 @@ export function createProgramRepository(db) {
         nostr_pubkey = ?,
         nostr_address = ?,
         nostr_published_at = ?,
+        catalog_baseline = ?,
         updated_at = datetime('now')
       WHERE id = ?
     `).run(
@@ -146,6 +149,7 @@ export function createProgramRepository(db) {
       values.nostr_pubkey,
       values.nostr_address,
       values.nostr_published_at,
+      values.catalog_baseline,
       id
     )
 
@@ -179,6 +183,7 @@ export function createProgramRepository(db) {
       nostrPubkey: null,
       nostrAddress: null,
       nostrPublishedAt: null,
+      catalogBaseline: null,
       exercises: program.exercises
     })
   }
@@ -208,6 +213,18 @@ export function createProgramRepository(db) {
   }
 
   return {
+    importWithExercises(buildInput, id = null) {
+      db.exec('BEGIN IMMEDIATE')
+      try {
+        const input = buildInput()
+        const result = id === null ? create(input) : update(id, input)
+        db.exec('COMMIT')
+        return result
+      } catch (error) {
+        db.exec('ROLLBACK')
+        throw error
+      }
+    },
     list,
     getById,
     getBySlug,

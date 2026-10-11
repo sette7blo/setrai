@@ -1,0 +1,171 @@
+/* Shared visual contracts. Layout and interactions remain feature-owned. */
+:root {
+  --border-subtle: 1px solid var(--color-border);
+  --font-section-title: 16px;
+}
+
+:is(.exercise-heading, .workout-heading, .statistics-page-head) {
+  margin: 0;
+  padding: 8px 0 4px;
+  gap: 16px;
+}
+
+:is(.exercise-heading, .workout-heading, .statistics-page-head,
+  .profile-hero, .quick-hero, .recovery-page) h1 {
+  max-width: none;
+  font-size: var(--font-page-title) !important;
+  font-weight: 650 !important;
+  line-height: 1.1 !important;
+  letter-spacing: -.04em !important;
+}
+
+.profile-hero, .quick-hero {
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding: 8px 0 16px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.profile-hero .eyebrow, .quick-hero .eyebrow { display: none; }
+.profile-hero .hero-summary { margin-bottom: 0; }
+
+:is(.exercise-page .library-summary-card, .exercise-page .exercise-card,
+  .exercise-page .exercise-search, .exercise-page .filter-icon,
+  .exercise-page .exercise-filters, .exercise-page .exercise-selection-bar,
+  .exercise-detail .exercise-detail__content, .exercise-detail .prescription-panel,
+  .exercise-detail .detail-prescription > div, .workout-card,
+  .program-browse-hero, .program-search, .program-toolbar-action,
+  .statistics-page .stats-panel, .statistics-page .summary-stat,
+  .statistics-page .body-card, .statistics-page .stats-record,
+  .statistics-page .stats-hero-card, .statistics-page .bars,
+  .settings-category, .recovery-hero--compact, .recovery-stat,
+  .recovery-map, .recovery-row, .recovery-fresh-summary,
+  .quick-form, .quick-preview, .quick-exercise-row,
+  .history-calendar, .history-card, .history-filter,
+  .session-detail-ex, .workout-exercise, .workout-preview) {
+  border: var(--border-subtle) !important;
+  box-shadow: none !important;
+}
+
+:is(.workout-card, .program-browse-hero, .recovery-hero--compact,
+  .recovery-stat, .recovery-row, .recovery-fresh-summary,
+  .quick-form, .quick-preview, .quick-exercise-row,
+  .history-card, .session-detail-ex, .workout-exercise) {
+  background: var(--color-surface) !important;
+}
+
+:is(.program-search, .recovery-map, .history-calendar, .workout-preview) {
+  background: var(--color-surface-strong) !important;
+}
+
+:is(.exercise-page .library-summary-card, .exercise-page .exercise-card,
+  .program-browse-hero, .stats-hero-card, .settings-category) {
+  border-radius: 16px !important;
+}
+
+.exercise-page .exercise-card__body,
+.workout-card-body { border-top: var(--border-subtle) !important; }
+.exercise-page .exercise-image-frame { border-bottom: 0 !important; }
+
+:is(.library-summary-icon, .program-browse-icon, .stats-hero-icon,
+  .recovery-hero-icon, .settings-category-icon) {
+  border: 0 !important;
+  color: var(--color-text) !important;
+  background: var(--color-surface-strong) !important;
+  box-shadow: none !important;
+}
+
+.settings-category[open] .settings-category-icon {
+  color: #fff !important;
+  background: #343432 !important;
+}
+.settings-category[open]::before { display: none; }
+.settings-category[open] > summary { background: var(--color-surface-strong); }
+
+:is(.exercise-tab, .workout-tab, .stats-tab) {
+  min-height: 44px !important;
+  height: 44px !important;
+  font-family: inherit !important;
+  font-weight: 600 !important;
+  letter-spacing: .01em !important;
+  text-transform: none !important;
+}
+
+.button { font-weight: 600 !important; text-transform: none !important; }
+:is(.exercise-card h2, .workout-card-name, .settings-category-copy strong,
+  .library-summary-copy > strong, .stats-section-title) { font-weight: 650 !important; }
+:is(.library-metric, .program-browse-metrics > span,
+  .detail-pills > span, .badge) { border: var(--border-subtle) !important; }
+
+.recovery-ring, #recovery-body { filter: none; }
+.recovery-ring-track { stroke: var(--color-border); }
+.recovery-map__fresh, .recovery-map__decor { fill: #d8d6cf; }
+.recovery-row-track { background: var(--color-surface-strong); }
+.recovery-row-track i { background: var(--tone); }
+.recovery-ring--recovering, .recovery-row--recovering,
+.recovery-stat--recovering { --ring: var(--color-error); --tone: var(--color-error); }
+.recovery-map__recovering { fill: var(--color-error); }
+.recovery-legend .recovering::before { background: var(--color-error); }
+
+:is(button, a, input, select, textarea, summary):focus-visible {
+  outline: 2px solid var(--color-text) !important;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { scroll-behavior: auto !important; }
+  .button:hover, .filter-icon:hover, .exercise-card:hover { transform: none; }
+}
+
+
+/* Exercise cards: preserve real 4:3 art ratio in Library and Discover. */
+.exercise-page .exercise-grid,
+.discover-page .exercise-grid {
+  align-items: start !important;
+}
+
+.exercise-page .exercise-card,
+.discover-page .exercise-card {
+  display: grid !important;
+  align-self: start !important;
+}
+
+.exercise-page .exercise-card__link,
+.discover-page .exercise-card__open,
+.discover-page .exercise-card__link {
+  display: grid !important;
+}
+
+.exercise-page .exercise-card .exercise-image-frame,
+.discover-page .exercise-card .exercise-image-frame,
+.exercise-page .exercise-card .exercise-image,
+.discover-page .exercise-card .exercise-image {
+  aspect-ratio: 4 / 3 !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: none !important;
+}
+
+.exercise-page .exercise-card .exercise-image-frame img,
+.discover-page .exercise-card .exercise-image-frame img {
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+}
+
+.exercise-page .exercise-card__body,
+.discover-page .exercise-card__body {
+  min-height: auto !important;
+  height: auto !important;
+}
+
+@media (max-width: 719px) {
+  .exercise-page .exercise-card .exercise-image-frame,
+  .discover-page .exercise-card .exercise-image-frame,
+  .exercise-page .exercise-card .exercise-image,
+  .discover-page .exercise-card .exercise-image {
+    aspect-ratio: 4 / 3 !important;
+  }
+}

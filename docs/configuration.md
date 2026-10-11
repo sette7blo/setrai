@@ -687,16 +687,28 @@ Yes
 
 # 10. Nostr relay defaults
 
-Setrai may eventually define documented default public relays.
+When `NOSTR_RELAYS` is empty, Setrai uses Workstr-web's catalog relay defaults,
+defined in `src/server/config/nostr-relays.js`:
 
-If defaults are introduced:
+```text
+wss://relay.damus.io
+wss://nos.lol
+wss://relay.primal.net
+wss://relay.nos.social
+wss://nostr.mom
+wss://relay.snort.social
+wss://relay.wellorder.net
+wss://bitcoiner.social
+wss://relay.powr.build
+wss://nostr.bitcoiner.social
+wss://nostr-pub.wellorder.net
+```
 
-- they must be clearly listed in this document;
-- they should be overridable;
-- Setrai must not depend on one specific relay;
-- lack of relay availability must not break local workout functionality.
-
-Until explicit defaults are defined, `NOSTR_RELAYS` should be treated as operator configuration.
+Set `NOSTR_RELAYS` to override these defaults with comma-separated secure
+WebSocket URLs. `NOSTR_ENABLED` remains false by default. Set it to true and
+restart to enable public exercise and workout Discover and imports; no private key is needed
+for these read-only operations. Catalog queries run only when Discover is opened
+or refreshed. Relay failures do not break local workout functionality.
 
 ---
 
@@ -708,10 +720,15 @@ When:
 NOSTR_ENABLED=true
 ```
 
-Setrai should validate:
+Setrai validates secure relay URLs for public discovery. No private key is
+required for reading or importing public exercises and programs. A future signing capability
+must validate `NOSTR_NSEC` before performing signed operations.
 
-- `NOSTR_NSEC`;
-- relay configuration where required.
+The safe `nostrIdentity` capability is true only when Nostr is enabled and
+`NOSTR_NSEC` is nonempty. It gates the Profile identity section in Settings; it
+does not claim a validated signing capability. With no key, discovery remains
+available and identity settings stay hidden. Configuration exposes only this
+boolean, never the private key. Restart after changing deployment configuration.
 
 If the key is invalid, the error must not echo the key.
 
@@ -970,6 +987,7 @@ Example response:
 {
   "ai": true,
   "nostr": false,
+  "nostrIdentity": false,
   "moneroWallet": false
 }
 ```
@@ -1111,21 +1129,17 @@ Setrai does not need to implement live configuration mutation for these settings
 
 The expected self-hosted deployment model is Docker Compose.
 
-A deployment may resemble:
+The distributed installer is `docker-compose.yml` with the public
+`dockersette/setrai` image and the minimal `deploy/.env.example` template. The
+optional `docker-compose.build.yml` override builds a local image from source.
+See [deployment instructions](deployment.md) for installation and publication.
 
-```yaml
-services:
-  setrai:
-    build: .
-    env_file:
-      - .env
-    volumes:
-      - ./data:/data
-    ports:
-      - "3000:3000"
-```
-
-The exact Compose file may evolve.
+The container uses a named volume at `/data`, runs as UID/GID 1000, and listens on
+internal port 3000. Compose overrides the server's host, port, data-directory,
+and database-path environment variables to match this layout. `SETRAI_IMAGE`
+chooses a published version or digest, `SETRAI_HTTP_PORT` chooses the host port,
+and `SETRAI_BIND_ADDRESS` defaults to `127.0.0.1`. The source-build workflow keeps
+using its existing host `.env` and database independently.
 
 The key design goals are:
 
@@ -1158,24 +1172,19 @@ Therefore Setrai does not need to write `.env` from the application UI.
 
 # 26. Example Docker deployment
 
-Example:
+Minimal installation (in a new installation directory or fresh checkout):
 
-```yaml
-services:
-  setrai:
-    container_name: setrai
-    build: .
-    restart: unless-stopped
-
-    env_file:
-      - .env
-
-    ports:
-      - "3000:3000"
-
-    volumes:
-      - ./data:/data
+```bash
+cp deploy/.env.example .env
+chmod 600 .env
+docker compose pull
+docker compose up -d --wait
 ```
+
+The image must first be published to Docker Hub. Preserve an existing `.env`
+instead of overwriting it. Optional integrations are disabled in this template.
+A public deployment needs authenticated HTTPS proxy access or a VPN; the
+`SETRAI_AUTH_ENABLED` flag does not implement HTTP authentication yet.
 
 If Ollama runs as another Compose service:
 

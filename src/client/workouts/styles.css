@@ -27,7 +27,7 @@
 .session-summary h1,
 .workouts-empty h1 {
   max-width: 12ch;
-  font-size: clamp(2.25rem, 10vw, 4.8rem);
+  font-size: var(--font-page-title);
 }
 
 .workout-section {
@@ -354,4 +354,23 @@
   .program-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+}
+@media (max-width: 719px) {
+  .workouts-page, .program-detail, .live-session { gap: 12px; }
+  .workout-hero, .program-detail__hero, .live-session__header, .session-summary { padding: 16px; gap: 12px; }
+  .workout-section, .program-grid, .program-card { gap: 12px; }
+  .section-heading h2, .program-card h2, .current-exercise h2, .program-exercise-list h2, .logged-sets h2 { font-size: var(--font-section-title); }
+  .program-card, .recent-session, .finish-panel { padding: 12px; }
+  .program-exercise-row { grid-template-columns: 72px minmax(0, 1fr); }
+  .program-exercise-row__body { padding: 10px; }
+  .program-exercise-row h3 { font-size: 14px; }
+  .current-exercise__image { max-height: 180px; }
+  .current-exercise__body { padding: 12px; }
+  .rest-timer { flex-wrap: wrap; min-height: 56px; padding: 8px 10px; top: calc(64px + env(safe-area-inset-top)); gap: 8px; }
+  .rest-timer strong { font-size: 22px; }
+  .rest-timer__controls { gap: 6px; }
+  .rest-timer button, .session-nav button, .logged-set button { min-height: 44px; }
+  .set-log-form input, .finish-panel textarea, .logged-set input { min-width: 0; min-height: 44px; font-size: 16px; }
+  .logged-set__edit { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .program-card__actions { gap: 8px; }
 }

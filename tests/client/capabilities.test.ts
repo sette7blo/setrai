@@ -15,6 +15,7 @@ test('capabilities parsing keeps missing or malformed integrations disabled', ()
     {
       ai: true,
       nostr: false,
+      nostrIdentity: false,
       moneroWallet: false
     }
   )
@@ -24,6 +25,7 @@ test('capabilities parsing keeps missing or malformed integrations disabled', ()
     {
       ai: false,
       nostr: false,
+      nostrIdentity: false,
       moneroWallet: false
     }
   )
@@ -44,4 +46,13 @@ test('capability label avoids disabled integration placeholders', () => {
 test('route lookup falls back to the Setrai home route', () => {
   assert.equal(findRoute('/profile').title, 'Training profile')
   assert.equal(findRoute('/unknown').path, '/')
+})
+
+
+test('public discovery does not imply a configured identity', () => {
+  assert.equal(parseCapabilities({ nostr: true }).nostrIdentity, false)
+  assert.equal(parseCapabilities({ nostr: true, nostrIdentity: 'true' }).nostrIdentity, false)
+  assert.equal(parseCapabilities({ nostr: false, nostrIdentity: true }).nostrIdentity, false)
+  assert.equal(parseCapabilities({ nostr: true, nostrIdentity: true }).nostrIdentity, true)
+  assert.equal(capabilityLabel({ ai: false, nostr: true, nostrIdentity: true, moneroWallet: false }), 'Training plus nostr')
 })

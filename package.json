@@ -5,14 +5,15 @@
   "description": "Self-hosted AI-native fitness and training application.",
   "type": "module",
   "scripts": {
-    "start": "node src/server/index.js",
+    "start": "node --env-file-if-exists=.env src/server/index.js",
     "dev": "vite --host 0.0.0.0",
     "arch": "node scripts/check-architecture.mjs",
     "test": "npm run test:server && npm run test:client",
     "test:server": "node --test tests/*.test.js",
     "test:client": "tsc -p tsconfig.client.test.json && node --test dist/client-tests/tests/client/*.test.js",
     "build": "tsc -p tsconfig.client.json && vite build",
-    "check": "npm run arch && npm test && npm run build"
+    "check": "npm run arch && npm test && npm run build",
+    "test:docker": "node scripts/test-docker.mjs"
   },
   "repository": {
     "type": "git",
@@ -31,6 +32,7 @@
     "vite": "^8.3.2"
   },
   "dependencies": {
-    "lucide": "^1.52.0"
+    "lucide": "^1.52.0",
+    "nostr-tools": "^2.25.2"
   }
 }

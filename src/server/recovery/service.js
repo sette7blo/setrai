@@ -56,3 +56,5 @@ export function createRecoveryService(db, options = {}) {
     getReadyMuscles
   }
 }
+
+export { recoveryMuscleGroup, workoutReadiness } from './readiness.js'

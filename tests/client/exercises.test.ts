@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
+import { readFileSync } from 'node:fs'
 
 import { ApiClient } from '../../src/client/shared/api/client.js'
-import { setExerciseFavourite } from '../../src/client/exercises/api.js'
+import { deleteExercise, setExerciseFavourite } from '../../src/client/exercises/api.js'
 import {
   filterExercises,
   filtersToUrl,
@@ -15,6 +16,7 @@ import {
   pluralizeExercise
 } from '../../src/client/exercises/format.js'
 import { imageFallbackState } from '../../src/client/exercises/image.js'
+import { muscleMapMarkup, muscleMapMarkupForMuscles, muscleRegion } from '../../src/client/exercises/muscle-map.js'
 import type { Exercise } from '../../src/client/exercises/types.js'
 
 function exercise(overrides: Partial<Exercise>): Exercise {
@@ -207,4 +209,60 @@ test('favorite API contract sends PATCH favourite payload', async () => {
   } finally {
     globalThis.fetch = originalFetch
   }
+})
+
+test('delete API contract sends DELETE exercise request', async () => {
+  const calls: Array<{ url: string, init?: RequestInit }> = []
+  const originalFetch = globalThis.fetch
+
+  try {
+    globalThis.fetch = async (url, init) => {
+      calls.push({ url: String(url), init })
+      return new Response(null, { status: 204 })
+    }
+
+    await deleteExercise(9, new ApiClient())
+    assert.equal(calls[0].url, '/api/exercises/9')
+    assert.equal(calls[0].init?.method, 'DELETE')
+  } finally {
+    globalThis.fetch = originalFetch
+  }
+})
+
+test('muscle map highlights primary chest and secondary triceps and granular deltoid', () => {
+  const markup = muscleMapMarkup({ muscleGroup: 'chest', muscles: ['triceps', 'anterior-deltoid'] })
+  assert.match(markup, /data-muscle="Chest"[^>]*class="muscle-map__primary"/)
+  assert.match(markup, /data-muscle="Triceps"[^>]*class="muscle-map__secondary"/)
+  assert.match(markup, /data-muscle="Shoulders"[^>]*class="muscle-map__secondary"/)
+  assert.match(markup, /data-muscle="Calves"[^>]*class="muscle-map__inactive"/)
+})
+
+test('theme preserves distinct primary and secondary muscle map colors', () => {
+  const theme = readFileSync('src/client/app/styles/editorial.css', 'utf8')
+  const styles = readFileSync('src/client/exercises/styles.css', 'utf8')
+  assert.match(theme, /\.muscle-map__primary\s*\{\s*fill: #000 !important;/)
+  assert.match(theme, /\.muscle-map__secondary\s*\{\s*fill: var\(--color-warning\) !important;/)
+  assert.doesNotMatch(theme, /\.muscle-map__primary\s*,\s*\.muscle-map__secondary\s*\{/)
+  assert.match(styles, /\.muscle-map__key-secondary\s*\{\s*color: var\(--color-warning\);/)
+})
+
+test('primary highlighting takes precedence and unknown muscles stay unpainted', () => {
+  const markup = muscleMapMarkup({ muscleGroup: 'chest', muscles: ['chest', '<script>'] })
+  assert.match(markup, /data-muscle="Chest"[^>]*class="muscle-map__primary"/)
+  assert.equal(markup.includes('<script>'), false)
+  assert.equal(muscleRegion('Anterior Deltoid'), 'Shoulders')
+  assert.equal(muscleRegion('unknown'), undefined)
+})
+
+test('aggregate muscle map highlights multiple primary regions for workout history', () => {
+  const markup = muscleMapMarkupForMuscles(['chest', 'back'], ['triceps', 'biceps', 'chest'])
+  assert.match(markup, /data-muscle="Chest"[^>]*class="muscle-map__primary"/)
+  assert.match(markup, /data-muscle="Back"[^>]*class="muscle-map__primary"/)
+  assert.match(markup, /data-muscle="Triceps"[^>]*class="muscle-map__secondary"/)
+  assert.match(markup, /data-muscle="Biceps"[^>]*class="muscle-map__secondary"/)
+})
+
+test('detail normalization preserves all instruction steps', () => {
+  const steps = ['Plant your feet.', 'Lower under control.', 'Press upward.']
+  assert.deepEqual(normalizeExercise({ id: 1, slug: 'bench-press', name: 'Bench Press', instructions: steps }).instructions, steps)
 })

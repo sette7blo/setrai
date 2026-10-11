@@ -35,6 +35,7 @@ export function mapProgramRow(row, exercises = []) {
     nostrPubkey: row.nostr_pubkey ?? null,
     nostrAddress: row.nostr_address ?? null,
     nostrPublishedAt: row.nostr_published_at ?? null,
+    catalogBaseline: parseJson(row.catalog_baseline, null),
     createdAt: row.created_at,
     updatedAt: row.updated_at
   }
@@ -67,6 +68,7 @@ export function normalizeProgramInput(input) {
     nostr_event_id: input.nostrEventId ?? null,
     nostr_pubkey: input.nostrPubkey ?? null,
     nostr_address: input.nostrAddress ?? null,
-    nostr_published_at: input.nostrPublishedAt ?? null
+    nostr_published_at: input.nostrPublishedAt ?? null,
+    catalog_baseline: input.catalogBaseline ? JSON.stringify(input.catalogBaseline) : null
   }
 }

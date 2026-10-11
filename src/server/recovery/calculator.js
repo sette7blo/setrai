@@ -38,7 +38,7 @@ function statusForRecovery(recovery) {
     return 'recovering'
   }
 
-  if (recovery < 0.7) {
+  if (recovery < 0.8) {
     return 'moderate'
   }
 

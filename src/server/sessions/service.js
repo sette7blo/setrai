@@ -9,6 +9,7 @@ import {
 import {
   createProgramService
 } from '../programs/service.js'
+import { normalizeLiveState, normalizeSetContext, validateSetLocation } from './live-state.js'
 
 function clientError(message, statusCode) {
   const error = new Error(message)
@@ -71,18 +72,24 @@ export function createSessionService(db) {
     const session = repository.create({
       programId: program.id,
       programName: program.name,
-      notes: input.notes ?? ''
+      notes: input.notes ?? '',
+      plan: {
+        exercises: program.exercises.map((entry) => ({ ...entry, exercise: exerciseService.getExercise(entry.exerciseId) })),
+        blocks: program.blocks ?? []
+      }
     })
 
     return {
       ...session,
-      plannedExercises: program.exercises
+      plannedExercises: session.plan.exercises,
+      blocks: session.plan.blocks
     }
   }
 
   function getSession(id) {
     const session = repository.getById(id)
 
+    if (session?.plan) return { ...session, plannedExercises: session.plan.exercises, blocks: session.plan.blocks }
     if (!session || !session.programId) {
       return session
     }
@@ -91,7 +98,8 @@ export function createSessionService(db) {
 
     return {
       ...session,
-      plannedExercises: program?.exercises ?? []
+      plannedExercises: program?.exercises ?? [],
+      blocks: program?.blocks ?? []
     }
   }
 
@@ -109,12 +117,20 @@ export function createSessionService(db) {
   }
 
   function logSet(sessionId, input) {
-    requireSession(sessionId)
+    const session = requireSession(sessionId)
+    if (session.finishedAt) throw clientError('Session is already finished', 409)
+    const context = normalizeSetContext(input)
     const setInput = normalizeSetInput(input)
-    const exercise = resolveExercise(input)
+    const exercise = resolveExercise(input, session)
+    validateSetLocation(context, getSession(sessionId), exercise.slug)
+    if (context.blockIndex !== undefined) {
+      const existing = session.sets.find((set) => set.exerciseId === exercise.id && set.setNumber === setInput.setNumber && set.blockIndex === context.blockIndex && set.intervalIndex === context.intervalIndex && set.roundIndex === context.roundIndex && set.stepIndex === context.stepIndex)
+      if (existing) return existing
+    }
 
     return repository.insertSet(sessionId, {
       ...setInput,
+      context,
       exerciseId: exercise.id,
       exerciseSlug: exercise.slug,
       exerciseName: exercise.name
@@ -166,12 +182,14 @@ export function createSessionService(db) {
     return session
   }
 
-  function resolveExercise(input) {
+  function resolveExercise(input, session) {
     const exerciseId = validatePositiveInteger(
       input.exerciseId,
       'Exercise ID is invalid'
     )
     const exercise = exerciseService.getExercise(exerciseId)
+    const planned = session.plan?.exercises.find((entry) => entry.exerciseId === exerciseId)
+    if (planned) return { id: exercise?.id ?? null, slug: planned.exerciseSlug, name: planned.exerciseName }
 
     if (!exercise) {
       throw clientError('Exercise not found', 404)
@@ -186,10 +204,7 @@ export function createSessionService(db) {
         input.setNumber,
         'Set number is invalid'
       ),
-      reps: validatePositiveInteger(
-        input.reps,
-        'Reps are invalid'
-      ),
+      reps: input.durationSec > 0 && (input.reps === null || input.reps === 0) ? 0 : validatePositiveInteger(input.reps, 'Reps are invalid'),
       weight: validateOptionalNonNegativeNumber(
         input.weight,
         'Weight is invalid'
@@ -200,6 +215,7 @@ export function createSessionService(db) {
 
   function normalizeSetUpdate(input) {
     const result = {}
+    if ('durationSec' in input) result.durationSec = normalizeSetContext(input).durationSec
 
     if ('setNumber' in input) {
       result.setNumber = validatePositiveInteger(
@@ -237,6 +253,17 @@ export function createSessionService(db) {
     logSet,
     updateSet,
     deleteSet,
-    finishSession
+    finishSession,
+    updateLiveState(id, input) {
+      const session = requireSession(id)
+      if (session.finishedAt) throw clientError('Session is already finished', 409)
+      repository.saveRuntime(id, normalizeLiveState(input, session.runtime))
+      return getSession(id)
+    },
+    discardSession(id) {
+      const session = requireSession(id)
+      if (session.finishedAt) throw clientError('Completed sessions cannot be discarded', 409)
+      return repository.remove(id)
+    }
   }
 }

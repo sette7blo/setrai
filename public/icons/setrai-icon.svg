@@ -1,8 +1,7 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="Setrai icon">
-  <rect width="128" height="128" rx="28" fill="#050807"/>
-  <path d="M24 81c18 12 62 12 80 0" fill="none" stroke="#48f2cf" stroke-width="8" stroke-linecap="round"/>
-  <path d="M34 64h60" stroke="#f4fff9" stroke-width="10" stroke-linecap="round"/>
-  <path d="M42 45l44 38" stroke="#ff5b2e" stroke-width="7" stroke-linecap="round" opacity="0.9"/>
-  <circle cx="32" cy="64" r="10" fill="#48f2cf"/>
-  <circle cx="96" cy="64" r="10" fill="#48f2cf"/>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96" role="img" aria-label="Setrai icon">
+  <rect width="96" height="96" rx="20" fill="#f7f6f1"/>
+  <g transform="translate(0 12)">
+    <path fill="#050505" d="M27 8h57l-8 10H28c-8.1 0-14 5.4-14 12.2C14 37.4 20.2 42 29.1 42h36.2c5.4 0 8.7 2.3 8.7 6.3 0 4.2-3.7 7.7-9.1 7.7H12l8-10h43.8c2.2 0 3.7-.9 3.7-2.3 0-1.5-1.4-2.2-4-2.2H27.7C12 41.5 4 33.7 4 24.5 4 15 13.2 8 27 8Z"/>
+    <path fill="#050505" d="M18 56h54l-8 10H10l8-10Z"/>
+  </g>
 </svg>

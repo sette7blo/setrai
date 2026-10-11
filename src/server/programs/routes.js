@@ -10,8 +10,15 @@ function sendJson(res, status, body) {
 
 async function readJsonBody(req) {
   const chunks = []
+  let size = 0
 
   for await (const chunk of req) {
+    size += chunk.length
+    if (size > 262144) {
+      const error = new Error('Program request is too large')
+      error.statusCode = 413
+      throw error
+    }
     chunks.push(chunk)
   }
 

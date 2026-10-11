@@ -9,7 +9,9 @@ export function normalizeProfile(payload: ProfileApiPayload): Profile {
     avatarUrl: payload.avatarUrl ?? '',
     weightUnit: payload.weightUnit === 'lb' ? 'lb' : 'kg',
     trainingGoal: payload.trainingGoal ?? '',
-    equipment: Array.isArray(payload.equipment) ? payload.equipment.filter((item): item is string => typeof item === 'string') : []
+    equipment: Array.isArray(payload.equipment) ? payload.equipment.filter((item): item is string => typeof item === 'string') : [],
+    heightCm: Number.isFinite(Number(payload.heightCm)) && Number(payload.heightCm) > 0 ? Number(payload.heightCm) : null,
+    targetWeightKg: Number.isFinite(Number(payload.targetWeightKg)) && Number(payload.targetWeightKg) > 0 ? Number(payload.targetWeightKg) : null
   }
 }
 

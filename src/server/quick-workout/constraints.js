@@ -93,23 +93,7 @@ export function normalizeTargetMuscles(value) {
 }
 
 export function workoutExerciseCount(durationMinutes) {
-  if (durationMinutes <= 20) {
-    return 3
-  }
-
-  if (durationMinutes <= 35) {
-    return 4
-  }
-
-  if (durationMinutes <= 50) {
-    return 5
-  }
-
-  if (durationMinutes <= 70) {
-    return 6
-  }
-
-  return 7
+  return Math.max(1, Math.floor(durationMinutes / 9))
 }
 
 export function getGoalPreset(goal) {

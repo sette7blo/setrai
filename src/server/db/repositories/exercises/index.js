@@ -9,6 +9,7 @@ import {
 } from './slug.js'
 
 const ALLOWED_UPDATE_FIELDS = [
+  'catalog_baseline',
   'name',
   'description',
   'category',
@@ -131,9 +132,10 @@ export function createExerciseRepository(db) {
           muscles, equipment, difficulty, tags, instructions,
           image_url, image_publish_url, favourite,
           default_sets, default_reps, default_rest,
-          source_type, status
+          source_type, status, nostr_event_id, nostr_pubkey,
+          nostr_address, nostr_published_at
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `)
       .run(
         slug,
@@ -153,7 +155,11 @@ export function createExerciseRepository(db) {
         values.default_reps ?? '8-12',
         values.default_rest ?? 90,
         values.source_type ?? 'manual',
-        values.status ?? 'active'
+        values.status ?? 'active',
+        values.nostr_event_id ?? null,
+        values.nostr_pubkey ?? null,
+        values.nostr_address ?? null,
+        values.nostr_published_at ?? null
       )
 
     return getById(Number(result.lastInsertRowid))

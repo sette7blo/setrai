@@ -39,13 +39,24 @@ function safeClientPath(pathname) {
   return filePath
 }
 
+function cacheControlFor(filePath) {
+  const extension = path.extname(filePath)
+
+  if (extension === '.html' || extension === '.css' || extension === '.js') {
+    return 'no-store, max-age=0'
+  }
+
+  return 'no-cache'
+}
+
 function sendFile(res, filePath, method) {
   const extension = path.extname(filePath)
   const contentType = MIME_TYPES.get(extension) ??
     'application/octet-stream'
 
   res.writeHead(200, {
-    'Content-Type': contentType
+    'Content-Type': contentType,
+    'Cache-Control': cacheControlFor(filePath)
   })
 
   if (method === 'HEAD') {

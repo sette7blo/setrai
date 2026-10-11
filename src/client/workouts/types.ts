@@ -1,6 +1,7 @@
-import type { Exercise } from '../exercises/types.js'
+import type { Exercise, ExerciseApiPayload } from '../exercises/types.js'
 
 export interface ProgramExerciseApiPayload {
+  exercise?: ExerciseApiPayload
   id?: number
   exerciseId?: number
   exercise_id?: number
@@ -29,6 +30,37 @@ export interface ProgramApiPayload {
   isTemporary?: boolean
   is_temporary?: boolean
   exercises?: ProgramExerciseApiPayload[]
+  blocks?: TrainingBlock[]
+  nostrAddress?: string | null
+  nostrPubkey?: string | null
+  nostrEventId?: string | null
+}
+
+export interface TrainingStep {
+  exerciseSlug: string
+  exerciseName?: string
+  targetReps?: string
+  targetDurationSec?: number
+  weight?: number | null
+  notes?: string
+}
+
+export interface TrainingBlock {
+  type: 'straight' | 'emom'
+  rounds: number
+  steps?: TrainingStep[]
+  restAfterRoundSec?: number
+  intervals?: { durationSec: number; steps: TrainingStep[] }[]
+  totalDurationSec?: number
+}
+
+export interface ProgramInput {
+  name: string
+  description: string
+  difficulty: string
+  tags: string[]
+  blocks?: TrainingBlock[]
+  exercises: ProgramExerciseApiPayload[]
 }
 
 export interface ProgramExercise {
@@ -54,9 +86,22 @@ export interface Program {
   tags: string[]
   isTemporary: boolean
   exercises: ProgramExercise[]
+  blocks?: TrainingBlock[]
+  nostrAddress?: string | null
+  nostrPubkey?: string | null
+  nostrEventId?: string | null
+  sourceLabel?: string
+  muscleMapUrl?: string
+  localId?: number | null
+  updateAvailable?: boolean
 }
 
 export interface SessionSetApiPayload {
+  durationSec?: number
+  blockIndex?: number
+  roundIndex?: number
+  intervalIndex?: number
+  stepIndex?: number
   id: number
   sessionId?: number
   session_id?: number
@@ -76,6 +121,8 @@ export interface SessionSetApiPayload {
 }
 
 export interface SessionApiPayload {
+  blocks?: TrainingBlock[]
+  runtime?: LiveRuntime
   id: number
   programId?: number | null
   program_id?: number | null
@@ -91,6 +138,11 @@ export interface SessionApiPayload {
 }
 
 export interface SessionSet {
+  durationSec?: number
+  blockIndex?: number
+  roundIndex?: number
+  intervalIndex?: number
+  stepIndex?: number
   id: number
   sessionId: number
   exerciseId: number
@@ -104,6 +156,8 @@ export interface SessionSet {
 }
 
 export interface Session {
+  blocks?: TrainingBlock[]
+  runtime?: LiveRuntime
   id: number
   programId: number | null
   programName: string
@@ -121,6 +175,11 @@ export interface SessionResponse { session: SessionApiPayload }
 export interface SessionSetResponse { set: SessionSetApiPayload }
 
 export interface LogSetInput {
+  durationSec?: number
+  blockIndex?: number
+  roundIndex?: number
+  intervalIndex?: number
+  stepIndex?: number
   exerciseId: number
   setNumber: number
   reps: number
@@ -128,7 +187,21 @@ export interface LogSetInput {
   done: boolean
 }
 
+export interface LiveRuntime {
+  mode?: 'strength' | 'emom'
+  exerciseIndex?: number
+  setCounts?: Record<string, number>
+  restEndsAt?: number | null
+  restDurationSec?: number
+  restNextIndex?: number | null
+  emomStartedAt?: number | null
+  emomPositionSec?: number
+  emomActiveSec?: number
+  emomRunningSince?: number | null
+}
+
 export interface UpdateSetInput {
+  durationSec?: number
   setNumber?: number
   reps?: number
   weight?: number | null

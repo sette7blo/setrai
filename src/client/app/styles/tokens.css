@@ -15,6 +15,8 @@
   --color-success: #72f29a;
   --color-warning: #f8de5a;
   --color-error: #ff6b6b;
+  --font-page-title: clamp(1.875rem, 3vw, 2.5rem);
+  --font-section-title: 1.05rem;
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -29,4 +31,16 @@
   --shadow-soft: 0 24px 80px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255,255,255,0.04);
   --shadow-accent: 0 0 36px rgba(var(--color-primary-rgb), 0.2);
   --glass-fill: rgba(7, 15, 17, 0.72);
+}
+
+@media (max-width: 719px) {
+  :root {
+    --font-page-title: 30px;
+    --space-5: 1rem;
+    --space-6: 1.25rem;
+    --space-8: 1.5rem;
+    --radius-lg: 13px;
+    --radius-xl: 16px;
+    --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255,255,255,0.03);
+  }
 }

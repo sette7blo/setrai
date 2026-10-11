@@ -26,7 +26,7 @@ export const BACK_EXERCISES = [
       "Brace, push the floor away, and stand tall.",
       "Lower the bar under control while keeping it close."
     ],
-    image_url: "/images/exercises/deadlift.webp",
+    image_url: "/images/exercises/ink/deadlift.svg",
     default_sets: 3,
     default_reps: "3-6",
     default_rest: 180,
@@ -58,7 +58,7 @@ export const BACK_EXERCISES = [
       "Row the bar toward the lower ribs.",
       "Lower until arms are extended."
     ],
-    image_url: "/images/exercises/barbell-row.webp",
+    image_url: "/images/exercises/ink/barbell-row.svg",
     default_sets: 3,
     default_reps: "6-10",
     default_rest: 120,
@@ -91,7 +91,7 @@ export const BACK_EXERCISES = [
       "Row the dumbbell toward the hip.",
       "Lower with control and repeat."
     ],
-    image_url: "/images/exercises/one-arm-dumbbell-row.webp",
+    image_url: "/images/exercises/ink/one-arm-dumbbell-row.svg",
     default_sets: 3,
     default_reps: "6-10",
     default_rest: 120,
@@ -122,7 +122,7 @@ export const BACK_EXERCISES = [
       "Pull the bar toward the upper chest.",
       "Control the bar back overhead."
     ],
-    image_url: "/images/exercises/lat-pulldown.webp",
+    image_url: "/images/exercises/ink/lat-pulldown.svg",
     default_sets: 3,
     default_reps: "6-10",
     default_rest: 120,
@@ -156,7 +156,7 @@ export const BACK_EXERCISES = [
       "Bring the chin near or above the bar.",
       "Lower to a controlled full hang."
     ],
-    image_url: "/images/exercises/pull-up.webp",
+    image_url: "/images/exercises/ink/pull-up.svg",
     default_sets: 3,
     default_reps: "5-10",
     default_rest: 120,
@@ -187,7 +187,7 @@ export const BACK_EXERCISES = [
       "Pull the handle toward the torso.",
       "Return slowly without rounding the back."
     ],
-    image_url: "/images/exercises/seated-cable-row.webp",
+    image_url: "/images/exercises/ink/seated-cable-row.svg",
     default_sets: 3,
     default_reps: "6-10",
     default_rest: 120,
@@ -219,7 +219,7 @@ export const BACK_EXERCISES = [
       "Row toward the ribs while keeping the chest supported.",
       "Lower under control."
     ],
-    image_url: "/images/exercises/chest-supported-row.webp",
+    image_url: "/images/exercises/ink/chest-supported-row.svg",
     default_sets: 3,
     default_reps: "6-10",
     default_rest: 120,
@@ -250,7 +250,7 @@ export const BACK_EXERCISES = [
       "Pull the handle down toward the thighs.",
       "Return slowly until the lats stretch."
     ],
-    image_url: "/images/exercises/straight-arm-pulldown.webp",
+    image_url: "/images/exercises/ink/straight-arm-pulldown.svg",
     default_sets: 3,
     default_reps: "10-15",
     default_rest: 60,

@@ -11,10 +11,10 @@ export interface RouteDefinition {
 const ROUTES: RouteDefinition[] = [
   {
     path: '/',
-    title: 'Ready to train',
-    eyebrow: 'Setrai Home',
-    summary: 'Your self-hosted training cockpit starts here. Feature surfaces connect to the deterministic backend as frontend phases land.',
-    primaryAction: 'Review today\'s training state'
+    title: 'Statistics',
+    eyebrow: 'Setrai Statistics',
+    summary: 'Training volume, session frequency, body weight, BMI, and progress trends.',
+    primaryAction: 'Review progress'
   },
   {
     path: '/workouts',
@@ -58,16 +58,20 @@ export function currentPath(): string {
 }
 
 export function primaryNavPath(path: string): string {
+  if (path === '/' || path.startsWith('/statistics')) {
+    return '/statistics'
+  }
+
   if (path.startsWith('/exercises')) {
     return '/exercises'
   }
 
-  if (path.startsWith('/programs') || path.startsWith('/sessions') || path.startsWith('/quick-workout')) {
+  if (path.startsWith('/workouts') || path.startsWith('/programs') || path.startsWith('/sessions') || path.startsWith('/quick-workout')) {
     return '/workouts'
   }
 
   if (path.startsWith('/recovery')) {
-    return '/statistics'
+    return '/workouts'
   }
 
   return path
@@ -79,7 +83,7 @@ export function findRoute(path: string): RouteDefinition {
 
 export function capabilityLabel(capabilities: Capabilities): string {
   const enabled = Object.entries(capabilities)
-    .filter(([, value]) => value)
+    .filter(([key, value]) => key !== 'nostrIdentity' && value)
     .map(([key]) => key)
 
   return enabled.length === 0

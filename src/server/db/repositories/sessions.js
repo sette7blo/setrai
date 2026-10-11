@@ -13,6 +13,8 @@ function mapSessionRow(row, sets = []) {
     finishedAt: row.finished_at,
     notes: row.notes,
     sets,
+    plan: row.plan_json ? JSON.parse(row.plan_json) : null,
+    runtime: JSON.parse(row.runtime_json || '{}'),
     summaryEventId: row.summary_event_id ?? null,
     summaryImageUrl: row.summary_image_url ?? null
   }
@@ -33,7 +35,8 @@ function mapSetRow(row) {
     reps: row.reps,
     weight: row.weight,
     done: Boolean(row.done),
-    loggedAt: row.logged_at
+    loggedAt: row.logged_at,
+    ...JSON.parse(row.context_json || '{}')
   }
 }
 
@@ -73,14 +76,15 @@ export function createSessionRepository(db) {
         INSERT INTO sessions (
           program_id,
           program_name,
-          notes
+          notes, plan_json
         )
-        VALUES (?, ?, ?)
+        VALUES (?, ?, ?, ?)
       `)
       .run(
         input.programId ?? null,
         input.programName ?? input.name ?? '',
-        input.notes ?? ''
+        input.notes ?? '',
+        input.plan ? JSON.stringify(input.plan) : null
       )
 
     return getById(Number(result.lastInsertRowid))
@@ -131,9 +135,9 @@ export function createSessionRepository(db) {
           set_number,
           reps,
           weight,
-          done
+          done, context_json
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
       `)
       .run(
         sessionId,
@@ -143,7 +147,8 @@ export function createSessionRepository(db) {
         input.setNumber,
         input.reps,
         input.weight,
-        input.done ? 1 : 0
+        input.done ? 1 : 0,
+        JSON.stringify(input.context ?? {})
       )
 
     return getSet(
@@ -167,6 +172,17 @@ export function createSessionRepository(db) {
   function updateSet(sessionId, setId, input) {
     const updates = []
     const parameters = []
+    if ('durationSec' in input) {
+      const current = getSet(sessionId, setId)
+      if (!current) return null
+      const context = {}
+      for (const key of ['durationSec', 'blockIndex', 'roundIndex', 'intervalIndex', 'stepIndex']) {
+        if (current[key] !== undefined) context[key] = current[key]
+      }
+      context.durationSec = input.durationSec
+      updates.push('context_json = ?')
+      parameters.push(JSON.stringify(context))
+    }
 
     const fields = {
       setNumber: 'set_number',
@@ -222,6 +238,15 @@ export function createSessionRepository(db) {
     return readSets(db, sessionId)
   }
 
+  function saveRuntime(id, runtime) {
+    db.prepare('UPDATE sessions SET runtime_json = ? WHERE id = ?').run(JSON.stringify(runtime), id)
+    return getById(id)
+  }
+
+  function remove(id) {
+    return db.prepare('DELETE FROM sessions WHERE id = ?').run(id).changes > 0
+  }
+
   return {
     create,
     getById,
@@ -231,6 +256,8 @@ export function createSessionRepository(db) {
     getSet,
     updateSet,
     deleteSet,
-    listSets
+    listSets,
+    saveRuntime,
+    remove
   }
 }

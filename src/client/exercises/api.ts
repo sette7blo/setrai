@@ -32,3 +32,12 @@ export async function setExerciseFavourite(
 
   return normalizeExercise(response.exercise)
 }
+
+export async function deleteExercise(
+  id: number,
+  client: ApiClient = apiClient
+): Promise<void> {
+  await client.request<void>(`/api/exercises/${id}`, {
+    method: 'DELETE'
+  })
+}
