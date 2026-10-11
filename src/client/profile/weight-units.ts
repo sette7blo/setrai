@@ -27,9 +27,12 @@ export function formatWeightFromKg(weightKg: number, unit: WeightUnit): string {
   return `${displayWeightFromKg(weightKg, unit).toLocaleString(undefined, { maximumFractionDigits: 1 })} ${unit}`
 }
 
+export function formatBodyWeightFromKg(weightKg: number, unit: WeightUnit): string {
+  return `${displayWeightFromKg(weightKg, unit).toLocaleString(undefined, { minimumFractionDigits: 1, maximumFractionDigits: 1 })} ${unit}`
+}
+
 export function formatVolumeKg(volumeKg: number, unit: WeightUnit): string {
   const value = unit === 'lb' ? kgToLb(volumeKg) : volumeKg
   const suffix = unit === 'lb' ? 'lb' : 'kg'
-  if (Math.abs(value) >= 1000) return `${(value / 1000).toFixed(1)}k ${suffix}`
   return `${Math.round(value).toLocaleString()} ${suffix}`
 }

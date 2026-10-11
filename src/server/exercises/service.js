@@ -1,4 +1,5 @@
 // src/server/exercises/service.js
+import { catalogBaseline, catalogUpdate } from './catalog-update.js'
 
 import {
   createExerciseRepository
@@ -21,6 +22,22 @@ export function createExerciseService(db) {
 
   function createExercise(input) {
     return repository.create(input)
+  }
+
+  // Accepts validated server-side discovery data; repeat imports preserve local edits.
+  function importDiscoveredExercise(input) {
+    if (!input.nostr_address || !input.nostr_event_id) throw new Error('Missing discovery provenance')
+    const existing = repository.list({ status: null }).find(item => item.nostr_address === input.nostr_address)
+    if (existing) return { exercise: existing, created: false }
+    const exercise = repository.create(input)
+    return { exercise: repository.update(exercise.id, { catalog_baseline: catalogBaseline(input) }), created: true }
+  }
+
+  function updateDiscoveredExercise(input, options = {}) {
+    const existing = repository.list({ status: null }).find(item => item.nostr_address === input.nostr_address)
+    if (!existing) return importDiscoveredExercise(input)
+    if (existing.nostr_event_id === input.nostr_event_id && !options.replaceImage) return { exercise: existing, created: false }
+    return { exercise: repository.update(existing.id, catalogUpdate(existing, input, options)), created: false }
   }
 
   function updateExercise(id, input) {
@@ -68,6 +85,8 @@ export function createExerciseService(db) {
     getExercise,
     getExerciseBySlug,
     createExercise,
+    importDiscoveredExercise,
+    updateDiscoveredExercise,
     updateExercise,
     setFavourite,
     deleteExercise,

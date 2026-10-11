@@ -1,6 +1,6 @@
 import { formatDate } from '../../shared/formatting/date-format.js'
 import type { WeightUnit } from '../types.js'
-import { formatWeightFromKg } from '../weight-units.js'
+import { formatBodyWeightFromKg } from '../weight-units.js'
 import type { BodyWeightEntry } from './types.js'
 
 export function newestFirst(entries: BodyWeightEntry[]): BodyWeightEntry[] {
@@ -13,7 +13,7 @@ export function oldestFirst(entries: BodyWeightEntry[]): BodyWeightEntry[] {
 
 export function latestEntryText(entry: BodyWeightEntry | null, unit: WeightUnit): string {
   if (!entry) return 'No weight logged yet'
-  return `${formatWeightFromKg(entry.weightKg, unit)} · ${formatDate(entry.date)}`
+  return `${formatBodyWeightFromKg(entry.weightKg, unit)} · ${formatDate(entry.date)}`
 }
 
 export function bodyWeightSeries(entries: BodyWeightEntry[], unit: WeightUnit): Array<{ label: string, value: number }> {

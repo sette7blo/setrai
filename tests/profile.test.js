@@ -30,7 +30,9 @@ const DEFAULT_PROFILE = {
   avatarUrl: '',
   weightUnit: 'kg',
   trainingGoal: '',
-  equipment: []
+  equipment: [],
+  heightCm: null,
+  targetWeightKg: null
 }
 
 test('returns default profile on a fresh database', () => {
@@ -103,6 +105,46 @@ test('rejects invalid weight unit', () => {
     assert.throws(
       () => service.updateProfile({ weightUnit: 'stone' }),
       /Invalid weight unit/
+    )
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})
+
+test('updates body metrics for statistics body tab', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    const service = createProfileService(db)
+    const profile = service.updateProfile({
+      heightCm: 180,
+      targetWeightKg: 74.25
+    })
+
+    assert.equal(profile.heightCm, 180)
+    assert.equal(profile.targetWeightKg, 74.3)
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})
+
+test('clears and validates body metrics', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    const service = createProfileService(db)
+    service.updateProfile({ heightCm: 180, targetWeightKg: 80 })
+    assert.deepEqual(
+      service.updateProfile({ heightCm: null, targetWeightKg: null }),
+      DEFAULT_PROFILE
+    )
+    assert.throws(
+      () => service.updateProfile({ heightCm: 90 }),
+      /heightCm is out of range/
+    )
+    assert.throws(
+      () => service.updateProfile({ targetWeightKg: 'heavy' }),
+      /targetWeightKg must be numeric/
     )
   } finally {
     cleanupDatabase(db, directory)
@@ -261,6 +303,8 @@ test('profile does not expose raw settings storage format', () => {
       'avatarUrl',
       'displayName',
       'equipment',
+      'heightCm',
+      'targetWeightKg',
       'trainingGoal',
       'weightUnit'
     ])

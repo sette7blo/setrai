@@ -4,6 +4,7 @@ import type { Capabilities } from '../shared/api/types.js'
 const DEFAULT_CAPABILITIES: Capabilities = {
   ai: false,
   nostr: false,
+  nostrIdentity: false,
   moneroWallet: false
 }
 
@@ -21,6 +22,7 @@ export function parseCapabilities(input: unknown): Capabilities {
   return {
     ai: readCapability(record.ai),
     nostr: readCapability(record.nostr),
+    nostrIdentity: readCapability(record.nostr) && readCapability(record.nostrIdentity),
     moneroWallet: readCapability(record.moneroWallet)
   }
 }

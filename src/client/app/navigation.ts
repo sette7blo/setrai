@@ -1,5 +1,4 @@
 import {
-  ChartNoAxesCombined,
   ClipboardList,
   createElement,
   Dumbbell,
@@ -17,10 +16,10 @@ export interface NavigationItem {
 
 export const NAVIGATION_ITEMS: NavigationItem[] = [
   {
-    path: '/',
+    path: '/statistics',
     label: 'Home',
     icon: House,
-    description: 'Training command center'
+    description: 'Training statistics and body progress'
   },
   {
     path: '/exercises',
@@ -34,12 +33,7 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
     icon: ClipboardList,
     description: 'Programs and live sessions'
   },
-  {
-    path: '/statistics',
-    label: 'Stats',
-    icon: ChartNoAxesCombined,
-    description: 'Volume and progress'
-  },
+
   {
     path: '/profile',
     label: 'Profile',

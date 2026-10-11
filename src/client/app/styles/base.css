@@ -14,6 +14,7 @@ body {
     radial-gradient(circle at 94% 0%, rgba(42, 112, 130, 0.16), transparent 24rem),
     radial-gradient(circle at 52% 105%, rgba(255, 83, 31, 0.08), transparent 28rem),
     var(--color-bg);
+  background-attachment: fixed, fixed, fixed, fixed, scroll;
 }
 a { color: inherit; text-decoration: none; }
 button, a { -webkit-tap-highlight-color: transparent; }
@@ -57,3 +58,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   box-shadow: inset 0 1px 0 rgba(255,255,255,0.22), 0 0 26px rgba(var(--color-primary-rgb), 0.22);
 }
 .button--secondary { color: var(--color-muted-strong); }
+
+@media (max-width: 719px) {
+  body { font-size: 14px; }
+  .button { padding-inline: 12px; border-radius: 12px; font-size: 13px; }
+  .button svg { width: 17px; height: 17px; }
+  input:not([type=checkbox]):not([type=radio]), select, textarea { font-size: 16px; }
+}

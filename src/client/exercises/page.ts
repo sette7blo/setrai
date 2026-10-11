@@ -1,43 +1,41 @@
-import { CheckSquare, ChevronRight, Dumbbell, Search, SlidersHorizontal, Star, Target } from 'lucide'
+import { ChevronRight, Dumbbell, RefreshCw, Search, SlidersHorizontal, Star, Target } from 'lucide'
+import { selectionToggle, selectionToolbar } from './selection.js'
 import { readableApiError } from '../shared/api/errors.js'
 import { iconElement } from '../app/navigation.js'
+import { catalogDetail, catalogEntry, exerciseStatus, mergeExerciseCatalog, type CatalogEntry, type ExerciseCatalog } from './catalog.js'
+import { exerciseFilterChips, exerciseFilterSheet } from './filter-sheet.js'
 import { createExerciseCard } from './card.js'
-import { displayName, pluralizeExercise } from './format.js'
+import { pluralizeExercise } from './format.js'
 import {
   activeFilterCount,
   filterExercises,
   filtersFromUrl,
   filtersToUrl,
-  uniqueDifficulties,
-  uniqueEquipment,
   uniqueMuscles
 } from './filters.js'
-import { listExercises, setExerciseFavourite } from './api.js'
+import { deleteExercise, listExercises, setExerciseFavourite } from './api.js'
 import type { Exercise, ExerciseFilters } from './types.js'
 
 interface PageState {
   exercises: Exercise[]
   filters: ExerciseFilters
+  catalog?: ExerciseCatalog
+  entries: CatalogEntry[]
+  refreshing: boolean
+  detail?: CatalogEntry
+  selecting: boolean
+  selectedIds: Set<number>
+  busy: boolean
+  error: string
 }
 
-function selectControl(labelText: string, value: string, options: string[], onChange: (value: string) => void): HTMLElement {
-  const label = document.createElement('label')
-  label.className = 'filter-control'
-  const span = document.createElement('span')
-  span.textContent = labelText
-  const select = document.createElement('select')
-  select.value = value
-  select.setAttribute('aria-label', labelText)
-  select.append(new Option('All', ''))
-  options.forEach((option) => select.append(new Option(displayName(option), option)))
-  select.addEventListener('change', () => onChange(select.value))
-  label.append(span, select)
-  return label
-}
 
 function updateUrl(filters: ExerciseFilters): void {
   const params = filtersToUrl(filters)
-  window.history.replaceState({}, '', params.toString() ? `/exercises?${params}` : '/exercises')
+  const nextUrl = params.toString() ? `/exercises?${params}` : '/exercises'
+  if (nextUrl !== `${window.location.pathname}${window.location.search}`) {
+    window.history.replaceState({}, '', nextUrl)
+  }
 }
 
 function loadingView(): HTMLElement {
@@ -75,10 +73,6 @@ function header(state: PageState): HTMLElement {
   section.innerHTML = `
     <div class="exercise-title-block">
       <h1>Exercises</h1>
-      <nav class="exercise-tabs" aria-label="Exercise sections">
-        <a class="exercise-tab exercise-tab--active" href="/exercises" aria-current="page">Library</a>
-        <span class="exercise-tab" aria-disabled="true">Discover</span>
-      </nav>
     </div>
   `
   const library = document.createElement('a')
@@ -98,7 +92,7 @@ function header(state: PageState): HTMLElement {
   row.className = 'library-summary-metrics'
   row.append(
     metric(iconElement(Dumbbell), pluralizeExercise(state.exercises.length)),
-    metric(iconElement(Star), `${favoriteCount} ${favoriteCount === 1 ? 'favorite' : 'favorites'}`, 'gold'),
+    metric(iconElement(Star), `${favoriteCount} fav`, 'gold'),
     metric(iconElement(Target), `${muscleCount} muscles`, 'green')
   )
   copy.append(title, row)
@@ -106,7 +100,7 @@ function header(state: PageState): HTMLElement {
   return section
 }
 
-function controls(state: PageState, onFilter: (filters: ExerciseFilters) => void, onReset: () => void): HTMLElement {
+function controls(state: PageState, onFilter: (filters: ExerciseFilters) => void, onRefresh: () => void, onToggle: (opener: HTMLButtonElement) => void, onSelectMode: () => void): HTMLElement {
   const wrap = document.createElement('section')
   wrap.className = 'exercise-controls'
   const searchLabel = document.createElement('label')
@@ -133,44 +127,48 @@ function controls(state: PageState, onFilter: (filters: ExerciseFilters) => void
   filterToggle.type = 'button'
   filterToggle.className = activeFilterCount(state.filters) > 0 ? 'filter-icon filter-icon--active' : 'filter-icon'
   filterToggle.setAttribute('aria-label', 'Filters')
+  filterToggle.setAttribute('aria-haspopup', 'dialog')
+  filterToggle.addEventListener('click', () => onToggle(filterToggle))
   filterToggle.append(iconElement(SlidersHorizontal))
 
-  const reset = document.createElement('button')
-  reset.type = 'button'
-  reset.className = 'filter-icon'
-  reset.setAttribute('aria-label', 'Reset filters')
-  reset.disabled = activeFilterCount(state.filters) === 0
-  reset.append(iconElement(CheckSquare))
-  reset.addEventListener('click', onReset)
+  const reset = selectionToggle(state.selecting, state.busy, onSelectMode)
   wrap.append(favourites, filterToggle, reset)
+  if (state.catalog) {
+    wrap.classList.add('exercise-controls--catalog')
+    const refresh = document.createElement('button')
+    refresh.type = 'button'
+    refresh.className = 'filter-icon'
+    refresh.setAttribute('aria-label', 'Refresh exercises')
+    refresh.title = 'Refresh web exercises'
+    refresh.disabled = state.refreshing || state.busy
+    refresh.append(iconElement(RefreshCw))
+    refresh.addEventListener('click', onRefresh)
+    wrap.insertBefore(refresh, reset)
+  }
   return wrap
 }
 
-function filterBar(state: PageState, onFilter: (filters: ExerciseFilters) => void): HTMLElement {
-  const bar = document.createElement('section')
-  bar.className = 'exercise-filters'
-  bar.setAttribute('aria-label', 'Exercise filters')
-  bar.append(
-    selectControl('Muscle', state.filters.muscle, uniqueMuscles(state.exercises), (muscle) => onFilter({ ...state.filters, muscle })),
-    selectControl('Equipment', state.filters.equipment, uniqueEquipment(state.exercises), (equipment) => onFilter({ ...state.filters, equipment })),
-    selectControl('Difficulty', state.filters.difficulty, uniqueDifficulties(state.exercises), (difficulty) => onFilter({ ...state.filters, difficulty }))
-  )
-  return bar
-}
-
-function resultsView(state: PageState, onFavourite: (exercise: Exercise) => void, onReset: () => void): HTMLElement {
-  const filtered = filterExercises(state.exercises, state.filters)
+function resultsView(state: PageState, onFavourite: (exercise: Exercise) => void, onReset: () => void, onSelect: (exercise: Exercise) => void, onSelectAll: () => void, onDelete: () => void, onCancelSelect: () => void, onOpen: (entry: CatalogEntry) => void, onImport: () => void, onUpdate: (entry: CatalogEntry) => void): HTMLElement {
+  const filtered = filterExercises(mergeExerciseCatalog(state.exercises, state.entries), state.filters)
   const wrapper = document.createElement('section')
   wrapper.className = 'exercise-results'
   wrapper.id = 'exercise-results'
   const count = document.createElement('p')
   count.className = 'exercise-count'
-  count.textContent = activeFilterCount(state.filters) > 0 ? pluralizeExercise(filtered.length) : `${pluralizeExercise(filtered.length)} in the built-in library`
+  count.textContent = `${pluralizeExercise(filtered.length)}${state.refreshing ? ' · Loading web exercises…' : ''}`
+  count.setAttribute('role', 'status')
   wrapper.append(count)
+  if (state.error) {
+    const error = document.createElement('p')
+    error.className = 'exercise-action-error'
+    error.textContent = state.error
+    wrapper.append(error)
+  }
+  if (state.selecting) wrapper.append(selectionToolbar(state, filtered, onSelectAll, onDelete, onCancelSelect, onImport))
   if (filtered.length === 0) {
     const empty = document.createElement('div')
     empty.className = 'exercise-empty'
-    empty.innerHTML = '<h2>No exercises match these filters.</h2><p>Clear search and filters to return to the full seeded library.</p>'
+    empty.innerHTML = '<h2>No exercises match these filters.</h2><p>Clear search and filters to browse all exercises.</p>'
     const reset = document.createElement('button')
     reset.type = 'button'
     reset.className = 'button button--secondary'
@@ -182,7 +180,19 @@ function resultsView(state: PageState, onFavourite: (exercise: Exercise) => void
   }
   const grid = document.createElement('div')
   grid.className = 'exercise-grid'
-  filtered.forEach((exercise) => grid.append(createExerciseCard(exercise, onFavourite)))
+  filtered.forEach((exercise) => {
+    const entry = catalogEntry(exercise, state.entries, state.exercises)
+    const status = exerciseStatus(exercise, entry)
+    grid.append(createExerciseCard(exercise, onFavourite, {
+      status,
+      onOpen: entry && status === 'Web' ? () => onOpen(entry) : undefined,
+      onUpdate: entry && status === 'Update' ? () => onUpdate(entry) : undefined,
+      busy: state.busy || state.refreshing,
+      selectable: state.selecting,
+      selected: state.selectedIds.has(exercise.id),
+      onSelect
+    }))
+  })
   wrapper.append(grid)
   return wrapper
 }
@@ -192,32 +202,153 @@ function renderLoaded(root: HTMLElement, state: PageState): void {
   function commit(nextFilters: ExerciseFilters): void {
     state.filters = nextFilters
     updateUrl(state.filters)
+    const active = document.activeElement as HTMLInputElement | HTMLSelectElement | null
+    const label = active?.getAttribute('aria-label')
+    const cursor = active instanceof HTMLInputElement ? active.selectionStart : null
     renderLoaded(root, state)
+    if (label) {
+      const replacement = Array.from(root.querySelectorAll<HTMLInputElement | HTMLSelectElement>('[aria-label]')).find((element) => element.getAttribute('aria-label') === label)
+      replacement?.focus()
+      if (replacement instanceof HTMLInputElement && cursor !== null) replacement.setSelectionRange(cursor, cursor)
+    }
   }
   async function toggleFavourite(exercise: Exercise): Promise<void> {
     const updated = await setExerciseFavourite(exercise.id, !exercise.favourite)
     state.exercises = state.exercises.map((item) => item.id === updated.id ? updated : item)
     renderLoaded(root, state)
   }
+  function toggleSelect(exercise: Exercise): void {
+    if (state.busy || state.refreshing) return
+    state.error = ''
+    if (state.selectedIds.has(exercise.id)) state.selectedIds.delete(exercise.id)
+    else state.selectedIds.add(exercise.id)
+    renderLoaded(root, state)
+  }
+  const visible = filterExercises(mergeExerciseCatalog(state.exercises, state.entries), state.filters)
+  function toggleSelectAllVisible(): void {
+    state.error = ''
+    const allVisible = visible.length > 0 && visible.every((exercise) => state.selectedIds.has(exercise.id))
+    for (const exercise of visible) {
+      if (allVisible) state.selectedIds.delete(exercise.id)
+      else state.selectedIds.add(exercise.id)
+    }
+    renderLoaded(root, state)
+  }
+  async function deleteSelected(): Promise<void> {
+    const ids = [...state.selectedIds].filter(id => id > 0)
+    if (!ids.length || state.busy) return
+    const count = ids.length
+    if (!window.confirm(`Delete ${count} selected exercise${count === 1 ? '' : 's'}? Programs and workout history keep their snapshots.`)) return
+    state.busy = true
+    state.error = ''
+    renderLoaded(root, state)
+    try {
+      await Promise.all(ids.map((id) => deleteExercise(id)))
+      state.exercises = state.exercises.filter((exercise) => !state.selectedIds.has(exercise.id))
+      state.selectedIds.clear()
+      state.selecting = false
+    } catch (error) {
+      state.error = readableApiError(error)
+    } finally {
+      state.busy = false
+      renderLoaded(root, state)
+    }
+  }
   const page = document.createElement('div')
   page.className = 'exercise-page'
   page.append(
     header(state),
-    controls(state, commit, () => commit(resetFilters)),
-    filterBar(state, commit),
-    resultsView(state, (exercise) => { void toggleFavourite(exercise).catch(() => renderLoaded(root, state)) }, () => commit(resetFilters))
+    controls(state, commit, () => { void refreshCatalog(root, state, true) }, () => {
+      const dialog = exerciseFilterSheet(mergeExerciseCatalog(state.exercises, state.entries), () => state.filters, commit,
+        () => root.querySelector<HTMLButtonElement>('[aria-label="Filters"]')?.focus())
+      document.body.append(dialog)
+      dialog.showModal()
+    }, () => {
+      state.selecting = !state.selecting
+      if (!state.selecting) state.selectedIds.clear()
+      state.error = ''
+      renderLoaded(root, state)
+    }),
+    exerciseFilterChips(mergeExerciseCatalog(state.exercises, state.entries), state.filters, commit),
+    resultsView(
+      state,
+      (exercise) => { void toggleFavourite(exercise).catch(() => renderLoaded(root, state)) },
+      () => commit(resetFilters),
+      toggleSelect,
+      toggleSelectAllVisible,
+      () => { void deleteSelected() },
+      () => { state.selecting = false; state.selectedIds.clear(); state.error = ''; renderLoaded(root, state) },
+      entry => { state.detail = entry; renderLoaded(root, state); window.scrollTo(0, 0) },
+      () => { void importSelected(root, state) },
+      entry => { void saveCatalog(root, state, entry, true) }
+    )
   )
+  if (state.detail) {
+    const entry = state.detail
+    page.replaceChildren(header(state), catalogDetail(entry, () => { void saveCatalog(root, state, entry) },
+      () => { state.detail = undefined; renderLoaded(root, state) }, state.busy))
+    if (state.error) {
+      const error = document.createElement('p'); error.setAttribute('role', 'alert'); error.textContent = state.error; page.append(error)
+    }
+  }
   root.replaceChildren(page)
 }
 
-export async function renderExerciseLibrary(root: HTMLElement): Promise<void> {
+async function refreshCatalog(root: HTMLElement, state: PageState, force = false): Promise<void> {
+  if (!state.catalog || state.refreshing) return
+  state.selectedIds.clear()
+  state.refreshing = true; renderLoaded(root, state)
+  try { state.entries = await state.catalog.load(force); state.error = '' }
+  catch (error) { state.error = readableApiError(error) }
+  finally { state.refreshing = false; renderLoaded(root, state) }
+}
+
+async function saveCatalog(root: HTMLElement, state: PageState, entry: CatalogEntry, replaceImage = false): Promise<void> {
+  if (!state.catalog || state.busy) return
+  state.busy = true; state.error = ''; renderLoaded(root, state)
+  try {
+    const saved = await state.catalog.save(entry.eventId, entry.localId !== null, replaceImage)
+    state.exercises = [...state.exercises.filter(item => item.id !== saved.id), saved].sort((a, b) => a.name.localeCompare(b.name))
+    entry.localId = saved.id; entry.updateAvailable = false; state.detail = undefined
+  } catch (error) { state.error = readableApiError(error) }
+  finally { state.busy = false; renderLoaded(root, state) }
+}
+
+async function importSelected(root: HTMLElement, state: PageState): Promise<void> {
+  if (!state.catalog || state.busy) return
+  const entries = mergeExerciseCatalog(state.exercises, state.entries)
+    .filter(item => item.id < 0 && state.selectedIds.has(item.id))
+    .map(item => catalogEntry(item, state.entries, state.exercises)!)
+  state.busy = true; state.error = ''; renderLoaded(root, state)
+  try {
+    for (const entry of entries) {
+      const saved = await state.catalog.save(entry.eventId)
+      state.exercises.push(saved); entry.localId = saved.id; entry.updateAvailable = false
+    }
+    state.exercises.sort((a, b) => a.name.localeCompare(b.name))
+  } catch (error) { state.error = readableApiError(error) }
+  finally { state.busy = false; state.selectedIds.clear(); renderLoaded(root, state) }
+}
+
+export async function renderExerciseLibrary(root: HTMLElement, catalog?: ExerciseCatalog): Promise<void> {
   root.replaceChildren(loadingView())
   try {
     const exercises = await listExercises()
-    renderLoaded(root, { exercises, filters: filtersFromUrl(new URLSearchParams(window.location.search)) })
+    const filters = filtersFromUrl(new URLSearchParams(window.location.search))
+    const state: PageState = {
+      exercises,
+      filters,
+      catalog, entries: [], refreshing: false,
+      selecting: false,
+      selectedIds: new Set(),
+      busy: false,
+      error: ''
+    }
+    renderLoaded(root, state)
+    await refreshCatalog(root, state)
   } catch (error) {
     const view = errorView(readableApiError(error))
-    view.querySelector('[data-retry]')?.addEventListener('click', () => { void renderExerciseLibrary(root) })
+    view.querySelector('[data-retry]')?.addEventListener('click', () => { void renderExerciseLibrary(root, catalog) })
     root.replaceChildren(view)
   }
 }

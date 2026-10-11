@@ -25,7 +25,7 @@ export const CHEST_EXERCISES = [
       "Lower the bar under control toward the mid chest.",
       "Press upward until the arms are extended."
     ],
-    image_url: "/images/exercises/bench-press.webp",
+    image_url: "/images/exercises/ink/bench-press.svg",
     default_sets: 3,
     default_reps: "6-10",
     default_rest: 120,
@@ -58,7 +58,7 @@ export const CHEST_EXERCISES = [
       "Lower the bar toward the upper chest.",
       "Press up without bouncing."
     ],
-    image_url: "/images/exercises/incline-bench-press.webp",
+    image_url: "/images/exercises/ink/incline-bench-press.svg",
     default_sets: 3,
     default_reps: "6-10",
     default_rest: 120,
@@ -91,7 +91,7 @@ export const CHEST_EXERCISES = [
       "Press both dumbbells upward under control.",
       "Lower until the chest and shoulders stay stable."
     ],
-    image_url: "/images/exercises/dumbbell-bench-press.webp",
+    image_url: "/images/exercises/ink/dumbbell-bench-press.svg",
     default_sets: 3,
     default_reps: "6-10",
     default_rest: 120,
@@ -124,7 +124,7 @@ export const CHEST_EXERCISES = [
       "Press up and slightly inward.",
       "Lower with control to the starting position."
     ],
-    image_url: "/images/exercises/incline-dumbbell-press.webp",
+    image_url: "/images/exercises/ink/incline-dumbbell-press.svg",
     default_sets: 3,
     default_reps: "6-10",
     default_rest: 120,
@@ -157,7 +157,7 @@ export const CHEST_EXERCISES = [
       "Lower the chest toward the floor.",
       "Press back to the starting position."
     ],
-    image_url: "/images/exercises/push-up.webp",
+    image_url: "/images/exercises/ink/push-up.svg",
     default_sets: 3,
     default_reps: "8-15",
     default_rest: 75,
@@ -189,7 +189,7 @@ export const CHEST_EXERCISES = [
       "Open the arms until the chest stretches.",
       "Bring the dumbbells back over the chest."
     ],
-    image_url: "/images/exercises/chest-fly.webp",
+    image_url: "/images/exercises/ink/chest-fly.svg",
     default_sets: 3,
     default_reps: "10-15",
     default_rest: 60,
@@ -220,7 +220,7 @@ export const CHEST_EXERCISES = [
       "Bring the handles together in front of the chest.",
       "Return slowly until the chest stretches."
     ],
-    image_url: "/images/exercises/cable-fly.webp",
+    image_url: "/images/exercises/ink/cable-fly.svg",
     default_sets: 3,
     default_reps: "10-15",
     default_rest: 60,
@@ -251,7 +251,7 @@ export const CHEST_EXERCISES = [
       "Press the handles forward smoothly.",
       "Return until the chest stretches without losing position."
     ],
-    image_url: "/images/exercises/machine-chest-press.webp",
+    image_url: "/images/exercises/ink/machine-chest-press.svg",
     default_sets: 3,
     default_reps: "6-10",
     default_rest: 120,

@@ -1,0 +1,23 @@
+# Allow only build/runtime inputs. Operator data and secrets never enter context.
+*
+!Dockerfile
+!package.json
+!package-lock.json
+!tsconfig.client.json
+!vite.config.ts
+!index.html
+!src/
+!src/client/
+!src/client/**
+!src/server/
+!src/server/**
+!public/
+!public/**
+!scripts/
+!scripts/docker-healthcheck.mjs
+**/.env*
+**/*.db
+**/*.db-wal
+**/*.db-shm
+**/node_modules
+**/.git

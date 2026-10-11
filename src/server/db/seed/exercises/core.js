@@ -23,7 +23,7 @@ export const CORE_EXERCISES = [
       "Keep ribs down and glutes tight.",
       "Hold without letting hips sag."
     ],
-    image_url: "/images/exercises/plank.webp",
+    image_url: "/images/exercises/ink/plank.svg",
     default_sets: 3,
     default_reps: "30-60 sec",
     default_rest: 45,
@@ -54,7 +54,7 @@ export const CORE_EXERCISES = [
       "Lift hips until the body forms a straight line.",
       "Hold while breathing steadily."
     ],
-    image_url: "/images/exercises/side-plank.webp",
+    image_url: "/images/exercises/ink/side-plank.svg",
     default_sets: 3,
     default_reps: "30-60 sec",
     default_rest: 45,
@@ -82,7 +82,7 @@ export const CORE_EXERCISES = [
       "Curl the shoulders off the floor.",
       "Lower slowly without pulling the neck."
     ],
-    image_url: "/images/exercises/crunch.webp",
+    image_url: "/images/exercises/ink/crunch.svg",
     default_sets: 3,
     default_reps: "8-15",
     default_rest: 75,
@@ -113,7 +113,7 @@ export const CORE_EXERCISES = [
       "Raise knees toward the chest.",
       "Lower legs under control."
     ],
-    image_url: "/images/exercises/hanging-knee-raise.webp",
+    image_url: "/images/exercises/ink/hanging-knee-raise.svg",
     default_sets: 3,
     default_reps: "8-12",
     default_rest: 60,
@@ -141,7 +141,7 @@ export const CORE_EXERCISES = [
       "Raise legs toward vertical.",
       "Lower slowly without losing control."
     ],
-    image_url: "/images/exercises/leg-raise.webp",
+    image_url: "/images/exercises/ink/leg-raise.svg",
     default_sets: 3,
     default_reps: "8-15",
     default_rest: 75,
@@ -170,7 +170,7 @@ export const CORE_EXERCISES = [
       "Rotate the torso side to side.",
       "Move under control instead of rushing."
     ],
-    image_url: "/images/exercises/russian-twist.webp",
+    image_url: "/images/exercises/ink/russian-twist.svg",
     default_sets: 3,
     default_reps: "8-15",
     default_rest: 75,
@@ -198,7 +198,7 @@ export const CORE_EXERCISES = [
       "Reach one hand toward the same-side heel.",
       "Alternate sides with controlled movement."
     ],
-    image_url: "/images/exercises/heel-toucher.webp",
+    image_url: "/images/exercises/ink/heel-toucher.svg",
     default_sets: 3,
     default_reps: "8-15",
     default_rest: 75,
@@ -226,7 +226,7 @@ export const CORE_EXERCISES = [
       "Extend one arm and the opposite leg.",
       "Return and alternate sides."
     ],
-    image_url: "/images/exercises/dead-bug.webp",
+    image_url: "/images/exercises/ink/dead-bug.svg",
     default_sets: 3,
     default_reps: "8-15",
     default_rest: 75,
@@ -255,7 +255,7 @@ export const CORE_EXERCISES = [
       "Press arms forward without rotating.",
       "Return to the chest under control."
     ],
-    image_url: "/images/exercises/pallof-press.webp",
+    image_url: "/images/exercises/ink/pallof-press.svg",
     default_sets: 3,
     default_reps: "10-15",
     default_rest: 60,

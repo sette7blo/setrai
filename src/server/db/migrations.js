@@ -10,6 +10,29 @@ const MIGRATIONS = [
     up(db) {
       db.exec(INITIAL_SCHEMA)
     }
+  },
+  {
+    version: 2,
+    name: 'live-session-plan-and-clock',
+    up(db) {
+      db.exec(`
+        ALTER TABLE sessions ADD COLUMN plan_json TEXT;
+        ALTER TABLE sessions ADD COLUMN runtime_json TEXT NOT NULL DEFAULT '{}';
+        ALTER TABLE session_sets ADD COLUMN context_json TEXT NOT NULL DEFAULT '{}';
+      `)
+    }
+  },
+  {
+    version: 3,
+    name: 'exercise-catalog-baseline',
+    up(db) {
+      db.exec('ALTER TABLE exercises ADD COLUMN catalog_baseline TEXT')
+    }
+  },
+  {
+    version: 4,
+    name: 'program-catalog-baseline',
+    up(db) { db.exec('ALTER TABLE programs ADD COLUMN catalog_baseline TEXT') }
   }
 ]
 
@@ -78,4 +101,3 @@ export function runMigrations(db) {
     applyMigration(db, migration)
   }
 }
-

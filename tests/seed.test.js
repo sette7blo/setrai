@@ -194,7 +194,7 @@ test('seed does not overwrite user-edited built-in exercises', () => {
   }
 })
 
-test('existing database keeps user exercises and receives missing built-ins', () => {
+test('existing database keeps user exercises without adding built-ins', () => {
   const { db, directory } = createTestDatabase()
 
   try {
@@ -213,11 +213,30 @@ test('existing database keeps user exercises and receives missing built-ins', ()
     assert.ok(
       service.getExerciseBySlug('garage-sled-push')
     )
-    assert.ok(service.getExerciseBySlug('bench-press'))
     assert.equal(
       countAllExercises(db),
-      BUILTIN_EXERCISES.length + 1
+      1
     )
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})
+
+test('seeding does not recreate built-ins deleted after initialization', () => {
+  const { db, directory } = createSeededDatabase()
+
+  try {
+    const service = createExerciseService(db)
+    const bench = service.getExerciseBySlug('bench-press')
+    assert.ok(bench)
+
+    assert.equal(service.deleteExercise(bench.id), true)
+    const before = countAllExercises(db)
+    const result = initializeDatabaseSeeds(db)
+
+    assert.equal(service.getExerciseBySlug('bench-press'), null)
+    assert.equal(countAllExercises(db), before)
+    assert.equal(result.exercises.inserted, 0)
   } finally {
     cleanupDatabase(db, directory)
   }
@@ -249,7 +268,7 @@ test('representative seed records contain training metadata and stable image pat
       assert.equal(exercise.status, 'active')
       assert.equal(
         exercise.image_url,
-        `/images/exercises/${slug}.webp`
+        `/images/exercises/ink/${slug}.svg`
       )
     }
   } finally {
@@ -266,7 +285,7 @@ test('seeded library supports Quick Workout equipment profiles', () => {
     const unrestricted = app.quickWorkout.generate({
       durationMinutes: 30
     })
-    assert.ok(unrestricted.exercises.length >= 4)
+    assert.equal(unrestricted.exercises.length, 3)
 
     app.profile.updateProfile({
       equipment: ['dumbbells', 'bench']
@@ -274,7 +293,7 @@ test('seeded library supports Quick Workout equipment profiles', () => {
     const dumbbellWorkout = app.quickWorkout.generate({
       durationMinutes: 30
     })
-    assert.ok(dumbbellWorkout.exercises.length >= 4)
+    assert.equal(dumbbellWorkout.exercises.length, 3)
     const dumbbellSlugs = dumbbellWorkout.exercises.map(
       (exercise) => exercise.exerciseSlug
     )
@@ -291,7 +310,7 @@ test('seeded library supports Quick Workout equipment profiles', () => {
     const bodyweightWorkout = app.quickWorkout.generate({
       durationMinutes: 30
     })
-    assert.ok(bodyweightWorkout.exercises.length >= 4)
+    assert.equal(bodyweightWorkout.exercises.length, 3)
 
     app.profile.updateProfile({
       equipment: ['barbell', 'bench']
@@ -299,7 +318,7 @@ test('seeded library supports Quick Workout equipment profiles', () => {
     const barbellWorkout = app.quickWorkout.generate({
       durationMinutes: 30
     })
-    assert.ok(barbellWorkout.exercises.length >= 4)
+    assert.equal(barbellWorkout.exercises.length, 3)
     const barbellSlugs = barbellWorkout.exercises.map(
       (exercise) => exercise.exerciseSlug
     )

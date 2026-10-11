@@ -1,0 +1,32 @@
+services:
+  setrai:
+    image: ${SETRAI_IMAGE:-dockersette/setrai:latest}
+    restart: unless-stopped
+    init: true
+    env_file:
+      - .env
+    environment:
+      SETRAI_HOST: 0.0.0.0
+      SETRAI_PORT: "3000"
+      SETRAI_DATA_DIR: /data
+      SETRAI_DB_PATH: /data/setrai.db
+    ports:
+      - "${SETRAI_BIND_ADDRESS:-127.0.0.1}:${SETRAI_HTTP_PORT:-3000}:3000"
+    volumes:
+      - setrai_data:/data
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=64m
+    cap_drop:
+      - ALL
+    security_opt:
+      - no-new-privileges:true
+    stop_grace_period: 30s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
+
+volumes:
+  setrai_data:

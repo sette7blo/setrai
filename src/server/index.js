@@ -61,6 +61,8 @@ import {
   handleStaticClientRoute
 } from './shared/static-client.js'
 
+import { createDiscoveryRoutes } from './nostr/routes.js'
+
 const config = loadConfig()
 const db = openDatabase(config.server.dbPath, {
   seed: true
@@ -100,6 +102,14 @@ const recoveryRoutes =
 const quickWorkoutRoutes =
   createQuickWorkoutRoutes(quickWorkoutService)
 
+const discoveryService = config.nostr.enabled
+  ? (await import('./nostr/discovery-service.js')).createDiscoveryService(config.nostr, exerciseService)
+  : null
+const programDiscovery = config.nostr.enabled
+  ? (await import('./nostr/program-discovery.js')).createProgramDiscovery(config.nostr, programService, discoveryService)
+  : null
+const discoveryRoutes = createDiscoveryRoutes(discoveryService, programDiscovery)
+
 function sendJson(res, status, body) {
   res.writeHead(status, {
     'Content-Type': 'application/json'
@@ -128,6 +138,8 @@ const server = http.createServer(
 
         return
       }
+
+      if (await discoveryRoutes.handle(req, res, url)) return
 
       const handledExerciseRoute =
         await exerciseRoutes.handle(

@@ -1,6 +1,6 @@
 import { formatDate } from '../shared/formatting/date-format.js'
 import type { WeightUnit } from '../profile/types.js'
-import { displayWeightFromKg, formatWeightFromKg } from '../profile/weight-units.js'
+import { displayWeightFromKg, formatBodyWeightFromKg } from '../profile/weight-units.js'
 import type { BodyWeightPoint } from './types.js'
 
 export function bodyWeightChart(points: BodyWeightPoint[], unit: WeightUnit): HTMLElement {
@@ -26,7 +26,7 @@ export function bodyWeightChart(points: BodyWeightPoint[], unit: WeightUnit): HT
   sorted.forEach((point, index) => {
     const item = document.createElement('div')
     const value = values[index]
-    item.innerHTML = `<i style="height:${30 + ((value - min) / range) * 70}%"></i><span>${formatWeightFromKg(point.weightKg, unit)}</span><small>${formatDate(point.date)}</small>`
+    item.innerHTML = `<i style="height:${30 + ((value - min) / range) * 70}%"></i><span>${formatBodyWeightFromKg(point.weightKg, unit)}</span><small>${formatDate(point.date)}</small>`
     list.append(item)
   })
   section.append(list)

@@ -25,8 +25,9 @@ export function renderSessionSummary(session: Session, program: Program | null):
   section.className = 'session-summary'
   section.innerHTML = `
     <p class="eyebrow">Workout complete</p>
-    <h1>${session.programName}</h1>
+    <h1></h1>
   `
+  section.querySelector('h1')!.textContent = session.programName
 
   const list = document.createElement('dl')
   for (const fact of summaryFacts(session, program)) {

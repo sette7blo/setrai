@@ -1,297 +1,219 @@
-import { ChevronLeft } from 'lucide'
-import { ApiError, readableApiError } from '../shared/api/errors.js'
-import { iconElement } from '../app/navigation.js'
+import { readableApiError } from '../shared/api/errors.js'
 import { getExercise } from '../exercises/api.js'
-import { createExerciseImage } from '../exercises/image.js'
-import { getProgram, getSession, logSessionSet, updateSessionSet, deleteSessionSet, finishSession } from './api.js'
-import { prescriptionLine } from './format.js'
-import { createRestTimer, renderRestTimer, tickRestTimer, type RestTimerState } from './rest-timer.js'
-import { renderLoggedSet } from './session-set.js'
+import { getProfile } from '../profile/api.js'
+import { getSession, saveLiveState, logSessionSet, finishSession, discardSession } from './api.js'
+import { editLoggedSet } from './live-edit.js'
 import { renderSessionSummary } from './session-summary.js'
-import {
-  currentSetNumber,
-  firstIncompleteExerciseIndex,
-  plannedSetsRemaining,
-  sessionProgress,
-  setsForExercise
-} from './session-logic.js'
-import type { Program, ProgramExercise, Session, UpdateSetInput } from './types.js'
+import { renderLiveShell, updateLiveClocks } from './live-shell.js'
+import { clockValue, compileIntervals, intervalPhase, phaseEndsAt, nextSet, setCount, strengthExercises, supersetNext } from './live-plan.js'
+import { createCountdownAudio } from './live-audio.js'
+import type { LiveModel, LiveActions } from './live-model.js'
+import type { LiveRuntime, Program, ProgramExercise, Session } from './types.js'
 
-interface SessionViewState {
-  session: Session
-  program: Program | null
-  exerciseIndex: number
-  restTimer: RestTimerState | null
-  timerId: number | null
-}
-
-function loadingView(): HTMLElement {
-  const section = document.createElement('section')
-  section.className = 'live-session live-session--loading'
-  section.innerHTML = '<div></div><div></div><div></div>'
-  return section
-}
-
-function errorView(title: string, message: string): HTMLElement {
-  const section = document.createElement('section')
-  section.className = 'workouts-empty'
-  section.innerHTML = `
-    <p class="eyebrow">Session</p>
-    <h1>${title}</h1>
-    <p>${message}</p>
-    <a class="button button--primary" href="/workouts">Back to Workouts</a>
-  `
-  return section
-}
-
-async function loadProgramForSession(session: Session): Promise<Program | null> {
-  if (!session.programId) {
-    return null
-  }
-
-  try {
-    const program = await getProgram(session.programId)
-    const exercises = await Promise.all(program.exercises.map(async (entry) => {
-      try {
-        return { ...entry, exercise: await getExercise(entry.exerciseId) }
-      } catch {
-        return entry
-      }
-    }))
-    return { ...program, exercises }
-  } catch {
-    return null
-  }
-}
-
-function plannedExercise(state: SessionViewState): ProgramExercise | null {
-  return state.program?.exercises[state.exerciseIndex] ?? null
-}
-
-function exerciseNav(state: SessionViewState, rerender: () => void): HTMLElement {
-  const nav = document.createElement('div')
-  nav.className = 'session-nav'
-  const prev = document.createElement('button')
-  prev.type = 'button'
-  prev.textContent = 'Previous'
-  prev.disabled = state.exerciseIndex <= 0
-  prev.addEventListener('click', () => {
-    state.exerciseIndex = Math.max(0, state.exerciseIndex - 1)
-    rerender()
-  })
-  const next = document.createElement('button')
-  next.type = 'button'
-  next.textContent = 'Next'
-  next.disabled = !state.program || state.exerciseIndex >= state.program.exercises.length - 1
-  next.addEventListener('click', () => {
-    if (state.program) {
-      state.exerciseIndex = Math.min(state.program.exercises.length - 1, state.exerciseIndex + 1)
-      rerender()
-    }
-  })
-  nav.append(prev, next)
-  return nav
-}
-
-function setForm(
-  state: SessionViewState,
-  exercise: ProgramExercise,
-  onLogged: () => void
-): HTMLElement {
-  const form = document.createElement('form')
-  form.className = 'set-log-form'
-  const setNumber = currentSetNumber(state.session, exercise)
-  form.innerHTML = `
-    <label>
-      <span>Reps</span>
-      <input name="reps" type="number" min="1" inputmode="numeric" value="${exercise.reps.match(/\d+/)?.[0] ?? '8'}" required>
-    </label>
-    <label>
-      <span>Weight kg</span>
-      <input name="weight" type="number" min="0" step="0.5" inputmode="decimal" value="${exercise.weight ?? ''}">
-    </label>
-  `
-  const button = document.createElement('button')
-  button.type = 'submit'
-  button.className = 'button button--primary set-log-form__submit'
-  button.textContent = `Complete Set ${setNumber}`
-  form.append(button)
-
-  form.addEventListener('submit', (event) => {
-    event.preventDefault()
-    button.disabled = true
-    const data = new FormData(form)
-    void logSessionSet(state.session.id, {
-      exerciseId: exercise.exerciseId,
-      setNumber,
-      reps: Number(data.get('reps')),
-      weight: data.get('weight') ? Number(data.get('weight')) : null,
-      done: true
-    }).then(async () => {
-      state.session = await getSession(state.session.id)
-      state.restTimer = createRestTimer(exercise.restSec)
-      if (state.program) {
-        state.exerciseIndex = firstIncompleteExerciseIndex(state.session, state.program)
-      }
-      onLogged()
-    }).catch(() => {
-      button.disabled = false
-    })
-  })
-
-  return form
-}
-
-function finishPanel(state: SessionViewState, rerender: () => void): HTMLElement {
-  const form = document.createElement('form')
-  form.className = 'finish-panel'
-  form.innerHTML = `
-    <label>
-      <span>Workout notes</span>
-      <textarea name="notes" rows="3" placeholder="Optional notes"></textarea>
-    </label>
-  `
-  const button = document.createElement('button')
-  button.type = 'submit'
-  button.className = 'button button--secondary'
-  button.textContent = 'Finish Workout'
-  form.append(button)
-  form.addEventListener('submit', (event) => {
-    event.preventDefault()
-    const remaining = plannedSetsRemaining(state.session, state.program)
-    if (remaining > 0 && !window.confirm(`You still have ${remaining} planned sets remaining. Finish anyway?`)) {
-      return
-    }
-    const data = new FormData(form)
-    void finishSession(state.session.id, String(data.get('notes') ?? '')).then((session) => {
-      state.session = session
-      rerender()
-    })
-  })
-  return form
-}
-
-function liveView(state: SessionViewState, rerender: () => void): HTMLElement {
-  if (state.session.finishedAt) {
-    return renderSessionSummary(state.session, state.program)
-  }
-
-  const exercise = plannedExercise(state)
-  const page = document.createElement('article')
-  page.className = 'live-session'
-  const back = document.createElement('a')
-  back.className = 'detail-back'
-  back.href = '/workouts'
-  back.append(iconElement(ChevronLeft), document.createTextNode('Workouts'))
-  page.append(back)
-
-  const header = document.createElement('section')
-  header.className = 'live-session__header'
-  header.innerHTML = `
-    <p class="eyebrow">Live workout</p>
-    <h1>${state.session.programName}</h1>
-    <p class="session-progress">${sessionProgress(state.session, state.program)}</p>
-  `
-  page.append(header)
-
-  page.append(renderRestTimer(state.restTimer, (next) => {
-    state.restTimer = next
-    rerender()
-  }))
-
-  if (!exercise) {
-    const empty = document.createElement('section')
-    empty.className = 'workouts-empty'
-    empty.innerHTML = '<h2>No planned exercises available.</h2><p>This session can be reviewed, but the live workout plan is unavailable.</p>'
-    page.append(empty, finishPanel(state, rerender))
-    return page
-  }
-
-  const current = document.createElement('section')
-  current.className = 'current-exercise'
-  current.append(createExerciseImage(exercise.exercise?.imageUrl ?? '', `${exercise.exerciseName} exercise image`, 'current-exercise__image'))
-  const body = document.createElement('div')
-  body.className = 'current-exercise__body'
-  const setNumber = currentSetNumber(state.session, exercise)
-  body.innerHTML = `
-    <span>Exercise ${state.exerciseIndex + 1} of ${state.program?.exercises.length ?? 1}</span>
-    <h2>${exercise.exerciseName || exercise.exercise?.name || 'Exercise'}</h2>
-    <p>Set ${setNumber} of ${exercise.sets}</p>
-    <strong>${prescriptionLine(exercise)}</strong>
-  `
-  body.append(setForm(state, exercise, rerender), exerciseNav(state, rerender))
-  current.append(body)
-  page.append(current)
-
-  const logged = document.createElement('section')
-  logged.className = 'logged-sets'
-  const title = document.createElement('h2')
-  title.textContent = 'Logged sets'
-  logged.append(title)
-  const sets = setsForExercise(state.session, exercise.exerciseId)
-  if (sets.length === 0) {
-    const empty = document.createElement('p')
-    empty.className = 'muted-line'
-    empty.textContent = 'No sets logged for this exercise yet.'
-    logged.append(empty)
-  }
-  for (const set of sets) {
-    logged.append(renderLoggedSet(
-      set,
-      (setId: number, input: UpdateSetInput) => {
-        void updateSessionSet(state.session.id, setId, input).then(async () => {
-          state.session = await getSession(state.session.id)
-          rerender()
-        })
-      },
-      (setId: number) => {
-        void deleteSessionSet(state.session.id, setId).then(async () => {
-          state.session = await getSession(state.session.id)
-          rerender()
-        })
-      }
-    ))
-  }
-  page.append(logged, finishPanel(state, rerender))
-  return page
-}
-
-function startTimer(state: SessionViewState, root: HTMLElement): void {
-  if (state.timerId !== null) {
-    window.clearInterval(state.timerId)
-  }
-  state.timerId = window.setInterval(() => {
-    if (!state.restTimer?.running) {
-      return
-    }
-    state.restTimer = tickRestTimer(state.restTimer)
-    render(root, state)
-  }, 1000)
-}
-
-function render(root: HTMLElement, state: SessionViewState): void {
-  root.replaceChildren(liveView(state, () => render(root, state)))
-  startTimer(state, root)
+function summaryProgram(session: Session): Program {
+  return { id: session.programId ?? 0, slug: '', name: session.programName, description: '', difficulty: '', tags: [],
+    isTemporary: false, exercises: session.plannedExercises, blocks: session.blocks }
 }
 
 export async function renderSessionPage(root: HTMLElement, id: number): Promise<void> {
-  root.replaceChildren(loadingView())
+  root.textContent = 'Loading session…'
   try {
-    const session = await getSession(id)
-    const program = await loadProgramForSession(session)
-    const state: SessionViewState = {
-      session,
-      program,
-      exerciseIndex: program ? firstIncompleteExerciseIndex(session, program) : 0,
-      restTimer: null,
-      timerId: null
-    }
-    render(root, state)
+    const [session, profile] = await Promise.all([getSession(id), getProfile().catch(() => ({ weightUnit: 'kg' as const }))])
+    session.plannedExercises = await Promise.all(session.plannedExercises.map(async (entry) => {
+      if (entry.exercise) return entry
+      try { return { ...entry, exercise: await getExercise(entry.exerciseId) } } catch { return entry }
+    }))
+    if (session.finishedAt) { root.replaceChildren(renderSessionSummary(session, summaryProgram(session))); return }
+    const exercises = strengthExercises(session)
+    const intervals = compileIntervals(session)
+    session.runtime ??= {}
+    session.runtime.mode ??= exercises.length ? 'strength' : 'emom'
+    session.runtime.exerciseIndex = Math.min(Math.max(0, session.runtime.exerciseIndex ?? exercises.findIndex((exercise) => nextSet(session, exercise) <= setCount(session, exercise))), Math.max(0, exercises.length - 1))
+    const model: LiveModel = { session, exercises, intervals, unit: profile.weightUnit, busy: false, openInstructions: new Set(), drafts: new Map(), intervalPage: 0, error: '' }
+    model.intervalPage = Math.floor((intervals.find((slot) => slot.endsAt > clockValue(session.runtime!).position)?.index ?? 0) / 5)
+    runSession(root, model)
   } catch (error) {
-    if (error instanceof ApiError && error.status === 404) {
-      root.replaceChildren(errorView('Session not found', 'This workout session may have been removed.'))
+    root.textContent = readableApiError(error)
+    const back = document.createElement('a')
+    back.href = '/workouts'
+    back.textContent = 'Back to Workouts'
+    root.append(back)
+  }
+}
+
+function runSession(root: HTMLElement, model: LiveModel): void {
+  let timer = 0
+  let phaseKey = ''
+  let disposed = false
+  let writes: Promise<unknown> = Promise.resolve()
+  let wakeLock: { release(): Promise<void> } | null = null
+  const audio = createCountdownAudio()
+  const runtime = () => model.session.runtime!
+  const report = (error: unknown) => { model.error = readableApiError(error); render() }
+  function persist(patch: LiveRuntime): Promise<unknown> {
+    Object.assign(runtime(), patch)
+    writes = writes.catch(() => undefined).then(() => saveLiveState(model.session.id, patch))
+    return writes
+  }
+  async function wake() {
+    try {
+      const navigatorWithWake = navigator as Navigator & { wakeLock?: { request(type: string): Promise<{ release(): Promise<void> }> } }
+      wakeLock = await navigatorWithWake.wakeLock?.request('screen') ?? null
+      if (disposed) await wakeLock?.release()
+    } catch { /* Training remains available when screen wake locks are unavailable. */ }
+  }
+  function unlockAudio() { void audio.unlock().then(() => syncAudio()) }
+  function syncAudio(now = Date.now()) {
+    if (document.hidden || disposed) { audio.sync(null); return }
+    if (runtime().restEndsAt && runtime().restEndsAt! > now) {
+      audio.sync({ key: 'rest', endsAt: runtime().restEndsAt! }, now)
       return
     }
-    root.replaceChildren(errorView('Unable to load session', readableApiError(error)))
+    const clock = clockValue(runtime(), now)
+    const slot = model.intervals.find(item => item.endsAt > clock.position)
+    if (runtime().mode !== 'emom' || runtime().emomRunningSince == null || !slot) { audio.sync(null); return }
+    const end = phaseEndsAt(slot, clock.position)
+    audio.sync({ key: `emom:${slot.index}:${end}`, endsAt: runtime().emomRunningSince! + (end - (runtime().emomPositionSec ?? 0)) * 1000 }, now)
   }
+  function cleanup() {
+    if (disposed) return
+    disposed = true
+    window.clearInterval(timer)
+    document.removeEventListener('visibilitychange', visible)
+    window.removeEventListener('pagehide', cleanup)
+    root.removeEventListener('pointerdown', unlockAudio)
+    void wakeLock?.release()
+    audio.close()
+  }
+  function visible() { syncAudio(); if (!document.hidden) { void wake(); tick() } }
+  function render() {
+    if (disposed) return
+    const scroll = root.querySelector('.live-body')?.scrollTop ?? 0
+    const wasResting = root.querySelector('.live-rest') !== null
+    root.replaceChildren(renderLiveShell(model, controls))
+    const restAction = root.querySelector<HTMLButtonElement>('.live-rest-actions button:nth-child(2)')
+    restAction?.focus({ preventScroll: true })
+    if (wasResting && !restAction) root.querySelector<HTMLButtonElement>('.live-footer .live-primary')?.focus({ preventScroll: true })
+    root.querySelector<HTMLElement>('.live-rail [aria-current]')?.scrollIntoView({ block: 'nearest', inline: 'center' })
+    const body = root.querySelector('.live-body')
+    if (body) body.scrollTop = scroll
+    updateLiveClocks(root, model)
+    phaseKey = currentPhaseKey()
+    syncAudio()
+  }
+  function currentPhaseKey(now = Date.now()) {
+    const value = clockValue(runtime(), now).position
+    const slot = model.intervals.find((item) => item.endsAt > value)
+    return `${slot?.index ?? 'complete'}:${slot ? intervalPhase(slot, value).stepIndex : ''}`
+  }
+  function clearRest() {
+    const next = runtime().restNextIndex
+    void persist({ restEndsAt: null, restNextIndex: null, ...(next != null ? { exerciseIndex: next } : {}) }).catch(report)
+    render()
+  }
+  function tick() {
+    if (!root.isConnected) { cleanup(); return }
+    const now = Date.now()
+    if (runtime().restEndsAt) {
+      const remaining = Math.ceil((runtime().restEndsAt! - now) / 1000)
+      if (remaining <= 0) clearRest()
+    }
+    if (runtime().mode === 'emom' && runtime().emomRunningSince != null) {
+      const clock = clockValue(runtime(), now)
+      const total = model.intervals.at(-1)?.endsAt ?? 0
+      if (clock.position >= total) {
+        const excess = Math.max(0, clock.position - total)
+        void persist({ emomPositionSec: total, emomActiveSec: Math.max(0, clock.active - excess), emomRunningSince: null }).catch(report)
+        render()
+      } else {
+        const slot = model.intervals.find((item) => item.endsAt > clock.position)!
+        if (currentPhaseKey(now) !== phaseKey) { model.intervalPage = Math.floor(slot.index / 5); render() }
+      }
+    }
+    const displayNow = Date.now()
+    syncAudio(displayNow)
+    updateLiveClocks(root, model, displayNow)
+  }
+  async function mutate(work: () => Promise<void>) {
+    if (model.busy) return
+    model.busy = true
+    model.error = ''
+    render()
+    try { await work() } catch (error) { model.error = readableApiError(error) }
+    finally { model.busy = false; render() }
+  }
+  const controls: LiveActions = {
+    render,
+    jump(index) {
+      void persist({ exerciseIndex: index, restEndsAt: null, restNextIndex: null }).catch(report)
+      render()
+      root.querySelector('.live-body')?.scrollTo(0, 0)
+    },
+    addSet(exercise) {
+      const counts = { ...runtime().setCounts, [exercise.exerciseSlug]: setCount(model.session, exercise) + 1 }
+      void persist({ setCounts: counts }).catch(report)
+      render()
+    },
+    log(input, exercise) {
+      void mutate(async () => {
+        await writes
+        const set = await logSessionSet(model.session.id, input)
+        if (!model.session.sets.some((entry) => entry.id === set.id)) model.session.sets.push(set)
+        if (!exercise) return
+        const transition = supersetNext(model.session, exercise, input.setNumber)
+        const index = runtime().exerciseIndex ?? 0
+        const next = transition?.slug ? model.exercises.findIndex((entry) => entry.exerciseSlug === transition.slug)
+          : nextSet(model.session, exercise) > setCount(model.session, exercise) ? Math.min(index + 1, model.exercises.length - 1) : index
+        const rest = transition ? transition.rest : exercise.restSec
+        await persist(rest > 0 ? { restEndsAt: Date.now() + rest * 1000, restDurationSec: rest, restNextIndex: next }
+          : { exerciseIndex: Math.max(0, next) })
+      })
+    },
+    edit(id) {
+      editLoggedSet(model, id, render)
+    },
+    finish() {
+      void mutate(async () => {
+        const clock = clockValue(runtime())
+        await persist({ emomPositionSec: clock.position, emomActiveSec: clock.active, emomRunningSince: null, restEndsAt: null })
+        const finished = await finishSession(model.session.id, model.session.notes)
+        cleanup()
+        root.replaceChildren(renderSessionSummary(finished, summaryProgram(model.session)))
+      })
+    },
+    discard() {
+      if (!window.confirm('Discard this session and its logged sets?')) return
+      void mutate(async () => { await writes; await discardSession(model.session.id); cleanup(); window.location.assign('/workouts') })
+    },
+    startEmom() {
+      const now = Date.now()
+      void persist({ mode: 'emom', emomStartedAt: runtime().emomStartedAt ?? now, emomRunningSince: now, restEndsAt: null }).catch(report)
+      render()
+    },
+    pause() {
+      const clock = clockValue(runtime())
+      void persist({ emomPositionSec: clock.position, emomActiveSec: clock.active, emomRunningSince: runtime().emomRunningSince == null ? Date.now() : null }).catch(report)
+      render()
+    },
+    seek(index) {
+      const clock = clockValue(runtime())
+      void persist({ emomPositionSec: model.intervals[index].startsAt, emomActiveSec: clock.active,
+        emomRunningSince: runtime().emomRunningSince == null ? null : Date.now() }).catch(report)
+      render()
+    },
+    rest(delta) {
+      if (delta === null) { clearRest(); return }
+      const end = Math.max(Date.now() + 5000, (runtime().restEndsAt ?? Date.now()) + delta * 1000)
+      void persist({ restEndsAt: end, restDurationSec: Math.max(runtime().restDurationSec ?? 0, (end - Date.now()) / 1000) }).catch(report)
+      updateLiveClocks(root, model)
+      syncAudio()
+    }
+  }
+  render()
+  tick()
+  timer = window.setInterval(tick, 100)
+  root.addEventListener('pointerdown', unlockAudio)
+  window.addEventListener('pagehide', cleanup)
+  document.addEventListener('visibilitychange', visible)
+  void wake()
 }

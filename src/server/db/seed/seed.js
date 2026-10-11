@@ -23,6 +23,35 @@ const VALID_CATEGORIES = new Set([
   'cardio'
 ])
 
+const BUILTIN_EXERCISE_SEED_KEY = 'seed.builtinExercises.initialized'
+
+function builtinSeedInitialized(db) {
+  return db
+    .prepare(`
+      SELECT value
+      FROM settings
+      WHERE key = ?
+    `)
+    .get(BUILTIN_EXERCISE_SEED_KEY)?.value === 'true'
+}
+
+function markBuiltinSeedInitialized(db) {
+  db.prepare(`
+    INSERT INTO settings (key, value)
+    VALUES (?, 'true')
+    ON CONFLICT(key) DO UPDATE SET value = excluded.value
+  `).run(BUILTIN_EXERCISE_SEED_KEY)
+}
+
+function countExercises(db) {
+  return Number(
+    db.prepare(`
+      SELECT COUNT(*) AS count
+      FROM exercises
+    `).get().count
+  )
+}
+
 function assertArray(value, field, slug) {
   if (!Array.isArray(value)) {
     throw new Error(
@@ -155,10 +184,20 @@ export function seedBuiltinExercises(db) {
   validateBuiltinExercises()
 
   const repository = createExerciseRepository(db)
+  const currentCount = countExercises(db)
   const result = {
     checked: BUILTIN_EXERCISES.length,
     inserted: 0,
-    existing: 0
+    existing: currentCount
+  }
+
+  if (builtinSeedInitialized(db)) {
+    return result
+  }
+
+  if (currentCount > 0) {
+    markBuiltinSeedInitialized(db)
+    return result
   }
 
   for (const exercise of BUILTIN_EXERCISES) {
@@ -174,6 +213,8 @@ export function seedBuiltinExercises(db) {
     repository.create(exercise)
     result.inserted += 1
   }
+
+  markBuiltinSeedInitialized(db)
 
   return result
 }

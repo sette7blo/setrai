@@ -2,16 +2,28 @@
   "name": "Setrai",
   "short_name": "Setrai",
   "description": "Self-hosted training, workouts, statistics, and recovery.",
-  "start_url": "/",
+  "start_url": "/statistics",
   "display": "standalone",
-  "background_color": "#050807",
-  "theme_color": "#07110f",
+  "background_color": "#f7f6f1",
+  "theme_color": "#f7f6f1",
   "icons": [
     {
-      "src": "/icons/setrai-icon.svg",
-      "sizes": "any",
-      "type": "image/svg+xml",
-      "purpose": "any maskable"
+      "src": "/icons/setrai-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/setrai-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/icons/setrai-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
     }
   ]
 }

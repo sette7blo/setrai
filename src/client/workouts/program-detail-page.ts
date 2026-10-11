@@ -20,10 +20,12 @@ function errorView(title: string, message: string): HTMLElement {
   section.className = 'workouts-empty'
   section.innerHTML = `
     <p class="eyebrow">Program</p>
-    <h1>${title}</h1>
-    <p>${message}</p>
+    <h1></h1>
+    <p data-error></p>
     <a class="button button--primary" href="/workouts">Back to Workouts</a>
   `
+  section.querySelector('h1')!.textContent = title
+  section.querySelector('[data-error]')!.textContent = message
   return section
 }
 
@@ -88,9 +90,11 @@ function renderProgram(program: Program): HTMLElement {
   const copy = document.createElement('div')
   copy.innerHTML = `
     <p class="eyebrow">Program</p>
-    <h1>${program.name}</h1>
-    <p class="hero-summary">${program.description || 'A focused Setrai training program.'}</p>
+    <h1></h1>
+    <p class="hero-summary"></p>
   `
+  copy.querySelector('h1')!.textContent = program.name
+  copy.querySelector('.hero-summary')!.textContent = program.description || 'A focused Setrai training program.'
   const start = document.createElement('button')
   start.type = 'button'
   start.className = 'button button--primary'

@@ -134,6 +134,7 @@ test('generates a deterministic workout with required fields', () => {
       'exerciseId',
       'exerciseSlug',
       'exerciseName',
+      'muscleGroup',
       'sets',
       'reps',
       'restSec'
@@ -148,7 +149,7 @@ test('filters unavailable equipment and keeps bodyweight/no-equipment eligible',
       equipment: ['bench']
     })
     const workout = service.generate({
-      durationMinutes: 15
+      durationMinutes: 30
     })
     const slugs = workout.exercises.map((item) => item.exerciseSlug)
 
@@ -191,41 +192,33 @@ test('prefers ready or absent-recovery muscles over recovering muscles', () => {
   })
 })
 
-test('uses moderate fallback before recovering fallback', () => {
-  runWithDb((db) => {
-    const exercises = [
-      exercise({ id: 1, slug: 'ready', name: 'Ready', muscle: 'legs' }),
-      exercise({ id: 2, slug: 'moderate', name: 'Moderate', muscle: 'back' }),
-      exercise({ id: 3, slug: 'recovering', name: 'Recovering', muscle: 'chest' })
-    ]
+test('keeps a shorter ready-only plan instead of falling back to tired muscles', () => {
+  runWithDb(db => {
     const workout = makeService(db, {
-      exercises,
+      exercises: [
+        exercise({ id: 1, slug: 'ready', name: 'Ready', muscle: 'legs' }),
+        exercise({ id: 2, slug: 'moderate', name: 'Moderate', muscle: 'back' }),
+        exercise({ id: 3, slug: 'recovering', name: 'Recovering', muscle: 'chest' })
+      ],
       recovery: [
-        { muscle: 'legs', recovery: 0.8, status: 'ready' },
-        { muscle: 'back', recovery: 0.5, status: 'moderate' },
-        { muscle: 'chest', recovery: 0.1, status: 'recovering' }
+        { muscle: 'legs', recovery: 0.8 },
+        { muscle: 'back', recovery: 0.5 },
+        { muscle: 'chest', recovery: 0.1 }
       ]
-    }).generate({ durationMinutes: 15 })
-
-    assert.equal(workout.recoveryFallback, 'recovering')
-    assert.deepEqual(
-      workout.exercises.map((item) => item.exerciseSlug),
-      ['ready', 'moderate', 'recovering']
-    )
+    }).generate({ durationMinutes: 30 })
+    assert.equal(workout.recoveryFallback, 'ready')
+    assert.equal(workout.estimatedDurationMinutes, 9)
+    assert.deepEqual(workout.exercises.map(item => item.exerciseSlug), ['ready'])
   })
 })
 
-test('can use recovering muscles when necessary', () => {
-  runWithDb((db) => {
-    const workout = makeService(db, {
+test('does not generate a workout when all eligible muscles need recovery', () => {
+  runWithDb(db => {
+    const service = makeService(db, {
       exercises: [exercise({ id: 1, slug: 'push-up', name: 'Push Up' })],
-      recovery: [
-        { muscle: 'chest', recovery: 0.1, status: 'recovering' }
-      ]
-    }).generate({ durationMinutes: 15 })
-
-    assert.equal(workout.recoveryFallback, 'recovering')
-    assert.equal(workout.exercises[0].exerciseSlug, 'push-up')
+      recovery: [{ muscle: 'chest', recovery: 0.79 }]
+    })
+    assert.throws(() => service.generate({ durationMinutes: 30 }), /No ready muscle groups/)
   })
 })
 
@@ -287,7 +280,7 @@ test('same inputs produce stable ordering and slug tie-breakers', () => {
   })
 })
 
-test('recently used exercise receives penalty when alternative exists', () => {
+test('previously completed exercise is preferred within its ready group', () => {
   runWithDb((db) => {
     const exercises = [
       exercise({ id: 1, slug: 'bench', name: 'Bench', muscle: 'chest' }),
@@ -296,11 +289,11 @@ test('recently used exercise receives penalty when alternative exists', () => {
     const workout = makeService(db, {
       exercises,
       sessions: [{
-        sets: [{ exerciseSlug: 'bench' }]
+        sets: [{ exerciseSlug: 'bench', done: true }]
       }]
     }).generate({ durationMinutes: 15 })
 
-    assert.equal(workout.exercises[0].exerciseSlug, 'fly')
+    assert.equal(workout.exercises[0].exerciseSlug, 'bench')
   })
 })
 
@@ -326,7 +319,7 @@ test('fails clearly when no eligible exercises remain', () => {
 
     assert.throws(
       () => service.generate({ durationMinutes: 30 }),
-      /Not enough eligible exercises/
+      /No ready muscle groups/
     )
   })
 })

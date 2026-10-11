@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 
 import { ApiClient } from '../../src/client/shared/api/client.js'
-import { displayWeightFromKg, inputWeightToKg, formatWeightFromKg } from '../../src/client/profile/weight-units.js'
+import { displayWeightFromKg, inputWeightToKg, formatWeightFromKg, formatBodyWeightFromKg } from '../../src/client/profile/weight-units.js'
 import { normalizeBodyWeight, saveBodyWeight, deleteBodyWeight } from '../../src/client/profile/body-weight/api.js'
 import { newestFirst, oldestFirst, latestEntryText } from '../../src/client/profile/body-weight/format.js'
 
@@ -10,6 +10,8 @@ test('converts and rounds kg/lb at presentation boundary', () => {
   assert.equal(displayWeightFromKg(100, 'lb'), 220.5)
   assert.equal(inputWeightToKg(220.462, 'lb'), 100)
   assert.equal(formatWeightFromKg(80, 'kg'), '80 kg')
+  assert.equal(formatBodyWeightFromKg(76.793, 'lb'), '169.3 lb')
+  assert.equal(formatBodyWeightFromKg(80, 'kg'), '80.0 kg')
 })
 
 test('normalizes Body Weight API payload safely', () => {
@@ -25,7 +27,7 @@ test('sorts body-weight history and formats latest text', () => {
   ]
   assert.equal(newestFirst(entries)[0].id, 2)
   assert.equal(oldestFirst(entries)[0].id, 1)
-  assert.match(latestEntryText(entries[1], 'kg'), /81 kg/)
+  assert.match(latestEntryText(entries[1], 'kg'), /81\.0 kg/)
 })
 
 test('Body Weight POST and DELETE contracts', async () => {

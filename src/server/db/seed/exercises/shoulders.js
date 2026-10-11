@@ -25,7 +25,7 @@ export const SHOULDERS_EXERCISES = [
       "Press the bar overhead in a straight path.",
       "Lower to the shoulders with control."
     ],
-    image_url: "/images/exercises/overhead-press.webp",
+    image_url: "/images/exercises/ink/overhead-press.svg",
     default_sets: 3,
     default_reps: "6-10",
     default_rest: 120,
@@ -56,7 +56,7 @@ export const SHOULDERS_EXERCISES = [
       "Finish with arms extended.",
       "Lower to shoulder level under control."
     ],
-    image_url: "/images/exercises/dumbbell-shoulder-press.webp",
+    image_url: "/images/exercises/ink/dumbbell-shoulder-press.svg",
     default_sets: 3,
     default_reps: "6-10",
     default_rest: 120,
@@ -84,7 +84,7 @@ export const SHOULDERS_EXERCISES = [
       "Stop around shoulder height.",
       "Lower slowly without swinging."
     ],
-    image_url: "/images/exercises/lateral-raise.webp",
+    image_url: "/images/exercises/ink/lateral-raise.svg",
     default_sets: 3,
     default_reps: "10-15",
     default_rest: 60,
@@ -114,7 +114,7 @@ export const SHOULDERS_EXERCISES = [
       "Stop around shoulder height.",
       "Lower slowly to the start."
     ],
-    image_url: "/images/exercises/front-raise.webp",
+    image_url: "/images/exercises/ink/front-raise.svg",
     default_sets: 3,
     default_reps: "10-15",
     default_rest: 60,
@@ -145,7 +145,7 @@ export const SHOULDERS_EXERCISES = [
       "Open the arms out to the sides.",
       "Lower slowly with control."
     ],
-    image_url: "/images/exercises/reverse-fly.webp",
+    image_url: "/images/exercises/ink/reverse-fly.svg",
     default_sets: 3,
     default_reps: "10-15",
     default_rest: 60,
@@ -175,7 +175,7 @@ export const SHOULDERS_EXERCISES = [
       "Keep elbows high and shoulder blades back.",
       "Return under control."
     ],
-    image_url: "/images/exercises/face-pull.webp",
+    image_url: "/images/exercises/ink/face-pull.svg",
     default_sets: 3,
     default_reps: "10-15",
     default_rest: 60,
@@ -207,7 +207,7 @@ export const SHOULDERS_EXERCISES = [
       "Finish with arms extended.",
       "Reverse the motion under control."
     ],
-    image_url: "/images/exercises/arnold-press.webp",
+    image_url: "/images/exercises/ink/arnold-press.svg",
     default_sets: 3,
     default_reps: "6-10",
     default_rest: 120,

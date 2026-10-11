@@ -6,6 +6,8 @@ export interface ProfileApiPayload {
   weightUnit?: WeightUnit
   trainingGoal?: string
   equipment?: string[]
+  heightCm?: number | null
+  targetWeightKg?: number | null
 }
 
 export interface Profile {
@@ -14,6 +16,8 @@ export interface Profile {
   weightUnit: WeightUnit
   trainingGoal: string
   equipment: string[]
+  heightCm: number | null
+  targetWeightKg: number | null
 }
 
 export type ProfilePatch = Partial<Profile>

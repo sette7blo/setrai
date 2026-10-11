@@ -3,6 +3,7 @@ import type { ProgramApiPayload, SessionApiPayload } from '../workouts/types.js'
 export type RecoveryFallback = 'ready' | 'moderate' | 'recovering'
 
 export interface QuickWorkoutExerciseApiPayload {
+  muscleGroup?: string
   exerciseId?: number
   exercise_id?: number
   exerciseSlug?: string
@@ -17,6 +18,8 @@ export interface QuickWorkoutExerciseApiPayload {
 }
 
 export interface QuickWorkoutApiPayload {
+  pool?: Record<string, QuickWorkoutExerciseApiPayload[]>
+  estimatedDurationMinutes?: number
   name?: string
   durationMinutes?: number
   duration_minutes?: number
@@ -27,6 +30,7 @@ export interface QuickWorkoutApiPayload {
 }
 
 export interface QuickWorkoutExercise {
+  muscleGroup?: string
   exerciseId: number
   exerciseSlug: string
   exerciseName: string
@@ -36,6 +40,8 @@ export interface QuickWorkoutExercise {
 }
 
 export interface QuickWorkout {
+  pool?: Record<string, QuickWorkoutExercise[]>
+  estimatedDurationMinutes?: number
   name: string
   durationMinutes: number
   goal: string

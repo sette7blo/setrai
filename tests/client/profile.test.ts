@@ -1,14 +1,28 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
+import { readFileSync } from 'node:fs'
 
 import { ApiClient } from '../../src/client/shared/api/client.js'
 import { normalizeProfile, updateProfile } from '../../src/client/profile/api.js'
 import { equipmentLabel, goalLabel } from '../../src/client/profile/equipment.js'
 
+test('settings gates identity on the Nostr identity capability and keeps training preferences', () => {
+  const page = readFileSync('src/client/profile/page.ts', 'utf8')
+  const app = readFileSync('src/client/app/application.ts', 'utf8')
+  assert.match(app, /renderProfilePage\(container, capabilities\.nostrIdentity === true\)/)
+  assert.match(page, /renderProfilePage\(root: HTMLElement, nostrIdentityEnabled = false\)/)
+  assert.match(page, /if \(state\.nostrIdentityEnabled\) list\.append\(profileSection/)
+  assert.match(page, /\n  list\.append\(trainingSection\(state,.*equipmentSection\(state,/)
+  assert.match(page, /renderLoaded\(root, \{ profile, message: '', nostrIdentityEnabled \}\)/)
+  assert.match(page, /renderProfilePage\(root, nostrIdentityEnabled\)/)
+})
+
 test('normalizes Profile API payload', () => {
-  const profile = normalizeProfile({ displayName: 'Sette', avatarUrl: 'https://example.test/a.png', weightUnit: 'lb', trainingGoal: 'strength', equipment: ['barbell'] })
+  const profile = normalizeProfile({ displayName: 'Sette', avatarUrl: 'https://example.test/a.png', weightUnit: 'lb', trainingGoal: 'strength', equipment: ['barbell'], heightCm: 180, targetWeightKg: 75 })
   assert.equal(profile.weightUnit, 'lb')
   assert.deepEqual(profile.equipment, ['barbell'])
+  assert.equal(profile.heightCm, 180)
+  assert.equal(profile.targetWeightKg, 75)
 })
 
 test('Profile PATCH sends changed payload', async () => {

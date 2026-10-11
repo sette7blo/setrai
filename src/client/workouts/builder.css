@@ -1,0 +1,23 @@
+.program-builder { width: min(100% - 20px, 680px); max-height: 90dvh; margin: auto; padding: 16px; border: 1px solid var(--color-border); border-radius: 20px; color: var(--color-text); background: #0d1a1c; }
+.program-builder form { display: grid; gap: 14px; }
+.program-builder .program-dialog-heading { margin: 0; }
+.program-builder label { display: grid; gap: 6px; min-width: 0; color: var(--color-muted-strong); font-size: 12px; font-weight: 700; }
+.program-builder input:not([type=checkbox]), .program-builder select, .program-builder textarea { width: 100%; min-width: 0; min-height: 44px; border: 1px solid var(--color-border); border-radius: 10px; padding: 8px 10px; font-family: inherit; font-size: 16px; line-height: 1.4; color: var(--color-text); background: rgba(0, 0, 0, .24); }
+.program-builder textarea { min-height: 76px; resize: vertical; }
+.program-builder select option { color: var(--color-text); background: #0d1a1c; }
+.builder-goals { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; border: 0; }
+.builder-goals legend { margin-bottom: 8px; color: var(--color-muted-strong); font-size: 12px; font-weight: 700; }
+.builder-goals label { display: flex; align-items: center; gap: 6px; min-height: 44px; padding: 0 9px; border: 1px solid var(--color-border); border-radius: 999px; cursor: pointer; }
+.builder-goals label:has(input:checked) { color: var(--color-primary); border-color: var(--color-primary); background: rgba(var(--color-primary-rgb), .08); }
+.builder-goals input { accent-color: var(--color-primary); }
+.builder-exercises { display: grid; gap: 12px; }
+.builder-exercise { min-width: 0; border: 1px solid var(--color-border); border-radius: 13px; padding: 10px; background: rgba(0, 0, 0, .14); }
+.builder-exercise-heading { display: grid; grid-template-columns: minmax(0, 1fr) repeat(3, 44px); gap: 4px; align-items: center; margin-bottom: 10px; }
+.builder-exercise-heading strong { font-size: 13px; line-height: 1.4; overflow-wrap: anywhere; }
+.builder-prescription { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.builder-picker { display: grid; gap: 8px; padding: 10px; border: 1px dashed var(--color-border); border-radius: 13px; }
+.program-builder .workout-action-error { margin: 0; }
+.program-builder button[type=submit] { position: sticky; bottom: -16px; min-height: 48px; margin-bottom: calc(4px + env(safe-area-inset-bottom)); background: #18594f; }
+@media (min-width: 720px) {
+  .builder-prescription { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+}

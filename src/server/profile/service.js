@@ -9,7 +9,9 @@ const PROFILE_KEYS = {
   avatarUrl: 'profile.avatarUrl',
   weightUnit: 'profile.weightUnit',
   trainingGoal: 'profile.trainingGoal',
-  equipment: 'profile.equipment'
+  equipment: 'profile.equipment',
+  heightCm: 'profile.heightCm',
+  targetWeightKg: 'profile.targetWeightKg'
 }
 
 const DEFAULT_PROFILE = {
@@ -17,7 +19,9 @@ const DEFAULT_PROFILE = {
   avatarUrl: '',
   weightUnit: 'kg',
   trainingGoal: '',
-  equipment: []
+  equipment: [],
+  heightCm: null,
+  targetWeightKg: null
 }
 
 const ALLOWED_FIELDS = new Set(
@@ -65,6 +69,24 @@ function normalizeEquipment(equipment) {
   )].sort((a, b) => a.localeCompare(b))
 }
 
+function normalizeOptionalNumber(value, field, { min, max }) {
+  if (value === undefined || value === null || value === '') {
+    return null
+  }
+
+  const number = Number(value)
+
+  if (!Number.isFinite(number)) {
+    throw clientError(`${field} must be numeric`)
+  }
+
+  if (number < min || number > max) {
+    throw clientError(`${field} is out of range`)
+  }
+
+  return Math.round(number * 10) / 10
+}
+
 function normalizeField(field, value) {
   if (field === 'displayName') {
     return trimString(value, 'displayName', 80)
@@ -92,6 +114,20 @@ function normalizeField(field, value) {
 
   if (field === 'equipment') {
     return normalizeEquipment(value)
+  }
+
+  if (field === 'heightCm') {
+    return normalizeOptionalNumber(value, 'heightCm', {
+      min: 100,
+      max: 250
+    })
+  }
+
+  if (field === 'targetWeightKg') {
+    return normalizeOptionalNumber(value, 'targetWeightKg', {
+      min: 1,
+      max: 500
+    })
   }
 
   throw clientError(`Unknown profile field: ${field}`)

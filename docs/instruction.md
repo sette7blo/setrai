@@ -94,7 +94,12 @@ Setrai server
 SQLite
 ```
 
-Docker is the primary deployment method.
+Docker Compose is the primary installation method for distributed releases.
+The image-only installer uses `dockersette/setrai`, runtime `.env` configuration,
+and a persistent `/data` volume. Maintainers can keep building from source or use
+the separate Compose build override. Installation does not require optional
+integrations. Public access requires a private VPN or authenticated HTTPS proxy
+until application authentication is implemented. See `docs/deployment.md`.
 
 Setrai should not require a hosted Setrai account.
 
@@ -182,6 +187,7 @@ The exact responsive presentation may evolve, but the main application concepts
 are:
 
 ```text
+Home
 Exercises
 Workouts
 Statistics
@@ -207,12 +213,34 @@ Coach
 or AI actions inside existing features.
 
 The navigation should remain focused and avoid exposing implementation details.
+Menu navigation between core pages keeps the application shell mounted rather
+than reloading the document. Browser Back and Forward update the selected view.
+Live session navigation retains document teardown until its timer lifecycle has
+an explicit client routing cleanup contract.
 
 ---
 
 # 5. Exercise library
 
 The exercise library is a core feature.
+
+Exercises uses one unified list, with saved exercises first and relay-only
+exercises after them. Every card has a full-width bottom status strip below its
+details, with centered text and the card's rounded bottom corners, leaving the
+image unobstructed: Local in the Home Total
+Volume green, Update in the Home Daily Streak orange, or Web in the Home Total
+Sessions purple. Update replaces Local when the verified relay event differs
+from the last imported event; local edits alone do not trigger it. Search and
+muscle/equipment/difficulty filters cover the whole list, and favorites cover
+saved exercises. Refresh sits beside the filters when discovery is enabled.
+Web details offer Add to library. The orange Update strip is a button that
+applies the latest verified relay version directly, including its image, without
+a review screen. It preserves favorites and other locally edited fields through
+an import baseline. Older imports without a baseline preserve their other local
+fields while receiving the latest image and a new baseline. The Update button
+is disabled while saving, refreshing, or selecting cards. Relay failure never
+hides saved exercises; a failed update leaves its Update button available to retry.
+The former `/exercises/discover` URL opens the unified Exercises list.
 
 Users must be able to:
 
@@ -243,9 +271,34 @@ The normal card hierarchy should favor:
 exercise image
 exercise name
 primary muscle
+difficulty
+Local / Update / Web status strip
 ```
 
 Secondary metadata belongs in filters or detail views when possible.
+Card names, primary muscle (or category when no primary muscle is available),
+and difficulty appear on three separate lines. Names are prominent; difficulty
+uses quieter text and a small muted dot: green for Beginner, orange for
+Intermediate, red for Advanced, and neutral for unknown levels. Difficulty
+always retains its text label so meaning does not depend on color.
+Card titles reserve two lines at every screen size. Longer titles truncate with
+an ellipsis; the full name remains available in the card's accessible link label
+and exercise detail view.
+Selection uses an icon-only toggle with a contrasting active state and an
+accessible label. In selection mode, cards show a black circle at the bottom
+left, with a white check only when selected. Favorite controls are hidden and titles stay unobstructed;
+tapping a card toggles selection without opening its details.
+
+The filter button opens a bottom sheet on mobile and a centered dialog on desktop,
+with labeled muscle, equipment, and difficulty options. Longer lists are searchable.
+The sheet uses the standard white surfaces, muted borders, and black selected
+states, with Reset and a live result-count button. Removable chips keep selected
+values visible after closing; resetting facets preserves search and favorites. Exercise
+details follow the Workstr card layout: image, title and difficulty/category
+badges, Sets/Reps/Rest tiles, target muscles and front/back map, equipment, tags,
+then a collapsed Instructions disclosure and favorite action. Primary and
+secondary muscles use distinct highlights. Library cards show the primary
+muscle and difficulty, with equipment reserved for details.
 
 ---
 
@@ -312,6 +365,43 @@ Users must be able to:
 
 Programs remain local data regardless of whether Nostr is enabled.
 
+Workouts merges saved and discovered programs into one Library list, ordered
+Local, Update, then Web by default, with alphabetical sorting within each group.
+When Nostr is disabled, only saved workouts are shown and no catalog requests,
+refresh, or update actions appear.
+Imported programs appear once by full Nostr address, retaining their local edits.
+Each collapsed or expanded card has an informational Local/Update/Web strip using
+the same muted sage/amber/lavender treatments as Exercises. Creator identity
+remains on the byline. Local cards support training/editing; Web cards support
+preview/import; Update cards provide Review update in their expanded actions.
+The former `/workouts/discover` URL opens the unified Library list.
+The list uses a search toolbar, goal/focus/format/level/equipment
+filters, and expandable program cards with front/back muscle maps, estimated
+duration, author, level, and goal/focus summaries. Filters use the same themed
+sheet, searchable long lists, and removable chips as Exercises. Expanded cards show exercise
+prescriptions and structured block previews. Search keeps keyboard focus.
+Workout card estimates use 45 seconds per strength set plus rest between sets,
+added to scheduled EMOM duration, matching Workstr-web. An exercise also used in
+a straight block retains its strength estimate when its slug appears in EMOM.
+Blank exercise names fall back to exercise metadata or a readable slug. Workout
+muscle labels group biceps, triceps, and forearms as Arms; maps retain anatomical
+regions and highlight every exercise's primary muscle as primary.
+
+Library supports creating, editing, ordering exercises, changing sets/reps/rest/
+weight/notes, duplicating, deleting, and starting programs. The builder uses local
+exercises and supports normal sets, supersets, EMOM sections, circuits sharing an
+interval, and mixed strength/EMOM plans. Goals are author-selected; focus, format,
+and equipment filters derive from exercises and blocks. My equipment uses the
+saved local equipment profile. Library keeps an active-workout Resume action. Quick Workout lives in Recovery. Completed sessions appear in the History tab; Library
+does not duplicate them in a Recent sessions section.
+Catalog loading and relay failures never hide saved workouts. Update review is
+read-only and compares saved and latest content before a separate Apply update
+action. Imported-version baselines allow updates to untouched metadata and
+training plans while keeping edited fields; exercises and blocks are one plan
+unit. Legacy imports without a baseline retain all saved content. Accepting a
+review advances provenance/baseline; updates are atomic with any new exercises
+and do not change captured session plans or publish anything.
+
 ---
 
 # 9. Workout sessions
@@ -332,6 +422,39 @@ During a live session, Setrai should support:
 
 The live workout interface must prioritize fast interaction.
 
+Live sessions use the Workstr layout: a full-screen exercise header and elapsed
+clock, connected exercise rail, centered 4:3 exercise media, prescription tiles, one set
+worksheet, technique accordion, and fixed bottom training actions. The live UI
+uses the compact Workstr proportions with warm off-white surfaces, restrained
+sage progress accents, and a dark primary action on a light footer.
+Live exercise images fit fully without cropping or distortion. Media scales down
+on short viewports while preserving its ratio; the worksheet remains scrollable
+and the bottom training action stays visible.
+Live media defaults to a compact image with an enlarge/reduce control beside it.
+The selected image size is a device-local presentation preference, retained
+across exercise changes and reloads. Compact mobile spacing prioritizes the
+image, prescription, set worksheet, and primary action on one screen; longer
+plans and expanded technique instructions remain scrollable.
+Target values remain on one line, and exercise/interval markers display their actual numbers. Logged sets
+can be corrected or deleted; adding a set persists across reloads. Reps and load
+carry forward from the previous set, with load displayed in the saved kg/lb unit.
+
+Straight supersets move directly between exercises and rest after each round.
+Mixed workouts hand off from strength to EMOM. EMOM starts explicitly and supports
+pause/resume, interval navigation, timed work/recovery phases, actual interval
+logging, and early completion. Timed targets never invent actual reps. Clock
+position and active elapsed time are separate, so seeking does not add training
+time and pausing stops the active clock. Session plans, extra sets, rest deadlines
+and EMOM clocks survive reloads. Plans are captured when a session starts.
+Rest and EMOM phase countdowns cue the final five seconds and the transition
+against the same deadline as the displayed clock. Pausing, seeking, skipping,
+changing a deadline, or leaving the foreground cancels obsolete sound cues;
+returning does not replay missed beeps. Sound remains optional.
+
+The header End control discards an active session after confirmation; finishing
+preserves logged work in history. Completed sessions cannot be discarded through
+the live session endpoint.
+
 Users should not need to navigate through complex forms while training.
 
 ---
@@ -346,7 +469,11 @@ The timer should:
 - display remaining rest clearly;
 - allow adjustment or dismissal;
 - remain usable on mobile;
-- avoid blocking other workout interactions.
+- provide a warm light rest overlay with a clear sage countdown ring, next
+  exercise and set, −15/+15 seconds, and Skip rest; keyboard focus remains in
+  the overlay and Escape skips rest;
+- reconcile elapsed wall time after backgrounding, without clearing input drafts;
+- continue to the next prescribed move when rest expires or is skipped.
 
 ---
 
@@ -425,6 +552,21 @@ Quick Workout may consider:
 The deterministic training system should be capable of producing a useful result
 without requiring AI.
 
+Quick Workout is built directly in the Recovery section, with 20/30/45/60-minute
+choices and a preview before starting. The former `/quick-workout` URL redirects
+to `/workouts/recovery`. Generation uses the local exercise library and saved
+equipment. Like Workstr, primary muscle groups must be at least 80% recovered;
+groups without recent logged training are fresh and eligible. Granular aliases
+are grouped into the recovery map regions, using the lowest readiness in a group.
+There is no fallback to tired muscles: a small pool produces a shorter workout,
+and no ready exercises produces an actionable empty message. Selection cycles
+across eligible groups, preferring completed-before and compound exercises within
+each group, with deterministic name/slug tie-breaking. Duration allows roughly
+one exercise per nine minutes, reported as an estimate. Set/repetition/rest
+prescriptions continue to follow the saved training goal. Users can swap within
+the same ready group or remove exercises before starting the exact preview as a
+temporary Program-backed Session; building a preview never saves a library item.
+
 AI may enhance or personalize this result when enabled.
 
 ---
@@ -484,6 +626,12 @@ The local profile may include:
 - unit preferences.
 
 The product must not require a Nostr identity for normal profile behavior.
+
+The app header uses a neutral Settings link without a placeholder name or avatar.
+An empty local profile must not display a fabricated identity.
+Settings hides the Profile identity section unless Nostr is enabled and a
+nonempty `NOSTR_NSEC` is configured. Public discovery alone does not enable
+identity settings. Training and Equipment remain available in either mode.
 
 When Nostr is enabled, Nostr profile information may enhance or replace selected
 public-facing identity elements.
@@ -592,7 +740,9 @@ There is no requirement to configure Nostr from the application UI.
 
 # 23. Nostr identity
 
-When enabled, Setrai loads the configured Nostr private key server-side.
+Public exercise discovery and importing are read-only Nostr operations and do
+not require a private key. Signing and publishing, when implemented, require a
+configured Nostr private key server-side.
 
 Setrai derives the corresponding public identity.
 
@@ -637,6 +787,39 @@ Discover may include:
 - programs;
 - creators;
 - published training content.
+
+The unified Exercises list reads the official Workstr exercise catalog (kind
+33401, author `ef24246321e47dd16cec960d4d374703af78505d0e59c532b054b5060e372bd6`).
+Events are signature-verified and validated server-side before display or import.
+Users can search, filter, inspect details, and import individual exercises.
+
+Import saves metadata, instructions, HTTPS image URLs, and Nostr provenance to
+SQLite through the Exercise service. Images remain hosted externally. Repeat
+imports reuse the existing record and preserve local edits and favorites. A slug
+collision with an unrelated local exercise creates a separate record instead of
+overwriting it. Imported exercises remain usable if Nostr is later disabled.
+
+Catalog responses are cached server-side for five minutes. Refresh fetches new
+relay data. Partial relay failures do not discard successful responses; complete
+failure offers retry without changing local data. No import publishes events.
+
+The unified Workout Library reads signature-verified kind 33402 programs from the official
+Workstr author and Workstr creator programs in the `workstr:beastmode:program:`
+namespace carrying `workstr`, `beastmode`, and `workstr-program` topics. It supports
+search, the same program filters, expanded previews, refresh, and import. Remote
+text is rendered as text, and image URLs must be HTTPS. Programs are deduplicated
+by full Nostr address, with the newest verified version selected.
+
+Import saves a program and missing exercise references in one SQLite transaction.
+Verified catalog exercise data is reused where available; otherwise a local
+exercise is created from the verified program's member metadata. Those fallback
+references retain program provenance and do not impersonate a verified catalog
+exercise event. Names/slug collisions do not overwrite unrelated library records.
+Repeated imports reuse the local program and preserve local edits. Duplicates
+have their own local identity. Imported blocks and interval durations remain
+available in previews and editing; imported programs remain usable with Nostr
+disabled. Program catalog caching and relay failure behavior follow Exercise
+Discover. No program import publishes or signs content.
 
 Content should be retrieved from configured public relays.
 
@@ -908,6 +1091,7 @@ Response:
 {
   "ai": true,
   "nostr": false,
+  "nostrIdentity": false,
   "moneroWallet": false
 }
 ```
@@ -1013,7 +1197,9 @@ should prioritize mobile ergonomics.
 
 # 43. Visual design
 
-Setrai uses a premium dark interface.
+Setrai uses a premium warm light interface with off-white canvas, white surfaces,
+near-black text, and restrained semantic accents. Live training may use dark
+header and action surfaces for emphasis.
 
 The exact design system may evolve, but it should feel:
 
@@ -1023,6 +1209,18 @@ The exact design system may evolve, but it should feel:
 - premium;
 - focused;
 - appropriate for an AI-native fitness application.
+
+Use a consistent compact scale across the application. Phone page titles use
+30 px text; headers, navigation icons, cards, and tiles should follow the compact
+Exercise library proportions. Touch controls remain at least 44 px tall and form
+input text remains 16 px to avoid automatic zoom on iOS. Shared spacing and title
+size tokens keep feature pages consistent; tablet and desktop layouts adapt
+without oversized hero typography.
+
+Use 1 px neutral borders for cards and controls, with stronger 2 px focus outlines.
+Page titles share a 30 px phone / 36 px desktop maximum scale and consistent
+header spacing. Use sentence case controls, restrained font weights, and whitespace
+to establish hierarchy; avoid decorative grids and heavy nested box outlines.
 
 Avoid excessive decorative complexity.
 

@@ -24,7 +24,7 @@ export const LEGS_EXERCISES = [
       "Squat down with knees tracking over toes.",
       "Drive up to standing while staying braced."
     ],
-    image_url: "/images/exercises/back-squat.webp",
+    image_url: "/images/exercises/ink/back-squat.svg",
     default_sets: 3,
     default_reps: "5-8",
     default_rest: 150,
@@ -55,7 +55,7 @@ export const LEGS_EXERCISES = [
       "Squat down under control.",
       "Drive through the feet to stand."
     ],
-    image_url: "/images/exercises/front-squat.webp",
+    image_url: "/images/exercises/ink/front-squat.svg",
     default_sets: 3,
     default_reps: "5-8",
     default_rest: 150,
@@ -87,7 +87,7 @@ export const LEGS_EXERCISES = [
       "Squat down between the knees.",
       "Stand tall while keeping the weight close."
     ],
-    image_url: "/images/exercises/goblet-squat.webp",
+    image_url: "/images/exercises/ink/goblet-squat.svg",
     default_sets: 3,
     default_reps: "6-10",
     default_rest: 120,
@@ -117,7 +117,7 @@ export const LEGS_EXERCISES = [
       "Lower the platform under control.",
       "Press away without locking the knees harshly."
     ],
-    image_url: "/images/exercises/leg-press.webp",
+    image_url: "/images/exercises/ink/leg-press.svg",
     default_sets: 3,
     default_reps: "6-10",
     default_rest: 120,
@@ -150,7 +150,7 @@ export const LEGS_EXERCISES = [
       "Lower the back knee toward the floor.",
       "Drive through the front foot to stand."
     ],
-    image_url: "/images/exercises/bulgarian-split-squat.webp",
+    image_url: "/images/exercises/ink/bulgarian-split-squat.svg",
     default_sets: 3,
     default_reps: "8-12",
     default_rest: 90,
@@ -183,7 +183,7 @@ export const LEGS_EXERCISES = [
       "Lower until both knees bend under control.",
       "Push through the front foot and step into the next rep."
     ],
-    image_url: "/images/exercises/walking-lunge.webp",
+    image_url: "/images/exercises/ink/walking-lunge.svg",
     default_sets: 3,
     default_reps: "8-15",
     default_rest: 75,
@@ -215,7 +215,7 @@ export const LEGS_EXERCISES = [
       "Lower until the hamstrings stretch.",
       "Drive the hips forward to stand."
     ],
-    image_url: "/images/exercises/romanian-deadlift.webp",
+    image_url: "/images/exercises/ink/romanian-deadlift.svg",
     default_sets: 3,
     default_reps: "6-10",
     default_rest: 120,
@@ -247,7 +247,7 @@ export const LEGS_EXERCISES = [
       "Lower until the hamstrings stretch.",
       "Stand by driving the hips forward."
     ],
-    image_url: "/images/exercises/dumbbell-romanian-deadlift.webp",
+    image_url: "/images/exercises/ink/dumbbell-romanian-deadlift.svg",
     default_sets: 3,
     default_reps: "6-10",
     default_rest: 120,
@@ -275,7 +275,7 @@ export const LEGS_EXERCISES = [
       "Extend the knees until legs are straight.",
       "Lower slowly to the starting position."
     ],
-    image_url: "/images/exercises/leg-extension.webp",
+    image_url: "/images/exercises/ink/leg-extension.svg",
     default_sets: 3,
     default_reps: "10-15",
     default_rest: 60,
@@ -303,7 +303,7 @@ export const LEGS_EXERCISES = [
       "Curl the heels toward the body.",
       "Return slowly until the legs extend."
     ],
-    image_url: "/images/exercises/leg-curl.webp",
+    image_url: "/images/exercises/ink/leg-curl.svg",
     default_sets: 3,
     default_reps: "10-15",
     default_rest: 60,
@@ -335,7 +335,7 @@ export const LEGS_EXERCISES = [
       "Drive hips upward until torso and thighs align.",
       "Lower under control."
     ],
-    image_url: "/images/exercises/hip-thrust.webp",
+    image_url: "/images/exercises/ink/hip-thrust.svg",
     default_sets: 3,
     default_reps: "6-10",
     default_rest: 120,
@@ -365,7 +365,7 @@ export const LEGS_EXERCISES = [
       "Rise onto the balls of the feet.",
       "Lower the heels under control."
     ],
-    image_url: "/images/exercises/standing-calf-raise.webp",
+    image_url: "/images/exercises/ink/standing-calf-raise.svg",
     default_sets: 3,
     default_reps: "10-15",
     default_rest: 60,

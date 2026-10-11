@@ -95,6 +95,8 @@ test('returns empty statistics for a fresh database', () => {
       volumeByMuscle: [],
       personalRecords: [],
       trainingStreak: {
+        currentStreakDays: 0,
+        longestStreakDays: 0,
         currentStreakWeeks: 0,
         longestStreakWeeks: 0
       },
@@ -274,6 +276,8 @@ test('calculates weekly training streaks deterministically', () => {
     assert.deepEqual(
       services.statistics.getTrainingStreak(),
       {
+        currentStreakDays: 0,
+        longestStreakDays: 0,
         currentStreakWeeks: 0,
         longestStreakWeeks: 0
       }
@@ -298,6 +302,8 @@ test('calculates weekly training streaks deterministically', () => {
     assert.deepEqual(
       services.statistics.getTrainingStreak(),
       {
+        currentStreakDays: 1,
+        longestStreakDays: 1,
         currentStreakWeeks: 2,
         longestStreakWeeks: 2
       }
