@@ -103,9 +103,9 @@ export async function renderWorkoutsPage(root: HTMLElement, enabled = false, mod
   root.replaceChildren(page)
   try {
     if (recovery) {
-      const overview = await getRecovery()
+      const [overview, profile] = await Promise.all([getRecovery(), getProfile().catch(() => ({ equipment: [] as string[] }))])
       state.textContent = ''
-      page.append(recoveryContent(overview), createRecoveryWorkoutPanel())
+      page.append(recoveryContent(overview), createRecoveryWorkoutPanel(profile.equipment))
       return
     }
     if (history) {

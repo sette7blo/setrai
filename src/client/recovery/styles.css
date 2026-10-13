@@ -86,7 +86,8 @@
 }
 .recovery-map { padding: 11px; border: 1px solid rgba(var(--color-primary-rgb), .14); border-radius: 18px; background: radial-gradient(circle at 50% 16%, rgba(var(--color-primary-rgb), .13), transparent 62%), rgba(7,14,17,.32); }
 #recovery-body { display: block; width: 100%; height: auto; filter: drop-shadow(0 0 14px rgba(var(--color-primary-rgb), .12)); }
-#recovery-body polygon { transition: fill .35s ease; }
+#recovery-body polygon { cursor: pointer; transition: fill .2s ease, stroke .2s ease; }
+#recovery-body polygon.is-selected { stroke: var(--color-text); stroke-width: 1.2; }
 .recovery-map__decor { fill: #304145; stroke: rgba(var(--color-primary-rgb), .12); stroke-width: .4; }
 .recovery-map__fresh { fill: #36434c; stroke: rgba(var(--color-primary-rgb), .14); stroke-width: .35; }
 .recovery-map__ready { fill: var(--color-success); stroke: rgba(255,255,255,.42); stroke-width: .35; }
@@ -115,6 +116,7 @@
 .recovery-row-meta { text-align: right; }
 .recovery-row-meta strong { color: var(--tone); font: 850 14px/1 ui-monospace, monospace; }
 .recovery-row-meta small { display: block; margin-top: 4px; color: var(--color-muted); font-size: 10.5px; white-space: nowrap; }
+.recovery-row.is-selected { outline: 2px solid var(--color-text); outline-offset: 2px; }
 .recovery-fresh-summary { display: grid; gap: 8px; padding: 11px; border: 1px solid rgba(var(--color-primary-rgb), .12); border-radius: 13px; background: rgba(255,255,255,.025); }
 .recovery-fresh-summary strong { display: inline-flex; align-items: center; gap: 7px; color: var(--color-primary); font: 850 11px/1 ui-monospace, monospace; text-transform: uppercase; letter-spacing: .08em; }
 .recovery-fresh-summary svg { width: 15px; height: 15px; }

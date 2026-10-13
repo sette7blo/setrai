@@ -20,7 +20,7 @@ function enrich(programs: Program[], exercises: Exercise[]): Program[] {
 
 export async function renderProgramLibrary(page: HTMLElement, enabled: boolean, sessionLinks: (sessions: Session[]) => HTMLElement): Promise<void> {
   const status = document.createElement('p')
-  status.className = 'workout-browser-status'; status.setAttribute('role', 'status'); status.textContent = 'Loading workouts...'
+  status.className = 'workout-browser-status'; status.setAttribute('role', 'status'); status.textContent = enabled ? 'Loading your library and web workouts…' : 'Loading your library…'
   page.append(status)
   const params = new URLSearchParams(window.location.search)
   const filters = emptyProgramFilters()
@@ -39,7 +39,7 @@ export async function renderProgramLibrary(page: HTMLElement, enabled: boolean, 
     const next = programHero(local, false)
     if (enabled) {
       const count = mergeProgramCatalog(local, remote).filter(card => card.status === 'Web').length
-      const web = document.createElement('span'); web.textContent = `${count} web workouts`
+      const web = document.createElement('span'); web.textContent = refreshing ? 'Loading web workouts…' : `${count} web workouts`
       next.querySelector('.program-browse-metrics')?.append(web)
       if (fetchedAt) next.title = `Web catalog updated ${new Date(fetchedAt).toLocaleTimeString()}`
     }
@@ -107,12 +107,15 @@ export async function renderProgramLibrary(page: HTMLElement, enabled: boolean, 
   const refresh = async (force = false): Promise<void> => {
     if (!enabled || refreshing) return
     refreshing = true; status.textContent = 'Loading web workouts...'
-    toolbar.querySelector<HTMLButtonElement>('[aria-label="Refresh web workouts"]')!.disabled = true
+    const refreshButton = toolbar.querySelector<HTMLButtonElement>('[aria-label="Refresh web workouts"]')!
+    refreshButton.disabled = true
+    refreshButton.setAttribute('aria-busy', 'true')
+    refreshButton.classList.add('is-refreshing')
     renderResults()
     try {
       const catalog = await loadProgramCatalog(force)
       remote = catalog.programs; fetchedAt = catalog.fetchedAt
-      status.textContent = catalog.unavailableRelays ? 'Some relays are unavailable; saved workouts remain available.' : ''
+      status.textContent = catalog.unavailableRelays ? 'Some relays are unavailable; saved workouts remain available.' : `Web workouts refreshed: ${catalog.programs.length} available.`
       updateHero()
     } catch (error) {
       status.replaceChildren(document.createTextNode(`${readableApiError(error)} Saved workouts remain available.`))
@@ -120,7 +123,9 @@ export async function renderProgramLibrary(page: HTMLElement, enabled: boolean, 
       retry.addEventListener('click', () => { void refresh(true) }); status.append(retry)
     } finally {
       refreshing = false
-      toolbar.querySelector<HTMLButtonElement>('[aria-label="Refresh web workouts"]')!.disabled = false
+      refreshButton.disabled = false
+      refreshButton.removeAttribute('aria-busy')
+      refreshButton.classList.remove('is-refreshing')
       renderResults()
     }
   }

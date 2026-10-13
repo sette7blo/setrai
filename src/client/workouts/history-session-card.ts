@@ -55,6 +55,14 @@ export function sessionDuration(session: Session): string {
   return minutes >= 60 ? `${Math.floor(minutes / 60)}h ${minutes % 60}m` : `${minutes}m`
 }
 
+export function hasUnusualSessionDuration(session: Session): boolean {
+  if (!session.finishedAt) return false
+  const started = new Date(session.startedAt.endsWith('Z') ? session.startedAt : `${session.startedAt}Z`)
+  const finished = new Date(session.finishedAt.endsWith('Z') ? session.finishedAt : `${session.finishedAt}Z`)
+  const minutes = (finished.getTime() - started.getTime()) / 60000
+  return Number.isFinite(minutes) && (minutes < 5 || minutes > 240)
+}
+
 export function sessionExercises(session: Session): { slug: string, name: string }[] {
   const entries = new Map<string, string>()
   for (const exercise of session.plannedExercises) {
@@ -188,7 +196,7 @@ export function sessionHistoryCard(session: Session, exercises: Exercise[], unit
   const exerciseCount = sessionExercises(session).length
   const stats = document.createElement('span')
   stats.className = 'history-stat-row'
-  for (const text of [`${doneSets} set${doneSets === 1 ? '' : 's'}`, `${exerciseCount} exercise${exerciseCount === 1 ? '' : 's'}`, sessionVolume(session) > 0 ? `${formatVolumeKg(sessionVolume(session), unit)} volume` : '']) {
+  for (const text of [`${doneSets} set${doneSets === 1 ? '' : 's'}`, `${exerciseCount} exercise${exerciseCount === 1 ? '' : 's'}`, sessionVolume(session) > 0 ? formatVolumeKg(sessionVolume(session), unit) : '']) {
     if (!text) continue
     const pill = document.createElement('span')
     pill.className = 'history-stat-pill'
@@ -199,6 +207,12 @@ export function sessionHistoryCard(session: Session, exercises: Exercise[], unit
   focus.className = 'workout-card-muscles'
   focus.textContent = muscles.names.slice(0, 4).join(' · ')
   info.append(top, meta, stats)
+  if (hasUnusualSessionDuration(session)) {
+    const quality = document.createElement('span')
+    quality.className = 'history-data-quality'
+    quality.textContent = 'Check logged duration'
+    info.append(quality)
+  }
   if (focus.textContent) info.append(focus)
   summary.append(map, info, iconElement(ChevronDown))
   const body = document.createElement('div')

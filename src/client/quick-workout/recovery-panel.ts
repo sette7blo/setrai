@@ -9,7 +9,7 @@ import { startAndNavigate } from './start.js'
 import type { QuickWorkout } from './types.js'
 
 // Public composition entry point: generation and session creation stay in Quick Workout.
-export function createRecoveryWorkoutPanel(): HTMLElement {
+export function createRecoveryWorkoutPanel(equipment: string[] = []): HTMLElement {
   const panel = document.createElement('section')
   panel.className = 'recovery-quick-panel'
   panel.setAttribute('aria-label', 'Quick Workout')
@@ -20,7 +20,7 @@ export function createRecoveryWorkoutPanel(): HTMLElement {
   const copy = document.createElement('div')
   const title = document.createElement('h2'); title.textContent = 'Quick Workout'
   const help = document.createElement('p')
-  help.textContent = 'Uses recovered or fresh muscles and your equipment. Swap or remove exercises before starting.'
+  help.textContent = equipment.length ? `Uses recovered or fresh muscles with ${equipment.map(displayName).join(', ')}. Swap or remove exercises before starting.` : 'Uses recovered or fresh muscles. Add equipment in Profile to tailor it further.'
   copy.append(title, help); heading.append(icon, copy)
   const duration = document.createElement('div')
   duration.className = 'recovery-quick-duration'

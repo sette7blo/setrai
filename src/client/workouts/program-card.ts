@@ -43,8 +43,8 @@ export function createProgramCard(program: Program, actions: ProgramCardActions,
   }
   const byline = document.createElement('span')
   byline.className = 'workout-card-byline'
-  const author = program.sourceLabel || (program.nostrPubkey === 'ef24246321e47dd16cec960d4d374703af78505d0e59c532b054b5060e372bd6' ? 'Workstr' : program.nostrPubkey ? 'Creator' : 'Your program')
-  byline.textContent = [author === 'Creator' ? `Creator ${program.nostrPubkey?.slice(0, 8)}` : author, displayName(program.difficulty)].filter(Boolean).join(' · ')
+  const author = program.sourceLabel || (program.nostrPubkey === 'ef24246321e47dd16cec960d4d374703af78505d0e59c532b054b5060e372bd6' ? 'Workstr' : program.nostrPubkey ? 'Nostr creator' : 'Your program')
+  byline.textContent = [author, displayName(program.difficulty)].filter(Boolean).join(' · ')
   const meta = document.createElement('span')
   meta.className = 'workout-card-meta'
   const formats = programTaxonomy(program).format.filter(value => value !== 'normal').map(value => value === 'emom' ? 'EMOM' : displayName(value))

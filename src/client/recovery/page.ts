@@ -1,4 +1,5 @@
 import { createRecoveryWorkoutPanel } from '../quick-workout/recovery-panel.js'
+import { getProfile } from '../profile/api.js'
 import { readableApiError } from '../shared/api/errors.js'
 import { Activity, BatteryCharging, CheckCircle2, Clock, HeartPulse, Hourglass, Info, Leaf } from 'lucide'
 import { iconElement } from '../app/navigation.js'
@@ -48,7 +49,7 @@ export function recoveryBodyMapMarkup(recovery: RecoveryOverview): string {
     if (!muscle) return `<polygon${attributes.replace(/\s*\/$/, '')} class="recovery-map__decor"/>`
     const item = byRegion.get(muscle)
     return `<polygon${attributes.replace(/\s*\/$/, '')} class="recovery-map__${statusClass(item?.status)}" data-status="${statusClass(item?.status)}"/>`
-  }).replace('<svg ', '<svg id="recovery-body" role="img" aria-label="Front and back muscle recovery map" ')
+  }).replace(/data-muscle="([^"]+)"/g, 'data-muscle="$1" tabindex="0" role="button" aria-label="$1 recovery details"').replace('<svg ', '<svg id="recovery-body" role="img" aria-label="Front and back muscle recovery map" ')
 }
 
 export function recoveryHero(recovery: RecoveryOverview): HTMLElement {
@@ -66,10 +67,11 @@ export function recoveryHero(recovery: RecoveryOverview): HTMLElement {
   metrics.className = 'program-browse-metrics recovery-hero-metrics'
   const readiness = averageReadiness(recovery)
   const byRegion = recoveryByRegion(recovery)
-  const ready = CANONICAL_MUSCLES.filter(muscle => !byRegion.has(muscle) || byRegion.get(muscle)?.status === 'ready').length
+  const fresh = CANONICAL_MUSCLES.filter(muscle => !byRegion.has(muscle)).length
+  const ready = [...byRegion.values()].filter((item) => item.status === 'ready').length
   const moderate = [...byRegion.values()].filter((item) => item.status === 'moderate').length
   const recovering = [...byRegion.values()].filter((item) => item.status === 'recovering').length
-  for (const [iconNode, text] of [[iconElement(Activity), `${readiness}% ready`], [iconElement(CheckCircle2), `${ready} ready`], [iconElement(Hourglass), `${recovering} recovering`]] as const) {
+  for (const [iconNode, text] of [[iconElement(Activity), `${readiness}% overall recovery`], [iconElement(CheckCircle2), `${ready} ready`], [iconElement(Leaf), `${fresh} fresh`], [iconElement(Hourglass), `${recovering} recovering`]] as const) {
     const pill = document.createElement('span')
     pill.append(iconNode, document.createTextNode(text))
     metrics.append(pill)
@@ -107,6 +109,7 @@ function recoveryRows(muscles: RecoveryMuscle[]): HTMLElement {
   for (const item of muscles) {
     const row = document.createElement('article')
     row.className = `recovery-row recovery-row--${statusClass(item.status)}`
+    row.dataset.muscle = item.muscle
     const status = document.createElement('span')
     status.className = 'recovery-row-status'
     status.append(iconElement(item.status === 'ready' ? CheckCircle2 : item.status === 'moderate' ? BatteryCharging : Hourglass))
@@ -153,7 +156,7 @@ export function recoveryContent(recovery: RecoveryOverview): HTMLElement {
   const status = document.createElement('p')
   status.className = 'recovery-status'
   const tired = sorted.filter((item) => item.status !== 'ready').slice(0, 3).map((item) => displayName(item.muscle))
-  status.append(iconElement(Info), document.createTextNode(tired.length ? `${tired.join(', ')} still need time.` : 'All tracked muscles are ready.'))
+  status.append(iconElement(Info), document.createTextNode(tired.length ? `Muscles needing the most time: ${tired.join(', ')}.` : 'All tracked muscles are ready.'))
   const map = document.createElement('div')
   map.className = 'recovery-map'
   map.innerHTML = `${recoveryBodyMapMarkup(recovery)}<div class="recovery-legend"><span class="rl ready">Ready</span><span class="rl moderate">Moderate</span><span class="rl recovering">Recovering</span><span class="rl fresh">Fresh</span></div>`
@@ -165,6 +168,15 @@ export function recoveryContent(recovery: RecoveryOverview): HTMLElement {
   const layout = document.createElement('div')
   layout.className = 'recovery-layout'
   layout.append(map, list)
+  map.querySelectorAll<HTMLElement>('[data-muscle]').forEach(region => {
+    const muscle = region.getAttribute('data-muscle') ?? ''
+    const select = (): void => {
+      map.querySelectorAll('[data-muscle]').forEach(item => item.classList.toggle('is-selected', item === region))
+      list.querySelectorAll<HTMLElement>('.recovery-row').forEach(row => row.classList.toggle('is-selected', row.dataset.muscle === muscle.toLowerCase()))
+    }
+    region.addEventListener('click', select)
+    region.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); select() } })
+  })
   panel.append(hero, stats, status, layout)
   return panel
 }
@@ -186,10 +198,10 @@ function errorView(message: string): HTMLElement {
 export async function renderRecoveryPage(root: HTMLElement): Promise<void> {
   root.replaceChildren(loadingView())
   try {
-    const recovery = await getRecovery()
+    const [recovery, profile] = await Promise.all([getRecovery(), getProfile().catch(() => ({ equipment: [] as string[] }))])
     const page = document.createElement('div')
     page.className = 'recovery-page'
-    page.append(recoveryContent(recovery), createRecoveryWorkoutPanel())
+    page.append(recoveryContent(recovery), createRecoveryWorkoutPanel(profile.equipment))
     root.replaceChildren(page)
   } catch (error) {
     const view = errorView(readableApiError(error))

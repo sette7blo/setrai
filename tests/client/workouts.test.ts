@@ -16,6 +16,7 @@ import {
 } from '../../src/client/workouts/format.js'
 import {
   historyHero,
+  hasUnusualSessionDuration,
   sessionDateKey,
   sessionHistoryCard,
   sessionMuscles,
@@ -228,6 +229,13 @@ test('Workout history derives aggregate muscles and stable date keys without ope
   assert.equal(sessionVolume(s), 1400)
 })
 
+test('Workout history flags implausible durations without hiding a completed session', () => {
+  const short = { ...session(), startedAt: '2026-10-05T14:00:00.000Z', finishedAt: '2026-10-05T14:03:00.000Z' }
+  const normal = { ...session(), startedAt: '2026-10-05T14:00:00.000Z', finishedAt: '2026-10-05T14:45:00.000Z' }
+  assert.equal(hasUnusualSessionDuration(short), true)
+  assert.equal(hasUnusualSessionDuration(normal), false)
+})
+
 class TestElement {
   href = ''
   className = ''
@@ -316,7 +324,8 @@ test('Workout history card omits receipt label and honors profile lb volume', ()
     const text = elementText(card)
     assert.match(text, /1 set/)
     assert.match(text, /1 exercise/)
-    assert.match(text, /2,205 lb volume/)
+    assert.match(text, /2,205 lb/)
+    assert.doesNotMatch(text, /2,205 lb volume/)
     assert.doesNotMatch(text, /Receipt/)
   } finally {
     globalThis.document = originalDocument
