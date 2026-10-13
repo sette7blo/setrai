@@ -37,9 +37,9 @@ import {
   skipRestTimer,
   tickRestTimer
 } from '../../src/client/workouts/rest-timer.js'
-import { summaryFacts } from '../../src/client/workouts/session-summary.js'
+import { renderSessionSummary, summaryFacts } from '../../src/client/workouts/session-summary.js'
 import { createHistoryCalendar } from '../../src/client/workouts/history-calendar.js'
-import { sessionLinks } from '../../src/client/workouts/page.js'
+import { sessionLinks, workoutLoadingSkeleton } from '../../src/client/workouts/page.js'
 import { workoutHeading } from '../../src/client/workouts/program-browser.js'
 import type { Program, Session } from '../../src/client/workouts/types.js'
 
@@ -172,6 +172,39 @@ test('Session summary reports logged set count and simple volume', () => {
   const s = session()
   assert.equal(simpleVolume(s), 800)
   assert.deepEqual(summaryFacts(s, program()), ['Upper A', '1 sets logged', '800 kg total volume'])
+})
+
+test('Session summary renders Setrai branded receipt with muscle map and stats', () => {
+  const originalDocument = globalThis.document
+  try {
+    globalThis.document = {
+      createElement: () => new TestElement(),
+      createElementNS: () => new TestElement(),
+      createTextNode: (text: string) => Object.assign(new TestElement(), { textContent: text })
+    } as unknown as Document
+    const s = session()
+    s.startedAt = '2026-10-05T14:00:00.000Z'
+    s.finishedAt = '2026-10-05T14:45:00.000Z'
+    s.plannedExercises = [{ id: null, exerciseId: 10, exerciseSlug: 'bench-press', exerciseName: 'Bench Press', position: 0, sets: 2, reps: '8', restSec: 90, weight: null, notes: '' }]
+    const summary = renderSessionSummary(s, program(), 'lb') as unknown as TestElement
+    const text = elementText(summary)
+    const classes = walkElements(summary).map(element => element.className).join(' ')
+    assert.match(classes, /session-summary-brand/)
+    assert.match(classes, /mobile-brand__logo/)
+    assert.match(classes, /session-summary-map/)
+    assert.match(classes, /session-summary-stat/)
+    const logo = walkElements(summary).find(element => element.className === 'mobile-brand__logo') as (TestElement & { src?: string }) | undefined
+    assert.equal(logo?.src, '/brand/setrai-logo-mark.jpg')
+    assert.doesNotMatch(String(logo?.src), /editorial-logo/)
+    assert.match(text, /Setrai/)
+    assert.match(text, /AI Training Coach/)
+    assert.match(text, /Workout complete/)
+    assert.match(text, /Upper A/)
+    assert.match(text, /1,764 lb/)
+    assert.match(text, /Training receipt/)
+  } finally {
+    globalThis.document = originalDocument
+  }
 })
 
 test('Workout history derives aggregate muscles and stable date keys without opening a session route', () => {
@@ -334,5 +367,21 @@ test('Library keeps only active Resume without duplicating completed history', (
       const actions = sessionLinks(sessions) as unknown as TestElement
       assert.deepEqual(actions.children.map(child => child.href), [])
     }
+  } finally { globalThis.document = originalDocument }
+})
+
+test('Workout loading skeletons render route-specific placeholder cards', () => {
+  const originalDocument = globalThis.document
+  try {
+    globalThis.document = {
+      createElement: () => new TestElement()
+    } as unknown as Document
+    const library = workoutLoadingSkeleton('library') as unknown as TestElement
+    const history = workoutLoadingSkeleton('history') as unknown as TestElement
+    assert.match(library.className, /workout-loading--library/)
+    assert.match(history.className, /workout-loading--history/)
+    assert.equal(library.children.length, 2)
+    assert.equal(history.children.length, 3)
+    assert(library.children.every(child => child.className === 'workout-loading-card'))
   } finally { globalThis.document = originalDocument }
 })

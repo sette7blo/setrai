@@ -100,6 +100,18 @@ function row(title: string, help: string, control: HTMLElement): HTMLElement {
   return item
 }
 
+function showToast(container: HTMLElement, message: string) {
+  const toast = document.createElement("div")
+  toast.className = "settings-toast"
+  toast.textContent = message
+  container.appendChild(toast)
+  setTimeout(() => {
+    toast.style.transition = "opacity 0.2s ease"
+    toast.style.opacity = "0"
+    setTimeout(() => toast.remove(), 200)
+  }, 2200)
+}
+
 function input(name: string, value: string, label: string, type = 'text'): HTMLInputElement {
   const field = document.createElement('input')
   field.name = name
@@ -215,7 +227,7 @@ function renderLoaded(root: HTMLElement, state: ProfileState): void {
   page.className = 'profile-page profile-settings-page'
   const hero = document.createElement('section')
   hero.className = 'profile-hero profile-settings-hero'
-  hero.innerHTML = `<p class="eyebrow">Settings</p><h1>Settings</h1><p class="hero-summary">${state.nostrIdentityEnabled ? 'Identity, training preferences, and equipment.' : 'Training preferences and equipment.'}</p>${state.message ? `<strong>${state.message}</strong>` : ''}`
+  hero.innerHTML = `<p class="eyebrow">Settings</p><h1>Settings</h1><p class="hero-summary">${state.nostrIdentityEnabled ? 'Identity, training preferences, and equipment.' : 'Training preferences and equipment.'}</p> `
   const list = document.createElement('section')
   list.className = 'profile-settings-list'
   if (state.nostrIdentityEnabled) list.append(profileSection(state, () => renderLoaded(root, state)))

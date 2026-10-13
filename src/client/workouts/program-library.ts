@@ -129,7 +129,7 @@ export async function renderProgramLibrary(page: HTMLElement, enabled: boolean, 
     const dialog = programFilterSheet(filters, equipment, profile.equipment.length > 0, renderResults, opener)
     document.body.append(dialog); dialog.showModal()
   }, () => openProgramBuilder(exercises, undefined, reload), enabled ? () => { void refresh(true) } : undefined)
-  page.append(hero, toolbar, chips, results, sessionLinks(sessions))
+  page.append(hero, sessionLinks(sessions), toolbar, chips, results)
   status.textContent = ''; renderResults(); updateHero()
   await refresh()
 }

@@ -7,9 +7,15 @@
   position: relative;
   overflow: hidden;
   border: 1px solid var(--color-border);
-  border-radius: 16px;
+  border-radius: 18px;
   background: #fff;
   color: #000;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  transition: box-shadow 0.2s ease, transform 0.1s ease;
+}
+.settings-category:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  transform: translateY(-1px);
 }
 
 .settings-category > summary {
@@ -137,4 +143,45 @@
   .settings-row-control > button { width: 100%; }
   .profile-settings-status { max-width: 58px; padding-inline: 6px; }
   .equipment-chip { padding-inline: 12px; font-size: 12px; }
+}
+
+/* Premium motion and focus polish */
+.settings-category > summary:focus-visible {
+  outline: 3px solid rgba(0,0,0,0.12);
+  outline-offset: -4px;
+}
+
+.settings-category-chevron {
+  transition: transform .2s cubic-bezier(0.23,1,0.32,1);
+}
+
+.settings-category[open] > summary {
+  transition: background 0.2s ease;
+}
+
+/* Toast for success messages */
+.settings-toast {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 8px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: #000;
+  color: #fff;
+  font: 600 13px/1 Inter, ui-sans-serif, sans-serif;
+  animation: toastPop 0.2s ease forwards;
+}
+
+@keyframes toastPop {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Improved input focus */
+.profile-settings-form input:focus,
+.profile-settings-form select:focus {
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.08);
+  border-color: #000;
 }
