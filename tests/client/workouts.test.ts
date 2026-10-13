@@ -41,6 +41,7 @@ import {
 import { renderSessionSummary, summaryFacts } from '../../src/client/workouts/session-summary.js'
 import { createHistoryCalendar } from '../../src/client/workouts/history-calendar.js'
 import { sessionLinks, workoutLoadingSkeleton } from '../../src/client/workouts/page.js'
+import { runCatalogRefresh } from '../../src/client/workouts/program-library.js'
 import { workoutHeading } from '../../src/client/workouts/program-browser.js'
 import type { Program, Session } from '../../src/client/workouts/types.js'
 
@@ -393,4 +394,20 @@ test('Workout loading skeletons render route-specific placeholder cards', () => 
     assert.equal(history.children.length, 3)
     assert(library.children.every(child => child.className === 'workout-loading-card'))
   } finally { globalThis.document = originalDocument }
+})
+
+test('Catalog refresh keeps loading state pending then restores the completed count', async () => {
+  let resolve: ((value: number) => void) | undefined
+  const states: string[] = []
+  const refresh = runCatalogRefresh(
+    () => new Promise<number>(done => { resolve = done }),
+    () => states.push('loading'),
+    count => states.push(`${count} web workouts`),
+    () => states.push('error'),
+    () => states.push('7 web workouts')
+  )
+  assert.deepEqual(states, ['loading'])
+  resolve?.(7)
+  await refresh
+  assert.deepEqual(states, ['loading', '7 web workouts', '7 web workouts'])
 })

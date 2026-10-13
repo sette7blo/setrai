@@ -144,7 +144,9 @@ function dayButton(key: string, day: number, inMonth: boolean, today: string, se
     if (data.sessions.length > 1) {
       const count = document.createElement('span')
       count.className = 'history-cal-count'
-      count.textContent = `${data.sessions.length} workouts`
+      count.setAttribute('aria-hidden', 'true')
+      count.title = `${data.sessions.length} workouts`
+      count.textContent = String(data.sessions.length)
       marks.append(count)
     }
     button.append(marks)

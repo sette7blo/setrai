@@ -12,6 +12,17 @@ import { openProgramUpdate } from './program-update.js'
 import { openProgramBuilder } from './program-builder.js'
 import type { Program, Session } from './types.js'
 
+export async function runCatalogRefresh<T>(load: () => Promise<T>, onPending: () => void, onSuccess: (value: T) => void, onError: (error: unknown) => void, onSettled: () => void): Promise<void> {
+  onPending()
+  try {
+    onSuccess(await load())
+  } catch (error) {
+    onError(error)
+  } finally {
+    onSettled()
+  }
+}
+
 function enrich(programs: Program[], exercises: Exercise[]): Program[] {
   return programs.map(program => ({ ...program, exercises: program.exercises.map(entry => ({
     ...entry, exercise: entry.exercise ?? exercises.find(item => item.id === entry.exerciseId || item.slug === entry.exerciseSlug)
@@ -106,28 +117,33 @@ export async function renderProgramLibrary(page: HTMLElement, enabled: boolean, 
   }
   const refresh = async (force = false): Promise<void> => {
     if (!enabled || refreshing) return
-    refreshing = true; status.textContent = 'Loading web workouts...'
     const refreshButton = toolbar.querySelector<HTMLButtonElement>('[aria-label="Refresh web workouts"]')!
-    refreshButton.disabled = true
-    refreshButton.setAttribute('aria-busy', 'true')
-    refreshButton.classList.add('is-refreshing')
-    renderResults()
-    try {
-      const catalog = await loadProgramCatalog(force)
-      remote = catalog.programs; fetchedAt = catalog.fetchedAt
-      status.textContent = catalog.unavailableRelays ? 'Some relays are unavailable; saved workouts remain available.' : `Web workouts refreshed: ${catalog.programs.length} available.`
-      updateHero()
-    } catch (error) {
-      status.replaceChildren(document.createTextNode(`${readableApiError(error)} Saved workouts remain available.`))
-      const retry = document.createElement('button'); retry.type = 'button'; retry.className = 'button button--secondary'; retry.textContent = 'Try again'
-      retry.addEventListener('click', () => { void refresh(true) }); status.append(retry)
-    } finally {
-      refreshing = false
-      refreshButton.disabled = false
-      refreshButton.removeAttribute('aria-busy')
-      refreshButton.classList.remove('is-refreshing')
-      renderResults()
-    }
+    await runCatalogRefresh(
+      () => loadProgramCatalog(force),
+      () => {
+        refreshing = true; status.textContent = 'Loading web workouts...'
+        refreshButton.disabled = true
+        refreshButton.setAttribute('aria-busy', 'true')
+        refreshButton.classList.add('is-refreshing')
+        updateHero(); renderResults()
+      },
+      catalog => {
+        remote = catalog.programs; fetchedAt = catalog.fetchedAt
+        status.textContent = catalog.unavailableRelays ? 'Some relays are unavailable; saved workouts remain available.' : `Web workouts refreshed: ${catalog.programs.length} available.`
+      },
+      error => {
+        status.replaceChildren(document.createTextNode(`${readableApiError(error)} Saved workouts remain available.`))
+        const retry = document.createElement('button'); retry.type = 'button'; retry.className = 'button button--secondary'; retry.textContent = 'Try again'
+        retry.addEventListener('click', () => { void refresh(true) }); status.append(retry)
+      },
+      () => {
+        refreshing = false
+        refreshButton.disabled = false
+        refreshButton.removeAttribute('aria-busy')
+        refreshButton.classList.remove('is-refreshing')
+        updateHero(); renderResults()
+      }
+    )
   }
   const toolbar = programToolbar(false, filters, renderResults, opener => {
     const equipment = [...new Set(mergeProgramCatalog(local, remote).flatMap(card => programTaxonomy(card.program).equipment))].sort()
