@@ -1,3 +1,7 @@
+# Public Setrai installer — published image only.
+# Use in an empty directory with a local .env (see README or .env.example).
+# Do not treat a git checkout as the install folder.
+
 services:
   setrai:
     image: ${SETRAI_IMAGE:-dockersette/setrai:latest}

@@ -200,7 +200,10 @@ setrai/
 ├── README.md
 ├── package.json
 ├── Dockerfile
-└── compose.yaml
+└── deploy/
+    ├── compose.yaml
+    ├── compose.build.yaml
+    └── .env.example
 ```
 
 The exact implementation may evolve, but new structure must preserve the ownership and dependency rules in this document.

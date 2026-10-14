@@ -1127,11 +1127,13 @@ Setrai does not need to implement live configuration mutation for these settings
 
 # 24. Docker configuration
 
-The expected self-hosted deployment model is Docker Compose.
+The expected self-hosted deployment model is Docker Compose with a **published
+image**, installed into an empty directory (README paste or `deploy/` templates).
+A git checkout is for development (`npm start`), not for production Compose.
 
-The distributed installer is `compose.yaml` with the public
-`dockersette/setrai` image and the minimal `deploy/.env.example` template. The
-optional `compose.build.yaml` override builds a local image from source.
+The distributed installer templates are `deploy/compose.yaml` (image-only
+`dockersette/setrai`) and `deploy/.env.example`. The optional
+`deploy/compose.build.yaml` override builds a local image from a source checkout.
 See [deployment instructions](deployment.md) for installation and publication.
 
 The container uses a named volume at `/data`, runs as UID/GID 1000, and listens on
@@ -1172,10 +1174,12 @@ Therefore Setrai does not need to write `.env` from the application UI.
 
 # 26. Example Docker deployment
 
-Minimal installation (in a new installation directory or fresh checkout):
+Minimal installation (empty directory — not a git checkout):
 
 ```bash
-cp deploy/.env.example .env
+# paste compose.yaml from README, or:
+# curl deploy/compose.yaml + deploy/.env.example into the folder
+cp .env.example .env   # if you downloaded deploy/.env.example as .env.example
 chmod 600 .env
 docker compose pull
 docker compose up -d --wait

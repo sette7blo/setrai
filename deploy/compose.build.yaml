@@ -1,0 +1,13 @@
+# Optional maintainer override: build a local image from a source checkout.
+# Not part of the public install path.
+#
+# From the repo root:
+#   docker compose -f deploy/compose.yaml -f deploy/compose.build.yaml --project-directory . up -d --build --wait
+#
+services:
+  setrai:
+    image: setrai:local
+    build:
+      context: .
+      dockerfile: Dockerfile
+    pull_policy: never

@@ -1,8 +1,0 @@
-# Optional source-build override; the public installer remains image-only.
-services:
-  setrai:
-    image: setrai:local
-    build:
-      context: .
-      dockerfile: Dockerfile
-    pull_policy: never

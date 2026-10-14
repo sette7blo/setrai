@@ -1969,8 +1969,10 @@ the module architecture has degraded and should be corrected.
 
 # 42. Deployment packaging
 
-Deployment owns `Dockerfile`, `.dockerignore`, `compose.yaml`, the optional
-source-build override `compose.build.yaml`, and `deploy/.env.example`.
+Deployment owns `Dockerfile`, `.dockerignore`, `deploy/compose.yaml` (public
+image installer), the optional source-build override `deploy/compose.build.yaml`,
+and `deploy/.env.example`. There is no root `compose.yaml`; install folders are
+empty directories that paste or download those templates.
 The multi-stage image builds the client and runs the existing server as a non-root
 user; persistent application data lives in the `/data` named volume. Secrets are
 supplied at runtime and never enter the Docker build context.

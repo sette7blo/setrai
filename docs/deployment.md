@@ -1,10 +1,19 @@
 # Deploying Setrai
 
-The repository supports two separate workflows: source builds for maintainers,
-and an image-only Compose installation for other people. Adding these files does
-not migrate or replace an existing source installation.
+Three separate tracks. Do not mix them in one folder.
 
-## Source installation
+| Track | Location | How |
+|-------|----------|-----|
+| **Install / self-host** | Empty directory | Paste Compose from README (or copy `deploy/`) + published image |
+| **Develop** | Git checkout | `npm start` — no Docker required |
+| **Ship** | CI / tags | Publish `dockersette/setrai` |
+
+A source checkout is **not** an install directory. Running Compose from the repo
+root is not the public install path.
+
+---
+
+## Develop from source
 
 Use the existing host `.env` and database:
 
@@ -16,25 +25,31 @@ npm start
 
 The server serves `dist/client`, produced by the build step in `npm run check`.
 Keep `SETRAI_DATA_DIR` and `SETRAI_DB_PATH` pointing at your existing writable
-storage. The Docker installation template is separate from your host settings.
+storage. Host settings are independent of any Docker install folder.
+
+---
 
 ## Install the published image
 
 Requires Docker Engine with the Compose v2 plugin (or Docker Desktop). No Node.js,
 Git checkout, Ollama, Nostr identity, or wallet is required.
 
-Download `compose.yaml` and
-`deploy/.env.example` from the same Setrai release. Put them in an empty directory
-and rename `.env.example` to `.env`. For a source checkout, the equivalent is:
+**Preferred:** create an empty directory and paste `compose.yaml` + `.env` from the
+[README](../README.md).
+
+**Alternative:** download the same templates from `deploy/`:
 
 ```bash
-cp deploy/.env.example .env
+mkdir setrai && cd setrai
+curl -fsSO https://raw.githubusercontent.com/sette7blo/setrai/main/deploy/compose.yaml
+curl -fsS -o .env.example https://raw.githubusercontent.com/sette7blo/setrai/main/deploy/.env.example
+cp .env.example .env
 chmod 600 .env
+# edit .env, then:
 docker compose pull
 docker compose up -d --wait
 ```
 
-Run the copy only in a new installation; retain an existing operator `.env`.
 Open `http://localhost:3000`. Check startup using:
 
 ```bash
@@ -42,9 +57,9 @@ docker compose ps
 docker compose logs --tail=100 setrai
 ```
 
-`compose.yaml` uses `dockersette/setrai:latest` by default. For controlled
-updates, set `SETRAI_IMAGE=dockersette/setrai:0.1.0` to a version that has actually
-been published, or pin an image digest. Version examples are not a claim that the
+The installer uses `dockersette/setrai:latest` by default. For controlled updates,
+set `SETRAI_IMAGE=dockersette/setrai:0.1.0` to a version that has actually been
+published, or pin an image digest. Version examples are not a claim that the
 Docker Hub image already exists.
 
 Compose passes `.env` at runtime. The image contains no operator configuration,
@@ -59,6 +74,8 @@ Only run one Setrai replica against a data volume. This is a single-instance
 SQLite deployment. Named volume ownership is initialized automatically for a
 fresh installation; host bind mounts instead require appropriate UID/GID 1000
 permissions.
+
+---
 
 ## Access from other devices
 
@@ -81,6 +98,8 @@ A proxy running on the host can forward to `127.0.0.1:3000`. A containerized pro
 can share a Docker network with Setrai and forward to `setrai:3000`; configure
 that network in your deployment override.
 
+---
+
 ## Optional integrations
 
 Edit `.env`, then use `docker compose up -d --force-recreate --wait` to apply
@@ -97,6 +116,8 @@ changes. `restart` alone does not reload changed container environment values.
 Keep `.env` private. Do not share expanded `docker compose config` output because
 it contains runtime environment values; use `docker compose config --quiet` to
 validate configuration without printing them.
+
+---
 
 ## Updates and data
 
@@ -135,12 +156,14 @@ docker compose -p setrai-restored up -d --wait
 Continue using `-p setrai-restored` for that installation so its volume is retained
 and selected consistently. Test the restoration before removing old data.
 
+---
+
 ## Build the container from source
 
-With the Docker buildx plugin available:
+Optional maintainer path only. From a **source checkout** (not an install folder):
 
 ```bash
-docker compose -f compose.yaml -f compose.build.yaml up -d --build --wait
+docker compose -f deploy/compose.yaml -f deploy/compose.build.yaml --project-directory . up -d --build --wait
 ```
 
 This override builds `setrai:local` from your checkout without pulling the Setrai
@@ -160,6 +183,8 @@ multi-platform publication. The smoke test uses its own temporary `.env`, random
 Compose project, and fresh volume; it never uses your live database. It checks
 startup, compiled assets, image security, session creation, and persistence across
 container replacement, then removes only its own test resources.
+
+---
 
 ## Publish under dockersette
 

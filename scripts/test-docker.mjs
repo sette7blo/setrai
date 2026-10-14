@@ -12,7 +12,7 @@ const project = `setrai-smoke-${process.pid}-${Date.now()}`
 const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'setrai-docker-'))
 const composeFile = path.join(directory, 'compose.yaml')
 const envFile = path.join(directory, '.env')
-fs.copyFileSync(path.join(root, 'compose.yaml'), composeFile)
+fs.copyFileSync(path.join(root, 'deploy', 'compose.yaml'), composeFile)
 fs.writeFileSync(envFile, [
   `SETRAI_IMAGE=${image}`, 'SETRAI_BIND_ADDRESS=127.0.0.1', 'SETRAI_HTTP_PORT=0',
   'AI_ENABLED=false', 'NOSTR_ENABLED=false', 'NOSTR_NSEC=', 'MONERO_WALLET_ENABLED=false'
