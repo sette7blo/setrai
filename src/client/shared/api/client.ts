@@ -62,6 +62,20 @@ export class ApiClient {
     return await response.json() as T
   }
 
+  async upload<T>(path: string, formData: FormData, signal?: AbortSignal): Promise<T> {
+    const response = await fetch(`${this.baseUrl}${path}`, {
+      method: 'POST',
+      body: formData,
+      signal
+    })
+
+    if (!response.ok) {
+      throw new ApiError(await parseError(response), response.status, path)
+    }
+
+    return await response.json() as T
+  }
+
   get<T>(path: string, signal?: AbortSignal): Promise<T> {
     return this.request<T>(path, { signal })
   }

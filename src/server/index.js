@@ -86,7 +86,9 @@ const quickWorkoutService =
   createQuickWorkoutService(db)
 
 const exerciseRoutes =
-  createExerciseRoutes(exerciseService)
+  createExerciseRoutes(exerciseService, {
+    dataDir: config.server.dataDir
+  })
 const programRoutes =
   createProgramRoutes(programService)
 const sessionRoutes =

@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronDown, Star, Download, Layers, Repeat, Timer, Dumbbell, Tag, ListOrdered } from 'lucide'
+import { ChevronLeft, ChevronDown, Star, Download, Layers, Repeat, Timer, Dumbbell, Tag, ListOrdered, Pencil } from 'lucide'
 import { iconElement } from '../app/navigation.js'
 import { displayName } from './format.js'
 import { createExerciseImage } from './image.js'
@@ -88,12 +88,22 @@ export function createExerciseDetailView(exercise: Exercise, onFavourite: () => 
   if (!actionLabel) favourite.setAttribute('aria-pressed', String(exercise.favourite))
   favourite.append(iconElement(actionLabel ? Download : Star), document.createTextNode(actionLabel || (exercise.favourite ? 'Remove from favorites' : 'Add to favorites')))
   favourite.addEventListener('click', onFavourite)
+  const actions = document.createElement('div')
+  actions.className = 'detail-actions'
+  actions.append(favourite)
+  if (!actionLabel && exercise.id > 0) {
+    const edit = document.createElement('a')
+    edit.className = 'button button--secondary'
+    edit.href = `/exercises/${exercise.id}/edit`
+    edit.append(iconElement(Pencil), document.createTextNode('Edit'))
+    actions.append(edit)
+  }
   card.append(
     createExerciseImage(exercise.imageUrl, `${exercise.name} exercise image`, 'exercise-detail__image'),
     heading, badges, description, prescription, map,
     metadataSection('Equipment', exercise.equipment, Dumbbell),
     metadataSection('Tags', exercise.tags, Tag),
-    createInstructions(exercise), favourite
+    createInstructions(exercise), actions
   )
   page.append(back, card)
   return page

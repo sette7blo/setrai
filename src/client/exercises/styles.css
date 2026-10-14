@@ -360,3 +360,115 @@ button.exercise-status:disabled { cursor: wait; opacity: .65; }
   color: #d4af37 !important;
   border-color: rgba(212, 175, 55, 0.5) !important;
 }
+
+.exercise-create {
+  justify-self: start;
+  min-height: 44px;
+}
+
+.detail-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.exercise-editor-page {
+  display: grid;
+  gap: 16px;
+}
+
+.exercise-editor {
+  display: grid;
+  gap: 14px;
+  max-width: 720px;
+  padding: 16px;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-surface);
+}
+
+.exercise-editor__field {
+  display: grid;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--color-muted-strong);
+}
+
+.exercise-editor__field > span {
+  font: 700 12px/1.2 ui-monospace, monospace;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  color: var(--color-muted);
+}
+
+.exercise-editor__field input,
+.exercise-editor__field textarea,
+.exercise-editor__field select {
+  min-height: 44px;
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px 12px;
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: #fff;
+  color: var(--color-text);
+  font: inherit;
+}
+
+.exercise-editor__field textarea {
+  min-height: 96px;
+  resize: vertical;
+}
+
+.exercise-editor__field small {
+  color: var(--color-muted);
+  font-size: 12px;
+}
+
+.exercise-editor__preview {
+  max-width: 280px;
+}
+
+.exercise-editor__image-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.exercise-editor__upload {
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.exercise-editor__upload input[type='file'] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.exercise-editor__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.exercise-editor__status {
+  min-height: 1.2em;
+  margin: 0;
+  color: var(--color-muted-strong);
+  font-size: 13px;
+}
+
+.exercise-editor__status:empty {
+  display: none;
+}
+
+.button--danger {
+  color: #fff;
+  background: #8b1e2d;
+  border-color: #8b1e2d;
+}

@@ -1,6 +1,6 @@
 // src/server/exercises/service.js
 import { catalogBaseline, catalogUpdate } from './catalog-update.js'
-
+import { normalizeExerciseWrite } from './write.js'
 import {
   createExerciseRepository
 } from '../db/repositories/exercises/index.js'
@@ -21,7 +21,23 @@ export function createExerciseService(db) {
   }
 
   function createExercise(input) {
-    return repository.create(input)
+    const values = normalizeExerciseWrite(input, { partial: false })
+    // Allow validated discovery/import callers to attach provenance on create.
+    for (const key of [
+      'slug',
+      'source_type',
+      'status',
+      'nostr_event_id',
+      'nostr_pubkey',
+      'nostr_address',
+      'nostr_published_at',
+      'catalog_baseline'
+    ]) {
+      if (input?.[key] !== undefined && input?.[key] !== null && input?.[key] !== '') {
+        values[key] = input[key]
+      }
+    }
+    return repository.create(values)
   }
 
   // Accepts validated server-side discovery data; repeat imports preserve local edits.
@@ -41,7 +57,7 @@ export function createExerciseService(db) {
   }
 
   function updateExercise(id, input) {
-    return repository.update(id, input)
+    return repository.update(id, normalizeExerciseWrite(input, { partial: true }))
   }
 
   function setFavourite(id, favourite) {

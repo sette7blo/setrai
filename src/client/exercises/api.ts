@@ -1,5 +1,5 @@
 import { apiClient, type ApiClient } from '../shared/api/client.js'
-import type { Exercise, ExerciseListResponse, ExercisePatch, ExerciseResponse } from './types.js'
+import type { Exercise, ExerciseListResponse, ExercisePatch, ExerciseResponse, ExerciseWrite } from './types.js'
 import { normalizeExercise } from './format.js'
 
 export async function listExercises(
@@ -19,6 +19,29 @@ export async function getExercise(
   return normalizeExercise(response.exercise)
 }
 
+export async function createExercise(
+  body: ExerciseWrite,
+  client: ApiClient = apiClient
+): Promise<Exercise> {
+  const response = await client.request<ExerciseResponse>('/api/exercises', {
+    method: 'POST',
+    body
+  })
+  return normalizeExercise(response.exercise)
+}
+
+export async function updateExercise(
+  id: number,
+  body: ExerciseWrite,
+  client: ApiClient = apiClient
+): Promise<Exercise> {
+  const response = await client.request<ExerciseResponse>(`/api/exercises/${id}`, {
+    method: 'PATCH',
+    body
+  })
+  return normalizeExercise(response.exercise)
+}
+
 export async function setExerciseFavourite(
   id: number,
   favourite: boolean,
@@ -29,7 +52,6 @@ export async function setExerciseFavourite(
     method: 'PATCH',
     body
   })
-
   return normalizeExercise(response.exercise)
 }
 
@@ -40,4 +62,14 @@ export async function deleteExercise(
   await client.request<void>(`/api/exercises/${id}`, {
     method: 'DELETE'
   })
+}
+
+export async function uploadExerciseImage(
+  file: File,
+  client: ApiClient = apiClient
+): Promise<string> {
+  const form = new FormData()
+  form.append('image', file, file.name || 'upload')
+  const response = await client.upload<{ imageUrl: string }>('/api/exercises/upload', form)
+  return response.imageUrl
 }

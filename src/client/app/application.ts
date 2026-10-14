@@ -2,6 +2,7 @@ import type { Capabilities } from '../shared/api/types.js'
 import { readableApiError } from '../shared/api/errors.js'
 import { loadCatalog, importCatalogExercise } from '../exercises/catalog-api.js'
 import { renderExerciseDetail } from '../exercises/detail-page.js'
+import { renderExerciseEditor } from '../exercises/editor-page.js'
 import { renderExerciseLibrary } from '../exercises/page.js'
 import { renderProgramDetail } from '../workouts/program-detail-page.js'
 import { renderSessionPage } from '../workouts/session-page.js'
@@ -164,6 +165,17 @@ async function renderRoute(container: HTMLElement, capabilities: Capabilities): 
 
   if (path === '/profile') {
     await renderProfilePage(container, capabilities.nostrIdentity === true)
+    return
+  }
+
+  if (path === '/exercises/new') {
+    await renderExerciseEditor(container, null)
+    return
+  }
+
+  const editMatch = path.match(/^\/exercises\/(\d+)\/edit$/)
+  if (editMatch) {
+    await renderExerciseEditor(container, Number(editMatch[1]))
     return
   }
 

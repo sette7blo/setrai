@@ -1,4 +1,4 @@
-import { Dumbbell, RefreshCw, Search, SlidersHorizontal, Star, Target } from 'lucide'
+import { Dumbbell, Plus, RefreshCw, Search, SlidersHorizontal, Star, Target } from 'lucide'
 import { selectionToggle, selectionToolbar } from './selection.js'
 import { readableApiError } from '../shared/api/errors.js'
 import { iconElement } from '../app/navigation.js'
@@ -93,6 +93,11 @@ function header(state: PageState): HTMLElement {
       { icon: Target, text: `${muscleCount} muscles`, tone: 'green' },
     ],
   }))
+  const create = document.createElement('a')
+  create.className = 'button button--primary exercise-create'
+  create.href = '/exercises/new'
+  create.append(iconElement(Plus), document.createTextNode('New exercise'))
+  section.append(create)
   return section
 }
 

@@ -58,5 +58,22 @@ export interface ExerciseFilters {
 }
 
 export interface ExercisePatch {
-  favourite: boolean
+  favourite?: boolean
+  name?: string
+  description?: string
+  category?: string
+  muscleGroup?: string
+  muscles?: string[]
+  equipment?: string[]
+  difficulty?: string
+  tags?: string[]
+  instructions?: string[]
+  imageUrl?: string
+  defaultSets?: number
+  defaultReps?: string
+  defaultRest?: number
+}
+
+export type ExerciseWrite = ExercisePatch & {
+  name?: string
 }
