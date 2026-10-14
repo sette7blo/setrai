@@ -1252,3 +1252,330 @@
   text-align: left !important;
   font-variant-numeric: tabular-nums !important;
 }
+
+/* Premium stat tiles (Home dashboard) */
+.summary-stat,
+.stat-card,
+.body-card {
+  transition: box-shadow 0.2s ease, transform 0.1s ease;
+  border-radius: 18px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.summary-stat:hover,
+.stat-card:hover,
+.body-card:hover {
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+
+.summary-stat .ss-val {
+  font-size: 28px;
+  font-weight: 800;
+  line-height: 1.1;
+  letter-spacing: -.03em;
+}
+
+.summary-stat .ss-label {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--color-muted-strong);
+  margin-top: 4px;
+}
+
+/* Premium panels consistency */
+.stats-panel,
+.recovery-card,
+.profile-panel {
+  transition: box-shadow 0.2s ease, transform 0.1s ease;
+  border-radius: 18px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+.stats-panel:hover {
+  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  transform: translateY(-1px);
+}
+
+/* Fix weekly volume label wrapping */
+.blabel {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.bars {
+  display: flex;
+  gap: 8px;
+  align-items: flex-end;
+  min-height: 120px;
+}
+
+/* Better range button press feedback */
+.stats-range-btn {
+  cursor: pointer;
+  transition: all 0.1s ease;
+}
+
+.stats-range-btn:active {
+  transform: scale(0.95);
+  background: rgba(var(--color-primary-rgb), .12);
+}
+
+.stats-range-btn.active {
+  font-weight: 900;
+}
+
+/* Improved weekly volume bar labels */
+.bars {
+  display: flex;
+  gap: 6px;
+  align-items: flex-end;
+  min-height: 110px;
+  padding-bottom: 4px;
+}
+
+.bar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 0;
+}
+
+.blabel {
+  color: var(--color-muted);
+  font: 600 9px/1.1 var(--font-mono);
+  text-align: center;
+  white-space: nowrap;
+  margin-top: 4px;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.bar.peak .blabel {
+  color: var(--color-primary);
+  font-weight: 700;
+}
+
+/* Match Workstr-web bar label style */
+.bar {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 8px;
+  height: 100%;
+}
+
+.bar .blabel {
+  color: var(--color-muted);
+  font: 700 10px/1 ui-monospace, monospace;
+  white-space: nowrap;
+  text-align: center;
+}
+
+/* === Body Tab Premium Polish === */
+
+/* 1. Body cards - hover lift + depth */
+.body-card {
+  transition: box-shadow 0.2s ease, transform 0.1s ease;
+  border-radius: 18px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+
+.body-card:hover {
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+
+.body-card-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: rgba(var(--color-primary-rgb), 0.1);
+  color: var(--color-primary);
+  margin-bottom: 8px;
+}
+
+/* 2. BMI bar - better visual treatment */
+.bmi-bar {
+  position: relative;
+  height: 14px;
+  border-radius: 999px;
+  background: #f1f0eb;
+  overflow: hidden;
+  margin: 12px 0 8px;
+}
+
+.bmi-zone {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 9px;
+  font-weight: 700;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.bmi-zone.under { background: #6b9e5e; }
+.bmi-zone.normal { background: #4a9c7d; }
+.bmi-zone.over { background: #d4a017; }
+.bmi-zone.obese { background: #c75050; }
+
+.bmi-marker {
+  position: absolute;
+  top: -2px;
+  width: 4px;
+  height: 18px;
+  background: #000;
+  border-radius: 999px;
+  box-shadow: 0 0 0 3px #fff;
+  transition: left 0.3s ease;
+}
+
+.bmi-scale {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  color: var(--color-muted);
+  padding: 0 2px;
+}
+
+/* 3. Weight trend chart polish */
+.body-chart svg {
+  width: 100%;
+  height: auto;
+  overflow: visible;
+}
+
+.body-chart polyline {
+  stroke: var(--color-primary);
+  stroke-width: 2.5;
+  stroke-linejoin: round;
+  stroke-linecap: round;
+}
+
+.body-chart .body-chart-area {
+  fill: rgba(var(--color-primary-rgb), 0.12);
+  stroke: none;
+}
+
+.body-chart circle {
+  fill: #fff;
+  stroke: var(--color-primary);
+  stroke-width: 2;
+  transition: r 0.15s ease;
+}
+
+.body-chart circle:hover {
+  r: 5;
+}
+
+/* 4. Goal progress bar - better contrast + animation */
+.body-goal-bar {
+  height: 10px;
+  background: #f1f0eb;
+  border-radius: 999px;
+  overflow: hidden;
+  margin: 10px 0;
+}
+
+.body-goal-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--color-primary), #4a9c7d);
+  border-radius: 999px;
+  transition: width 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+/* 5. Entries list rows - hover + delete visibility */
+.body-entry {
+  transition: background 0.1s ease;
+}
+
+.body-entry:hover {
+  background: rgba(0,0,0,0.03);
+}
+
+.body-entry-delete {
+  opacity: 0.4;
+  transition: opacity 0.15s ease;
+}
+
+.body-entry:hover .body-entry-delete {
+  opacity: 1;
+}
+
+.body-entry-delete:hover {
+  opacity: 1;
+  color: #c75050;
+}
+
+/* Make Training tab icons match Body tab boldness */
+.ss-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: rgba(var(--color-primary-rgb), 0.1);
+  color: var(--color-primary);
+  margin-bottom: 8px;
+}
+
+.summary-stat.streak .ss-icon {
+  background: rgba(247, 192, 74, 0.15);
+  color: #f7c04a;
+}
+
+/* Force bold icon treatment on Training tab stat tiles */
+.summary-stat .ss-icon {
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: 10px !important;
+  display: grid !important;
+  place-items: center !important;
+  background: rgba(var(--color-primary-rgb), 0.12) !important;
+  color: var(--color-primary) !important;
+  margin-bottom: 8px !important;
+}
+
+.summary-stat.streak .ss-icon {
+  background: rgba(247, 192, 74, 0.18) !important;
+  color: #f7c04a !important;
+}
+
+/* Black bold contour on the flame icon for Day Streak */
+.summary-stat.streak .ss-icon svg {
+  stroke: #000 !important;
+  stroke-width: 2.5 !important;
+  stroke-linejoin: round !important;
+  stroke-linecap: round !important;
+}
+
+/* Ultra-specific black bold contour for flame icon */
+.summary-stat.streak .ss-icon svg,
+.summary-stat.streak .ss-icon svg path {
+  stroke: #000 !important;
+  stroke-width: 3 !important;
+  stroke-opacity: 1 !important;
+}
+
+/* Make Training tab icons exactly match Body tab */
+.summary-stat .ss-icon {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  display: grid;
+  place-items: center;
+  background: rgba(var(--color-primary-rgb), 0.1);
+  color: var(--color-primary);
+  margin-bottom: 8px;
+}

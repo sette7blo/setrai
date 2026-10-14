@@ -30,13 +30,21 @@ export function createProgramCard(program: Program, actions: ProgramCardActions,
   map.querySelector('svg')?.setAttribute('aria-hidden', 'true')
   const copy = document.createElement('span')
   copy.className = 'workout-card-info'
+  const titleRow = document.createElement('span')
+  titleRow.className = 'workout-card-title-row'
   const name = document.createElement('strong')
   name.className = 'workout-card-name'
   name.textContent = program.name
+  titleRow.append(name)
+  if (status) {
+    const badge = statusLabel(status)
+    badge.classList.add('workout-card-status')
+    titleRow.append(badge)
+  }
   const byline = document.createElement('span')
   byline.className = 'workout-card-byline'
-  const author = program.sourceLabel || (program.nostrPubkey === 'ef24246321e47dd16cec960d4d374703af78505d0e59c532b054b5060e372bd6' ? 'Workstr' : program.nostrPubkey ? 'Creator' : 'Your program')
-  byline.textContent = [author === 'Creator' ? `Creator ${program.nostrPubkey?.slice(0, 8)}` : author, displayName(program.difficulty)].filter(Boolean).join(' · ')
+  const author = program.sourceLabel || (program.nostrPubkey === 'ef24246321e47dd16cec960d4d374703af78505d0e59c532b054b5060e372bd6' ? 'Workstr' : program.nostrPubkey ? 'Nostr creator' : 'Your program')
+  byline.textContent = [author, displayName(program.difficulty)].filter(Boolean).join(' · ')
   const meta = document.createElement('span')
   meta.className = 'workout-card-meta'
   const formats = programTaxonomy(program).format.filter(value => value !== 'normal').map(value => value === 'emom' ? 'EMOM' : displayName(value))
@@ -44,7 +52,7 @@ export function createProgramCard(program: Program, actions: ProgramCardActions,
   const focus = document.createElement('span')
   focus.className = 'workout-card-focus'
   focus.textContent = programFocusLabel(program)
-  copy.append(name, byline, meta, focus)
+  copy.append(titleRow, byline, meta, focus)
   summary.append(map, copy, iconElement(ChevronDown))
   const body = createProgramBody(program)
   const bar = document.createElement('div')
@@ -52,10 +60,10 @@ export function createProgramCard(program: Program, actions: ProgramCardActions,
   const error = document.createElement('p')
   error.className = 'workout-action-error'
   error.setAttribute('role', 'status')
-  const addAction = (label: string, icon: typeof Play, action: () => void | Promise<void>, primary = false): void => {
+  const addAction = (key: string, label: string, icon: typeof Play, action: () => void | Promise<void>, primary = false): void => {
     const button = document.createElement('button')
     button.type = 'button'
-    button.className = `button${primary ? ' button--primary' : ' button--secondary'}`
+    button.className = `button workout-card-action workout-card-action--${key}${primary ? ' button--primary' : ' button--secondary'}`
     button.setAttribute('aria-label', `${label} ${program.name}`)
     button.append(iconElement(icon), document.createTextNode(label))
     button.addEventListener('click', () => {
@@ -65,19 +73,20 @@ export function createProgramCard(program: Program, actions: ProgramCardActions,
     })
     bar.append(button)
   }
-  if (actions.start) addAction('Start', Play, () => actions.start!(program), true)
-  if (actions.edit) addAction('Edit', Pencil, () => actions.edit!(program))
-  if (actions.duplicate) addAction('Duplicate', Copy, () => actions.duplicate!(program))
-  if (actions.remove) addAction('Delete', Trash2, () => actions.remove!(program))
-  if (actions.review) addAction('Review update', Download, () => actions.review!(program))
+  if (actions.start) addAction('start', 'Start', Play, () => actions.start!(program), true)
+  if (actions.edit) addAction('edit', 'Edit', Pencil, () => actions.edit!(program))
+  if (actions.duplicate) addAction('duplicate', 'Duplicate', Copy, () => actions.duplicate!(program))
+  if (actions.remove) addAction('delete', 'Delete', Trash2, () => actions.remove!(program))
+  if (actions.review) addAction('review', 'Review update', Download, () => actions.review!(program))
   if (actions.import) {
     if (program.localId) {
       const link = document.createElement('a')
       link.className = 'button button--secondary'
+      link.classList.add('workout-card-action', 'workout-card-action--open')
       link.href = `/programs/${program.localId}`
       link.textContent = 'In Library · Open'
       bar.append(link)
-    } else addAction('Import', Download, () => actions.import!(program), true)
+    } else addAction('import', 'Import', Download, () => actions.import!(program), true)
   }
   body.append(bar, error)
   card.append(summary, body)
@@ -85,7 +94,7 @@ export function createProgramCard(program: Program, actions: ProgramCardActions,
   if (status) {
     const wrapper = document.createElement('article')
     wrapper.className = 'program-catalog-card'
-    wrapper.append(card, statusLabel(status))
+    wrapper.append(card)
     return wrapper
   }
   return card

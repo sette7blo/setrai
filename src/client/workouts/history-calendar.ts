@@ -144,7 +144,9 @@ function dayButton(key: string, day: number, inMonth: boolean, today: string, se
     if (data.sessions.length > 1) {
       const count = document.createElement('span')
       count.className = 'history-cal-count'
-      count.textContent = `×${data.sessions.length}`
+      count.setAttribute('aria-hidden', 'true')
+      count.title = `${data.sessions.length} workouts`
+      count.textContent = String(data.sessions.length)
       marks.append(count)
     }
     button.append(marks)
@@ -229,7 +231,7 @@ function summaryCards(days: Map<string, HistoryDay>, month: string, today: strin
   const values = [
     [String([...days.values()].filter(day => day.key.startsWith(month)).reduce((total, day) => total + day.sessions.length, 0)), `workouts in ${monthLabel(month).split(' ')[0]}`],
     [String(weekStreak(days, today)), 'active weeks in a row'],
-    [latest ? String(daysBetween(latest, today)) : '—', latest ? 'days since last workout' : 'no workout logged yet']
+    [latest === today ? 'Today' : latest ? `${daysBetween(latest, today)} days` : '—', latest === today ? 'last workout' : latest ? 'since last workout' : 'no workout logged yet']
   ]
   for (const [value, label] of values) {
     const card = document.createElement('div')

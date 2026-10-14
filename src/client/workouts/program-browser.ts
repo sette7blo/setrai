@@ -65,7 +65,7 @@ export function programToolbar(discover: boolean, filters: ProgramFilters, onSea
   toggle.addEventListener('click', () => onFilters(toggle))
   const action = document.createElement('button')
   action.type = 'button'
-  action.className = `program-toolbar-action${discover ? '' : ' accent'}`
+  action.className = `program-toolbar-action${discover ? '' : ' accent program-toolbar-action--create'}`
   action.setAttribute('aria-label', discover ? 'Refresh relay programs' : 'Create new program')
   action.append(iconElement(discover ? RefreshCw : Plus))
   action.addEventListener('click', onAction)

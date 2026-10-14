@@ -23,7 +23,7 @@ export async function renderSessionPage(root: HTMLElement, id: number): Promise<
       if (entry.exercise) return entry
       try { return { ...entry, exercise: await getExercise(entry.exerciseId) } } catch { return entry }
     }))
-    if (session.finishedAt) { root.replaceChildren(renderSessionSummary(session, summaryProgram(session))); return }
+    if (session.finishedAt) { root.replaceChildren(renderSessionSummary(session, summaryProgram(session), profile.weightUnit)); return }
     const exercises = strengthExercises(session)
     const intervals = compileIntervals(session)
     session.runtime ??= {}
@@ -178,7 +178,7 @@ function runSession(root: HTMLElement, model: LiveModel): void {
         await persist({ emomPositionSec: clock.position, emomActiveSec: clock.active, emomRunningSince: null, restEndsAt: null })
         const finished = await finishSession(model.session.id, model.session.notes)
         cleanup()
-        root.replaceChildren(renderSessionSummary(finished, summaryProgram(model.session)))
+        root.replaceChildren(renderSessionSummary(finished, summaryProgram(model.session), model.unit))
       })
     },
     discard() {

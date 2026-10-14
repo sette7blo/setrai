@@ -58,6 +58,18 @@ function errorView(message: string): HTMLElement {
   return section
 }
 
+function showExerciseToast(message: string) {
+  const toast = document.createElement("div")
+  toast.className = "exercise-toast"
+  toast.textContent = message
+  document.body.appendChild(toast)
+  setTimeout(() => {
+    toast.style.transition = "opacity 0.2s ease"
+    toast.style.opacity = "0"
+    setTimeout(() => toast.remove(), 200)
+  }, 2000)
+}
+
 function metric(icon: SVGElement, value: string, tone = ''): HTMLElement {
   const item = document.createElement('span')
   item.className = tone ? `library-metric ${tone}` : 'library-metric'

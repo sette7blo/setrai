@@ -113,7 +113,7 @@ button.exercise-status:disabled { cursor: wait; opacity: .65; }
 .exercise-card__muscle { display: inline-flex; align-items: center; gap: 5px; color: var(--color-muted); font: 700 10px/1.4 ui-monospace, monospace; }
 .exercise-card__muscle-icon { color: var(--color-primary); font-size: 10px; line-height: 1; text-shadow: none; }
 .exercise-card small { color: var(--color-muted); }
-.favorite-button { position: absolute; top: 0.55rem; right: 0.55rem; display: inline-grid; width: 2.1rem; height: 2.1rem; place-items: center; border: 1px solid rgba(229,239,255,0.42); border-radius: 999px; color: #dfe8f7; background: rgba(4,8,10,0.66); backdrop-filter: blur(12px); cursor: pointer; }
+.favorite-button { position: absolute; top: 0.55rem; right: 0.55rem; display: inline-grid; width: 2.1rem; height: 2.1rem; place-items: center; border: 1px solid rgba(229,239,255,0.42); border-radius: 999px; color: #4d4b47; background: var(--color-surface); border-color: var(--color-border); backdrop-filter: blur(12px); cursor: pointer; }
 .favorite-button svg { width: 1.15rem; height: 1.15rem; }
 .favorite-button--active { color: var(--color-warning); border-color: rgba(248,222,90,0.62); background: rgba(20,18,6,0.7); }
 .favorite-button--active svg { fill: currentColor; }
@@ -123,9 +123,9 @@ button.exercise-status:disabled { cursor: wait; opacity: .65; }
 .exercise-select-button svg { width: 1.05rem; height: 1.05rem; }
 .exercise-select-button--active { color: #031010; border-color: var(--color-primary); background: var(--color-primary); box-shadow: 0 0 16px rgba(var(--color-primary-rgb),0.42); }
 .exercise-card__selection { padding: 8px; background: #fff; }
-.exercise-card .exercise-select-button { position: static; width: 44px; height: 44px; border: 0 !important; border-radius: 50% !important; background: #000 !important; color: #fff !important; box-shadow: none !important; backdrop-filter: none; }
+.exercise-card .exercise-select-button { position: static; width: 44px; height: 44px; border: 0 !important; border-radius: 50% !important; background: var(--color-surface); color: var(--color-text); border: 1px solid var(--color-border); box-shadow: none; backdrop-filter: none; }
 .exercise-card .exercise-select-button svg { visibility: hidden; fill: none; }
-.exercise-card .exercise-select-button--active { background: #000 !important; color: #fff !important; }
+.exercise-card .exercise-select-button--active { background: var(--color-primary); color: #fff; }
 .exercise-card .exercise-select-button--active svg { visibility: visible; stroke: #fff; fill: none; }
 .exercise-card.exercise-card--selected { outline: 2px solid #000; outline-offset: -2px; }
 .exercise-selection-toggle { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; padding: 0 10px; border: 1px solid #000; border-radius: 12px; background: #fff; color: #000; font-family: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
@@ -146,7 +146,7 @@ button.exercise-status:disabled { cursor: wait; opacity: .65; }
 .exercise-bulk-delete { display: inline-flex; align-items: center; gap: 6px; }
 .exercise-bulk-delete svg, .exercise-select-cancel svg { width: 16px; height: 16px; }
 .exercise-action-error { margin: 0 0 var(--space-3); color: #ff9c9c; font-size: 0.82rem; font-weight: 750; }
-.exercise-empty { border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: clamp(1.25rem, 5vw, 2rem); background: rgba(12,23,20,0.72); }
+.exercise-empty { border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: clamp(1.25rem, 5vw, 2rem); background: #fff; border: 1px solid var(--color-border); }
 .exercise-empty h2, .detail-section h2 { margin-top: 0; letter-spacing: -0.04em; }
 .exercise-card--loading, .exercise-detail--loading { min-height: 16rem; animation: exercisePulse 1.4s ease-in-out infinite; }
 .exercise-card--loading .exercise-card__body span, .exercise-card--loading .exercise-card__body small, .exercise-detail--loading span, .exercise-heading--skeleton div { display: block; height: 1rem; border-radius: 999px; background: rgba(255,255,255,0.09); }
@@ -269,7 +269,7 @@ button.exercise-status:disabled { cursor: wait; opacity: .65; }
   .exercise-count { margin-bottom: 10px; font-size: 12px; font-weight: 400; }
   .exercise-grid { gap: 10px; }
   .exercise-card { border-radius: 16px; border-color: var(--color-border); box-shadow: none; }
-  .exercise-card .exercise-image-frame { aspect-ratio: 3 / 2; }
+  .exercise-card .exercise-image-frame { aspect-ratio: 4 / 3; }
   .exercise-card__body { min-height: 64px; padding: 12px; gap: 5px; }
   .exercise-card h2 { font-size: 15px; line-height: 1.25; letter-spacing: -0.025em; padding-right: 25px; }
   .exercise-card__muscle { font-size: 10px; gap: 4px; }
@@ -297,4 +297,123 @@ button.exercise-status:disabled { cursor: wait; opacity: .65; }
 }
 @media (max-width: 374px) {
   .library-summary-metrics .library-metric svg { display: none; }
+}
+
+/* Premium exercise card polish */
+.exercise-card {
+  transition: box-shadow 0.2s ease, transform 0.1s ease;
+  border-radius: 18px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+}
+.exercise-card:hover {
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  transform: translateY(-2px);
+}
+
+.exercise-card__level {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 9px;
+  border-radius: 999px;
+  font: 700 10px/1.2 Inter, ui-sans-serif, sans-serif;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+.exercise-card__level[data-difficulty="beginner"] { background: #e8f0e3; color: #3f5c2e; }
+.exercise-card__level[data-difficulty="intermediate"] { background: #f6e8c9; color: #6f4518; }
+.exercise-card__level[data-difficulty="advanced"] { background: #f0d9d9; color: #5c2e2e; }
+
+.favorite-button {
+  transition: transform 0.15s cubic-bezier(0.23,1,0.32,1), color 0.15s ease;
+}
+.favorite-button:active {
+  transform: scale(0.85);
+}
+.favorite-button--active {
+  color: #d4af37;
+}
+
+/* Toast for exercise actions */
+.exercise-toast {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #000;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font: 600 13px/1 Inter, ui-sans-serif, sans-serif;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  z-index: 1000;
+  animation: exerciseToastPop 0.2s ease forwards;
+}
+@keyframes exerciseToastPop {
+  from { opacity: 0; transform: translateX(-50%) translateY(8px); }
+  to { opacity: 1; transform: translateX(-50%) translateY(0); }
+}
+
+/* Tab underline animation */
+.exercise-tab--active::after {
+  transition: all 0.2s ease;
+}
+
+/* Filter chip micro-interaction */
+.filter-chip {
+  transition: transform 0.1s ease, background 0.15s ease;
+}
+.filter-chip:active {
+  transform: scale(0.96);
+}
+
+/* Search focus ring */
+.exercise-search input:focus {
+  box-shadow: 0 0 0 3px rgba(0,0,0,0.08);
+  border-radius: 12px;
+}
+
+/* Library summary card depth */
+.library-summary-card {
+  transition: box-shadow 0.2s ease, transform 0.1s ease;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+.library-summary-card:hover {
+  box-shadow: 0 6px 16px rgba(0,0,0,0.08);
+  transform: translateY(-1px);
+}
+
+/* Better selection button UX - outline only when selected, smaller */
+.exercise-card .exercise-select-button {
+  width: 32px !important;
+  height: 32px !important;
+  border: 2px solid var(--color-border) !important;
+  background: #fff !important;
+  color: var(--color-text) !important;
+  border-radius: 50% !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.exercise-card .exercise-select-button svg {
+  width: 16px !important;
+  height: 16px !important;
+  visibility: hidden;
+}
+
+.exercise-card .exercise-select-button--active {
+  background: #fff !important;
+  border-color: var(--color-primary) !important;
+  color: var(--color-primary) !important;
+  box-shadow: 0 0 0 3px rgba(var(--color-primary-rgb), 0.15);
+}
+
+.exercise-card .exercise-select-button--active svg {
+  visibility: visible;
+  stroke: var(--color-primary);
+  stroke-width: 3;
+}
+
+/* Stronger favorite active state */
+.exercise-card .favorite-button--active {
+  color: #d4af37 !important;
+  border-color: rgba(212, 175, 55, 0.5) !important;
 }

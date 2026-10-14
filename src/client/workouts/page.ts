@@ -26,7 +26,19 @@ export function sessionLinks(sessions: Session[]): HTMLElement {
   return section
 }
 
-
+export function workoutLoadingSkeleton(view: 'library' | 'history'): HTMLElement {
+  const skeleton = document.createElement('div')
+  skeleton.className = `workout-loading workout-loading--${view}`
+  skeleton.setAttribute('aria-hidden', 'true')
+  const count = view === 'history' ? 3 : 2
+  for (let index = 0; index < count; index += 1) {
+    const card = document.createElement('div')
+    card.className = 'workout-loading-card'
+    card.innerHTML = '<span></span><i></i><b></b>'
+    skeleton.append(card)
+  }
+  return skeleton
+}
 
 function renderHistoryView(page: HTMLElement, sessions: Session[], exercises: Exercise[], unit: WeightUnit = 'kg'): void {
   let selectedDate: string | null = null
@@ -85,25 +97,30 @@ export async function renderWorkoutsPage(root: HTMLElement, enabled = false, mod
   state.className = 'workout-browser-status'
   state.setAttribute('role', 'status')
   state.textContent = recovery ? 'Loading muscle recovery...' : history ? 'Loading workout history...' : 'Loading your library...'
+  const skeleton = recovery ? null : workoutLoadingSkeleton(history ? 'history' : 'library')
   page.append(heading, state)
+  if (skeleton) page.append(skeleton)
   root.replaceChildren(page)
   try {
     if (recovery) {
-      const overview = await getRecovery()
+      const [overview, profile] = await Promise.all([getRecovery(), getProfile().catch(() => ({ equipment: [] as string[] }))])
       state.textContent = ''
-      page.append(recoveryContent(overview), createRecoveryWorkoutPanel())
+      page.append(recoveryContent(overview), createRecoveryWorkoutPanel(profile.equipment))
       return
     }
     if (history) {
       const [sessionList, exercises, profile] = await Promise.all([listSessions(), listExercises(), getProfile().catch(() => ({ weightUnit: 'kg' as const }))])
       const sessions = await Promise.all(sessionList.map(async session => session.finishedAt ? getSession(session.id).catch(() => session) : session))
+      skeleton?.remove()
       state.textContent = ''
       renderHistoryView(page, sessions, exercises, profile.weightUnit)
       return
     }
+    skeleton?.remove()
     state.textContent = ''
     await renderProgramLibrary(page, enabled, sessionLinks)
   } catch (error) {
+    skeleton?.remove()
     state.textContent = readableApiError(error)
     const retry = document.createElement('button')
     retry.className = 'button button--primary'

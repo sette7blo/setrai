@@ -1,6 +1,7 @@
 import { createRecoveryWorkoutPanel } from '../quick-workout/recovery-panel.js'
+import { getProfile } from '../profile/api.js'
 import { readableApiError } from '../shared/api/errors.js'
-import { Activity, BatteryCharging, CheckCircle2, Clock, HeartPulse, Hourglass, Info, Leaf } from 'lucide'
+import { Activity, BatteryCharging, CheckCircle2, HeartPulse, Hourglass, Info, Leaf } from 'lucide'
 import { iconElement } from '../app/navigation.js'
 import { EXERCISE_BODY_SVG } from '../exercises/body-map.js'
 import { displayName } from '../exercises/format.js'
@@ -11,6 +12,7 @@ import type { RecoveryMuscle, RecoveryOverview, RecoveryStatus } from './types.j
 
 const CANONICAL_MUSCLES = ['Back', 'Biceps', 'Calves', 'Chest', 'Core', 'Glutes', 'Hamstrings', 'Quadriceps', 'Shoulders', 'Triceps']
 const STATUS_ORDER: Record<RecoveryStatus, number> = { recovering: 0, moderate: 1, ready: 2 }
+type RecoveryCategory = RecoveryStatus | 'fresh'
 
 function statusClass(status?: RecoveryStatus): string {
   if (!status) return 'fresh'
@@ -25,6 +27,13 @@ function recoveryByRegion(recovery: RecoveryOverview): Map<string, RecoveryMuscl
     if (!current || item.recovery < current.recovery) map.set(region, item)
   }
   return map
+}
+
+export function recoveryPartition(recovery: RecoveryOverview): { byRegion: Map<string, RecoveryMuscle>, counts: Record<RecoveryCategory, number> } {
+  const byRegion = recoveryByRegion(recovery)
+  const counts: Record<RecoveryCategory, number> = { fresh: 0, ready: 0, moderate: 0, recovering: 0 }
+  for (const muscle of CANONICAL_MUSCLES) counts[byRegion.get(muscle)?.status ?? 'fresh'] += 1
+  return { byRegion, counts }
 }
 
 function averageReadiness(recovery: RecoveryOverview): number {
@@ -42,13 +51,13 @@ function recoveryRing(percent: number): HTMLElement {
 }
 
 export function recoveryBodyMapMarkup(recovery: RecoveryOverview): string {
-  const byRegion = recoveryByRegion(recovery)
+  const { byRegion } = recoveryPartition(recovery)
   return EXERCISE_BODY_SVG.replace(/<polygon([^>]*)>/g, (_match, attributes: string) => {
     const muscle = attributes.match(/data-muscle="([^"]+)"/)?.[1]
     if (!muscle) return `<polygon${attributes.replace(/\s*\/$/, '')} class="recovery-map__decor"/>`
     const item = byRegion.get(muscle)
     return `<polygon${attributes.replace(/\s*\/$/, '')} class="recovery-map__${statusClass(item?.status)}" data-status="${statusClass(item?.status)}"/>`
-  }).replace('<svg ', '<svg id="recovery-body" role="img" aria-label="Front and back muscle recovery map" ')
+  }).replace('<svg ', '<svg id="recovery-body" aria-hidden="true" ')
 }
 
 export function recoveryHero(recovery: RecoveryOverview): HTMLElement {
@@ -65,18 +74,15 @@ export function recoveryHero(recovery: RecoveryOverview): HTMLElement {
   const metrics = document.createElement('div')
   metrics.className = 'program-browse-metrics recovery-hero-metrics'
   const readiness = averageReadiness(recovery)
-  const byRegion = recoveryByRegion(recovery)
-  const ready = CANONICAL_MUSCLES.filter(muscle => !byRegion.has(muscle) || byRegion.get(muscle)?.status === 'ready').length
-  const moderate = [...byRegion.values()].filter((item) => item.status === 'moderate').length
-  const recovering = [...byRegion.values()].filter((item) => item.status === 'recovering').length
-  for (const [iconNode, text] of [[iconElement(Activity), `${readiness}% ready`], [iconElement(CheckCircle2), `${ready} ready`], [iconElement(Hourglass), `${recovering} recovering`]] as const) {
+  const { counts } = recoveryPartition(recovery)
+  for (const [iconNode, text] of [[iconElement(Activity), `${readiness}% overall recovery`], [iconElement(CheckCircle2), `${counts.ready} ready`], [iconElement(Leaf), `${counts.fresh} fresh`], [iconElement(Hourglass), `${counts.recovering} recovering`]] as const) {
     const pill = document.createElement('span')
     pill.append(iconNode, document.createTextNode(text))
     metrics.append(pill)
   }
-  if (moderate > 0) {
+  if (counts.moderate > 0) {
     const pill = document.createElement('span')
-    pill.append(iconElement(BatteryCharging), document.createTextNode(`${moderate} moderate`))
+    pill.append(iconElement(BatteryCharging), document.createTextNode(`${counts.moderate} moderate`))
     metrics.append(pill)
   }
   copy.append(title, metrics)
@@ -107,6 +113,7 @@ function recoveryRows(muscles: RecoveryMuscle[]): HTMLElement {
   for (const item of muscles) {
     const row = document.createElement('article')
     row.className = `recovery-row recovery-row--${statusClass(item.status)}`
+    row.dataset.muscle = item.muscle
     const status = document.createElement('span')
     status.className = 'recovery-row-status'
     status.append(iconElement(item.status === 'ready' ? CheckCircle2 : item.status === 'moderate' ? BatteryCharging : Hourglass))
@@ -126,34 +133,55 @@ function recoveryRows(muscles: RecoveryMuscle[]): HTMLElement {
 }
 
 function freshSummary(recovery: RecoveryOverview): HTMLElement | null {
-  const byRegion = recoveryByRegion(recovery)
+  const { byRegion } = recoveryPartition(recovery)
   const fresh = CANONICAL_MUSCLES.filter((muscle) => !byRegion.has(muscle))
   if (!fresh.length) return null
   const summary = document.createElement('div')
   summary.className = 'recovery-fresh-summary'
-  summary.innerHTML = `<strong>${iconElement(Leaf).outerHTML}<span>Fresh</span></strong><span class="recovery-fresh-chips">${fresh.map((name) => `<span>${name}</span>`).join('')}</span><small>Not logged in the lookback window, so available now.</small>`
+  summary.innerHTML = `<strong>${iconElement(Leaf).outerHTML}<span>Fresh</span></strong><span class="recovery-fresh-chips">${fresh.map((name) => `<span data-muscle="${name}">${name}</span>`).join('')}</span><small>Not logged in the lookback window, so available now.</small>`
   return summary
+}
+
+export function recoveryMapControls(recovery: RecoveryOverview, select: (muscle: string) => void): HTMLElement {
+  const { byRegion } = recoveryPartition(recovery)
+  const controls = document.createElement('div')
+  controls.className = 'recovery-map-controls'
+  controls.setAttribute('role', 'group')
+  controls.setAttribute('aria-label', 'Select a muscle for recovery details')
+  for (const muscle of CANONICAL_MUSCLES) {
+    const button = document.createElement('button')
+    button.type = 'button'
+    button.className = `recovery-map-control recovery-map-control--${statusClass(byRegion.get(muscle)?.status)}`
+    button.dataset.muscle = muscle
+    button.textContent = muscle
+    button.setAttribute('aria-pressed', 'false')
+    const activate = (): void => select(muscle)
+    button.addEventListener('click', activate)
+    button.addEventListener('keydown', event => { if (event.key === 'Enter' || event.key === ' ') { event.preventDefault(); activate() } })
+    controls.append(button)
+  }
+  return controls
 }
 
 export function recoveryContent(recovery: RecoveryOverview): HTMLElement {
   const panel = document.createElement('section')
   panel.className = 'recovery-panel'
   const hero = recoveryHero(recovery)
-  const grouped = [...recoveryByRegion(recovery)].map(([region, item]) => ({ ...item, muscle: region.toLowerCase() }))
+  const partition = recoveryPartition(recovery)
+  const grouped = [...partition.byRegion].map(([region, item]) => ({ ...item, muscle: region.toLowerCase() }))
   const sorted = sortedRecovery(grouped).sort((a, b) => STATUS_ORDER[a.status] - STATUS_ORDER[b.status] || a.recovery - b.recovery)
-  const recovering = grouped.filter((item) => item.status !== 'ready')
   const stats = document.createElement('div')
   stats.className = 'recovery-stats'
-  const readyCount = CANONICAL_MUSCLES.length - recovering.length
   stats.append(
-    statTile(iconElement(CheckCircle2), `${readyCount} of ${CANONICAL_MUSCLES.length}`, 'muscles ready', 'ready'),
-    statTile(iconElement(Hourglass), String(recovering.length), recovering.length === 1 ? 'muscle recovering' : 'muscles recovering', recovering.length ? 'recovering' : ''),
-    statTile(iconElement(Clock), recovery.lookbackDays ? `${recovery.lookbackDays}d` : 'Live', 'lookback window')
+    statTile(iconElement(CheckCircle2), String(partition.counts.ready), 'muscles ready', 'ready'),
+    statTile(iconElement(Leaf), String(partition.counts.fresh), 'muscles fresh'),
+    statTile(iconElement(BatteryCharging), String(partition.counts.moderate), 'muscles moderate'),
+    statTile(iconElement(Hourglass), String(partition.counts.recovering), 'muscles recovering', partition.counts.recovering ? 'recovering' : '')
   )
   const status = document.createElement('p')
   status.className = 'recovery-status'
   const tired = sorted.filter((item) => item.status !== 'ready').slice(0, 3).map((item) => displayName(item.muscle))
-  status.append(iconElement(Info), document.createTextNode(tired.length ? `${tired.join(', ')} still need time.` : 'All tracked muscles are ready.'))
+  status.append(iconElement(Info), document.createTextNode(tired.length ? `Muscles needing the most time: ${tired.join(', ')}.` : 'All tracked muscles are ready.'))
   const map = document.createElement('div')
   map.className = 'recovery-map'
   map.innerHTML = `${recoveryBodyMapMarkup(recovery)}<div class="recovery-legend"><span class="rl ready">Ready</span><span class="rl moderate">Moderate</span><span class="rl recovering">Recovering</span><span class="rl fresh">Fresh</span></div>`
@@ -162,9 +190,27 @@ export function recoveryContent(recovery: RecoveryOverview): HTMLElement {
   if (sorted.length) list.append(recoveryRows(sorted))
   const fresh = freshSummary(recovery)
   if (fresh) list.append(fresh)
+  const detail = document.createElement('p')
+  detail.className = 'recovery-selection-detail'
+  detail.setAttribute('aria-live', 'polite')
+  detail.setAttribute('aria-label', 'Selected muscle recovery details')
+  detail.textContent = 'Select a muscle to view its recovery details.'
   const layout = document.createElement('div')
   layout.className = 'recovery-layout'
+  const select = (muscle: string): void => {
+    const item = partition.byRegion.get(muscle)
+    map.querySelectorAll<HTMLElement>('[data-muscle]').forEach(shape => shape.classList.toggle('is-selected', shape.dataset.muscle === muscle))
+    map.querySelectorAll<HTMLButtonElement>('.recovery-map-control').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.muscle === muscle)))
+    list.querySelectorAll<HTMLElement>('[data-muscle]').forEach(row => row.classList.toggle('is-selected', row.dataset.muscle === muscle.toLowerCase() || row.dataset.muscle === muscle))
+    detail.textContent = item ? `${muscle}: ${recoveryPercent(item.recovery)} ${statusLabel(item.status)}. ${lastTrainedText(item.lastTrainedAt)}.` : `${muscle}: Fresh. Not logged in the lookback window, so available now.`
+  }
+  map.append(recoveryMapControls(recovery, select))
+  list.append(detail)
   layout.append(map, list)
+  map.querySelectorAll<HTMLElement>('[data-muscle]').forEach(region => {
+    const muscle = region.getAttribute('data-muscle') ?? ''
+    region.addEventListener('click', () => select(muscle))
+  })
   panel.append(hero, stats, status, layout)
   return panel
 }
@@ -186,10 +232,10 @@ function errorView(message: string): HTMLElement {
 export async function renderRecoveryPage(root: HTMLElement): Promise<void> {
   root.replaceChildren(loadingView())
   try {
-    const recovery = await getRecovery()
+    const [recovery, profile] = await Promise.all([getRecovery(), getProfile().catch(() => ({ equipment: [] as string[] }))])
     const page = document.createElement('div')
     page.className = 'recovery-page'
-    page.append(recoveryContent(recovery), createRecoveryWorkoutPanel())
+    page.append(recoveryContent(recovery), createRecoveryWorkoutPanel(profile.equipment))
     root.replaceChildren(page)
   } catch (error) {
     const view = errorView(readableApiError(error))
