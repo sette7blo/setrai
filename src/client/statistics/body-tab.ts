@@ -1,6 +1,7 @@
 import { Activity, Check, Gauge, History, LineChart, Minus, Plus, Ruler, Target, Trash2, TrendingDown, TrendingUp, Weight } from 'lucide'
 
 import { iconElement } from '../app/navigation.js'
+import { pageSummary } from '../shared/page-chrome.js'
 import { formatDate, todayDate } from '../shared/formatting/date-format.js'
 import type { Profile, WeightUnit } from '../profile/types.js'
 import { updateProfile } from '../profile/api.js'
@@ -37,15 +38,14 @@ function sectionHead(icon: Icon, title: string, note = ''): HTMLElement {
 }
 
 function statsHero(unit: WeightUnit, entries: BodyWeightEntry[]): HTMLElement {
-  const hero = document.createElement('section')
-  hero.className = 'stats-hero-card'
   const latest = newest(entries)[0]
   const line = latest ? `Last logged ${shortDate(latest.date)}. Weights in ${unit}.` : `Track weight over time. Weights in ${unit}.`
-  const copy = document.createElement('div')
-  copy.className = 'stats-hero-copy'
-  copy.innerHTML = `<span>Body weight</span><p>${line}</p>`
-  hero.append(iconWrap('stats-hero-icon', Weight), copy)
-  return hero
+  return pageSummary({
+    icon: Weight,
+    title: 'Body weight',
+    description: line,
+    className: 'stats-hero-card page-summary',
+  })
 }
 
 function statTile(icon: Icon, value: string, label: string, tone = ''): HTMLElement {
@@ -221,12 +221,12 @@ function bodyForms(profile: Profile, entries: BodyWeightEntry[], onRefresh: () =
     const data = new FormData(form)
     void saveBodyWeight({ date: String(data.get('date')), weightKg: inputWeightToKg(Number(data.get('weight')), unit), notes: '' }).then(onRefresh)
   })
-  panel.append(form, sectionHead(Ruler, 'Profile', 'for BMI & goal'))
+  panel.append(form, sectionHead(Ruler, 'Body metrics', 'for BMI & goal'))
   const profileForm = document.createElement('form')
   profileForm.id = 'body-profile-form'
   profileForm.className = 'form-grid'
   profileForm.innerHTML = `<label>Height (cm)<input type="number" name="heightCm" step="1" min="100" max="250" inputmode="numeric" placeholder="e.g. 175" value="${profile.heightCm ?? ''}" /></label><label><span>Target weight (<span class="body-unit-lbl">${unit}</span>)</span><input type="number" name="targetWeight" step="0.1" min="0" inputmode="decimal" placeholder="e.g. 165" value="${profile.targetWeightKg ? displayWeightFromKg(profile.targetWeightKg, unit) : ''}" /></label><div class="form-actions span-2"><button class="button stats-action" type="submit"></button></div>`
-  profileForm.querySelector('button')?.append(iconElement(Check), Object.assign(document.createElement('span'), { textContent: 'Save profile' }))
+  profileForm.querySelector('button')?.append(iconElement(Check), Object.assign(document.createElement('span'), { textContent: 'Save metrics' }))
   profileForm.addEventListener('submit', (event) => {
     event.preventDefault()
     const data = new FormData(profileForm)
@@ -244,7 +244,6 @@ export function bodyView(context: BodyTabContext): HTMLElement {
   const section = document.createElement('section')
   section.className = 'stats-body-view'
   section.dataset.statsSection = 'body'
-  section.hidden = true
   section.append(statsHero(unit, entries), bodyCards(entries, unit))
   const panel = document.createElement('section')
   panel.className = 'panel stats-panel body-panel'

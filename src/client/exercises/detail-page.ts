@@ -1,40 +1,30 @@
+import { pageEmpty, pageError, pageLoading } from '../shared/page-states.js'
 import { ApiError, readableApiError } from '../shared/api/errors.js'
 import { getExercise, setExerciseFavourite } from './api.js'
 import { createExerciseDetailView } from './detail-view.js'
 
 function loadingView(): HTMLElement {
-  const section = document.createElement('section')
-  section.className = 'exercise-detail exercise-detail--loading'
-  section.setAttribute('aria-busy', 'true')
-  section.innerHTML = `
-    <div class="exercise-detail__image"></div>
-    <div class="exercise-detail__content"><span></span><span></span><span></span></div>
-  `
-  return section
+  return pageLoading({ className: 'exercise-detail exercise-detail--loading', blocks: 2, label: 'Loading exercise' })
 }
 
 function notFoundView(): HTMLElement {
-  const section = document.createElement('section')
-  section.className = 'exercise-empty'
-  section.innerHTML = `
-    <p class="eyebrow">Exercise detail</p>
-    <h1>Exercise not found</h1>
-    <p>This exercise may have been removed or the link is incorrect.</p>
-    <a class="button button--primary" href="/exercises">Back to Exercise library</a>
-  `
-  return section
+  return pageEmpty({
+    eyebrow: 'Exercise',
+    title: 'Exercise not found',
+    description: 'This exercise may have been removed or the link is incorrect.',
+    action: { label: 'Back to Exercises', href: '/exercises' },
+    className: 'exercise-empty',
+  })
 }
 
 function errorView(message: string): HTMLElement {
-  const section = document.createElement('section')
-  section.className = 'exercise-empty'
-  section.innerHTML = `
-    <p class="eyebrow">Exercise detail</p>
-    <h1>Unable to load exercise</h1>
-    <p>${message}</p>
-    <a class="button button--secondary" href="/exercises">Back to Exercise library</a>
-  `
-  return section
+  return pageError({
+    eyebrow: 'Exercise',
+    title: 'Unable to load exercise',
+    message,
+    className: 'exercise-empty',
+    action: { label: 'Back to Exercises', href: '/exercises', primary: false },
+  })
 }
 
 export async function renderExerciseDetail(root: HTMLElement, id: number): Promise<void> {

@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 
 import { normalizeRecovery, recoveryPercent, sortedRecovery, statusLabel, lastTrainedText } from '../../src/client/recovery/format.js'
-import { recoveryBodyMapMarkup, recoveryContent, recoveryHero, recoveryMapControls, recoveryPartition } from '../../src/client/recovery/page.js'
+import { recoveryBodyMapMarkup, recoveryContent, recoveryHero, recoveryPartition } from '../../src/client/recovery/page.js'
 
 test('normalizes Recovery API payload', () => {
   const recovery = normalizeRecovery({ generatedAt: 'now', lookbackDays: 7, muscles: [{ muscle: 'chest', recovery: 0.82, status: 'ready', lastTrainedAt: '2026-10-03T00:00:00.000Z' }] })
@@ -84,11 +84,11 @@ test('Recovery hero is compact and uses status metrics instead of explanatory co
     assert.match(hero.className, /program-browse-hero/)
     assert.match(hero.className, /recovery-hero--compact/)
     assert.match(rendered, /Muscle readiness/)
-    assert.match(rendered, /85% overall recovery/)
+    assert.match(rendered, /85% ready/)
     assert.match(rendered, /1 ready/)
     assert.match(rendered, /7 fresh/)
-    assert.match(rendered, /1 moderate/)
     assert.match(rendered, /1 recovering/)
+    assert.match(rendered, /1 moderate/)
     assert.doesNotMatch(rendered, /Training-readiness estimates/)
   } finally {
     globalThis.document = originalDocument
@@ -107,7 +107,7 @@ test('Recovery map uses the least ready muscle when aliases share a region, rega
   }
 })
 
-test('Recovery content uses one canonical partition and map controls support click, Enter, and Space', () => {
+test('Recovery content keeps one partition and omits map label chips', () => {
   const originalDocument = globalThis.document
   try {
     globalThis.document = {
@@ -123,16 +123,9 @@ test('Recovery content uses one canonical partition and map controls support cli
     assert.deepEqual(recoveryPartition(recovery).counts, { fresh: 7, ready: 1, moderate: 1, recovering: 1 })
     const content = recoveryContent(recovery) as unknown as TestElement
     const rendered = text(content)
-    assert.match(rendered, /1 muscles ready/)
-    assert.match(rendered, /7 muscles fresh/)
-    assert.match(rendered, /1 muscles moderate/)
-    assert.match(rendered, /1 muscles recovering/)
-    const selected: string[] = []
-    const controls = recoveryMapControls(recovery, muscle => selected.push(muscle)) as unknown as TestElement
-    const chest = controls.children.find(button => button.dataset.muscle === 'Chest')!
-    chest.dispatch('click')
-    chest.dispatch('keydown', { key: 'Enter', preventDefault() {} } as KeyboardEvent)
-    chest.dispatch('keydown', { key: ' ', preventDefault() {} } as KeyboardEvent)
-    assert.deepEqual(selected, ['Chest', 'Chest', 'Chest'])
+    assert.match(rendered, /Muscles needing the most time/)
+    assert.doesNotMatch(rendered, /Tap a muscle row|lookback window|available now/)
+    assert.doesNotMatch(rendered, /recovery-map-control/)
+    assert.doesNotMatch(content.innerHTML + rendered, /Not logged in the lookback window/)
   } finally { globalThis.document = originalDocument }
 })

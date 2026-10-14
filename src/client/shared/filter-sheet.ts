@@ -1,3 +1,5 @@
+import { X } from 'lucide'
+import { iconElement } from '../app/navigation.js'
 export interface FilterOption { value: string; label: string }
 export interface FilterGroup {
   key: string
@@ -26,7 +28,7 @@ export function createFilterSheet(options: {
   close.type = 'button'
   close.className = 'filter-sheet__close'
   close.setAttribute('aria-label', 'Close filters')
-  close.textContent = '×'
+  close.append(iconElement(X))
   close.addEventListener('click', () => dialog.close())
   heading.append(title, close)
   const content = document.createElement('div')

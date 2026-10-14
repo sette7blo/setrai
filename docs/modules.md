@@ -79,7 +79,6 @@ src/client/statistics/
 src/client/recovery/
 src/client/profile/
 src/client/quick-workout/
-src/client/discover/
 src/client/shared/
 ```
 
@@ -1216,18 +1215,18 @@ src/client/workouts/
 - rest overlay presentation and keyboard controls in `live-rest-view.ts` and
   shared countdown/rest styling in `live-rest.css`;
 - set logging UI;
-- rest timer;
+- live rest overlay (not a separate rest-timer module);
 - workout completion;
 - Recovery composition through the public Quick Workout panel;
 
 ## Typical files
 
 ```text
-program-list.ts
-program-editor.ts
-runner.ts
-rest-timer.ts
-quick-workout.ts
+program-library.ts
+program-builder.ts
+session-page.ts
+live-rest-view.ts
+live-session.css
 api.ts
 types.ts
 ```
@@ -1385,36 +1384,30 @@ client shared API
 
 ---
 
-# 26. Discover client feature
+# 26. Exercise catalog client (Nostr)
 
 ## Location
 
 ```text
-src/client/discover/
+src/client/exercises/catalog-api.ts
 ```
 
 ## Owns
 
-- discovery UI;
-- creator browsing;
-- remote program browsing;
-- official Workstr catalog API adapter in `api.ts`, consumed by the app shell
+- official Workstr/Nostr exercise catalog API adapter consumed by the app shell
   to inject the optional `ExerciseCatalog` contract into Exercises;
-- catalog loading and local import API contracts in `api.ts`;
-- import actions;
-- publish status presentation;
-- creator tip entry points.
+- catalog loading and local import API contracts;
+- no standalone Discover product UI (removed; `/exercises/discover` redirects to Exercises).
 
 ## Availability
 
-This feature may be hidden or inactive when Nostr is disabled.
+Catalog import may be inactive when Nostr is disabled.
 
 ## May depend on
 
 ```text
 safe Nostr-backed server APIs
-Exercise client public types, image, tabs, filters, formatting and detail components
-Monero wallet public client API for tipping
+Exercise client public types and formatting
 client shared
 ```
 

@@ -1,7 +1,9 @@
-import { ChevronRight, Dumbbell, RefreshCw, Search, SlidersHorizontal, Star, Target } from 'lucide'
+import { Dumbbell, RefreshCw, Search, SlidersHorizontal, Star, Target } from 'lucide'
 import { selectionToggle, selectionToolbar } from './selection.js'
 import { readableApiError } from '../shared/api/errors.js'
 import { iconElement } from '../app/navigation.js'
+import { pageHeading, pageSummary } from '../shared/page-chrome.js'
+import { bindPageRetry, pageEmpty, pageError } from '../shared/page-states.js'
 import { catalogDetail, catalogEntry, exerciseStatus, mergeExerciseCatalog, type CatalogEntry, type ExerciseCatalog } from './catalog.js'
 import { exerciseFilterChips, exerciseFilterSheet } from './filter-sheet.js'
 import { createExerciseCard } from './card.js'
@@ -52,10 +54,7 @@ function loadingView(): HTMLElement {
 }
 
 function errorView(message: string): HTMLElement {
-  const section = document.createElement('section')
-  section.className = 'exercise-page exercise-empty'
-  section.innerHTML = `<p class="eyebrow">Exercise library</p><h1>Exercises unavailable</h1><p>${message}</p><button class="button button--primary" type="button" data-retry>Try again</button>`
-  return section
+  return pageError({ eyebrow: 'Exercises', title: 'Exercises unavailable', message, className: 'exercise-page exercise-empty' })
 }
 
 function showExerciseToast(message: string) {
@@ -78,45 +77,30 @@ function metric(icon: SVGElement, value: string, tone = ''): HTMLElement {
 }
 
 function header(state: PageState): HTMLElement {
-  const section = document.createElement('section')
-  section.className = 'exercise-heading'
   const favoriteCount = state.exercises.filter((exercise) => exercise.favourite).length
   const muscleCount = uniqueMuscles(state.exercises).length
-  section.innerHTML = `
-    <div class="exercise-title-block">
-      <h1>Exercises</h1>
-    </div>
-  `
-  const library = document.createElement('a')
-  library.className = 'library-summary-card'
-  library.href = '#exercise-results'
-  library.append(
-    Object.assign(document.createElement('span'), { className: 'library-summary-icon' }),
-    Object.assign(document.createElement('div'), { className: 'library-summary-copy' }),
-    iconElement(ChevronRight)
-  )
-  const icon = library.querySelector('.library-summary-icon') as HTMLElement
-  icon.append(iconElement(Dumbbell))
-  const copy = library.querySelector('.library-summary-copy') as HTMLElement
-  const title = document.createElement('strong')
-  title.textContent = 'Exercise library'
-  const row = document.createElement('span')
-  row.className = 'library-summary-metrics'
-  row.append(
-    metric(iconElement(Dumbbell), pluralizeExercise(state.exercises.length)),
-    metric(iconElement(Star), `${favoriteCount} fav`, 'gold'),
-    metric(iconElement(Target), `${muscleCount} muscles`, 'green')
-  )
-  copy.append(title, row)
-  section.append(library)
+  const section = pageHeading({ title: 'Exercises', className: 'exercise-heading' })
+  section.append(pageSummary({
+    icon: Dumbbell,
+    title: 'Exercises',
+    href: '#exercise-results',
+    ariaLabel: 'Jump to exercise results',
+    className: 'library-summary-card',
+    trailing: true,
+    metrics: [
+      { icon: Dumbbell, text: pluralizeExercise(state.exercises.length) },
+      { icon: Star, text: `${favoriteCount} fav`, tone: 'gold' },
+      { icon: Target, text: `${muscleCount} muscles`, tone: 'green' },
+    ],
+  }))
   return section
 }
 
 function controls(state: PageState, onFilter: (filters: ExerciseFilters) => void, onRefresh: () => void, onToggle: (opener: HTMLButtonElement) => void, onSelectMode: () => void): HTMLElement {
   const wrap = document.createElement('section')
-  wrap.className = 'exercise-controls'
+  wrap.className = 'page-toolbar exercise-controls'
   const searchLabel = document.createElement('label')
-  searchLabel.className = 'exercise-search'
+  searchLabel.className = 'page-toolbar-search exercise-search'
   searchLabel.append(iconElement(Search))
   const search = document.createElement('input')
   search.type = 'search'
@@ -129,7 +113,9 @@ function controls(state: PageState, onFilter: (filters: ExerciseFilters) => void
 
   const favourites = document.createElement('button')
   favourites.type = 'button'
-  favourites.className = state.filters.favouritesOnly ? 'filter-icon filter-icon--active' : 'filter-icon'
+  favourites.className = state.filters.favouritesOnly
+    ? 'page-toolbar-action filter-icon filter-icon--active page-toolbar-action--active'
+    : 'page-toolbar-action filter-icon'
   favourites.setAttribute('aria-label', 'Show favorites')
   favourites.setAttribute('aria-pressed', String(state.filters.favouritesOnly))
   favourites.append(iconElement(Star))
@@ -137,7 +123,9 @@ function controls(state: PageState, onFilter: (filters: ExerciseFilters) => void
 
   const filterToggle = document.createElement('button')
   filterToggle.type = 'button'
-  filterToggle.className = activeFilterCount(state.filters) > 0 ? 'filter-icon filter-icon--active' : 'filter-icon'
+  filterToggle.className = activeFilterCount(state.filters) > 0
+    ? 'page-toolbar-action filter-icon filter-icon--active page-toolbar-action--active'
+    : 'page-toolbar-action filter-icon'
   filterToggle.setAttribute('aria-label', 'Filters')
   filterToggle.setAttribute('aria-haspopup', 'dialog')
   filterToggle.addEventListener('click', () => onToggle(filterToggle))
@@ -149,7 +137,7 @@ function controls(state: PageState, onFilter: (filters: ExerciseFilters) => void
     wrap.classList.add('exercise-controls--catalog')
     const refresh = document.createElement('button')
     refresh.type = 'button'
-    refresh.className = 'filter-icon'
+    refresh.className = 'page-toolbar-action filter-icon'
     refresh.setAttribute('aria-label', 'Refresh exercises')
     refresh.title = 'Refresh web exercises'
     refresh.disabled = state.refreshing || state.busy
@@ -178,9 +166,12 @@ function resultsView(state: PageState, onFavourite: (exercise: Exercise) => void
   }
   if (state.selecting) wrapper.append(selectionToolbar(state, filtered, onSelectAll, onDelete, onCancelSelect, onImport))
   if (filtered.length === 0) {
-    const empty = document.createElement('div')
-    empty.className = 'exercise-empty'
-    empty.innerHTML = '<h2>No exercises match these filters.</h2><p>Clear search and filters to browse all exercises.</p>'
+    const empty = pageEmpty({
+      title: 'No exercises match these filters.',
+      description: 'Clear search and filters to browse all exercises.',
+      compact: true,
+      className: 'exercise-empty',
+    })
     const reset = document.createElement('button')
     reset.type = 'button'
     reset.className = 'button button--secondary'
@@ -360,7 +351,7 @@ export async function renderExerciseLibrary(root: HTMLElement, catalog?: Exercis
     await refreshCatalog(root, state)
   } catch (error) {
     const view = errorView(readableApiError(error))
-    view.querySelector('[data-retry]')?.addEventListener('click', () => { void renderExerciseLibrary(root, catalog) })
+    bindPageRetry(view, () => { void renderExerciseLibrary(root, catalog) })
     root.replaceChildren(view)
   }
 }

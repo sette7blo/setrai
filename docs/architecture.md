@@ -185,7 +185,6 @@ setrai/
 │       ├── recovery/
 │       ├── profile/
 │       ├── quick-workout/
-│       ├── discover/
 │       └── shared/
 │
 ├── scripts/
@@ -413,7 +412,6 @@ src/client/
 ├── recovery/
 ├── profile/
 ├── quick-workout/
-├── discover/
 └── shared/
 ```
 

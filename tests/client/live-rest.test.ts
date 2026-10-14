@@ -12,6 +12,7 @@ class Element {
   attributes: Record<string, string> = {}
   listeners: Record<string, ((event: KeyboardEvent) => void)[]> = {}
   append(...children: Element[]): void { this.children.push(...children) }
+  prepend(...children: Element[]): void { this.children.unshift(...children) }
   appendChild(child: Element): Element { this.children.push(child); return child }
   setAttribute(name: string, value: string): void { this.attributes[name] = value }
   querySelector(): null { return null }

@@ -1,6 +1,8 @@
-import { Activity, ChevronDown, Dumbbell, UserRound } from 'lucide'
+import { Activity, ChevronDown, Dumbbell, Settings, UserRound } from 'lucide'
 
 import { iconElement } from '../app/navigation.js'
+import { pageHeading, pageSummary } from '../shared/page-chrome.js'
+import { bindPageRetry, pageError, pageLoading } from '../shared/page-states.js'
 import { readableApiError } from '../shared/api/errors.js'
 import { getProfile, updateProfile } from './api.js'
 import { EQUIPMENT_OPTIONS, equipmentLabel, goalLabel } from './equipment.js'
@@ -13,17 +15,11 @@ interface ProfileState {
 }
 
 function loadingView(): HTMLElement {
-  const section = document.createElement('section')
-  section.className = 'profile-page profile-page--loading'
-  section.innerHTML = '<div></div><div></div><div></div>'
-  return section
+  return pageLoading({ className: 'profile-page profile-page--loading', label: 'Loading settings' })
 }
 
 function errorView(message: string): HTMLElement {
-  const section = document.createElement('section')
-  section.className = 'profile-empty'
-  section.innerHTML = `<p class="eyebrow">Profile</p><h1>Profile unavailable</h1><p>${message}</p><button class="button button--primary" data-retry>Try again</button>`
-  return section
+  return pageError({ eyebrow: 'Settings', title: 'Settings unavailable', message, className: 'profile-empty' })
 }
 
 function avatar(profile: Profile): HTMLElement {
@@ -173,7 +169,7 @@ function trainingSection(state: ProfileState, rerender: () => void): HTMLDetails
   unit.append(new Option('Kilograms', 'kg'), new Option('Pounds', 'lb'))
   unit.value = state.profile.weightUnit
   form.append(row('Training goal', 'Tunes labels and defaults toward your main goal.', goal))
-  form.append(row('Display unit', 'Used for workouts, history, statistics, and body weight.', unit))
+  form.append(row('Display unit', 'Used for workouts, history, home, and body weight.', unit))
   const save = document.createElement('button')
   save.type = 'submit'
   save.className = 'button button--primary settings-row-button'
@@ -225,14 +221,18 @@ function equipmentSection(state: ProfileState, rerender: () => void): HTMLDetail
 function renderLoaded(root: HTMLElement, state: ProfileState): void {
   const page = document.createElement('div')
   page.className = 'profile-page profile-settings-page'
-  const hero = document.createElement('section')
-  hero.className = 'profile-hero profile-settings-hero'
-  hero.innerHTML = `<p class="eyebrow">Settings</p><h1>Settings</h1><p class="hero-summary">${state.nostrIdentityEnabled ? 'Identity, training preferences, and equipment.' : 'Training preferences and equipment.'}</p> `
+  const heading = pageHeading({ title: 'Settings', className: 'profile-settings-hero page-heading' })
+  const summary = pageSummary({
+    icon: Settings,
+    title: 'Preferences',
+    description: state.nostrIdentityEnabled ? 'Identity, training preferences, and equipment.' : 'Training preferences and equipment.',
+    className: 'page-summary',
+  })
   const list = document.createElement('section')
   list.className = 'profile-settings-list'
   if (state.nostrIdentityEnabled) list.append(profileSection(state, () => renderLoaded(root, state)))
   list.append(trainingSection(state, () => renderLoaded(root, state)), equipmentSection(state, () => renderLoaded(root, state)))
-  page.append(hero, list)
+  page.append(heading, summary, list)
   root.replaceChildren(page)
 }
 
@@ -243,7 +243,7 @@ export async function renderProfilePage(root: HTMLElement, nostrIdentityEnabled 
     renderLoaded(root, { profile, message: '', nostrIdentityEnabled })
   } catch (error) {
     const view = errorView(readableApiError(error))
-    view.querySelector('[data-retry]')?.addEventListener('click', () => { void renderProfilePage(root, nostrIdentityEnabled) })
+    bindPageRetry(view, () => { void renderProfilePage(root, nostrIdentityEnabled) })
     root.replaceChildren(view)
   }
 }

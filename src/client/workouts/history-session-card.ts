@@ -1,8 +1,10 @@
-import { ChevronDown } from 'lucide'
+import { CalendarCheck, CheckCircle2, ChevronDown, Layers, PlayCircle, RotateCcw } from 'lucide'
 import { displayName } from '../exercises/format.js'
 import { muscleMapMarkupForMuscles } from '../exercises/muscle-map.js'
 import type { Exercise } from '../exercises/types.js'
 import { iconElement } from '../app/navigation.js'
+import { pageSummary } from '../shared/page-chrome.js'
+import { pageEmpty } from '../shared/page-states.js'
 import { formatVolumeKg, formatWeightFromKg } from '../profile/weight-units.js'
 import type { WeightUnit } from '../profile/types.js'
 import type { Session } from './types.js'
@@ -22,28 +24,20 @@ export function sessionDateKey(session: Session): string | null {
 }
 
 export function historyHero(sessions: Session[]): HTMLElement {
-  const hero = document.createElement('section')
-  hero.className = 'program-browse-hero history-hero'
   const completed = sessions.filter(session => session.finishedAt).length
   const active = sessions.length - completed
   const sets = sessions.reduce((total, session) => total + session.sets.filter(set => set.done).length, 0)
-  const icon = document.createElement('span')
-  icon.className = 'program-browse-icon'
-  icon.setAttribute('aria-hidden', 'true')
-  icon.textContent = '↺'
-  const copy = document.createElement('div')
-  const title = document.createElement('h2')
-  title.textContent = 'Workout history'
-  const metrics = document.createElement('div')
-  metrics.className = 'program-browse-metrics'
-  for (const text of [`${sessions.length} sessions`, `${completed} completed`, `${active} active`, `${sets} sets`]) {
-    const item = document.createElement('span')
-    item.textContent = text
-    metrics.append(item)
-  }
-  copy.append(title, metrics)
-  hero.append(icon, copy)
-  return hero
+  return pageSummary({
+    icon: RotateCcw,
+    title: 'Workout history',
+    className: 'program-browse-hero history-hero',
+    metrics: [
+      { icon: CalendarCheck, text: `${sessions.length} sessions` },
+      { icon: CheckCircle2, text: `${completed} completed` },
+      { icon: PlayCircle, text: `${active} active` },
+      { icon: Layers, text: `${sets} sets` },
+    ],
+  })
 }
 
 export function sessionDuration(session: Session): string {
@@ -119,10 +113,12 @@ export function sessionDetail(session: Session, unit: WeightUnit = 'kg'): HTMLEl
   }
   detail.append(summary)
   if (!doneSets.length) {
-    const empty = document.createElement('p')
-    empty.className = 'workout-browser-empty history-session-empty'
-    empty.textContent = session.finishedAt ? 'No sets were logged in this session.' : 'No sets logged yet. Resume the workout to keep going.'
-    detail.append(empty)
+    detail.append(pageEmpty({
+      title: session.finishedAt ? 'No sets were logged in this session.' : 'No sets logged yet.',
+      description: session.finishedAt ? undefined : 'Resume the workout to keep going.',
+      compact: true,
+      className: 'workout-browser-empty history-session-empty',
+    }))
   } else {
     const byExercise = new Map<string, typeof doneSets>()
     for (const set of doneSets) {

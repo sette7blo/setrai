@@ -1,5 +1,5 @@
 import { renderRest } from './live-rest-view.js'
-import { action, node, paintCountdown, glyph } from './live-components.js'
+import { action, node, paintCountdown, glyph, iconAction } from './live-components.js'
 import { clockValue, intervalPhase, nextSet, setCount, strengthSets, timeLabel } from './live-plan.js'
 import { renderStrength } from './live-strength-view.js'
 import { renderEmom } from './live-emom-view.js'
@@ -24,9 +24,7 @@ export function renderLiveShell(model: LiveModel, controls: LiveActions): HTMLEl
   elapsed.dataset.elapsed = ''
   elapsed.setAttribute('aria-label', 'Session elapsed time')
   main.append(title, meta, elapsed)
-  const end = action('', controls.discard, 'live-end')
-  end.append(glyph('close'))
-  end.setAttribute('aria-label', 'End session')
+  const end = iconAction('close', 'End session', controls.discard, 'live-end')
   header.append(main, end)
   const progress = node('div', 'live-progress')
   progress.setAttribute('role', 'progressbar')
@@ -40,17 +38,17 @@ export function renderLiveShell(model: LiveModel, controls: LiveActions): HTMLEl
   if (emom && runtime.emomStartedAt) {
     const start = model.intervalPage * 5
     const page = (delta: number) => { model.intervalPage += delta; controls.render() }
-    if (start > 0) rail.append(action('‹', () => page(-1), 'live-pip'))
+    if (start > 0) rail.append(iconAction('chevronLeft', 'Previous intervals', () => page(-1), 'live-pip'))
     for (const item of model.intervals.slice(start, start + 5)) {
       const button = action(String(item.index + 1), () => controls.seek(item.index), `live-pip ${slot?.index === item.index ? 'is-current' : position >= item.endsAt ? 'is-done' : ''}`)
       button.setAttribute('aria-label', `Go to interval ${item.index + 1}`)
       if (slot?.index === item.index) button.setAttribute('aria-current', 'step')
       rail.append(button)
     }
-    if (start + 5 < model.intervals.length) rail.append(action('›', () => page(1), 'live-pip'))
+    if (start + 5 < model.intervals.length) rail.append(iconAction('chevronRight', 'Next intervals', () => page(1), 'live-pip'))
   } else if (!emom) model.exercises.forEach((exercise, i) => {
     const done = nextSet(model.session, exercise) > setCount(model.session, exercise)
-    const button = action(done ? '✓' : String(i + 1), () => controls.jump(i), `live-pip ${i === index ? 'is-current' : done ? 'is-done' : ''}`)
+    const button = action(done ? '' : String(i + 1), () => controls.jump(i), `live-pip ${i === index ? 'is-current' : done ? 'is-done' : ''}`)
     button.setAttribute('aria-label', `Exercise ${i + 1}: ${exercise.exerciseName}`)
     if (i === index) button.setAttribute('aria-current', 'step')
     rail.append(button)
@@ -58,6 +56,11 @@ export function renderLiveShell(model: LiveModel, controls: LiveActions): HTMLEl
   for (const button of rail.querySelectorAll('button')) {
     const mark = node('span', 'live-pip-mark', button.textContent ?? '')
     if (button.classList.contains('is-done')) { mark.textContent = ''; mark.append(glyph('check')) }
+    else if (!button.textContent && button.querySelector('svg')) {
+      // icon-only nav pips already have svg children; wrap them
+      const existing = [...button.childNodes]
+      mark.replaceChildren(...existing)
+    }
     button.replaceChildren(mark)
   }
   const body = node('div', 'live-body')

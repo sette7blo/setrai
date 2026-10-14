@@ -1,0 +1,112 @@
+/* Shared empty / error / loading kit */
+
+.page-state {
+  display: grid;
+  gap: 12px;
+  padding: 18px 16px;
+  border: 1px solid var(--color-border, rgba(0, 0, 0, 0.1));
+  border-radius: 16px;
+  background: #fff;
+  color: inherit;
+}
+
+.page-state--error,
+.page-state--empty {
+  align-content: start;
+}
+
+.page-state .eyebrow {
+  margin: 0;
+  color: var(--color-muted, #6b6964);
+  font: 850 11px/1 ui-monospace, SFMono-Regular, monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.page-state-title {
+  margin: 0;
+  font: 750 1.35rem/1.15 ui-sans-serif, system-ui, sans-serif;
+  letter-spacing: -0.02em;
+}
+
+.page-state--compact .page-state-title {
+  font: 650 0.95rem/1.35 ui-sans-serif, system-ui, sans-serif;
+  color: var(--color-muted-strong, #4d4b47);
+}
+
+.page-state-copy {
+  margin: 0;
+  color: var(--color-muted, #6b6964);
+  font: 500 0.95rem/1.45 ui-sans-serif, system-ui, sans-serif;
+}
+
+.page-state .button {
+  justify-self: start;
+  margin-top: 4px;
+}
+
+.page-state--compact {
+  padding: 14px;
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.page-state--loading {
+  gap: 10px;
+  padding: 14px;
+  border-style: dashed;
+  background: rgba(255, 255, 255, 0.4);
+}
+
+.page-state-block {
+  height: 56px;
+  border-radius: 12px;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 0, 0, 0.04),
+    rgba(0, 0, 0, 0.08),
+    rgba(0, 0, 0, 0.04)
+  );
+  background-size: 200% 100%;
+  animation: page-state-pulse 1.2s ease-in-out infinite;
+}
+
+.page-state-block:nth-child(1) { height: 72px; }
+.page-state-block:nth-child(2) { height: 120px; }
+.page-state-block:nth-child(3) { height: 88px; }
+
+@keyframes page-state-pulse {
+  0% { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
+
+/* Compatibility aliases — old empty class names pick up shared kit look */
+.exercise-empty,
+.profile-empty,
+.workouts-empty,
+.stats-empty {
+  display: grid;
+  gap: 12px;
+  padding: 18px 16px;
+  border: 1px solid var(--color-border, rgba(0, 0, 0, 0.1));
+  border-radius: 16px;
+  background: #fff;
+}
+
+.exercise-empty .button,
+.profile-empty .button,
+.workouts-empty .button,
+.stats-empty .button {
+  justify-self: start;
+}
+
+@media (max-width: 720px) {
+  .page-state {
+    padding: 16px 14px;
+    border-radius: 14px;
+  }
+
+  .page-state-title {
+    font-size: 1.2rem;
+  }
+}

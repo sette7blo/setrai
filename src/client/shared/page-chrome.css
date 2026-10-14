@@ -1,0 +1,166 @@
+/* Shared page chrome: heading + section tabs + compact summary card */
+
+.page-heading {
+  display: grid;
+  gap: 18px;
+  padding-top: 4px;
+}
+
+.page-heading h1 {
+  margin: 0;
+  max-width: 12ch;
+  font-size: var(--font-page-title);
+  line-height: 0.96;
+  letter-spacing: -0.07em;
+}
+
+.page-tabs {
+  display: flex;
+  gap: 26px;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.page-tab {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 0 0 14px;
+  border: 0;
+  background: transparent;
+  color: var(--color-muted);
+  font: 850 11px/1 ui-monospace, SFMono-Regular, monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.page-tab--active {
+  color: var(--color-primary);
+}
+
+.page-tab--active::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--color-primary);
+}
+
+.page-summary {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid rgba(var(--color-primary-rgb), 0.32);
+  border-radius: 16px;
+  color: inherit;
+  text-decoration: none;
+  background: linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.12), var(--color-surface));
+}
+
+.page-summary:has(.page-summary-trailing) {
+  grid-template-columns: 40px minmax(0, 1fr) auto;
+}
+
+.page-summary-icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 1px solid rgba(var(--color-primary-rgb), 0.26);
+  border-radius: 12px;
+  color: var(--color-primary);
+  background: rgba(var(--color-primary-rgb), 0.1);
+}
+
+.page-summary-icon svg {
+  width: 20px;
+  height: 20px;
+}
+
+.page-summary-copy {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.page-summary-title {
+  margin: 0;
+  color: var(--color-text);
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+}
+
+.page-summary-description {
+  margin: 0;
+  color: var(--color-muted-strong);
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+.page-summary-metrics {
+  color: var(--color-muted-strong);
+}
+
+.page-summary-metric--gold {
+  color: #b8860b;
+}
+
+.page-summary-metric--gold svg {
+  color: #c9a227;
+}
+
+.page-summary-metric--green {
+  color: var(--color-primary);
+}
+
+.page-summary-trailing {
+  display: grid;
+  place-items: center;
+  color: var(--color-muted);
+}
+
+.page-summary-trailing svg {
+  width: 18px;
+  height: 18px;
+}
+
+@media (max-width: 719px) {
+  .page-summary-description {
+    display: none;
+  }
+
+  .page-summary-metrics {
+    margin-top: 2px;
+  }
+}
+
+/* Backward-compatible heading aliases */
+.workout-heading,
+.exercise-heading,
+.statistics-page-head,
+.profile-settings-hero.page-heading {
+  display: grid;
+  gap: 18px;
+  padding-top: 4px;
+}
+
+.program-browse-hero,
+.library-summary-card,
+.stats-hero-card,
+.recovery-hero.page-summary {
+  display: grid;
+  grid-template-columns: 40px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid rgba(var(--color-primary-rgb), 0.32);
+  border-radius: 16px;
+  background: linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.12), var(--color-surface));
+}

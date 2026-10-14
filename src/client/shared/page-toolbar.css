@@ -1,0 +1,171 @@
+/* Shared search + icon-action toolbar density (Exercises / Workouts library). */
+
+.page-toolbar,
+.exercise-controls,
+.program-toolbar {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) repeat(var(--toolbar-actions, 3), var(--toolbar-size));
+  gap: var(--toolbar-gap);
+  align-items: center;
+}
+
+.page-toolbar--actions-2,
+.program-toolbar:not(.program-toolbar--catalog) {
+  --toolbar-actions: 2;
+}
+
+.page-toolbar--actions-3,
+.exercise-controls:not(.exercise-controls--catalog),
+.program-toolbar--catalog {
+  --toolbar-actions: 3;
+}
+
+.page-toolbar--actions-4,
+.exercise-controls--catalog {
+  --toolbar-actions: 4;
+}
+
+.page-toolbar-search,
+.exercise-search,
+.program-search {
+  box-sizing: border-box;
+  display: flex;
+  min-width: 0;
+  min-height: var(--toolbar-size);
+  height: var(--toolbar-size);
+  align-items: center;
+  gap: 8px;
+  padding: 0 var(--toolbar-search-pad-x);
+  border: 1px solid var(--color-border);
+  border-radius: var(--toolbar-radius);
+  background: rgba(0, 0, 0, 0.2);
+  box-shadow: none;
+}
+
+.page-toolbar-search svg,
+.exercise-search svg,
+.program-search svg,
+.program-search > svg {
+  width: var(--toolbar-icon);
+  height: var(--toolbar-icon);
+  flex: none;
+  color: var(--color-muted-strong);
+  stroke-width: 2;
+}
+
+.page-toolbar-search input,
+.exercise-search input,
+.program-search input {
+  width: 100%;
+  min-width: 0;
+  min-height: var(--toolbar-size);
+  height: var(--toolbar-size);
+  border: 0;
+  padding: 0;
+  color: var(--color-text);
+  background: transparent;
+  font: inherit;
+  font-size: 16px;
+}
+
+.page-toolbar-search input::placeholder,
+.exercise-search input::placeholder,
+.program-search input::placeholder {
+  color: var(--color-muted);
+}
+
+.page-toolbar-search input:focus,
+.exercise-search input:focus,
+.program-search input:focus {
+  outline: none;
+}
+
+.page-toolbar-action,
+.filter-icon,
+.program-toolbar-action {
+  box-sizing: border-box;
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: var(--toolbar-size);
+  min-width: var(--toolbar-size);
+  height: var(--toolbar-size);
+  min-height: var(--toolbar-size);
+  padding: 0;
+  border: 1px solid var(--color-border);
+  border-radius: var(--toolbar-radius);
+  color: var(--color-muted-strong);
+  background: var(--color-surface);
+  cursor: pointer;
+  box-shadow: none;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.page-toolbar-action svg,
+.filter-icon svg,
+.program-toolbar-action svg {
+  width: var(--toolbar-action-icon);
+  height: var(--toolbar-action-icon);
+  stroke-width: 2;
+}
+
+.page-toolbar-action:disabled,
+.filter-icon:disabled,
+.program-toolbar-action:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.page-toolbar-action--active,
+.filter-icon--active,
+.program-toolbar-action.accent:not(.program-toolbar-action--create) {
+  color: var(--color-primary);
+  border-color: rgba(var(--color-primary-rgb), 0.45);
+  background: rgba(var(--color-primary-rgb), 0.11);
+}
+
+.page-toolbar-action--primary,
+.program-toolbar-action--create {
+  color: var(--color-bg) !important;
+  border-color: var(--color-primary) !important;
+  background: var(--color-primary) !important;
+}
+
+.page-toolbar-action--primary svg,
+.program-toolbar-action--create svg {
+  color: currentColor !important;
+  stroke-width: 2.5;
+}
+
+.page-toolbar-action[data-count]:not([data-count=""])::after,
+.program-toolbar-action[data-count]:not([data-count=""])::after,
+.filter-icon[data-count]:not([data-count=""])::after {
+  content: attr(data-count);
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  display: grid;
+  place-items: center;
+  width: 17px;
+  height: 17px;
+  border-radius: 999px;
+  font: 800 10px/1 ui-monospace, monospace;
+  color: var(--color-bg);
+  background: var(--color-primary);
+}
+
+@media (max-width: 719px) {
+  .page-toolbar,
+  .exercise-controls,
+  .program-toolbar {
+    grid-template-columns: minmax(0, 1fr) repeat(var(--toolbar-actions, 3), var(--toolbar-size));
+    gap: var(--toolbar-gap);
+  }
+}
+
+@media (max-width: 390px) {
+  :root {
+    --toolbar-gap: 6px;
+  }
+}

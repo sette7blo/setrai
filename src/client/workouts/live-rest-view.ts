@@ -1,4 +1,4 @@
-import { action, countdown, glyph, node, paintCountdown } from './live-components.js'
+import { action, countdown, glyph, labeledAction, node, paintCountdown } from './live-components.js'
 import { nextSet, setCount } from './live-plan.js'
 import type { LiveActions, LiveModel } from './live-model.js'
 
@@ -23,11 +23,11 @@ export function renderRest(model: LiveModel, controls: LiveActions): HTMLElement
     node('strong', '', complete ? model.intervals.length ? 'EMOM section' : 'Finish session' : next.exerciseName))
   if (!complete) upcoming.append(node('span', '', `Set ${number} of ${setCount(model.session, next)}`))
   const buttons = node('div', 'live-rest-actions')
-  const minus = action('−15s', () => controls.rest(-15))
+  const minus = labeledAction('minus', '15s', () => controls.rest(-15))
   minus.setAttribute('aria-label', 'Rest 15 seconds less')
-  const plus = action('+15s', () => controls.rest(15))
+  const plus = labeledAction('plus', '15s', () => controls.rest(15))
   plus.setAttribute('aria-label', 'Rest 15 seconds more')
-  const skip = action('Skip rest', () => controls.rest(null), 'live-finish')
+  const skip = labeledAction('arrowRight', 'Skip rest', () => controls.rest(null), 'live-finish', 'end')
   buttons.append(minus, skip, plus)
   rest.append(heading, ring, upcoming, buttons)
   rest.addEventListener('keydown', (event) => {

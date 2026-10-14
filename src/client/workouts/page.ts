@@ -1,4 +1,7 @@
+import { Play } from 'lucide'
+import { iconElement } from '../app/navigation.js'
 import { readableApiError } from '../shared/api/errors.js'
+import { bindPageRetry, pageEmpty, pageError } from '../shared/page-states.js'
 import { listExercises } from '../exercises/api.js'
 import { getProfile } from '../profile/api.js'
 import { getRecovery } from '../recovery/api.js'
@@ -20,7 +23,7 @@ export function sessionLinks(sessions: Session[]): HTMLElement {
     const resume = document.createElement('a')
     resume.className = 'button button--primary'
     resume.href = `/sessions/${session.id}`
-    resume.textContent = `Resume ${session.programName}`
+    resume.append(iconElement(Play), document.createTextNode(`Resume ${session.programName}`))
     section.append(resume)
   }
   return section
@@ -68,10 +71,13 @@ function renderHistoryView(page: HTMLElement, sessions: Session[], exercises: Ex
       list.append(filter)
     }
     if (!visible.length) {
-      const empty = document.createElement('div')
-      empty.className = 'workout-browser-empty'
-      empty.textContent = selectedDate ? 'No sessions on this day.' : 'No workout history yet. Start a Quick Workout or run a program to build your timeline.'
-      list.append(empty)
+      list.append(pageEmpty({
+        title: selectedDate ? 'No sessions on this day.' : 'No workout history yet.',
+        description: selectedDate ? undefined : 'Start a Quick Workout or run a program to build your timeline.',
+        action: selectedDate ? undefined : { label: 'Open Recovery', href: '/workouts/recovery' },
+        compact: true,
+        className: 'workout-browser-empty',
+      }))
       return
     }
     for (const session of visible) list.append(sessionHistoryCard(session, exercises, unit))
@@ -80,14 +86,8 @@ function renderHistoryView(page: HTMLElement, sessions: Session[], exercises: Ex
   page.append(calendar, list)
 }
 
-export async function renderWorkoutsPage(root: HTMLElement, enabled = false, mode: boolean | 'library' | 'discover' | 'history' | 'recovery' = false): Promise<void> {
-  let view = mode === true ? 'discover' : mode === false ? 'library' : mode
-  if (view === 'discover') {
-    const params = new URLSearchParams(window.location.search)
-    params.delete('scope')
-    window.history.replaceState({}, '', `/workouts${params.size ? `?${params}` : ''}`)
-    view = 'library'
-  }
+export async function renderWorkoutsPage(root: HTMLElement, enabled = false, mode: boolean | 'library' | 'history' | 'recovery' = false): Promise<void> {
+  const view = mode === true || mode === false ? 'library' : mode
   const history = view === 'history'
   const recovery = view === 'recovery'
   const page = document.createElement('div')
@@ -121,11 +121,14 @@ export async function renderWorkoutsPage(root: HTMLElement, enabled = false, mod
     await renderProgramLibrary(page, enabled, sessionLinks)
   } catch (error) {
     skeleton?.remove()
-    state.textContent = readableApiError(error)
-    const retry = document.createElement('button')
-    retry.className = 'button button--primary'
-    retry.textContent = 'Try again'
-    retry.addEventListener('click', () => { void renderWorkoutsPage(root, enabled, view) })
-    page.append(retry)
+    state.remove()
+    const viewError = pageError({
+      eyebrow: 'Workouts',
+      title: recovery ? 'Recovery unavailable' : history ? 'History unavailable' : 'Library unavailable',
+      message: readableApiError(error),
+      className: 'workouts-empty',
+    })
+    bindPageRetry(viewError, () => { void renderWorkoutsPage(root, enabled, view) })
+    page.append(viewError)
   }
 }

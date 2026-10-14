@@ -1,6 +1,6 @@
 export function loadingState(): string {
   return `
-    <section class="state-panel" aria-live="polite">
+    <section class="state-panel page-state page-state--loading" aria-live="polite">
       <div class="pulse-mark"></div>
       <p class="eyebrow">Loading Setrai</p>
       <h1>Preparing your training shell</h1>
@@ -11,7 +11,7 @@ export function loadingState(): string {
 
 export function errorState(message: string): string {
   return `
-    <section class="state-panel state-panel--error" role="alert">
+    <section class="state-panel page-state page-state--error state-panel--error" role="alert">
       <p class="eyebrow">Connection issue</p>
       <h1>Unable to load Setrai</h1>
       <p>${message}</p>

@@ -1,5 +1,4 @@
 .statistics-page,
-.recovery-page,
 .profile-page {
   display: grid;
   gap: 12px;
@@ -17,7 +16,6 @@
 
 .statistics-page-head h1,
 .stats-empty h1,
-.recovery-empty h1,
 .profile-empty h1 {
   margin: 0;
   max-width: 12ch;
@@ -26,45 +24,10 @@
   letter-spacing: -.07em;
 }
 
-.stats-tabs {
-  display: flex;
-  gap: 26px;
-  border-bottom: 1px solid var(--color-border);
-}
 
-.stats-tab {
-  position: relative;
-  min-height: 42px;
-  border: 0;
-  padding: 0 0 11px;
-  background: transparent;
-  color: var(--color-muted);
-  font: 850 .76rem/1 var(--font-mono);
-  letter-spacing: .12em;
-  text-transform: uppercase;
-}
 
-.stats-tab::after {
-  position: absolute;
-  right: 0;
-  bottom: -1px;
-  left: 0;
-  height: 2px;
-  border-radius: 999px;
-  background: var(--color-primary);
-  content: '';
-  opacity: 0;
-  transform: scaleX(.65);
-}
 
-.stats-tab.active {
-  color: var(--color-primary);
-}
 
-.stats-tab.active::after {
-  opacity: 1;
-  transform: scaleX(1);
-}
 
 .stats-hero-card {
   display: grid;
@@ -219,7 +182,6 @@
 }
 
 .stats-panel,
-.recovery-card,
 .profile-panel {
   display: grid;
   gap: 16px;
@@ -470,7 +432,6 @@
 }
 
 .stats-empty,
-.recovery-empty,
 .profile-empty {
   border: 1px dashed var(--color-border);
   border-radius: 17px;
@@ -480,7 +441,6 @@
 }
 
 .statistics-page--loading div,
-.recovery-page--loading div,
 .profile-page--loading div {
   min-height: 6rem;
   border-radius: var(--radius-lg);
@@ -498,7 +458,6 @@
 
 @media (max-width: 719px) {
   .statistics-page,
-  .recovery-page,
   .profile-page {
     gap: 12px;
   }
@@ -1285,7 +1244,6 @@
 
 /* Premium panels consistency */
 .stats-panel,
-.recovery-card,
 .profile-panel {
   transition: box-shadow 0.2s ease, transform 0.1s ease;
   border-radius: 18px;

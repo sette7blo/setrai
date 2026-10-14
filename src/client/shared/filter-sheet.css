@@ -4,17 +4,16 @@
 .filter-sheet__heading { display: flex; flex: none; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--color-border); }
 .filter-sheet__heading h2 { margin: 0; font-size: 18px; font-weight: 650; letter-spacing: -.025em; }
 .filter-sheet__close { display: grid; place-items: center; width: 44px; height: 44px; flex: none; border: 1px solid var(--color-border); border-radius: 12px; color: var(--color-text); background: var(--color-surface); font-size: 26px; cursor: pointer; }
+.filter-sheet__close svg { width: 18px; height: 18px; stroke-width: 2.2; }
 .filter-sheet__content { min-height: 0; flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 16px; -webkit-overflow-scrolling: touch; }
 .filter-sheet fieldset { min-width: 0; margin: 0 0 20px; padding: 0; border: 0; }
 .filter-sheet legend { margin-bottom: 10px; padding: 0; color: var(--color-muted-strong); font-size: 14px; font-weight: 600; }
 .filter-sheet__choices { display: flex; flex-wrap: wrap; gap: 8px; }
-.filter-sheet__option { min-height: 44px; max-width: 100%; padding: 10px 14px; border: 1px solid var(--color-border); border-radius: 12px; background: var(--color-surface); color: var(--color-text); font: inherit; font-size: 13px; overflow-wrap: anywhere; cursor: pointer; }
-.filter-sheet__option[aria-pressed="true"] { border-color: var(--color-primary); background: var(--color-primary); color: var(--color-bg-elevated); }
+.filter-sheet__option { max-width: 100%; color: var(--color-text); overflow-wrap: anywhere; }
 .filter-sheet__option[hidden] { display: none; }
 .filter-sheet__search { box-sizing: border-box; width: 100%; min-height: 44px; margin-bottom: 12px; padding: 10px 12px; border: 1px solid var(--color-border); border-radius: 12px; background: var(--color-surface-strong); color: var(--color-text); font: inherit; font-size: 16px; }
 .filter-sheet__footer { display: flex; flex: none; gap: 8px; padding: 12px 16px calc(12px + env(safe-area-inset-bottom)); border-top: 1px solid var(--color-border); background: var(--color-surface); }
 .filter-sheet__footer .button { flex: 1; min-height: 44px; padding-inline: 10px; font-size: 13px; }
-.active-filter-chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .active-filter-chips:empty { display: none; }
-.active-filter-chips button { min-height: 44px; max-width: 100%; padding: 8px 12px; border: 1px solid var(--color-border); border-radius: 999px; background: var(--color-surface-strong); color: var(--color-text); font: inherit; font-size: 12px; cursor: pointer; }
+.active-filter-chips button { max-width: 100%; background: var(--color-surface-strong); color: var(--color-text); }
 @media (min-width: 720px) { .filter-sheet { inset: 0; margin: auto; border-radius: 20px; } }

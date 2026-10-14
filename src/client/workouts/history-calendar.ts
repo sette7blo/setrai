@@ -1,4 +1,7 @@
+import { ChevronLeft, ChevronRight } from 'lucide'
+import { iconElement } from '../app/navigation.js'
 import type { Session } from './types.js'
+import { pageEmpty } from '../shared/page-states.js'
 
 const WEEKDAYS = ['Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa', 'Su']
 
@@ -103,12 +106,12 @@ function monthLabel(month: string): string {
   return date ? date.toLocaleDateString([], { month: 'long', year: 'numeric' }) : month
 }
 
-function makeButton(label: string, text: string): HTMLButtonElement {
+function makeButton(label: string, icon: Parameters<typeof iconElement>[0]): HTMLButtonElement {
   const button = document.createElement('button')
   button.type = 'button'
   button.className = 'history-cal-nav'
   button.setAttribute('aria-label', label)
-  button.textContent = text
+  button.append(iconElement(icon))
   return button
 }
 
@@ -167,8 +170,8 @@ export function createHistoryCalendar(sessions: Session[], selected: string | nu
     root.replaceChildren()
     const head = document.createElement('div')
     head.className = 'history-cal-head'
-    const prev = makeButton('Previous month', '‹')
-    const next = makeButton('Next month', '›')
+    const prev = makeButton('Previous month', ChevronLeft)
+    const next = makeButton('Next month', ChevronRight)
     const title = document.createElement('div')
     title.className = 'history-cal-title'
     title.textContent = monthLabel(month)
@@ -212,10 +215,12 @@ export function createHistoryCalendar(sessions: Session[], selected: string | nu
     }
     root.append(head, grid)
     if (!days.size) {
-      const empty = document.createElement('p')
-      empty.className = 'history-cal-empty'
-      empty.textContent = 'No completed workouts yet. Finish a session and the day fills in here.'
-      root.append(empty)
+      root.append(pageEmpty({
+        title: 'No completed workouts yet.',
+        description: 'Finish a session and the day fills in here.',
+        compact: true,
+        className: 'history-cal-empty',
+      }))
     }
     root.append(summaryCards(days, month, today))
   }

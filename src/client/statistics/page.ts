@@ -1,6 +1,8 @@
 import { BicepsFlexed, CalendarCheck, ChartColumn, Flame, Trophy, Weight } from 'lucide'
 
 import { iconElement } from '../app/navigation.js'
+import { pageHeading, pageSummary } from '../shared/page-chrome.js'
+import { bindPageRetry, pageEmpty, pageError, pageLoading } from '../shared/page-states.js'
 import { readableApiError } from '../shared/api/errors.js'
 import { displayName } from '../exercises/format.js'
 import { getProfile } from '../profile/api.js'
@@ -14,24 +16,25 @@ import { bodyView } from './body-tab.js'
 import type { MuscleVolume, PersonalRecord, StatisticsOverview, WeeklyVolumePoint } from './types.js'
 
 function loadingView(): HTMLElement {
-  const section = document.createElement('section')
-  section.className = 'statistics-page statistics-page--loading'
-  section.innerHTML = '<div></div><div></div><div></div>'
-  return section
+  return pageLoading({ className: 'statistics-page statistics-page--loading', label: 'Loading home' })
 }
 
 function errorView(message: string): HTMLElement {
-  const section = document.createElement('section')
-  section.className = 'stats-empty'
-  section.innerHTML = `<p class="eyebrow">Statistics</p><h1>Statistics unavailable</h1><p>${message}</p><button class="button button--primary" data-retry>Try again</button>`
-  return section
+  return pageError({ eyebrow: 'Home', title: 'Home unavailable', message, className: 'stats-empty' })
 }
 
 function emptyView(): HTMLElement {
-  const section = document.createElement('section')
-  section.className = 'stats-empty statistics-workstr-empty'
-  section.innerHTML = '<p class="eyebrow">Statistics</p><h1>No completed workouts yet.</h1><p>Finish your first workout to start building your statistics.</p><a class="button button--primary" href="/workouts">Start training</a>'
-  return section
+  const page = document.createElement('div')
+  page.className = 'statistics-page statistics-workstr-page'
+  page.append(homeHeading('training'))
+  page.append(pageEmpty({
+    eyebrow: 'Home',
+    title: 'No completed workouts yet.',
+    description: 'Finish your first workout to start building your timeline.',
+    action: { label: 'Start training', href: '/workouts' },
+    className: 'stats-empty statistics-workstr-empty',
+  }))
+  return page
 }
 
 function iconWrap(className: string, icon: Parameters<typeof iconElement>[0]): HTMLElement {
@@ -42,13 +45,12 @@ function iconWrap(className: string, icon: Parameters<typeof iconElement>[0]): H
 }
 
 function statsHero(icon: Parameters<typeof iconElement>[0], title: string, help: string): HTMLElement {
-  const hero = document.createElement('section')
-  hero.className = 'stats-hero-card'
-  const copy = document.createElement('div')
-  copy.className = 'stats-hero-copy'
-  copy.innerHTML = `<span>${title}</span><p>${help}</p>`
-  hero.append(iconWrap('stats-hero-icon', icon), copy)
-  return hero
+  return pageSummary({
+    icon,
+    title,
+    description: help,
+    className: 'stats-hero-card page-summary',
+  })
 }
 
 function statTile(icon: Parameters<typeof iconElement>[0], value: string, label: string, tone = ''): HTMLElement {
@@ -81,7 +83,7 @@ function rangeBar(): HTMLElement {
   const bar = document.createElement('div')
   bar.className = 'stats-range'
   bar.setAttribute('role', 'group')
-  bar.setAttribute('aria-label', 'Statistics date range')
+  bar.setAttribute('aria-label', 'Training date range')
   labels.forEach((label) => {
     const button = document.createElement('button')
     button.className = `stats-range-btn${label === 'All' ? ' active' : ''}`
@@ -176,7 +178,7 @@ function trainingView(stats: StatisticsOverview, unit: WeightUnit): HTMLElement 
   const section = document.createElement('section')
   section.className = 'stats-training-view'
   section.dataset.statsSection = 'training'
-  section.append(statsHero(ChartColumn, 'Training stats', 'Streak, volume and records from every finished workout.'))
+  section.append(statsHero(ChartColumn, 'Training', 'Streak, volume and records from finished workouts.'))
 
   const tiles = document.createElement('div')
   tiles.className = 'stats-hero'
@@ -199,63 +201,50 @@ function trainingView(stats: StatisticsOverview, unit: WeightUnit): HTMLElement 
   return section
 }
 
-function tabs(): HTMLElement {
-  const tabs = document.createElement('nav')
-  tabs.className = 'stats-tabs'
-  tabs.setAttribute('aria-label', 'Statistics sections')
-  ;[
-    ['training', 'Training'],
-    ['body', 'Body']
-  ].forEach(([key, label]) => {
-    const button = document.createElement('button')
-    button.className = `stats-tab${key === 'training' ? ' active' : ''}`
-    button.type = 'button'
-    button.dataset.statsTab = key
-    button.setAttribute('aria-pressed', String(key === 'training'))
-    button.textContent = label
-    tabs.append(button)
-  })
-  return tabs
-}
+export type HomeSection = 'training' | 'body'
 
-function bindTabs(page: HTMLElement): void {
-  page.querySelectorAll<HTMLButtonElement>('[data-stats-tab]').forEach((button) => {
-    button.addEventListener('click', () => {
-      const target = button.dataset.statsTab
-      page.querySelectorAll<HTMLButtonElement>('[data-stats-tab]').forEach((tab) => {
-        const active = tab.dataset.statsTab === target
-        tab.classList.toggle('active', active)
-        tab.setAttribute('aria-pressed', String(active))
-      })
-      page.querySelectorAll<HTMLElement>('[data-stats-section]').forEach((section) => {
-        section.hidden = section.dataset.statsSection !== target
-      })
-    })
+function homeHeading(section: HomeSection): HTMLElement {
+  return pageHeading({
+    title: 'Home',
+    className: 'statistics-page-head',
+    tabsLabel: 'Home sections',
+    tabs: [
+      { id: 'training', label: 'Training', href: '/statistics', active: section === 'training' },
+      { id: 'body', label: 'Body', href: '/statistics/body', active: section === 'body' },
+    ],
   })
 }
 
-function renderLoaded(root: HTMLElement, stats: StatisticsOverview, profile: Profile, entries: BodyWeightEntry[]): HTMLElement {
-  if (!hasTrainingHistory(stats)) return emptyView()
+function renderLoaded(
+  root: HTMLElement,
+  stats: StatisticsOverview,
+  profile: Profile,
+  entries: BodyWeightEntry[],
+  section: HomeSection,
+): HTMLElement {
+  if (section === 'training' && !hasTrainingHistory(stats)) return emptyView()
+
   const page = document.createElement('div')
   page.className = 'statistics-page statistics-workstr-page'
-  const title = document.createElement('header')
-  title.className = 'statistics-page-head'
-  title.innerHTML = '<h1>Statistics</h1>'
-  title.append(tabs())
-  const refresh = () => { void renderStatisticsPage(root) }
-  page.append(title, trainingView(stats, profile.weightUnit), bodyView({ stats, profile, entries, onRefresh: refresh }))
-  bindTabs(page)
+  page.append(homeHeading(section))
+
+  const refresh = () => { void renderStatisticsPage(root, section) }
+  if (section === 'body') {
+    page.append(bodyView({ stats, profile, entries, onRefresh: refresh }))
+  } else {
+    page.append(trainingView(stats, profile.weightUnit))
+  }
   return page
 }
 
-export async function renderStatisticsPage(root: HTMLElement): Promise<void> {
+export async function renderStatisticsPage(root: HTMLElement, section: HomeSection = 'training'): Promise<void> {
   root.replaceChildren(loadingView())
   try {
     const [stats, profile, entries] = await Promise.all([getStatistics(), getProfile(), listBodyWeight()])
-    root.replaceChildren(renderLoaded(root, stats, profile, entries))
+    root.replaceChildren(renderLoaded(root, stats, profile, entries, section))
   } catch (error) {
     const view = errorView(readableApiError(error))
-    view.querySelector('[data-retry]')?.addEventListener('click', () => { void renderStatisticsPage(root) })
+    bindPageRetry(view, () => { void renderStatisticsPage(root, section) })
     root.replaceChildren(view)
   }
 }

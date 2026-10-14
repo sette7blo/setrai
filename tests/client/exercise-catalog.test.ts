@@ -3,7 +3,7 @@ import test from 'node:test'
 import { normalizeExercise } from '../../src/client/exercises/format.js'
 import { catalogEntry, exerciseStatus, mergeExerciseCatalog, statusLabel, type CatalogEntry } from '../../src/client/exercises/catalog.js'
 import { filterExercises } from '../../src/client/exercises/filters.js'
-import { importCatalogExercise } from '../../src/client/discover/api.js'
+import { importCatalogExercise } from '../../src/client/exercises/catalog-api.js'
 
 test('merged list keeps all local exercises first and deduplicates by provenance, not title', () => {
   const local = [normalizeExercise({ id: 3, slug: 'squat', name: 'My squat', favourite: true }),

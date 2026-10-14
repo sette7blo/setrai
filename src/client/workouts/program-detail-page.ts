@@ -1,5 +1,6 @@
 import { ChevronLeft, Play } from 'lucide'
 import { ApiError, readableApiError } from '../shared/api/errors.js'
+import { pageEmpty, pageLoading } from '../shared/page-states.js'
 import { iconElement } from '../app/navigation.js'
 import { getExercise } from '../exercises/api.js'
 import { createExerciseImage } from '../exercises/image.js'
@@ -9,24 +10,17 @@ import { prescriptionLine } from './format.js'
 import type { Program, ProgramExercise } from './types.js'
 
 function loadingView(): HTMLElement {
-  const section = document.createElement('section')
-  section.className = 'program-detail program-detail--loading'
-  section.innerHTML = '<div></div><div></div><div></div>'
-  return section
+  return pageLoading({ className: 'program-detail program-detail--loading', label: 'Loading program' })
 }
 
 function errorView(title: string, message: string): HTMLElement {
-  const section = document.createElement('section')
-  section.className = 'workouts-empty'
-  section.innerHTML = `
-    <p class="eyebrow">Program</p>
-    <h1></h1>
-    <p data-error></p>
-    <a class="button button--primary" href="/workouts">Back to Workouts</a>
-  `
-  section.querySelector('h1')!.textContent = title
-  section.querySelector('[data-error]')!.textContent = message
-  return section
+  return pageEmpty({
+    eyebrow: 'Program',
+    title,
+    description: message,
+    action: { label: 'Back to Workouts', href: '/workouts' },
+    className: 'workouts-empty',
+  })
 }
 
 async function enrichProgram(program: Program): Promise<Program> {

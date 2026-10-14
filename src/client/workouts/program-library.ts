@@ -1,4 +1,5 @@
 import { readableApiError } from '../shared/api/errors.js'
+import { pageEmpty } from '../shared/page-states.js'
 import { getProfile } from '../profile/api.js'
 import { listExercises } from '../exercises/api.js'
 import type { Exercise } from '../exercises/types.js'
@@ -43,11 +44,11 @@ export async function renderProgramLibrary(page: HTMLElement, enabled: boolean, 
   let remote: Program[] = []
   let refreshing = false
   let fetchedAt = 0
-  let hero = programHero(local, false)
+  let hero = programHero(local)
   const chips = document.createElement('div')
   const results = document.createElement('div'); results.className = 'program-list'
   const updateHero = (): void => {
-    const next = programHero(local, false)
+    const next = programHero(local)
     if (enabled) {
       const count = mergeProgramCatalog(local, remote).filter(card => card.status === 'Web').length
       const web = document.createElement('span'); web.textContent = refreshing ? 'Loading web workouts…' : `${count} web workouts`
@@ -106,10 +107,20 @@ export async function renderProgramLibrary(page: HTMLElement, enabled: boolean, 
       card.open = open.has(card.dataset.programKey); results.append(wrapper)
     }
     if (!matches.length) {
-      const empty = document.createElement('div'); empty.className = 'workout-browser-empty'
-      empty.textContent = cards.length ? 'No workouts match. Clear a filter or try another search.'
-        : refreshing ? 'Loading web workouts...' : 'No workouts yet. Create one with +.'
-      results.append(empty)
+      results.append(pageEmpty({
+        title: cards.length
+          ? 'No workouts match.'
+          : refreshing
+            ? 'Loading web workouts...'
+            : 'No workouts yet.',
+        description: cards.length
+          ? 'Clear a filter or try another search.'
+          : refreshing
+            ? undefined
+            : 'Create one with +.',
+        compact: true,
+        className: 'workout-browser-empty',
+      }))
     }
     const count = Object.entries(filters).filter(([key, value]) => key !== 'search' && value).length
     toolbar.querySelector('[aria-label="Filter programs"]')?.setAttribute('data-count', count ? String(count) : '')
@@ -145,7 +156,7 @@ export async function renderProgramLibrary(page: HTMLElement, enabled: boolean, 
       }
     )
   }
-  const toolbar = programToolbar(false, filters, renderResults, opener => {
+  const toolbar = programToolbar(filters, renderResults, opener => {
     const equipment = [...new Set(mergeProgramCatalog(local, remote).flatMap(card => programTaxonomy(card.program).equipment))].sort()
     const dialog = programFilterSheet(filters, equipment, profile.equipment.length > 0, renderResults, opener)
     document.body.append(dialog); dialog.showModal()

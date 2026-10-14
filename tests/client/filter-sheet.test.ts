@@ -15,6 +15,8 @@ class Element {
   constructor(public tag: string) {}
   get childElementCount(): number { return this.children.length }
   append(...children: Element[]): void { this.children.push(...children) }
+  prepend(...children: Element[]): void { this.children.unshift(...children) }
+  appendChild(child: Element): Element { this.children.push(child); return child }
   setAttribute(key: string, value: string): void { this.attributes[key] = value }
   addEventListener(key: string, listener: () => void): void { this.listeners[key] = listener }
   querySelectorAll(selector: string): Element[] {
@@ -28,7 +30,7 @@ class Element {
 
 test('filter sheet retains selections, updates counts, searches long lists, resets and restores focus', () => {
   const original = globalThis.document
-  globalThis.document = { createElement: (tag: string) => new Element(tag) } as unknown as Document
+  globalThis.document = { createElement: (tag: string) => new Element(tag), createElementNS: () => new Element('svg'), createTextNode: (text: string) => Object.assign(new Element('text'), { textContent: text }) } as unknown as Document
   try {
     let selected = 'item-2'
     let closed = false

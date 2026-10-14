@@ -7,8 +7,12 @@ const root = process.cwd()
 
 test('app header has a neutral settings link without a fabricated identity', () => {
   const shell = fs.readFileSync(path.join(root, 'src/client/app/application.ts'), 'utf8')
-  assert.match(shell, /aria-label="Open settings"/)
+  const navigation = fs.readFileSync(path.join(root, 'src/client/app/navigation.ts'), 'utf8')
+  assert.match(shell, /Open settings/)
+  assert.match(shell, /settings-gear/)
+  assert.match(shell, /iconElement\(Settings\)/)
   assert.doesNotMatch(shell, /Settebello|settebello-reference|profile-pill__avatar/)
+  assert.doesNotMatch(navigation, /label: 'Profile'/)
   const profile = fs.readFileSync(path.join(root, 'src/client/profile/page.ts'), 'utf8')
   assert.doesNotMatch(profile, /Settebello/)
   assert.match(profile, /if \(state\.profile\.avatarUrl\) identity\.append/)

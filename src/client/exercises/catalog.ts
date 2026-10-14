@@ -48,7 +48,7 @@ export function catalogDetail(entry: CatalogEntry, onSave: () => void, onBack: (
   const view = createExerciseDetailView(entry.exercise, onSave, busy ? 'Saving…' : 'Add to library')
   view.querySelector<HTMLButtonElement>('.detail-favourite')!.disabled = busy
   const back = view.querySelector<HTMLAnchorElement>('.detail-back')!
-  back.textContent = 'Back to exercises'
+  back.textContent = 'Back to Exercises'
   back.addEventListener('click', event => { event.preventDefault(); onBack() })
   return view
 }

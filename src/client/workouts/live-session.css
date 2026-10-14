@@ -225,3 +225,7 @@ body:has(.live-overlay) { overflow: hidden; }
   .live-footer .live-action { min-height: 48px; }
 }
 @media (prefers-reduced-motion: reduce) { .live-progress-fill { transition: none; } }
+
+.live-rest-actions .live-action { display:inline-flex; align-items:center; justify-content:center; gap:6px; }
+.live-interval-done, .live-eyebrow { display:inline-flex; align-items:center; gap:6px; }
+.live-interval-done svg, .live-eyebrow svg, .live-set-status svg, h2 svg, h3 svg { width:16px; height:16px; flex:none; vertical-align:middle; }

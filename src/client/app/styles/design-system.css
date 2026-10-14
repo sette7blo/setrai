@@ -11,7 +11,7 @@
 }
 
 :is(.exercise-heading, .workout-heading, .statistics-page-head,
-  .profile-hero, .quick-hero, .recovery-page) h1 {
+  .profile-hero) h1 {
   max-width: none;
   font-size: var(--font-page-title) !important;
   font-weight: 650 !important;
@@ -19,7 +19,7 @@
   letter-spacing: -.04em !important;
 }
 
-.profile-hero, .quick-hero {
+.profile-hero {
   border: 0 !important;
   border-radius: 0 !important;
   padding: 8px 0 16px !important;
@@ -27,7 +27,7 @@
   box-shadow: none !important;
 }
 
-.profile-hero .eyebrow, .quick-hero .eyebrow { display: none; }
+.profile-hero .eyebrow { display: none; }
 .profile-hero .hero-summary { margin-bottom: 0; }
 
 :is(.exercise-page .library-summary-card, .exercise-page .exercise-card,
@@ -39,9 +39,7 @@
   .statistics-page .stats-panel, .statistics-page .summary-stat,
   .statistics-page .body-card, .statistics-page .stats-record,
   .statistics-page .stats-hero-card, .statistics-page .bars,
-  .settings-category, .recovery-hero--compact, .recovery-stat,
-  .recovery-map, .recovery-row, .recovery-fresh-summary,
-  .quick-form, .quick-preview, .quick-exercise-row,
+  .settings-category, .recovery-hero--compact,   .recovery-map, .recovery-row, .recovery-fresh-summary,
   .history-calendar, .history-card, .history-filter,
   .session-detail-ex, .workout-exercise, .workout-preview) {
   border: var(--border-subtle) !important;
@@ -49,9 +47,7 @@
 }
 
 :is(.workout-card, .program-browse-hero, .recovery-hero--compact,
-  .recovery-stat, .recovery-row, .recovery-fresh-summary,
-  .quick-form, .quick-preview, .quick-exercise-row,
-  .history-card, .session-detail-ex, .workout-exercise) {
+    .history-card, .session-detail-ex, .workout-exercise) {
   background: var(--color-surface) !important;
 }
 
@@ -83,7 +79,7 @@
 .settings-category[open]::before { display: none; }
 .settings-category[open] > summary { background: var(--color-surface-strong); }
 
-:is(.exercise-tab, .workout-tab, .stats-tab) {
+:is(.page-tab) {
   min-height: 44px !important;
   height: 44px !important;
   font-family: inherit !important;
@@ -98,13 +94,11 @@
 :is(.library-metric, .program-browse-metrics > span,
   .detail-pills > span, .badge) { border: var(--border-subtle) !important; }
 
-.recovery-ring, #recovery-body { filter: none; }
-.recovery-ring-track { stroke: var(--color-border); }
+#recovery-body { filter: none; }
 .recovery-map__fresh, .recovery-map__decor { fill: #d8d6cf; }
 .recovery-row-track { background: var(--color-surface-strong); }
 .recovery-row-track i { background: var(--tone); }
-.recovery-ring--recovering, .recovery-row--recovering,
-.recovery-stat--recovering { --ring: var(--color-error); --tone: var(--color-error); }
+.recovery-row--recovering { --tone: var(--color-error); }
 .recovery-map__recovering { fill: var(--color-error); }
 .recovery-legend .recovering::before { background: var(--color-error); }
 
@@ -119,28 +113,22 @@
 }
 
 
-/* Exercise cards: preserve real 4:3 art ratio in Library and Discover. */
-.exercise-page .exercise-grid,
-.discover-page .exercise-grid {
+/* Exercise cards: preserve real 4:3 art ratio in Library. */
+.exercise-page .exercise-grid {
   align-items: start !important;
 }
 
-.exercise-page .exercise-card,
-.discover-page .exercise-card {
+.exercise-page .exercise-card {
   display: grid !important;
   align-self: start !important;
 }
 
-.exercise-page .exercise-card__link,
-.discover-page .exercise-card__open,
-.discover-page .exercise-card__link {
+.exercise-page .exercise-card__link {
   display: grid !important;
 }
 
 .exercise-page .exercise-card .exercise-image-frame,
-.discover-page .exercise-card .exercise-image-frame,
-.exercise-page .exercise-card .exercise-image,
-.discover-page .exercise-card .exercise-image {
+.exercise-page .exercise-card .exercise-image {
   aspect-ratio: 4 / 3 !important;
   width: 100% !important;
   height: auto !important;
@@ -148,24 +136,20 @@
   max-height: none !important;
 }
 
-.exercise-page .exercise-card .exercise-image-frame img,
-.discover-page .exercise-card .exercise-image-frame img {
+.exercise-page .exercise-card .exercise-image-frame img {
   width: 100% !important;
   height: 100% !important;
   object-fit: cover !important;
 }
 
-.exercise-page .exercise-card__body,
-.discover-page .exercise-card__body {
+.exercise-page .exercise-card__body {
   min-height: auto !important;
   height: auto !important;
 }
 
 @media (max-width: 719px) {
   .exercise-page .exercise-card .exercise-image-frame,
-  .discover-page .exercise-card .exercise-image-frame,
-  .exercise-page .exercise-card .exercise-image,
-  .discover-page .exercise-card .exercise-image {
+  .exercise-page .exercise-card .exercise-image {
     aspect-ratio: 4 / 3 !important;
   }
 }

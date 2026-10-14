@@ -31,13 +31,6 @@ import {
   simpleVolume,
   totalPlannedSets
 } from '../../src/client/workouts/session-logic.js'
-import {
-  addRestSeconds,
-  createRestTimer,
-  formatRestTime,
-  skipRestTimer,
-  tickRestTimer
-} from '../../src/client/workouts/rest-timer.js'
 import { renderSessionSummary, summaryFacts } from '../../src/client/workouts/session-summary.js'
 import { createHistoryCalendar } from '../../src/client/workouts/history-calendar.js'
 import { sessionLinks, workoutLoadingSkeleton } from '../../src/client/workouts/page.js'
@@ -157,19 +150,6 @@ test('live Session logic selects current set and exercise progression', () => {
   assert.equal(sessionProgress(s, p), '1 / 2 exercises · 2 / 3 sets')
 })
 
-test('rest timer handles duration, ticks, +/-15, skip, and floor at zero', () => {
-  let timer = createRestTimer(90)
-  assert.deepEqual(timer, { remainingSec: 90, running: true })
-  timer = tickRestTimer(timer, 15)
-  assert.equal(timer.remainingSec, 75)
-  timer = addRestSeconds(timer, 15)
-  assert.equal(timer.remainingSec, 90)
-  timer = addRestSeconds(timer, -200)
-  assert.deepEqual(timer, { remainingSec: 0, running: false })
-  assert.deepEqual(skipRestTimer(), { remainingSec: 0, running: false })
-  assert.equal(formatRestTime(77), '01:17')
-})
-
 test('Session summary reports logged set count and simple volume', () => {
   const s = session()
   assert.equal(simpleVolume(s), 800)
@@ -248,11 +228,13 @@ class TestElement {
   children: TestElement[] = []
   listeners: Record<string, Array<() => void>> = {}
   type = ''
+  attributes: Record<string, string> = {}
 
   append(...children: TestElement[]): void { this.children.push(...children) }
+  prepend(...children: TestElement[]): void { this.children.unshift(...children) }
   appendChild(child: TestElement): TestElement { this.children.push(child); return child }
   replaceChildren(...children: TestElement[]): void { this.children = [...children] }
-  setAttribute(): void {}
+  setAttribute(name: string, value: string): void { this.attributes[name] = value }
   querySelector(): TestElement | null { return null }
   addEventListener(name: string, handler: () => void): void { (this.listeners[name] ??= []).push(handler) }
   click(): void { for (const handler of this.listeners.click ?? []) handler() }
@@ -277,9 +259,10 @@ test('Workout heading includes Recovery as a workouts tab', () => {
       createTextNode: (text: string) => Object.assign(new TestElement(), { textContent: text })
     } as unknown as Document
     const heading = workoutHeading('recovery', true) as unknown as TestElement
-    assert.match(heading.innerHTML, /href="\/workouts\/recovery"/)
-    assert.match(heading.innerHTML, /Recovery/)
-    assert.match(heading.innerHTML, /aria-current="page"/)
+    const nodes = walkElements(heading)
+    assert.equal(nodes.some((node) => node.href === '/workouts/recovery'), true)
+    assert.match(elementText(heading), /Recovery/)
+    assert.equal(nodes.some((node) => node.attributes['aria-current'] === 'page'), true)
   } finally {
     globalThis.document = originalDocument
   }
@@ -340,7 +323,9 @@ test('Workout history calendar selects the clicked day instead of the final rend
   try {
     globalThis.HTMLButtonElement = TestButton as unknown as typeof HTMLButtonElement
     globalThis.document = {
-      createElement: (tag: string) => tag === 'button' ? new TestButton() : new TestElement()
+      createElement: (tag: string) => tag === 'button' ? new TestButton() : new TestElement(),
+      createElementNS: () => new TestElement(),
+      createTextNode: (text: string) => Object.assign(new TestElement(), { textContent: text })
     } as unknown as Document
     globalThis.window = { location: { search: '' } } as unknown as Window & typeof globalThis
     let selected = ''
@@ -364,13 +349,15 @@ test('Library keeps only active Resume without duplicating completed history', (
   const originalDocument = globalThis.document
   try {
     globalThis.document = {
-      createElement: () => new TestElement()
+      createElement: () => new TestElement(),
+      createElementNS: () => new TestElement(),
+      createTextNode: (text: string) => Object.assign(new TestElement(), { textContent: text })
     } as unknown as Document
     const complete = normalizeSession({ id: 1, programName: 'Completed workout', finishedAt: '2026-10-09T12:00:00Z' })
     const active = normalizeSession({ id: 2, programName: 'Active workout' })
     const links = sessionLinks([complete, active]) as unknown as TestElement
     assert.deepEqual(links.children.map(child => child.href), ['/sessions/2'])
-    assert.equal(links.children[0].textContent, 'Resume Active workout')
+    assert.match(elementText(links.children[0]), /Resume Active workout/)
     assert(!elementText(links).includes('Recent sessions'))
     assert(!elementText(links).includes('Completed workout'))
     for (const sessions of [[], [complete]]) {

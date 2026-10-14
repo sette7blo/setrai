@@ -1,79 +1,69 @@
-import { ClipboardList, Compass, Dumbbell, Plus, RefreshCw, Search, SlidersHorizontal } from 'lucide'
+import { ClipboardList, Dumbbell, Plus, RefreshCw, Search, SlidersHorizontal } from 'lucide'
 import { iconElement } from '../app/navigation.js'
 import { displayName } from '../exercises/format.js'
 import { PROGRAM_GOALS, PROGRAM_FOCUS, PROGRAM_FORMATS, emptyProgramFilters } from './program-taxonomy.js'
 import type { ProgramFilters } from './program-taxonomy.js'
 import type { Program } from './types.js'
 import { createFilterChips, createFilterSheet, type FilterGroup } from '../shared/filter-sheet.js'
+import { pageHeading, pageSummary } from '../shared/page-chrome.js'
 
-export function workoutHeading(active: 'library' | 'discover' | 'history' | 'recovery', _enabled: boolean): HTMLElement {
-  const header = document.createElement('header')
-  header.className = 'workout-heading'
-  header.innerHTML = `<h1>Workouts</h1><nav class="workout-tabs" aria-label="Workout sections">
-    <a class="workout-tab${active === 'library' || active === 'discover' ? ' workout-tab--active' : ''}" href="/workouts"${active === 'library' || active === 'discover' ? ' aria-current="page"' : ''}>Library</a>
-    <a class="workout-tab${active === 'history' ? ' workout-tab--active' : ''}" href="/workouts/history"${active === 'history' ? ' aria-current="page"' : ''}>History</a>
-    <a class="workout-tab${active === 'recovery' ? ' workout-tab--active' : ''}" href="/workouts/recovery"${active === 'recovery' ? ' aria-current="page"' : ''}>Recovery</a>
-  </nav>`
-  return header
+export function workoutHeading(active: 'library' | 'history' | 'recovery', _enabled: boolean): HTMLElement {
+  return pageHeading({
+    title: 'Workouts',
+    className: 'workout-heading',
+    tabsLabel: 'Workout sections',
+    tabs: [
+      { id: 'library', label: 'Library', href: '/workouts', active: active === 'library' },
+      { id: 'history', label: 'History', href: '/workouts/history', active: active === 'history' },
+      { id: 'recovery', label: 'Recovery', href: '/workouts/recovery', active: active === 'recovery' },
+    ],
+  })
 }
 
-export function programHero(programs: Program[], discover: boolean, status = ''): HTMLElement {
-  const hero = document.createElement('section')
-  hero.className = 'program-browse-hero'
-  const icon = document.createElement('span')
-  icon.className = 'program-browse-icon'
-  icon.append(iconElement(discover ? Compass : ClipboardList))
-  const copy = document.createElement('div')
-  const title = document.createElement('h2')
-  title.textContent = discover ? 'Creator programs' : 'Program library'
-  const description = document.createElement('p')
-  description.textContent = discover ? 'Import a program into your Library to edit and run it.' : 'Your own programs: run them, edit them, make them yours.'
-  const metrics = document.createElement('div')
-  metrics.className = 'program-browse-metrics'
-  if (discover) metrics.textContent = status
-  else {
-    const counts = [[ClipboardList, programs.length, 'programs'], [Dumbbell, new Set(programs.flatMap(program => program.exercises.map(entry => entry.exerciseSlug))).size, 'exercises']] as const
-    for (const [glyph, value, label] of counts) {
-      const metric = document.createElement('span')
-      metric.append(iconElement(glyph), document.createTextNode(`${value} ${value === 1 ? label.slice(0, -1) : label}`))
-      metrics.append(metric)
-    }
-  }
-  copy.append(title, description, metrics)
-  hero.append(icon, copy)
-  return hero
+export function programHero(programs: Program[]): HTMLElement {
+  const exerciseCount = new Set(programs.flatMap(program => program.exercises.map(entry => entry.exerciseSlug))).size
+  return pageSummary({
+    icon: ClipboardList,
+    title: 'Program library',
+    description: 'Your own programs: run them, edit them, make them yours.',
+    className: 'program-browse-hero',
+    metrics: [
+      { icon: ClipboardList, text: `${programs.length} ${programs.length === 1 ? 'program' : 'programs'}` },
+      { icon: Dumbbell, text: `${exerciseCount} ${exerciseCount === 1 ? 'exercise' : 'exercises'}` },
+    ],
+  })
 }
 
-export function programToolbar(discover: boolean, filters: ProgramFilters, onSearch: () => void, onFilters: (opener: HTMLButtonElement) => void, onAction: () => void, onRefresh?: () => void): HTMLElement {
+export function programToolbar(filters: ProgramFilters, onSearch: () => void, onFilters: (opener: HTMLButtonElement) => void, onAction: () => void, onRefresh?: () => void): HTMLElement {
   const toolbar = document.createElement('div')
-  toolbar.className = 'program-toolbar'
+  toolbar.className = 'page-toolbar program-toolbar'
   const label = document.createElement('label')
-  label.className = 'program-search'
+  label.className = 'page-toolbar-search program-search'
   const search = document.createElement('input')
   search.type = 'search'
-  search.placeholder = discover ? 'Search relay programs...' : 'Search programs...'
+  search.placeholder = 'Search programs...'
   search.setAttribute('aria-label', search.placeholder)
   search.value = filters.search
   search.addEventListener('input', () => { filters.search = search.value; onSearch() })
   label.append(iconElement(Search), search)
   const toggle = document.createElement('button')
   toggle.type = 'button'
-  toggle.className = 'program-toolbar-action'
+  toggle.className = 'page-toolbar-action program-toolbar-action'
   toggle.setAttribute('aria-label', 'Filter programs')
   toggle.setAttribute('aria-haspopup', 'dialog')
   toggle.append(iconElement(SlidersHorizontal))
   toggle.addEventListener('click', () => onFilters(toggle))
   const action = document.createElement('button')
   action.type = 'button'
-  action.className = `program-toolbar-action${discover ? '' : ' accent program-toolbar-action--create'}`
-  action.setAttribute('aria-label', discover ? 'Refresh relay programs' : 'Create new program')
-  action.append(iconElement(discover ? RefreshCw : Plus))
+  action.className = 'page-toolbar-action program-toolbar-action accent program-toolbar-action--create page-toolbar-action--primary'
+  action.setAttribute('aria-label', 'Create new program')
+  action.append(iconElement(Plus))
   action.addEventListener('click', onAction)
   toolbar.append(label, toggle, action)
   if (onRefresh) {
     toolbar.classList.add('program-toolbar--catalog')
     const refresh = document.createElement('button')
-    refresh.type = 'button'; refresh.className = 'program-toolbar-action'
+    refresh.type = 'button'; refresh.className = 'page-toolbar-action program-toolbar-action'
     refresh.setAttribute('aria-label', 'Refresh web workouts')
     refresh.append(iconElement(RefreshCw))
     refresh.addEventListener('click', onRefresh)

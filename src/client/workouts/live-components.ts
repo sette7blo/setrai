@@ -1,9 +1,60 @@
 export { exerciseHero } from './live-media.js'
-import { Check, Layers, Repeat2, Hourglass, X, ListOrdered, Plus, Info, Target } from 'lucide'
+import {
+  ArrowRight,
+  Check,
+  ChevronLeft,
+  ChevronRight,
+  Hourglass,
+  Info,
+  Layers,
+  ListOrdered,
+  Minus,
+  Pause,
+  Play,
+  Plus,
+  Repeat2,
+  Target,
+  X,
+} from 'lucide'
 import { iconElement } from '../app/navigation.js'
 import { displayWeightFromKg } from '../profile/weight-units.js'
 import type { WeightUnit } from '../profile/types.js'
 import type { ProgramExercise } from './types.js'
+
+export type LiveGlyph =
+  | 'sets'
+  | 'reps'
+  | 'rest'
+  | 'close'
+  | 'list'
+  | 'plus'
+  | 'minus'
+  | 'info'
+  | 'target'
+  | 'check'
+  | 'play'
+  | 'pause'
+  | 'chevronLeft'
+  | 'chevronRight'
+  | 'arrowRight'
+
+const GLYPHS = {
+  sets: Layers,
+  reps: Repeat2,
+  rest: Hourglass,
+  close: X,
+  list: ListOrdered,
+  plus: Plus,
+  minus: Minus,
+  info: Info,
+  target: Target,
+  check: Check,
+  play: Play,
+  pause: Pause,
+  chevronLeft: ChevronLeft,
+  chevronRight: ChevronRight,
+  arrowRight: ArrowRight,
+} as const
 
 export function node<K extends keyof HTMLElementTagNameMap>(tag: K, className: string, text?: string): HTMLElementTagNameMap[K] {
   const element = document.createElement(tag)
@@ -19,8 +70,22 @@ export function action(text: string, run: () => void, className = ''): HTMLButto
   return button
 }
 
-export function glyph(name: 'sets' | 'reps' | 'rest' | 'close' | 'list' | 'plus' | 'info' | 'target' | 'check'): SVGElement {
-  return iconElement({ sets: Layers, reps: Repeat2, rest: Hourglass, close: X, list: ListOrdered, plus: Plus, info: Info, target: Target, check: Check }[name])
+export function glyph(name: LiveGlyph): SVGElement {
+  return iconElement(GLYPHS[name])
+}
+
+export function iconAction(name: LiveGlyph, label: string, run: () => void, className = ''): HTMLButtonElement {
+  const button = action('', run, className)
+  button.append(glyph(name))
+  button.setAttribute('aria-label', label)
+  return button
+}
+
+export function labeledAction(name: LiveGlyph, text: string, run: () => void, className = '', position: 'start' | 'end' = 'start'): HTMLButtonElement {
+  const button = action(text, run, className)
+  if (position === 'start') button.prepend(glyph(name))
+  else button.append(glyph(name))
+  return button
 }
 
 export function instructions(exercise: ProgramExercise | undefined, open: Set<string>): HTMLElement {

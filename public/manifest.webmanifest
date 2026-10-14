@@ -1,7 +1,7 @@
 {
   "name": "Setrai",
   "short_name": "Setrai",
-  "description": "Self-hosted training, workouts, statistics, and recovery.",
+  "description": "Self-hosted training, workouts, home progress, and recovery.",
   "start_url": "/statistics",
   "display": "standalone",
   "background_color": "#f7f6f1",

@@ -55,9 +55,7 @@
 .program-card,
 .program-exercise-row,
 .current-exercise,
-.logged-set,
 .finish-panel,
-.rest-timer,
 .recent-session,
 .workouts-empty,
 .session-summary {
@@ -127,15 +125,8 @@
 }
 
 .program-exercise-list,
-.logged-sets {
-  display: grid;
-  gap: var(--space-3);
-}
 
 .program-exercise-list h2,
-.logged-sets h2 {
-  margin: 0;
-}
 
 .program-exercise-row {
   display: grid;
@@ -161,47 +152,7 @@
 .live-session__header {
   gap: var(--space-2);
 }
-
-.rest-timer {
-  position: sticky;
-  top: var(--space-3);
-  z-index: 4;
-  display: flex;
-  min-height: 4rem;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--space-3);
-  padding: var(--space-3) var(--space-4);
-  color: var(--color-muted-strong);
-  backdrop-filter: blur(16px);
-}
-
-.rest-timer--active {
-  border-color: var(--color-border-strong);
-  background: rgba(7, 17, 15, 0.94);
-}
-
-.rest-timer strong {
-  color: var(--color-primary);
-  font-size: 1.6rem;
-  font-variant-numeric: tabular-nums;
-}
-
-.rest-timer__controls {
-  display: flex;
-  gap: var(--space-2);
-}
-
-.rest-timer button,
 .session-nav button,
-.logged-set button {
-  min-height: 40px;
-  border: 1px solid var(--color-border);
-  border-radius: 999px;
-  color: var(--color-text);
-  background: rgba(255, 255, 255, 0.04);
-  padding: 0 var(--space-3);
-}
 
 .current-exercise {
   overflow: hidden;
@@ -241,16 +192,6 @@
 
 .set-log-form input,
 .finish-panel textarea,
-.logged-set input {
-  width: 100%;
-  min-height: 48px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-md);
-  padding: 0 var(--space-3);
-  color: var(--color-text);
-  background: rgba(255, 255, 255, 0.04);
-  font: inherit;
-}
 
 .finish-panel {
   padding: var(--space-4);
@@ -267,28 +208,9 @@
   gap: var(--space-3);
 }
 
-.logged-set {
-  display: grid;
-  gap: var(--space-3);
-  padding: var(--space-3);
-}
 
-.logged-set__summary {
-  display: flex;
-  justify-content: space-between;
-  gap: var(--space-3);
-}
 
-.logged-set__summary span {
-  color: var(--color-muted-strong);
-}
 
-.logged-set__edit {
-  display: grid;
-  grid-template-columns: 1fr 1fr auto auto;
-  gap: var(--space-2);
-  align-items: center;
-}
 
 .button-danger {
   color: var(--color-error) !important;
@@ -491,18 +413,11 @@
   .session-summary-map { min-height: 13rem; padding: 12px; }
   .session-summary-map svg { width: min(100%, 14.5rem); }
   .workout-section, .program-grid, .program-card { gap: 12px; }
-  .section-heading h2, .program-card h2, .current-exercise h2, .program-exercise-list h2, .logged-sets h2 { font-size: var(--font-section-title); }
-  .program-card, .recent-session, .finish-panel { padding: 12px; }
+  .section-heading h2, .program-card h2, .current-exercise h2, .program-exercise-list h2,   .program-card, .recent-session, .finish-panel { padding: 12px; }
   .program-exercise-row { grid-template-columns: 72px minmax(0, 1fr); }
   .program-exercise-row__body { padding: 10px; }
   .program-exercise-row h3 { font-size: 14px; }
   .current-exercise__image { max-height: 180px; }
   .current-exercise__body { padding: 12px; }
-  .rest-timer { flex-wrap: wrap; min-height: 56px; padding: 8px 10px; top: calc(64px + env(safe-area-inset-top)); gap: 8px; }
-  .rest-timer strong { font-size: 22px; }
-  .rest-timer__controls { gap: 6px; }
-  .rest-timer button, .session-nav button, .logged-set button { min-height: 44px; }
-  .set-log-form input, .finish-panel textarea, .logged-set input { min-width: 0; min-height: 44px; font-size: 16px; }
-  .logged-set__edit { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .program-card__actions { gap: 8px; }
+  .set-log-form input, .finish-panel textarea,     .program-card__actions { gap: 8px; }
 }

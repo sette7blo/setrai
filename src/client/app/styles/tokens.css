@@ -31,6 +31,27 @@
   --shadow-soft: 0 24px 80px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255,255,255,0.04);
   --shadow-accent: 0 0 36px rgba(var(--color-primary-rgb), 0.2);
   --glass-fill: rgba(7, 15, 17, 0.72);
+
+  /* Shared chip tokens — metric (display) vs control (interactive) */
+  --chip-radius: 999px;
+  --chip-gap: 6px;
+  --chip-border: 1px solid var(--color-border);
+  --chip-metric-height: 28px;
+  --chip-metric-pad-x: 8px;
+  --chip-metric-font: 650 11px/1.2 Inter, ui-sans-serif, system-ui, sans-serif;
+  --chip-metric-icon: 12px;
+  --chip-control-height: 44px;
+  --chip-control-pad-x: 12px;
+  --chip-control-font: 650 12px/1 Inter, ui-sans-serif, system-ui, sans-serif;
+  --chip-control-icon: 14px;
+
+  /* Shared search/filter toolbar density */
+  --toolbar-size: 44px;
+  --toolbar-gap: 8px;
+  --toolbar-radius: 12px;
+  --toolbar-search-pad-x: 12px;
+  --toolbar-icon: 18px;
+  --toolbar-action-icon: 18px;
 }
 
 @media (max-width: 719px) {

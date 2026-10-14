@@ -1,6 +1,6 @@
 import type { Capabilities } from '../shared/api/types.js'
 import { readableApiError } from '../shared/api/errors.js'
-import { loadCatalog, importCatalogExercise } from '../discover/api.js'
+import { loadCatalog, importCatalogExercise } from '../exercises/catalog-api.js'
 import { renderExerciseDetail } from '../exercises/detail-page.js'
 import { renderExerciseLibrary } from '../exercises/page.js'
 import { renderProgramDetail } from '../workouts/program-detail-page.js'
@@ -8,6 +8,7 @@ import { renderSessionPage } from '../workouts/session-page.js'
 import { renderWorkoutsPage } from '../workouts/page.js'
 import { renderStatisticsPage } from '../statistics/page.js'
 import { renderProfilePage } from '../profile/page.js'
+import { Settings } from 'lucide'
 import {
   iconElement,
   NAVIGATION_ITEMS
@@ -110,8 +111,16 @@ function routeContainer(): HTMLElement {
 async function renderRoute(container: HTMLElement, capabilities: Capabilities): Promise<void> {
   const path = currentPath()
 
-  if (path === '/') {
-    await renderStatisticsPage(container)
+  if (path === '/' || path === '/statistics' || path === '/statistics/training') {
+    if (path === '/' || path === '/statistics/training') {
+      window.history.replaceState({}, '', `/statistics${window.location.search}`)
+    }
+    await renderStatisticsPage(container, 'training')
+    return
+  }
+
+  if (path === '/statistics/body') {
+    await renderStatisticsPage(container, 'body')
     return
   }
 
@@ -127,7 +136,8 @@ async function renderRoute(container: HTMLElement, capabilities: Capabilities): 
   }
 
   if (path === '/workouts/discover') {
-    await renderWorkoutsPage(container, capabilities.nostr, 'discover')
+    window.history.replaceState({}, '', `/workouts${window.location.search}`)
+    await renderWorkoutsPage(container, capabilities.nostr, 'library')
     return
   }
 
@@ -144,11 +154,6 @@ async function renderRoute(container: HTMLElement, capabilities: Capabilities): 
   if (path === '/quick-workout') {
     window.history.replaceState({}, '', '/workouts/recovery')
     await renderWorkoutsPage(container, capabilities.nostr, 'recovery')
-    return
-  }
-
-  if (path === '/statistics') {
-    await renderStatisticsPage(container)
     return
   }
 
@@ -209,16 +214,17 @@ async function renderShell(root: HTMLElement, capabilities: Capabilities): Promi
 
   const top = document.createElement('header')
   top.className = 'top-bar'
-  top.innerHTML = `
-    <a class="mobile-brand" href="/statistics" aria-label="Setrai home">
-      <img class="mobile-brand__logo" src="/brand/setrai-logo-mark.jpg" alt="" aria-hidden="true">
-      <span><strong>Setrai</strong><small>AI Training Coach</small></span>
-    </a>
-    <a class="profile-pill profile-pill--settings" href="/profile" aria-label="Open settings">
-      <strong>Settings</strong>
-      <span class="profile-pill__gear" aria-hidden="true">⚙</span>
-    </a>
-  `
+  const brand = document.createElement('a')
+  brand.className = 'mobile-brand'
+  brand.href = '/statistics'
+  brand.setAttribute('aria-label', 'Setrai home')
+  brand.innerHTML = '<img class="mobile-brand__logo" src="/brand/setrai-logo-mark.jpg" alt="" aria-hidden="true"><span><strong>Setrai</strong><small>AI Training Coach</small></span>'
+  const settings = document.createElement('a')
+  settings.className = 'settings-gear'
+  settings.href = '/profile'
+  settings.setAttribute('aria-label', 'Open settings')
+  settings.append(iconElement(Settings))
+  top.append(brand, settings)
 
   let container = routeContainer()
   main.append(top, container)

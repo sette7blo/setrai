@@ -1,0 +1,124 @@
+/* Shared chip polish — metric (display) vs control (interactive). Live session actions stay separate. */
+
+.chip-metric,
+.library-metric,
+.page-summary-metrics > span,
+.recovery-hero-metrics > span,
+.program-browse-metrics > span,
+.detail-pills > span,
+.badge:not(.muscle),
+.status-pill {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--chip-gap);
+  min-height: var(--chip-metric-height);
+  padding: 0 var(--chip-metric-pad-x);
+  border: var(--chip-border);
+  border-radius: var(--chip-radius);
+  background: transparent;
+  color: var(--color-muted-strong);
+  font: var(--chip-metric-font);
+  white-space: nowrap;
+}
+
+.chip-metric svg,
+.library-metric svg,
+.page-summary-metrics svg,
+.recovery-hero-metrics svg,
+.program-browse-metrics svg {
+  width: var(--chip-metric-icon);
+  height: var(--chip-metric-icon);
+  flex: none;
+  color: var(--color-primary);
+}
+
+.chip-control,
+.filter-chip,
+.filter-reset,
+.filter-title,
+.equipment-chip,
+.active-filter-chips button,
+.recovery-fresh-chips button,
+.recovery-quick-duration button,
+.filter-sheet__option {
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--chip-gap);
+  min-height: var(--chip-control-height);
+  padding: 0 var(--chip-control-pad-x);
+  border: var(--chip-border);
+  border-radius: var(--chip-radius);
+  color: var(--color-muted-strong);
+  background: var(--color-surface);
+  font: var(--chip-control-font);
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+}
+
+.chip-control svg,
+.filter-chip svg,
+.equipment-chip svg {
+  width: var(--chip-control-icon);
+  height: var(--chip-control-icon);
+  flex: none;
+}
+
+.chip-control--active,
+.filter-chip--active,
+.equipment-chip--active,
+.recovery-quick-duration button[aria-pressed="true"],
+.filter-sheet__option[aria-pressed="true"],
+.recovery-fresh-chips button.is-selected {
+  color: #fff;
+  background: #000;
+  border-color: #000;
+}
+
+.chip-row,
+.library-summary-metrics,
+.page-summary-metrics,
+.recovery-hero-metrics,
+.program-browse-metrics,
+.detail-pills,
+.active-filter-chips,
+.recovery-fresh-chips,
+.recovery-quick-duration {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--chip-gap);
+  align-items: center;
+}
+
+.recovery-quick-duration {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.recovery-quick-duration button {
+  width: 100%;
+}
+
+/* Soften pressed state for light monochrome surfaces already using white chips */
+.equipment-chip {
+  background: #fff;
+  color: #242424;
+}
+
+.equipment-chip--active {
+  background: #000;
+  color: #fff;
+  border-color: #000;
+}
+
+@media (max-width: 719px) {
+  :root {
+    --chip-metric-height: 26px;
+    --chip-metric-pad-x: 7px;
+    --chip-metric-font: 650 10px/1.2 Inter, ui-sans-serif, system-ui, sans-serif;
+    --chip-control-pad-x: 12px;
+  }
+}

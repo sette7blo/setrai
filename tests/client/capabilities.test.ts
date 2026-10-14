@@ -3,7 +3,8 @@ import test from 'node:test'
 
 import {
   capabilityLabel,
-  findRoute
+  findRoute,
+  primaryNavPath
 } from '../../src/client/app/router.js'
 import {
   parseCapabilities
@@ -44,8 +45,17 @@ test('capability label avoids disabled integration placeholders', () => {
 })
 
 test('route lookup falls back to the Setrai home route', () => {
-  assert.equal(findRoute('/profile').title, 'Training profile')
+  assert.equal(findRoute('/profile').title, 'Settings')
   assert.equal(findRoute('/unknown').path, '/')
+  assert.equal(findRoute('/statistics/body').title, 'Home')
+  assert.equal(findRoute('/statistics/body').primaryAction, 'Log body weight')
+})
+
+test('home body route stays under Home primary navigation', () => {
+  assert.equal(primaryNavPath('/statistics'), '/statistics')
+  assert.equal(primaryNavPath('/statistics/body'), '/statistics')
+  assert.equal(primaryNavPath('/statistics/training'), '/statistics')
+  assert.equal(primaryNavPath('/'), '/statistics')
 })
 
 

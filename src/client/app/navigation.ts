@@ -3,7 +3,6 @@ import {
   createElement,
   Dumbbell,
   House,
-  User,
   type IconNode
 } from 'lucide'
 
@@ -19,26 +18,19 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
     path: '/statistics',
     label: 'Home',
     icon: House,
-    description: 'Training statistics and body progress'
+    description: 'Training volume and body progress'
   },
   {
     path: '/exercises',
     label: 'Exercises',
     icon: Dumbbell,
-    description: 'Seeded movement library'
+    description: 'Browse movements and favorites'
   },
   {
     path: '/workouts',
     label: 'Workouts',
     icon: ClipboardList,
     description: 'Programs and live sessions'
-  },
-
-  {
-    path: '/profile',
-    label: 'Profile',
-    icon: User,
-    description: 'Training preferences'
   }
 ]
 

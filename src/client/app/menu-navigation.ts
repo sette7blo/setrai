@@ -30,7 +30,7 @@ export function installMenuNavigation(
   const click = (event: MouseEvent): void => {
     if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return
     const link = event.target instanceof Element
-      ? event.target.closest<HTMLAnchorElement>('a.nav-link, a.brand-mark, a.mobile-brand, a.profile-pill, a.exercise-tab, a.workout-tab')
+      ? event.target.closest<HTMLAnchorElement>('a.nav-link, a.brand-mark, a.mobile-brand, a.settings-gear, a.page-tab')
       : null
     if (!link) return
     const destination = menuDestination(link.href, window.location.href, link.target, link.hasAttribute('download'))

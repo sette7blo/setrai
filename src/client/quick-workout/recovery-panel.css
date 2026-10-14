@@ -2,10 +2,8 @@
 .recovery-quick-heading { display: flex; align-items: center; gap: 12px; }
 .recovery-quick-heading h2 { margin: 0 0 4px; font-size: 16px; font-weight: 650; }
 .recovery-quick-heading p { margin: 0; color: var(--color-muted-strong); font-size: 13px; line-height: 1.5; }
-.recovery-quick-duration { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; }
-.recovery-quick-duration button, .recovery-quick-icon { min-height: 44px; border: 1px solid var(--color-border); border-radius: 12px; color: var(--color-text); background: var(--color-surface-strong); font: inherit; cursor: pointer; }
-.recovery-quick-duration button { padding: 6px; font-size: 13px; font-weight: 600; }
-.recovery-quick-duration button[aria-pressed="true"] { color: #fff; background: #000; border-color: #000; }
+.recovery-quick-icon { min-height: var(--chip-control-height); border: var(--chip-border); border-radius: var(--chip-radius); color: var(--color-text); background: var(--color-surface-strong); font: inherit; cursor: pointer; }
+.recovery-quick-duration button { color: var(--color-text); background: var(--color-surface-strong); }
 .recovery-quick-status { margin: 0; color: var(--color-muted-strong); font-size: 13px; }
 .recovery-quick-status:empty, .recovery-quick-result:empty { display: none; }
 .recovery-quick-result, .recovery-quick-list { display: grid; gap: 10px; min-width: 0; }

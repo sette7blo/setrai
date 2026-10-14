@@ -1,5 +1,5 @@
 import { displayWeightFromKg, inputWeightToKg } from '../profile/weight-units.js'
-import { action, node, exerciseHero, instructions, numberInput, loadLabel, glyph } from './live-components.js'
+import { action, node, exerciseHero, instructions, numberInput, loadLabel, glyph, iconAction, labeledAction } from './live-components.js'
 import { nextSet, setCount, strengthSets, supersetNext } from './live-plan.js'
 import type { LiveModel, LiveActions } from './live-model.js'
 
@@ -8,7 +8,7 @@ export function renderStrength(model: LiveModel, controls: LiveActions, body: HT
   const exercise = model.exercises[index]
   if (!exercise) {
     body.append(node('h2', '', 'No planned exercises available'))
-    footer.append(action('Finish session', controls.finish, 'live-primary'))
+    footer.append(labeledAction('check', 'Finish session', controls.finish, 'live-primary'))
     return
   }
   body.append(exerciseHero(exercise))
@@ -65,8 +65,7 @@ export function renderStrength(model: LiveModel, controls: LiveActions, body: HT
     }
     plan.append(row)
   }
-  const add = action('Add set', () => controls.addSet(exercise), 'live-add')
-  add.prepend(glyph('plus'))
+  const add = labeledAction('plus', 'Add set', () => controls.addSet(exercise), 'live-add')
   plan.append(add)
   body.append(plan, instructions(exercise, model.openInstructions))
   if (index === model.exercises.length - 1 && number > count) {
@@ -80,12 +79,10 @@ export function renderStrength(model: LiveModel, controls: LiveActions, body: HT
     body.append(notes)
   }
   if (index > 0) {
-    const previous = action('‹', () => controls.jump(index - 1), 'live-prev')
-    previous.setAttribute('aria-label', 'Previous exercise')
-    footer.append(previous)
+    footer.append(iconAction('chevronLeft', 'Previous exercise', () => controls.jump(index - 1), 'live-prev'))
   }
   if (number <= count) {
-    const button = action(`Log set ${number}`, () => {
+    const button = labeledAction('check', `Log set ${number}`, () => {
       const reps = Number(draft.reps)
       const weight = draft.weight.trim() ? inputWeightToKg(Number(draft.weight), model.unit) : null
       if (!Number.isInteger(reps) || reps < 1 || (weight !== null && (!Number.isFinite(weight) || weight < 0))) {
@@ -98,12 +95,14 @@ export function renderStrength(model: LiveModel, controls: LiveActions, body: HT
         weight, done: true, ...(timed ? { durationSec: reps } : {}),
         ...(transition ? { blockIndex: transition.blockIndex, roundIndex: transition.roundIndex, stepIndex: transition.stepIndex } : {}) }, exercise)
     }, 'live-primary')
-    button.prepend(glyph('check'))
     button.disabled = model.busy
     footer.append(button)
   } else if (index < model.exercises.length - 1) {
-    footer.append(action('Next exercise →', () => controls.jump(index + 1), 'live-primary'))
+    footer.append(labeledAction('arrowRight', 'Next exercise', () => controls.jump(index + 1), 'live-primary', 'end'))
   } else if (model.intervals.length) {
-    footer.append(action('Start EMOM →', controls.startEmom, 'live-primary'), action('Finish early', controls.finish))
-  } else footer.append(action('Finish session', controls.finish, 'live-primary live-finish'))
+    footer.append(
+      labeledAction('play', 'Start EMOM', controls.startEmom, 'live-primary'),
+      action('Finish early', controls.finish),
+    )
+  } else footer.append(labeledAction('check', 'Finish session', controls.finish, 'live-primary live-finish'))
 }

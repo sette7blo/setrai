@@ -20,7 +20,7 @@ export function createRecoveryWorkoutPanel(equipment: string[] = []): HTMLElemen
   const copy = document.createElement('div')
   const title = document.createElement('h2'); title.textContent = 'Quick Workout'
   const help = document.createElement('p')
-  help.textContent = equipment.length ? `Uses recovered or fresh muscles with ${equipment.map(displayName).join(', ')}. Swap or remove exercises before starting.` : 'Uses recovered or fresh muscles. Add equipment in Profile to tailor it further.'
+  help.textContent = equipment.length ? `Uses recovered or fresh muscles with ${equipment.map(displayName).join(', ')}. Swap or remove exercises before starting.` : 'Uses recovered or fresh muscles. Add equipment in Settings to tailor it further.'
   copy.append(title, help); heading.append(icon, copy)
   const duration = document.createElement('div')
   duration.className = 'recovery-quick-duration'

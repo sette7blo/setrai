@@ -1,5 +1,5 @@
 import { inputWeightToKg } from '../profile/weight-units.js'
-import { action, node, exerciseHero, instructions, numberInput, loadLabel, countdown, paintCountdown } from './live-components.js'
+import { action, node, exerciseHero, instructions, numberInput, loadLabel, countdown, paintCountdown, glyph, labeledAction } from './live-components.js'
 import { clockValue, intervalPhase, timeLabel } from './live-plan.js'
 import type { LiveModel, LiveActions } from './live-model.js'
 
@@ -14,11 +14,19 @@ export function renderEmom(model: LiveModel, controls: LiveActions, body: HTMLEl
   body.append(exerciseHero(exercise))
   if (!runtime.emomStartedAt || !slot) {
     const card = node('section', 'live-transition')
-    card.append(node('p', 'live-eyebrow', runtime.emomStartedAt ? '✓ EMOM complete' : 'EMOM next'),
+    const eyebrow = node('p', 'live-eyebrow', runtime.emomStartedAt ? 'EMOM complete' : 'EMOM next')
+    if (runtime.emomStartedAt) eyebrow.prepend(glyph('check'))
+    card.append(
+      eyebrow,
       node('h2', '', `${timeLabel(total)} · ${model.intervals.length} intervals`),
-      node('p', '', runtime.emomStartedAt ? 'Review your logged work, then finish your session.' : 'Start the clock when you’re ready. Log actual reps separately from timed targets.'))
+      node('p', '', runtime.emomStartedAt ? 'Review your logged work, then finish your session.' : 'Start the clock when you’re ready. Log actual reps separately from timed targets.'),
+    )
     body.append(card)
-    footer.append(action(runtime.emomStartedAt ? '✓ Finish session' : 'Start EMOM', runtime.emomStartedAt ? controls.finish : controls.startEmom, 'live-primary'))
+    footer.append(
+      runtime.emomStartedAt
+        ? labeledAction('check', 'Finish session', controls.finish, 'live-primary')
+        : labeledAction('play', 'Start EMOM', controls.startEmom, 'live-primary'),
+    )
     return
   }
   const status = node('section', 'live-emom-status')
@@ -41,10 +49,18 @@ export function renderEmom(model: LiveModel, controls: LiveActions, body: HTMLEl
     const entry = model.session.plannedExercises.find((item) => item.exerciseSlug === step.exerciseSlug)
     const saved = model.session.sets.find((set) => set.blockIndex === slot.blockIndex && set.roundIndex === slot.roundIndex && set.intervalIndex === slot.intervalIndex && set.stepIndex === stepIndex)
     const row = node('div', 'live-interval-row')
-    row.append(node('h3', '', saved ? '✓ Logged' : 'Log this interval'))
+    if (saved) {
+      const heading = node('h3', '', 'Logged')
+      heading.prepend(glyph('check'))
+      row.append(heading)
+    } else {
+      row.append(node('h3', '', 'Log this interval'))
+    }
     if (slot.steps.length > 1) row.append(node('p', 'live-muted', entry?.exerciseName || step.exerciseName || step.exerciseSlug))
     if (saved) {
-      row.append(node('p', 'live-interval-done', `✓ Logged · ${saved.reps || '—'} reps · ${loadLabel(saved.weight, model.unit)} ${model.unit}${saved.durationSec ? ` · ${saved.durationSec}s` : ''}`))
+      const done = node('p', 'live-interval-done', `Logged · ${saved.reps || '—'} reps · ${loadLabel(saved.weight, model.unit)} ${model.unit}${saved.durationSec ? ` · ${saved.durationSec}s` : ''}`)
+      done.prepend(glyph('check'))
+      row.append(done)
     } else if (phase!.stepIndex === null || phase!.stepIndex === stepIndex) {
       const key = `interval:${slot.index}:${stepIndex}`
       if (!model.drafts.has(key)) model.drafts.set(key, { reps: '', weight: '' })
@@ -56,10 +72,10 @@ export function renderEmom(model: LiveModel, controls: LiveActions, body: HTMLEl
       weight.placeholder = `Load ${model.unit}`
       const repsLabel = node('label', '')
       repsLabel.append(node('span', '', 'Actual reps'), reps)
-      const loadLabel = node('label', '')
-      loadLabel.append(node('span', '', `Load ${model.unit}`), weight)
-      inputs.append(repsLabel, loadLabel)
-      row.append(inputs, action('✓ Log interval', () => {
+      const loadField = node('label', '')
+      loadField.append(node('span', '', `Load ${model.unit}`), weight)
+      inputs.append(repsLabel, loadField)
+      row.append(inputs, labeledAction('check', 'Log interval', () => {
         const value = draft.reps.trim() ? Number(draft.reps) : 0
         const load = draft.weight.trim() ? inputWeightToKg(Number(draft.weight), model.unit) : null
         if (!Number.isInteger(value) || value < 0 || (!value && !step.targetDurationSec) || (load !== null && (!Number.isFinite(load) || load < 0))) {
@@ -77,5 +93,8 @@ export function renderEmom(model: LiveModel, controls: LiveActions, body: HTMLEl
   body.append(panel)
   const next = model.intervals[slot.index + 1]
   body.append(node('p', 'live-next-up', next ? `Next up · ${next.steps.map((step) => model.session.plannedExercises.find((item) => item.exerciseSlug === step.exerciseSlug)?.exerciseName || step.exerciseName || step.exerciseSlug).join(' + ')}` : 'Next up · Finish session'), instructions(exercise, model.openInstructions))
-  footer.append(action(runtime.emomRunningSince == null ? '▶ Resume' : 'Ⅱ Pause', controls.pause, 'live-primary'), action('Finish early', controls.finish, 'live-early'))
+  footer.append(
+    labeledAction(runtime.emomRunningSince == null ? 'play' : 'pause', runtime.emomRunningSince == null ? 'Resume' : 'Pause', controls.pause, 'live-primary'),
+    action('Finish early', controls.finish, 'live-early'),
+  )
 }

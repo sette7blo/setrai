@@ -3,7 +3,11 @@ import { normalizeExercise } from '../exercises/format.js'
 import type { Exercise, ExerciseApiPayload } from '../exercises/types.js'
 import type { CatalogEntry } from '../exercises/catalog.js'
 
-export interface DiscoveredExercise extends CatalogEntry {}
+/** Nostr exercise catalog client used by Exercises when Nostr is enabled. */
+export type CatalogExerciseEntry = CatalogEntry
+/** @deprecated Prefer CatalogExerciseEntry */
+export type DiscoveredExercise = CatalogExerciseEntry
+
 interface CatalogExercise extends ExerciseApiPayload {
   nostr_event_id: string
   nostr_address: string
@@ -11,7 +15,7 @@ interface CatalogExercise extends ExerciseApiPayload {
   updateAvailable?: boolean
 }
 
-export async function loadCatalog(refresh = false): Promise<DiscoveredExercise[]> {
+export async function loadCatalog(refresh = false): Promise<CatalogExerciseEntry[]> {
   const response = await apiClient.get<{ exercises: CatalogExercise[] }>(
     `/api/nostr/exercises${refresh ? '?refresh=true' : ''}`
   )

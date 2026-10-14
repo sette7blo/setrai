@@ -5,7 +5,9 @@ import type { Exercise } from './types.js'
 export function selectionToggle(selecting: boolean, busy: boolean, onToggle: () => void): HTMLButtonElement {
   const button = document.createElement('button')
   button.type = 'button'
-  button.className = 'exercise-selection-toggle'
+  button.className = selecting
+    ? 'page-toolbar-action filter-icon exercise-selection-toggle page-toolbar-action--active filter-icon--active'
+    : 'page-toolbar-action filter-icon exercise-selection-toggle'
   button.setAttribute('aria-label', selecting ? 'Exit selection mode' : 'Select exercises')
   button.setAttribute('aria-pressed', String(selecting))
   button.disabled = busy
