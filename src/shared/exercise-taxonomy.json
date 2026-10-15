@@ -36,6 +36,8 @@
     { "value": "quadriceps", "label": "Quadriceps" },
     { "value": "hamstrings", "label": "Hamstrings" },
     { "value": "glutes", "label": "Glutes" },
+    { "value": "abductors", "label": "Hip abductors" },
+    { "value": "adductors", "label": "Hip adductors" },
     { "value": "calves", "label": "Calves" }
   ],
   "equipment": [

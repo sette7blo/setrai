@@ -1,6 +1,7 @@
 // src/server/db/migrations.js
 
 import { INITIAL_SCHEMA } from './schema.js'
+import secondaryMuscleCorrections from '../../shared/exercise-secondary-muscles.json' with { type: 'json' }
 
 const MIGRATIONS = [
   {
@@ -47,6 +48,23 @@ const MIGRATIONS = [
           ELSE ''
         END;
       `)
+    }
+  },
+  {
+    version: 6,
+    name: 'repair-imported-exercise-secondary-muscles',
+    up(db) {
+      const update = db.prepare(`
+        UPDATE exercises
+        SET muscles = ?
+        WHERE slug = ?
+          AND json_array_length(muscles) = 1
+          AND lower(json_extract(muscles, '$[0]')) = lower(muscle_group)
+      `)
+
+      for (const [slug, muscles] of Object.entries(secondaryMuscleCorrections)) {
+        update.run(JSON.stringify(muscles), slug)
+      }
     }
   }
 ]

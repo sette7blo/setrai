@@ -16,6 +16,8 @@ test('upgrades an existing version-one session database without changing logged 
     db.prepare('INSERT INTO exercises(slug,name,tags) VALUES(?,?,?)').run('press', 'Press', '["compound","push"]')
     db.prepare('INSERT INTO exercises(slug,name,tags) VALUES(?,?,?)').run('curl', 'Curl', '["isolation"]')
     db.prepare('INSERT INTO exercises(slug,name,tags) VALUES(?,?,?)').run('carry', 'Carry', '["grip"]')
+    db.prepare('INSERT INTO exercises(slug,name,muscle_group,muscles,tags) VALUES(?,?,?,?,?)')
+      .run('pushups', 'Pushups', 'chest', '["chest"]', '["compound"]')
     runMigrations(db)
     runMigrations(db)
     const session = createSessionRepository(db).getById(1)
@@ -25,15 +27,20 @@ test('upgrades an existing version-one session database without changing logged 
     assert.equal(session.sets[0].weight, 25)
     assert.equal(session.plan, null)
     assert.deepEqual(session.runtime, {})
-    assert.equal(db.prepare('SELECT COUNT(*) AS count FROM schema_migrations').get().count, 5)
+    assert.equal(db.prepare('SELECT COUNT(*) AS count FROM schema_migrations').get().count, 6)
     assert.deepEqual(
       db.prepare('SELECT slug, movement_type FROM exercises ORDER BY slug').all()
         .map(row => ({ ...row })),
       [
         { slug: 'carry', movement_type: '' },
         { slug: 'curl', movement_type: 'isolation' },
-        { slug: 'press', movement_type: 'compound' }
+        { slug: 'press', movement_type: 'compound' },
+        { slug: 'pushups', movement_type: 'compound' }
       ]
     )
+    assert.deepEqual(JSON.parse(db.prepare('SELECT muscles FROM exercises WHERE slug = ?').get('pushups').muscles), [
+      'shoulders',
+      'triceps'
+    ])
   } finally { db.close() }
 })

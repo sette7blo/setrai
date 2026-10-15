@@ -268,13 +268,17 @@ Exercise create/edit uses the canonical taxonomy in
 equipment, difficulty, and movement type (`compound` or `isolation`) are controlled
 choices rather than free text. The
 primary choice is a Recovery group; secondary choices may be anatomically more
-specific but must map to the front/back body preview. The editor updates that
+specific and map to the front/back body preview when a matching region exists. The editor updates that
 preview immediately, using a strong primary highlight and quieter secondary
 highlight. Movement type is required for new manual exercises and is used by Quick
 Workout scoring. Tags are retained only as internal catalog metadata and are not
 edited or displayed in normal exercise UI; descriptions and instructions remain free-form. The server
 normalizes known aliases and rejects unsupported structural values so Recovery,
 filters, body maps, and Quick Workout do not diverge because of spelling variants.
+Known Workstr catalog exercises use the audited correction data in
+`src/shared/exercise-secondary-muscles.json` when an older event contains only a
+duplicate of its primary muscle. Explicit secondary muscles from newer events remain
+authoritative.
 
 The UI should avoid displaying excessive metadata on exercise cards.
 
@@ -307,8 +311,8 @@ with labeled muscle, equipment, and difficulty options. Longer lists are searcha
 The sheet uses the standard white surfaces, muted borders, and black selected
 states, with Reset and a live result-count button. Removable chips keep selected
 values visible after closing; resetting facets preserves search and favorites. Exercise
-details follow the Workstr card layout: image, title and difficulty/category
-badges, Sets/Reps/Rest tiles, target muscles and front/back map, equipment, tags,
+details follow the Workstr card layout: image, title and classification
+badges, Sets/Reps/Rest tiles, target muscles and front/back map, equipment,
 then a collapsed Instructions disclosure and favorite action. Primary and
 secondary muscles use distinct highlights. Library cards show the primary
 muscle and difficulty, with equipment reserved for details.

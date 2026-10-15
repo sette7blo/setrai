@@ -396,6 +396,8 @@ src/server/exercises/
 - exercise validation;
 - canonical compound/isolation movement type persistence and migration from safe
   legacy tags (database migration 5);
+- audited secondary-muscle repair for legacy Workstr events that repeated only the
+  primary muscle (shared correction data plus database migration 6);
 - exercise availability;
 - exercise service contracts, including idempotent `importDiscoveredExercise`
   for validated server-side discovery data;

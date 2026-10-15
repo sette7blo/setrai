@@ -1,4 +1,5 @@
 import { verifyEvent } from 'nostr-tools/pure'
+import { catalogSecondaryMuscles } from '../exercises/secondary-muscles.js'
 
 export const WORKSTR_AUTHOR = 'ef24246321e47dd16cec960d4d374703af78505d0e59c532b054b5060e372bd6'
 export const EXERCISE_KIND = 33401
@@ -66,11 +67,15 @@ export function exerciseFromEvent(event) {
     const movementType = muscle(meta.movementType ?? '') ||
       (tags.map(tag => tag.toLowerCase()).find(tag => tag === 'compound' || tag === 'isolation') ?? '')
     if (movementType && movementType !== 'compound' && movementType !== 'isolation') return null
+    const slug = d.slice(PREFIX.length)
+    const primaryMuscle = muscle(primary)
+    const eventMuscles = [...new Set(rows.map(tag => muscle(tag[1])))]
     return {
-      slug: d.slice(PREFIX.length), name,
+      slug, name,
       description: text(meta.description ?? '', 5000),
       category: muscle(meta.category ?? values('t').find(tag => tag !== 'workstr') ?? 'strength'),
-      muscle_group: muscle(primary), muscles: [...new Set(rows.map(tag => muscle(tag[1])))],
+      muscle_group: primaryMuscle,
+      muscles: catalogSecondaryMuscles(slug, primaryMuscle, eventMuscles),
       equipment: strings(meta.equipment ?? values('equipment')).map(equipment),
       difficulty: muscle(meta.difficulty ?? value('difficulty')),
       movement_type: movementType,
