@@ -265,11 +265,14 @@ Useful exercise metadata may include:
 
 Exercise create/edit uses the canonical taxonomy in
 `src/shared/exercise-taxonomy.json`. Category, primary muscle, secondary muscles,
-equipment, and difficulty are controlled choices rather than free text. The
+equipment, difficulty, and movement type (`compound` or `isolation`) are controlled
+choices rather than free text. The
 primary choice is a Recovery group; secondary choices may be anatomically more
 specific but must map to the front/back body preview. The editor updates that
 preview immediately, using a strong primary highlight and quieter secondary
-highlight. Tags, descriptions, and instructions remain free-form. The server
+highlight. Movement type is required for new manual exercises and is used by Quick
+Workout scoring. Tags are retained only as internal catalog metadata and are not
+edited or displayed in normal exercise UI; descriptions and instructions remain free-form. The server
 normalizes known aliases and rejects unsupported structural values so Recovery,
 filters, body maps, and Quick Workout do not diverge because of spelling variants.
 

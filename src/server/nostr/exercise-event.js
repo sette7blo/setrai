@@ -62,6 +62,10 @@ export function exerciseFromEvent(event) {
     const image = images.find(part => part.startsWith('url '))?.slice(4) || value('image')
     const reps = meta.defaultReps === undefined ? '8-12' : String(meta.defaultReps)
     if (!/^[0-9][0-9a-zA-Z .,/–-]{0,39}$/.test(reps)) return null
+    const tags = strings(meta.tags ?? values('t').filter(tag => tag !== 'workstr'))
+    const movementType = muscle(meta.movementType ?? '') ||
+      (tags.map(tag => tag.toLowerCase()).find(tag => tag === 'compound' || tag === 'isolation') ?? '')
+    if (movementType && movementType !== 'compound' && movementType !== 'isolation') return null
     return {
       slug: d.slice(PREFIX.length), name,
       description: text(meta.description ?? '', 5000),
@@ -69,7 +73,8 @@ export function exerciseFromEvent(event) {
       muscle_group: muscle(primary), muscles: [...new Set(rows.map(tag => muscle(tag[1])))],
       equipment: strings(meta.equipment ?? values('equipment')).map(equipment),
       difficulty: muscle(meta.difficulty ?? value('difficulty')),
-      tags: strings(meta.tags ?? values('t').filter(tag => tag !== 'workstr')),
+      movement_type: movementType,
+      tags,
       instructions: strings(meta.instructions ?? event.content.split('\n'), 100, 5000),
       image_url: imageUrl(image),
       default_sets: integer(meta.defaultSets, 3, 1, 100),

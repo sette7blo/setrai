@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { generateQuickWorkout } from '../src/server/quick-workout/generator.js'
+import { scoreExercise } from '../src/server/quick-workout/scoring.js'
 import { statusForRecovery } from '../src/server/recovery/calculator.js'
 
 function exercise(id, name, muscle, extra = {}) {
@@ -49,13 +50,23 @@ test('compound and completed-before scoring stays within each group, with no pre
   const plan = generate([
     exercise(1, 'A new curl', 'biceps'), exercise(2, 'B familiar curl', 'biceps'),
     exercise(3, 'C compound curl', 'biceps', { tags: ['compound'] }),
-    exercise(4, 'D familiar compound', 'biceps', { tags: ['compound'] })
+    exercise(4, 'D familiar compound', 'biceps', { movement_type: 'compound' })
   ], { durationMinutes: 20, recentSessions: [
     { sets: [{ exerciseSlug: 'a-new-curl', done: false }] },
     { sets: [{ exerciseSlug: 'b-familiar-curl', done: true }, { exerciseSlug: 'd-familiar-compound', done: true }] }
   ] })
   assert.deepEqual(plan.exercises.map(item => item.exerciseName), ['D familiar compound', 'B familiar curl'])
   assert.deepEqual(plan.pool.biceps.map(item => item.exerciseName), ['C compound curl', 'A new curl'])
+})
+
+test('explicit movement type overrides legacy compound tags', () => {
+  const base = { recoveryMap: new Map(), recentSlugs: new Set(), targetMuscles: [] }
+  const compound = scoreExercise({ exercise: exercise(1, 'Press', 'chest', { movement_type: 'compound' }), ...base })
+  const isolation = scoreExercise({ exercise: exercise(2, 'Fly', 'chest', { movement_type: 'isolation', tags: ['compound'] }), ...base })
+  const legacy = scoreExercise({ exercise: exercise(3, 'Dip', 'chest', { tags: ['compound'] }), ...base })
+  assert.equal(compound.score, 1)
+  assert.equal(isolation.score, 0)
+  assert.equal(legacy.score, 1)
 })
 
 test('unavailable equipment and inactive exercises never appear in the plan or swap pool', () => {

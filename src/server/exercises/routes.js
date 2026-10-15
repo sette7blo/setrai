@@ -78,7 +78,7 @@ export function createExerciseRoutes(exerciseService, { dataDir = './data' } = {
 
     if (req.method === 'POST' && url.pathname === '/api/exercises') {
       const body = await readJsonBody(req)
-      const exercise = exerciseService.createExercise(body)
+      const exercise = exerciseService.createExercise(body, { requireMovementType: true })
       sendJson(res, 201, { exercise })
       return true
     }

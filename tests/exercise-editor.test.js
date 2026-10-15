@@ -51,11 +51,13 @@ test('normalizeExerciseWrite canonicalizes supported taxonomy aliases', () => {
     muscleGroup: 'pecs',
     muscles: ['front delts', 'triceps'],
     equipment: ['dumbbell', 'bench'],
-    difficulty: 'intermediate'
+    difficulty: 'intermediate',
+    movementType: 'compound'
   })
   assert.equal(body.muscle_group, 'chest')
   assert.deepEqual(body.muscles, ['anterior-deltoid', 'triceps'])
   assert.deepEqual(body.equipment, ['dumbbells', 'bench'])
+  assert.equal(body.movement_type, 'compound')
 })
 
 test('normalizeExerciseWrite rejects unknown structural taxonomy values', () => {
@@ -70,6 +72,14 @@ test('normalizeExerciseWrite rejects unknown structural taxonomy values', () => 
   assert.throws(
     () => normalizeExerciseWrite({ name: 'X', category: 'power-ish' }),
     /category must use a supported value/
+  )
+  assert.throws(
+    () => normalizeExerciseWrite({ name: 'X', movementType: 'hybrid' }),
+    /movementType must use a supported value/
+  )
+  assert.throws(
+    () => normalizeExerciseWrite({ name: 'X' }, { requireMovementType: true }),
+    /movementType is required/
   )
 })
 

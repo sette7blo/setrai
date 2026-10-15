@@ -40,6 +40,14 @@ export function mapExercise(row) {
   }
 }
 
+export function movementTypeFromTags(tags) {
+  if (!Array.isArray(tags)) return ''
+  const values = new Set(tags.map(tag => String(tag).trim().toLowerCase()))
+  if (values.has('compound')) return 'compound'
+  if (values.has('isolation')) return 'isolation'
+  return ''
+}
+
 export function normalizeExerciseInput(input) {
   const result = {
     ...input

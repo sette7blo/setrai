@@ -241,6 +241,7 @@ test('returns publishable exercise data without persistence internals', () => {
       name: 'Bench Press',
       description: 'Barbell bench press',
       muscle_group: 'chest',
+      movement_type: 'compound',
       muscles: ['chest'],
       equipment: ['barbell'],
       image_url: '/images/bench.jpg'
@@ -262,6 +263,7 @@ test('returns publishable exercise data without persistence internals', () => {
         muscles: ['chest'],
         equipment: ['barbell'],
         difficulty: '',
+        movementType: 'compound',
         tags: [],
         instructions: [],
         imageUrl: '/images/bench.jpg'

@@ -10,6 +10,7 @@ export const PRIMARY_MUSCLES = taxonomyData.primaryMuscles as TaxonomyOption[]
 export const SECONDARY_MUSCLES = taxonomyData.secondaryMuscles as TaxonomyOption[]
 export const EXERCISE_EQUIPMENT = taxonomyData.equipment as TaxonomyOption[]
 export const EXERCISE_DIFFICULTIES = taxonomyData.difficulties as TaxonomyOption[]
+export const MOVEMENT_TYPES = taxonomyData.movementTypes as TaxonomyOption[]
 
 type AliasGroup = keyof typeof taxonomyData.aliases
 

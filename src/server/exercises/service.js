@@ -20,8 +20,11 @@ export function createExerciseService(db) {
     return repository.getBySlug(slug)
   }
 
-  function createExercise(input) {
-    const values = normalizeExerciseWrite(input, { partial: false })
+  function createExercise(input, options = {}) {
+    const values = normalizeExerciseWrite(input, {
+      partial: false,
+      requireMovementType: options.requireMovementType === true
+    })
     // Allow validated discovery/import callers to attach provenance on create.
     for (const key of [
       'slug',
@@ -88,6 +91,7 @@ export function createExerciseService(db) {
       muscles: exercise.muscles,
       equipment: exercise.equipment,
       difficulty: exercise.difficulty,
+      movementType: exercise.movement_type,
       tags: exercise.tags,
       instructions: exercise.instructions,
       imageUrl:

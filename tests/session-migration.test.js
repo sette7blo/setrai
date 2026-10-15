@@ -13,6 +13,9 @@ test('upgrades an existing version-one session database without changing logged 
     db.prepare('INSERT INTO schema_migrations(version,name) VALUES(1,?)').run('initial-setrai-schema')
     db.prepare('INSERT INTO sessions(program_name,notes) VALUES(?,?)').run('Existing workout', 'Existing note')
     db.prepare('INSERT INTO session_sets(session_id,exercise_slug,exercise_name,set_number,reps,weight,done) VALUES(1,?,?,?,?,?,1)').run('press', 'Press', 1, 8, 25)
+    db.prepare('INSERT INTO exercises(slug,name,tags) VALUES(?,?,?)').run('press', 'Press', '["compound","push"]')
+    db.prepare('INSERT INTO exercises(slug,name,tags) VALUES(?,?,?)').run('curl', 'Curl', '["isolation"]')
+    db.prepare('INSERT INTO exercises(slug,name,tags) VALUES(?,?,?)').run('carry', 'Carry', '["grip"]')
     runMigrations(db)
     runMigrations(db)
     const session = createSessionRepository(db).getById(1)
@@ -22,6 +25,15 @@ test('upgrades an existing version-one session database without changing logged 
     assert.equal(session.sets[0].weight, 25)
     assert.equal(session.plan, null)
     assert.deepEqual(session.runtime, {})
-    assert.equal(db.prepare('SELECT COUNT(*) AS count FROM schema_migrations').get().count, 4)
+    assert.equal(db.prepare('SELECT COUNT(*) AS count FROM schema_migrations').get().count, 5)
+    assert.deepEqual(
+      db.prepare('SELECT slug, movement_type FROM exercises ORDER BY slug').all()
+        .map(row => ({ ...row })),
+      [
+        { slug: 'carry', movement_type: '' },
+        { slug: 'curl', movement_type: 'isolation' },
+        { slug: 'press', movement_type: 'compound' }
+      ]
+    )
   } finally { db.close() }
 })

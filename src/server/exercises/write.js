@@ -4,6 +4,7 @@ import {
   canonicalCategory,
   canonicalDifficulty,
   canonicalEquipment,
+  canonicalMovementType,
   canonicalPrimaryMuscle,
   canonicalSecondaryMuscles
 } from './taxonomy.js'
@@ -55,7 +56,7 @@ function pick(input, camel, snake) {
   return undefined
 }
 
-export function normalizeExerciseWrite(input, { partial = false } = {}) {
+export function normalizeExerciseWrite(input, { partial = false, requireMovementType = false } = {}) {
   if (!input || typeof input !== 'object' || Array.isArray(input)) {
     throw clientError('Exercise body must be an object')
   }
@@ -85,6 +86,12 @@ export function normalizeExerciseWrite(input, { partial = false } = {}) {
 
   const difficulty = asString(pick(input, 'difficulty', 'difficulty'), 'difficulty', { max: 40 })
   if (difficulty !== undefined) result.difficulty = difficulty ? canonicalDifficulty(difficulty) : ''
+
+  const movementType = asString(pick(input, 'movementType', 'movement_type'), 'movementType', {
+    max: 20,
+    required: requireMovementType
+  })
+  if (movementType !== undefined) result.movement_type = movementType ? canonicalMovementType(movementType) : ''
 
   const tags = asStringArray(pick(input, 'tags', 'tags'), 'tags')
   if (tags !== undefined) result.tags = tags

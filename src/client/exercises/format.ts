@@ -19,6 +19,7 @@ export function normalizeExercise(payload: ExerciseApiPayload): Exercise {
     muscles: asTextArray(payload.muscles),
     equipment: asTextArray(payload.equipment),
     difficulty: payload.difficulty || '',
+    movementType: payload.movementType || payload.movement_type || '',
     tags: asTextArray(payload.tags),
     instructions: asTextArray(payload.instructions),
     imageUrl: payload.imageUrl || payload.image_url || '',

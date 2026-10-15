@@ -33,6 +33,21 @@ const MIGRATIONS = [
     version: 4,
     name: 'program-catalog-baseline',
     up(db) { db.exec('ALTER TABLE programs ADD COLUMN catalog_baseline TEXT') }
+  },
+  {
+    version: 5,
+    name: 'exercise-movement-type',
+    up(db) {
+      db.exec(`
+        ALTER TABLE exercises ADD COLUMN movement_type TEXT NOT NULL DEFAULT '';
+        UPDATE exercises
+        SET movement_type = CASE
+          WHEN EXISTS (SELECT 1 FROM json_each(exercises.tags) WHERE lower(value) = 'compound') THEN 'compound'
+          WHEN EXISTS (SELECT 1 FROM json_each(exercises.tags) WHERE lower(value) = 'isolation') THEN 'isolation'
+          ELSE ''
+        END;
+      `)
+    }
   }
 ]
 

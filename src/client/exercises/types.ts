@@ -9,6 +9,8 @@ export interface ExerciseApiPayload {
   muscles?: string[]
   equipment?: string[]
   difficulty?: string
+  movementType?: string
+  movement_type?: string
   tags?: string[]
   instructions?: string[]
   imageUrl?: string
@@ -32,6 +34,7 @@ export interface Exercise {
   muscles: string[]
   equipment: string[]
   difficulty: string
+  movementType: string
   tags: string[]
   instructions: string[]
   imageUrl: string
@@ -66,6 +69,7 @@ export interface ExercisePatch {
   muscles?: string[]
   equipment?: string[]
   difficulty?: string
+  movementType?: string
   tags?: string[]
   instructions?: string[]
   imageUrl?: string

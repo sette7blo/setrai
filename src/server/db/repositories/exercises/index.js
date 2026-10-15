@@ -2,6 +2,7 @@
 
 import {
   mapExercise,
+  movementTypeFromTags,
   normalizeExerciseInput
 } from './mapper.js'
 import {
@@ -17,6 +18,7 @@ const ALLOWED_UPDATE_FIELDS = [
   'muscles',
   'equipment',
   'difficulty',
+  'movement_type',
   'tags',
   'instructions',
   'image_url',
@@ -118,7 +120,10 @@ export function createExerciseRepository(db) {
       throw new Error('Exercise name is required')
     }
 
-    const values = normalizeExerciseInput(input)
+    const values = normalizeExerciseInput({
+      ...input,
+      movement_type: input.movement_type ?? movementTypeFromTags(input.tags)
+    })
     const slug = createUniqueExerciseSlug(
       db,
       values.name,
@@ -129,13 +134,13 @@ export function createExerciseRepository(db) {
       .prepare(`
         INSERT INTO exercises (
           slug, name, description, category, muscle_group,
-          muscles, equipment, difficulty, tags, instructions,
+          muscles, equipment, difficulty, movement_type, tags, instructions,
           image_url, image_publish_url, favourite,
           default_sets, default_reps, default_rest,
           source_type, status, nostr_event_id, nostr_pubkey,
           nostr_address, nostr_published_at
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `)
       .run(
         slug,
@@ -146,6 +151,7 @@ export function createExerciseRepository(db) {
         values.muscles ?? '[]',
         values.equipment ?? '[]',
         values.difficulty ?? '',
+        values.movement_type ?? '',
         values.tags ?? '[]',
         values.instructions ?? '[]',
         values.image_url ?? '',

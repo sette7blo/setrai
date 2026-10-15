@@ -54,6 +54,10 @@
     { "value": "intermediate", "label": "Intermediate" },
     { "value": "advanced", "label": "Advanced" }
   ],
+  "movementTypes": [
+    { "value": "compound", "label": "Compound" },
+    { "value": "isolation", "label": "Isolation" }
+  ],
   "aliases": {
     "primaryMuscles": {
       "pecs": "chest", "pectorals": "chest", "upper-chest": "chest",

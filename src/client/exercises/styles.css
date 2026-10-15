@@ -676,7 +676,7 @@ button.exercise-status:disabled { cursor: wait; opacity: .65; }
   letter-spacing: -.02em;
 }
 .exercise-editor__field-grid { display: grid; gap: 12px; }
-.exercise-editor__field-grid--classification { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.exercise-editor__field-grid--classification { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .exercise-editor__field-grid--prescription { grid-template-columns: repeat(3, minmax(0, 1fr)); }
 .exercise-editor__muscle-layout {
   padding: 0;
@@ -715,8 +715,7 @@ button.exercise-status:disabled { cursor: wait; opacity: .65; }
   border-radius: 12px;
   background: #fff;
 }
-.exercise-editor__picker > summary,
-.exercise-editor__more > summary {
+.exercise-editor__picker > summary {
   display: flex;
   align-items: center;
   min-height: 44px;
@@ -728,18 +727,10 @@ button.exercise-status:disabled { cursor: wait; opacity: .65; }
   cursor: pointer;
   list-style: none;
 }
-.exercise-editor__picker > summary::-webkit-details-marker,
-.exercise-editor__more > summary::-webkit-details-marker { display: none; }
+.exercise-editor__picker > summary::-webkit-details-marker { display: none; }
 .exercise-editor__picker > summary svg { width: 16px; height: 16px; }
-.exercise-editor__picker[open] > summary,
-.exercise-editor__more[open] > summary { border-bottom: 1px solid var(--color-border); }
+.exercise-editor__picker[open] > summary { border-bottom: 1px solid var(--color-border); }
 .exercise-editor__picker .exercise-editor__chips { padding: 12px; }
-.exercise-editor__more {
-  border: 1px solid var(--color-border);
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--color-surface) 94%, var(--color-border));
-}
-.exercise-editor__more > .exercise-editor__field { padding: 12px; }
 .exercise-editor__actions { background: var(--color-background); }
 .exercise-editor__actions .button--primary { min-width: 180px; }
 .exercise-editor__danger {

@@ -394,6 +394,8 @@ src/server/exercises/
 - favorites;
 - exercise detail;
 - exercise validation;
+- canonical compound/isolation movement type persistence and migration from safe
+  legacy tags (database migration 5);
 - exercise availability;
 - exercise service contracts, including idempotent `importDiscoveredExercise`
   for validated server-side discovery data;
@@ -1143,7 +1145,8 @@ src/client/exercises/
 - exercise detail front/back muscle map;
 - feature-owned body geometry in `body-map.ts` and highlighting in `muscle-map.ts`;
 - canonical create/edit controls in `editor-taxonomy.ts`, consuming the shared
-  exercise taxonomy and rendering a synchronized primary/secondary muscle preview;
+  exercise taxonomy, exposing controlled movement type, and rendering a synchronized
+  primary/secondary muscle preview; free-form tags remain hidden catalog metadata;
 - exercise selection surfaces;
 - public tabs, image, formatting, filter controls, and detail card components
   consumed by Discover without relay logic entering Exercises.
@@ -1614,7 +1617,7 @@ Do not implement duplicate Quick Workout logic in both AI and workouts.
 # 31. Equipment ownership
 
 Equipment is user training configuration. Canonical exercise equipment identifiers,
-along with exercise categories, difficulty levels, and recovery-safe muscle choices,
+along with exercise categories, difficulty and movement-type values, and recovery-safe muscle choices,
 live in `src/shared/exercise-taxonomy.json`. The Exercises server validates manual
 writes from it and the Exercises client builds editor controls from it.
 

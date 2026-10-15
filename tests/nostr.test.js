@@ -20,6 +20,7 @@ test('verifies signed official exercise and preserves artwork, instructions and 
   assert.ok(parsed)
   assert.match(parsed.image_url, /^https:\/\/i\.nostr\.build\//)
   assert.ok(parsed.instructions.length)
+  assert.equal(parsed.movement_type, 'compound')
   assert.equal(parsed.nostr_event_id, fixture.id)
   assert.match(parsed.nostr_address, /^33401:/)
   assert.equal(selectExercises([event(), event()]).length, 1)

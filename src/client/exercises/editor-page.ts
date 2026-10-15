@@ -12,7 +12,7 @@ import {
 } from './api.js'
 import { createExerciseImage } from './image.js'
 import { equipmentEditorControl, muscleEditorControl, taxonomySelect } from './editor-taxonomy.js'
-import { EXERCISE_CATEGORIES, EXERCISE_DIFFICULTIES } from './taxonomy.js'
+import { EXERCISE_CATEGORIES, EXERCISE_DIFFICULTIES, MOVEMENT_TYPES } from './taxonomy.js'
 import type { Exercise, ExerciseWrite } from './types.js'
 
 function field(label: string, control: HTMLElement, hint = ''): HTMLElement {
@@ -63,14 +63,6 @@ function textArea(value: string, rows = 3): HTMLTextAreaElement {
   return area
 }
 
-function csvValue(values: string[]): string {
-  return values.join(', ')
-}
-
-function parseCsv(value: string): string[] {
-  return value.split(',').map(part => part.trim()).filter(Boolean)
-}
-
 function linesValue(values: string[]): string {
   return values.join('\n')
 }
@@ -90,6 +82,7 @@ function emptyExercise(): Exercise {
     muscles: [],
     equipment: [],
     difficulty: 'intermediate',
+    movementType: '',
     tags: [],
     instructions: [],
     imageUrl: '',
@@ -121,7 +114,8 @@ export function createExerciseEditorForm(
   const equipment = equipmentEditorControl(initial.equipment)
   const difficulty = taxonomySelect(EXERCISE_DIFFICULTIES, initial.difficulty || 'intermediate', 'Select difficulty')
   difficulty.required = true
-  const tags = textInput(csvValue(initial.tags), { placeholder: 'compound, push' })
+  const movementType = taxonomySelect(MOVEMENT_TYPES, initial.movementType, 'Select movement type')
+  movementType.required = true
   const instructions = textArea(linesValue(initial.instructions), 6)
   const defaultSets = textInput(String(initial.defaultSets), { type: 'number', min: '1', max: '50' })
   const defaultReps = textInput(initial.defaultReps, { placeholder: '8-12' })
@@ -217,12 +211,6 @@ export function createExerciseEditorForm(
     danger.append(dangerCopy, remove)
   }
 
-  const more = document.createElement('details')
-  more.className = 'exercise-editor__more'
-  const moreSummary = document.createElement('summary')
-  moreSummary.textContent = 'More details'
-  more.append(moreSummary, field('Tags', tags, 'Optional, comma-separated descriptors'))
-
   form.append(
     formSection('Identity',
       field('Name', name),
@@ -233,7 +221,8 @@ export function createExerciseEditorForm(
     formSection('Classification',
       fieldGrid('exercise-editor__field-grid--classification',
         field('Category', category, 'Keeps library categories consistent.'),
-        field('Difficulty', difficulty)
+        field('Difficulty', difficulty),
+        field('Movement type', movementType, 'Compound uses multiple joints; isolation focuses on one.')
       )
     ),
     formSection('Target muscles', muscles.element),
@@ -246,8 +235,7 @@ export function createExerciseEditorForm(
       )
     ),
     formSection('Coaching',
-      field('Instructions', instructions, 'One step per line'),
-      more
+      field('Instructions', instructions, 'One step per line')
     ),
     ...(danger.childElementCount ? [danger] : []),
     status,
@@ -265,7 +253,7 @@ export function createExerciseEditorForm(
       muscles: muscles.secondaryValues(),
       equipment: equipment.values(),
       difficulty: difficulty.value,
-      tags: parseCsv(tags.value),
+      movementType: movementType.value,
       instructions: parseLines(instructions.value),
       imageUrl,
       defaultSets: Number(defaultSets.value || 3),
@@ -277,8 +265,8 @@ export function createExerciseEditorForm(
       name.focus()
       return
     }
-    if (!payload.category || !payload.muscleGroup || !payload.difficulty) {
-      status.textContent = 'Choose a category, primary muscle, and difficulty.'
+    if (!payload.category || !payload.muscleGroup || !payload.difficulty || !payload.movementType) {
+      status.textContent = 'Choose a category, primary muscle, difficulty, and movement type.'
       return
     }
     save.disabled = true

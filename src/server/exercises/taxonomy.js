@@ -5,7 +5,8 @@ const lists = {
   primaryMuscle: taxonomy.primaryMuscles,
   secondaryMuscle: taxonomy.secondaryMuscles,
   equipment: taxonomy.equipment,
-  difficulty: taxonomy.difficulties
+  difficulty: taxonomy.difficulties,
+  movementType: taxonomy.movementTypes
 }
 
 function token(value) {
@@ -49,6 +50,10 @@ export function canonicalEquipment(values) {
 
 export function canonicalDifficulty(value) {
   return canonical(value, 'difficulty')
+}
+
+export function canonicalMovementType(value) {
+  return canonical(value, 'movementType')
 }
 
 export const exerciseTaxonomy = taxonomy

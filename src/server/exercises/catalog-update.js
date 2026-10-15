@@ -1,6 +1,6 @@
 const FIELDS = [
   'name', 'description', 'category', 'muscle_group', 'muscles', 'equipment',
-  'difficulty', 'tags', 'instructions', 'image_url', 'default_sets',
+  'difficulty', 'movement_type', 'tags', 'instructions', 'image_url', 'default_sets',
   'default_reps', 'default_rest'
 ]
 

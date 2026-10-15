@@ -30,6 +30,7 @@ function exercise(overrides: Partial<Exercise>): Exercise {
     muscles: ['chest', 'triceps'],
     equipment: ['barbell', 'bench'],
     difficulty: 'intermediate',
+    movementType: 'compound',
     tags: [],
     instructions: [],
     imageUrl: '/images/exercises/bench-press.webp',
@@ -162,6 +163,7 @@ test('normalizes expected API payload into safe client fields', () => {
     slug: 'bench-press',
     name: 'Bench Press',
     muscle_group: 'chest',
+    movement_type: 'compound',
     image_url: '/images/exercises/bench-press.webp',
     default_sets: 3,
     default_reps: '6-10',
@@ -173,6 +175,7 @@ test('normalizes expected API payload into safe client fields', () => {
   })
 
   assert.equal(normalized.muscleGroup, 'chest')
+  assert.equal(normalized.movementType, 'compound')
   assert.equal(normalized.imageUrl, '/images/exercises/bench-press.webp')
   assert.equal(normalized.defaultSets, 3)
   assert.equal(normalized.defaultReps, '6-10')

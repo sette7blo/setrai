@@ -48,7 +48,8 @@ export function exerciseMatchesEquipment(exercise, equipment) {
 export function scoreExercise({ exercise, recoveryMap, recentSlugs, targetMuscles }) {
   const muscle = recoveryMuscleGroup(exercise.muscle_group)
   const recovery = recoveryMap.get(muscle) ?? 1
-  const compound = (exercise.tags ?? []).some(tag => String(tag).toLowerCase() === 'compound')
+  const compound = exercise.movement_type === 'compound' ||
+    (!exercise.movement_type && (exercise.tags ?? []).some(tag => String(tag).toLowerCase() === 'compound'))
   return {
     muscle,
     recovery,

@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronDown, Star, Download, Layers, Repeat, Timer, Dumbbell, Tag, ListOrdered, Pencil } from 'lucide'
+import { ChevronLeft, ChevronDown, Star, Download, Layers, Repeat, Timer, Dumbbell, ListOrdered, Pencil } from 'lucide'
 import { iconElement } from '../app/navigation.js'
 import { displayName } from './format.js'
 import { createExerciseImage } from './image.js'
@@ -101,7 +101,7 @@ export function createExerciseDetailView(exercise: Exercise, onFavourite: () => 
     }
   }
 
-  const badges = pills([exercise.difficulty, exercise.category])
+  const badges = pills([exercise.difficulty, exercise.category, exercise.movementType])
   badges.classList.add('detail-badges')
   const description = document.createElement('p')
   description.className = 'detail-description'
@@ -136,7 +136,6 @@ export function createExerciseDetailView(exercise: Exercise, onFavourite: () => 
     prescription,
     map,
     metadataSection('Equipment', exercise.equipment, Dumbbell),
-    metadataSection('Tags', exercise.tags, Tag),
     createInstructions(exercise)
   )
 

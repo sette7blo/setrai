@@ -200,8 +200,8 @@ test('Workout history derives aggregate muscles and stable date keys without ope
   s.sets.push({ id: 2, sessionId: 5, exerciseId: 11, exerciseSlug: 'row', exerciseName: 'Row', setNumber: 1, reps: 10, weight: 60, done: true, loggedAt: '' })
 
   const muscles = sessionMuscles(s, [
-    { id: 10, slug: 'bench-press', name: 'Bench Press', description: '', category: '', muscleGroup: 'chest', muscles: ['triceps'], equipment: [], difficulty: '', tags: [], instructions: [], imageUrl: '', favourite: false, defaultSets: 3, defaultReps: '8', defaultRest: 90 },
-    { id: 11, slug: 'row', name: 'Row', description: '', category: '', muscleGroup: 'back', muscles: ['biceps'], equipment: [], difficulty: '', tags: [], instructions: [], imageUrl: '', favourite: false, defaultSets: 3, defaultReps: '10', defaultRest: 90 }
+    { id: 10, slug: 'bench-press', name: 'Bench Press', description: '', category: '', muscleGroup: 'chest', muscles: ['triceps'], equipment: [], difficulty: '', movementType: '', tags: [], instructions: [], imageUrl: '', favourite: false, defaultSets: 3, defaultReps: '8', defaultRest: 90 },
+    { id: 11, slug: 'row', name: 'Row', description: '', category: '', muscleGroup: 'back', muscles: ['biceps'], equipment: [], difficulty: '', movementType: '', tags: [], instructions: [], imageUrl: '', favourite: false, defaultSets: 3, defaultReps: '10', defaultRest: 90 }
   ])
 
   assert.equal(sessionDateKey(s), '2026-10-05')
