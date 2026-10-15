@@ -46,7 +46,8 @@ export function statusLabel(status: 'Local' | 'Update' | 'Web', onUpdate?: () =>
 
 export function catalogDetail(entry: CatalogEntry, onSave: () => void, onBack: () => void, busy: boolean): HTMLElement {
   const view = createExerciseDetailView(entry.exercise, onSave, busy ? 'Saving…' : 'Add to library')
-  view.querySelector<HTMLButtonElement>('.detail-favourite')!.disabled = busy
+  const primary = view.querySelector<HTMLButtonElement>('.detail-primary-action')
+  if (primary) primary.disabled = busy
   const back = view.querySelector<HTMLAnchorElement>('.detail-back')!
   back.textContent = 'Back to Exercises'
   back.addEventListener('click', event => { event.preventDefault(); onBack() })
