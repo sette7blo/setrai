@@ -6,6 +6,7 @@ import test from 'node:test'
 
 import { openDatabase } from '../src/server/db/connection.js'
 import {
+  MAX_BYTES,
   parseImageMultipart,
   storeExerciseImage,
   resolveExerciseMediaFile
@@ -97,6 +98,22 @@ test('stores and resolves uploaded exercise images under data dir', () => {
     assert.ok(filePath)
     assert.equal(fs.readFileSync(filePath).equals(png), true)
     assert.equal(resolveExerciseMediaFile(directory, '../secret.png'), null)
+  } finally {
+    fs.rmSync(directory, { recursive: true, force: true })
+  }
+})
+
+test('accepts normal phone-sized photos and rejects files over 10 MB', () => {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'setrai-media-size-'))
+  try {
+    const photo = Buffer.alloc(3 * 1024 * 1024)
+    Buffer.from([0xff, 0xd8, 0xff]).copy(photo)
+    const saved = storeExerciseImage(directory, photo, 'image/jpeg')
+    assert.equal(saved.bytes, photo.length)
+    assert.throws(
+      () => storeExerciseImage(directory, Buffer.alloc(MAX_BYTES + 1), 'image/jpeg'),
+      /10 MB or smaller/
+    )
   } finally {
     fs.rmSync(directory, { recursive: true, force: true })
   }

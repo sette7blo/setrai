@@ -5,7 +5,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { randomBytes } from 'node:crypto'
 
-const MAX_BYTES = 2 * 1024 * 1024
+export const MAX_BYTES = 10 * 1024 * 1024
 const ALLOWED = new Map([
   ['image/jpeg', '.jpg'],
   ['image/png', '.png'],
@@ -57,7 +57,7 @@ export function storeExerciseImage(dataDir, buffer, declaredType = '') {
     throw error
   }
   if (buffer.length > MAX_BYTES) {
-    const error = new Error('Image must be 2 MB or smaller')
+    const error = new Error('Image must be 10 MB or smaller')
     error.statusCode = 413
     throw error
   }

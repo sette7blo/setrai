@@ -279,7 +279,9 @@ filters, body maps, and Quick Workout do not diverge because of spelling variant
 Known Workstr catalog exercises use the audited correction data in
 `src/shared/exercise-secondary-muscles.json` when an older event contains only a
 duplicate of its primary muscle. Explicit secondary muscles from newer events remain
-authoritative.
+authoritative. Existing exercises persist a successful image upload immediately instead
+of requiring a second Save action; new exercises attach the uploaded image when the
+exercise is created. JPEG, PNG, WebP, GIF, and SVG uploads may be up to 10 MB.
 
 The UI should avoid displaying excessive metadata on exercise cards.
 

@@ -16,6 +16,7 @@ import {
   pluralizeExercise
 } from '../../src/client/exercises/format.js'
 import { imageFallbackState } from '../../src/client/exercises/image.js'
+import { applyExerciseImage, MAX_EXERCISE_IMAGE_BYTES } from '../../src/client/exercises/image-upload.js'
 import { muscleMapMarkup, muscleMapMarkupForMuscles, muscleRegion } from '../../src/client/exercises/muscle-map.js'
 import type { Exercise } from '../../src/client/exercises/types.js'
 
@@ -67,6 +68,37 @@ const library = [
     favourite: true
   })
 ]
+
+test('uploaded images attach immediately when editing an existing exercise', async () => {
+  const updates: Array<{ id: number, imageUrl: string }> = []
+  const uploaded = await applyExerciseImage({ size: 1024 } as File, 217, {
+    upload: async () => '/media/exercises/sit-up.jpg',
+    update: async (id, payload) => {
+      updates.push({ id, imageUrl: payload.imageUrl })
+      return exercise({ id, imageUrl: payload.imageUrl })
+    }
+  })
+
+  assert.deepEqual(uploaded, {
+    imageUrl: '/media/exercises/sit-up.jpg',
+    persisted: true
+  })
+  assert.deepEqual(updates, [{ id: 217, imageUrl: '/media/exercises/sit-up.jpg' }])
+})
+
+test('new-exercise images wait for creation and oversized photos fail clearly', async () => {
+  const uploaded = await applyExerciseImage({ size: 1024 } as File, null, {
+    upload: async () => '/media/exercises/new.jpg'
+  })
+  assert.deepEqual(uploaded, {
+    imageUrl: '/media/exercises/new.jpg',
+    persisted: false
+  })
+  await assert.rejects(
+    applyExerciseImage({ size: MAX_EXERCISE_IMAGE_BYTES + 1 } as File, null),
+    /10 MB or smaller/
+  )
+})
 
 test('filters favorites only', () => {
   const results = filterExercises(library, {

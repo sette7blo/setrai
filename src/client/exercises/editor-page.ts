@@ -7,10 +7,10 @@ import {
   createExercise,
   deleteExercise,
   getExercise,
-  updateExercise,
-  uploadExerciseImage
+  updateExercise
 } from './api.js'
 import { createExerciseImage } from './image.js'
+import { applyExerciseImage } from './image-upload.js'
 import { equipmentEditorControl, muscleEditorControl, taxonomySelect } from './editor-taxonomy.js'
 import { EXERCISE_CATEGORIES, EXERCISE_DIFFICULTIES, MOVEMENT_TYPES } from './taxonomy.js'
 import type { Exercise, ExerciseWrite } from './types.js'
@@ -138,16 +138,20 @@ export function createExerciseEditorForm(
     const chosen = file.files?.[0]
     if (!chosen) return
     status.textContent = 'Uploading image…'
-    void uploadExerciseImage(chosen)
-      .then((url) => {
-        imageUrl = url
+    file.disabled = true
+    void applyExerciseImage(chosen, mode === 'edit' ? initial.id : null)
+      .then((result) => {
+        imageUrl = result.imageUrl
         renderPreview()
-        status.textContent = 'Image uploaded.'
+        status.textContent = result.persisted
+          ? 'Image updated.'
+          : 'Image uploaded. Create the exercise to apply it.'
       })
       .catch((error) => {
         status.textContent = readableApiError(error)
       })
       .finally(() => {
+        file.disabled = false
         file.value = ''
       })
   })
