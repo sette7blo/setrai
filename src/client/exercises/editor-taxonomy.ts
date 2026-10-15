@@ -1,4 +1,4 @@
-import { Check } from 'lucide'
+import { Check, Plus, X } from 'lucide'
 import { iconElement } from '../app/navigation.js'
 import { muscleMapMarkupForMuscles } from './muscle-map.js'
 import {
@@ -66,6 +66,13 @@ function chipGroup(
   legend.textContent = label
   const note = document.createElement('small')
   note.textContent = hint
+  const selectedRow = document.createElement('div')
+  selectedRow.className = 'exercise-editor__selected'
+  const picker = document.createElement('details')
+  picker.className = 'exercise-editor__picker'
+  const summary = document.createElement('summary')
+  const summaryLabel = document.createElement('span')
+  summary.append(iconElement(Plus), summaryLabel)
   const chips = document.createElement('div')
   chips.className = 'exercise-editor__chips'
   const selected = new Set(canonicalSelection(initial, options, normalize))
@@ -83,12 +90,44 @@ function chipGroup(
     mark.append(iconElement(Check))
     const text = document.createElement('span')
     text.textContent = option.label
-    input.addEventListener('change', () => onChange?.())
+    input.addEventListener('change', () => {
+      refresh()
+      onChange?.()
+    })
     chip.append(input, mark, text)
     chips.append(chip)
     inputs.set(option.value, input)
   }
-  section.append(legend, note, chips)
+
+  const refresh = (): void => {
+    selectedRow.replaceChildren()
+    const active = [...inputs.entries()].filter(([, input]) => input.checked && !input.disabled)
+    summaryLabel.textContent = active.length ? `Change selection · ${active.length}` : `Add ${label.toLowerCase()}`
+    if (!active.length) {
+      const empty = document.createElement('span')
+      empty.className = 'exercise-editor__selected-empty'
+      empty.textContent = 'None selected'
+      selectedRow.append(empty)
+      return
+    }
+    for (const [value, input] of active) {
+      const option = options.find(item => item.value === value)!
+      const remove = document.createElement('button')
+      remove.type = 'button'
+      remove.className = 'exercise-editor__selected-chip'
+      remove.setAttribute('aria-label', `Remove ${option.label}`)
+      remove.append(document.createTextNode(option.label), iconElement(X))
+      remove.addEventListener('click', () => {
+        input.checked = false
+        refresh()
+        onChange?.()
+      })
+      selectedRow.append(remove)
+    }
+  }
+  picker.append(summary, chips)
+  section.append(legend, note, selectedRow, picker)
+  refresh()
   return {
     element: section,
     values: () => [...inputs.values()].filter(input => input.checked && !input.disabled).map(input => input.value),
@@ -97,6 +136,7 @@ function chipGroup(
       if (!input) return
       input.disabled = disabled
       if (disabled) input.checked = false
+      refresh()
     }
   }
 }
@@ -165,7 +205,7 @@ export function muscleEditorControl(initialPrimary: string, initialSecondary: st
 
 export function equipmentEditorControl(initial: string[]): { element: HTMLElement, values: () => string[] } {
   const group = chipGroup(
-    'Equipment',
+    'Required equipment',
     'Choose all equipment required so library and Quick Workout filters stay accurate.',
     EXERCISE_EQUIPMENT,
     initial,

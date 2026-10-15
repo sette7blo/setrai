@@ -29,6 +29,22 @@ function field(label: string, control: HTMLElement, hint = ''): HTMLElement {
   return wrap
 }
 
+function formSection(title: string, ...children: HTMLElement[]): HTMLElement {
+  const section = document.createElement('section')
+  section.className = 'exercise-editor__section'
+  const heading = document.createElement('h2')
+  heading.textContent = title
+  section.append(heading, ...children)
+  return section
+}
+
+function fieldGrid(className: string, ...children: HTMLElement[]): HTMLElement {
+  const grid = document.createElement('div')
+  grid.className = `exercise-editor__field-grid ${className}`
+  grid.append(...children)
+  return grid
+}
+
 function textInput(value: string, opts: { type?: string, placeholder?: string, required?: boolean, min?: string, max?: string } = {}): HTMLInputElement {
   const input = document.createElement('input')
   input.type = opts.type || 'text'
@@ -170,7 +186,16 @@ export function createExerciseEditorForm(
   cancel.textContent = 'Cancel'
   actions.append(save, cancel)
 
+  const danger = document.createElement('section')
+  danger.className = 'exercise-editor__danger'
+
   if (mode === 'edit' && initial.id) {
+    const dangerCopy = document.createElement('div')
+    const dangerTitle = document.createElement('strong')
+    dangerTitle.textContent = 'Delete exercise'
+    const dangerHint = document.createElement('span')
+    dangerHint.textContent = 'Permanently remove this exercise from your library.'
+    dangerCopy.append(dangerTitle, dangerHint)
     const remove = document.createElement('button')
     remove.type = 'button'
     remove.className = 'button button--danger'
@@ -189,23 +214,42 @@ export function createExerciseEditorForm(
           status.textContent = readableApiError(error)
         })
     })
-    actions.append(remove)
+    danger.append(dangerCopy, remove)
   }
 
+  const more = document.createElement('details')
+  more.className = 'exercise-editor__more'
+  const moreSummary = document.createElement('summary')
+  moreSummary.textContent = 'More details'
+  more.append(moreSummary, field('Tags', tags, 'Optional, comma-separated descriptors'))
+
   form.append(
-    field('Name', name),
-    field('Description', description),
-    field('Category', category, 'Controlled so categories remain consistent across the library.'),
-    muscles.element,
-    equipment.element,
-    field('Difficulty', difficulty),
-    field('Tags', tags, 'Comma-separated'),
-    field('Instructions', instructions, 'One step per line'),
-    field('Default sets', defaultSets),
-    field('Default reps', defaultReps),
-    field('Default rest (sec)', defaultRest),
-    field('Image', preview),
-    imageHint,
+    formSection('Identity',
+      field('Name', name),
+      field('Image', preview),
+      imageHint,
+      field('Description', description)
+    ),
+    formSection('Classification',
+      fieldGrid('exercise-editor__field-grid--classification',
+        field('Category', category, 'Keeps library categories consistent.'),
+        field('Difficulty', difficulty)
+      )
+    ),
+    formSection('Target muscles', muscles.element),
+    formSection('Equipment', equipment.element),
+    formSection('Prescription',
+      fieldGrid('exercise-editor__field-grid--prescription',
+        field('Sets', defaultSets),
+        field('Reps', defaultReps),
+        field('Rest (sec)', defaultRest)
+      )
+    ),
+    formSection('Coaching',
+      field('Instructions', instructions, 'One step per line'),
+      more
+    ),
+    ...(danger.childElementCount ? [danger] : []),
     status,
     actions
   )

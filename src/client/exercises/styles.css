@@ -652,3 +652,127 @@ button.exercise-status:disabled { cursor: wait; opacity: .65; }
   background: #8b1e2d;
   border-color: #8b1e2d;
 }
+
+/* Exercise editor task flow */
+.exercise-editor {
+  gap: 16px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.exercise-editor__section {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid var(--color-border);
+  border-radius: 16px;
+  background: var(--color-surface);
+}
+.exercise-editor__section > h2 {
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.25;
+  letter-spacing: -.02em;
+}
+.exercise-editor__field-grid { display: grid; gap: 12px; }
+.exercise-editor__field-grid--classification { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.exercise-editor__field-grid--prescription { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+.exercise-editor__muscle-layout {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+.exercise-editor__selected {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-height: 32px;
+  margin-bottom: 10px;
+}
+.exercise-editor__selected-empty { color: var(--color-muted); font-size: 13px; }
+.exercise-editor__selected-chip {
+  display: inline-flex;
+  align-items: center;
+  min-height: 34px;
+  gap: 6px;
+  padding: 6px 9px;
+  border: 1px solid var(--color-primary);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--color-text);
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  cursor: pointer;
+}
+.exercise-editor__selected-chip svg { width: 14px; height: 14px; }
+.exercise-editor__picker {
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: #fff;
+}
+.exercise-editor__picker > summary,
+.exercise-editor__more > summary {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  gap: 8px;
+  padding: 0 12px;
+  color: var(--color-muted-strong);
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  list-style: none;
+}
+.exercise-editor__picker > summary::-webkit-details-marker,
+.exercise-editor__more > summary::-webkit-details-marker { display: none; }
+.exercise-editor__picker > summary svg { width: 16px; height: 16px; }
+.exercise-editor__picker[open] > summary,
+.exercise-editor__more[open] > summary { border-bottom: 1px solid var(--color-border); }
+.exercise-editor__picker .exercise-editor__chips { padding: 12px; }
+.exercise-editor__more {
+  border: 1px solid var(--color-border);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--color-surface) 94%, var(--color-border));
+}
+.exercise-editor__more > .exercise-editor__field { padding: 12px; }
+.exercise-editor__actions { background: var(--color-background); }
+.exercise-editor__actions .button--primary { min-width: 180px; }
+.exercise-editor__danger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 18px;
+  border: 1px solid rgba(139, 30, 45, .24);
+  border-radius: 16px;
+  background: var(--color-surface);
+}
+.exercise-editor__danger > div { display: grid; gap: 4px; }
+.exercise-editor__danger strong { font-size: 14px; }
+.exercise-editor__danger span { color: var(--color-muted); font-size: 12px; }
+
+@media (max-width: 719px) {
+  .exercise-editor__section { padding: 14px; }
+  .exercise-editor__field-grid--classification { grid-template-columns: minmax(0, 1fr); }
+  .exercise-editor__field-grid--prescription { gap: 8px; }
+  .exercise-editor__field-grid--prescription .exercise-editor__field > span { font-size: 10px; }
+  .exercise-editor__muscle-layout { padding: 0; }
+  .exercise-editor__selected-chip { min-height: 40px; }
+  .exercise-editor__actions {
+    position: sticky;
+    z-index: 8;
+    bottom: calc(72px + env(safe-area-inset-bottom));
+    padding: 10px;
+    margin: 0 -4px;
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    box-shadow: 0 -6px 20px rgba(28, 25, 22, .08);
+  }
+  .exercise-editor__actions .button--primary { flex: 1 1 auto; min-width: 0; }
+  .exercise-editor__danger { align-items: flex-start; flex-direction: column; }
+}
