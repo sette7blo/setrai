@@ -93,11 +93,6 @@ function header(state: PageState): HTMLElement {
       { icon: Target, text: `${muscleCount} muscles`, tone: 'green' },
     ],
   }))
-  const create = document.createElement('a')
-  create.className = 'button button--primary exercise-create'
-  create.href = '/exercises/new'
-  create.append(iconElement(Plus), document.createTextNode('New exercise'))
-  section.append(create)
   return section
 }
 
@@ -137,7 +132,13 @@ function controls(state: PageState, onFilter: (filters: ExerciseFilters) => void
   filterToggle.append(iconElement(SlidersHorizontal))
 
   const reset = selectionToggle(state.selecting, state.busy, onSelectMode)
-  wrap.append(favourites, filterToggle, reset)
+  const create = document.createElement('a')
+  create.className = 'page-toolbar-action filter-icon page-toolbar-action--primary exercise-toolbar-create'
+  create.href = '/exercises/new'
+  create.setAttribute('aria-label', 'Create new exercise')
+  create.title = 'Create new exercise'
+  create.append(iconElement(Plus))
+  wrap.append(favourites, filterToggle, reset, create)
   if (state.catalog) {
     wrap.classList.add('exercise-controls--catalog')
     const refresh = document.createElement('button')
@@ -148,7 +149,7 @@ function controls(state: PageState, onFilter: (filters: ExerciseFilters) => void
     refresh.disabled = state.refreshing || state.busy
     refresh.append(iconElement(RefreshCw))
     refresh.addEventListener('click', onRefresh)
-    wrap.insertBefore(refresh, reset)
+    wrap.insertBefore(refresh, create)
   }
   return wrap
 }

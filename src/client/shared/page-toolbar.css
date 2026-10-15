@@ -15,14 +15,18 @@
 }
 
 .page-toolbar--actions-3,
-.exercise-controls:not(.exercise-controls--catalog),
 .program-toolbar--catalog {
   --toolbar-actions: 3;
 }
 
 .page-toolbar--actions-4,
-.exercise-controls--catalog {
+.exercise-controls:not(.exercise-controls--catalog) {
   --toolbar-actions: 4;
+}
+
+.page-toolbar--actions-5,
+.exercise-controls--catalog {
+  --toolbar-actions: 5;
 }
 
 .page-toolbar-search,
@@ -100,6 +104,7 @@
   box-shadow: none;
   appearance: none;
   -webkit-appearance: none;
+  text-decoration: none;
 }
 
 .page-toolbar-action svg,

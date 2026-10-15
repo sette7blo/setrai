@@ -1,5 +1,5 @@
 .route-container { min-width: 0; }
-.exercise-controls.exercise-controls--catalog { --toolbar-actions: 4; }
+.exercise-controls.exercise-controls--catalog { --toolbar-actions: 5; }
 .exercise-status { display: block; width: 100%; padding: 7px 9px; text-align: center; font-size: 11px; font-weight: 850; line-height: 1.2; border-top: 1px solid; }
 .exercise-status--local { background: #e2e8d6; color: #3f4729; border-color: rgba(102,114,71,.22); }
 .exercise-status--update { background: #f6e8c9; color: #6f4518; border-color: rgba(214,162,58,.26); }
@@ -8,7 +8,7 @@ button.exercise-status { min-height: 44px; border: 0; border-top: 1px solid rgba
 button.exercise-status:hover:not(:disabled) { background: #efddb0; }
 button.exercise-status:disabled { cursor: wait; opacity: .65; }
 @media (max-width: 540px) {
-  .exercise-controls.exercise-controls--catalog { --toolbar-actions: 4; }
+  .exercise-controls.exercise-controls--catalog { --toolbar-actions: 5; }
   .exercise-controls--catalog .page-toolbar-search,
   .exercise-controls--catalog .exercise-search { grid-column: 1 / -1; }
 }
@@ -361,10 +361,6 @@ button.exercise-status:disabled { cursor: wait; opacity: .65; }
   border-color: rgba(212, 175, 55, 0.5) !important;
 }
 
-.exercise-create {
-  justify-self: start;
-  min-height: 44px;
-}
 
 .detail-actions {
   display: flex;
