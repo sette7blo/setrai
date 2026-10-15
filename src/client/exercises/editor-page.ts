@@ -11,10 +11,9 @@ import {
   uploadExerciseImage
 } from './api.js'
 import { createExerciseImage } from './image.js'
+import { equipmentEditorControl, muscleEditorControl, taxonomySelect } from './editor-taxonomy.js'
+import { EXERCISE_CATEGORIES, EXERCISE_DIFFICULTIES } from './taxonomy.js'
 import type { Exercise, ExerciseWrite } from './types.js'
-
-const DIFFICULTIES = ['beginner', 'intermediate', 'advanced']
-const CATEGORIES = ['strength', 'conditioning', 'mobility', 'cardio']
 
 function field(label: string, control: HTMLElement, hint = ''): HTMLElement {
   const wrap = document.createElement('label')
@@ -100,18 +99,12 @@ export function createExerciseEditorForm(
 
   const name = textInput(initial.name, { required: true, placeholder: 'Bench Press' })
   const description = textArea(initial.description, 3)
-  const category = textInput(initial.category || 'strength', { placeholder: 'strength' })
-  const muscleGroup = textInput(initial.muscleGroup, { placeholder: 'chest' })
-  const muscles = textInput(csvValue(initial.muscles), { placeholder: 'triceps, anterior-deltoid' })
-  const equipment = textInput(csvValue(initial.equipment), { placeholder: 'barbell, bench' })
-  const difficulty = document.createElement('select')
-  for (const value of DIFFICULTIES) {
-    const option = document.createElement('option')
-    option.value = value
-    option.textContent = value
-    if (value === (initial.difficulty || 'intermediate')) option.selected = true
-    difficulty.append(option)
-  }
+  const category = taxonomySelect(EXERCISE_CATEGORIES, initial.category || 'strength', 'Select category')
+  category.required = true
+  const muscles = muscleEditorControl(initial.muscleGroup, initial.muscles)
+  const equipment = equipmentEditorControl(initial.equipment)
+  const difficulty = taxonomySelect(EXERCISE_DIFFICULTIES, initial.difficulty || 'intermediate', 'Select difficulty')
+  difficulty.required = true
   const tags = textInput(csvValue(initial.tags), { placeholder: 'compound, push' })
   const instructions = textArea(linesValue(initial.instructions), 6)
   const defaultSets = textInput(String(initial.defaultSets), { type: 'number', min: '1', max: '50' })
@@ -202,10 +195,9 @@ export function createExerciseEditorForm(
   form.append(
     field('Name', name),
     field('Description', description),
-    field('Category', category, CATEGORIES.join(', ')),
-    field('Primary muscle', muscleGroup),
-    field('Muscles', muscles, 'Comma-separated'),
-    field('Equipment', equipment, 'Comma-separated'),
+    field('Category', category, 'Controlled so categories remain consistent across the library.'),
+    muscles.element,
+    equipment.element,
     field('Difficulty', difficulty),
     field('Tags', tags, 'Comma-separated'),
     field('Instructions', instructions, 'One step per line'),
@@ -224,10 +216,10 @@ export function createExerciseEditorForm(
     const payload: ExerciseWrite = {
       name: name.value.trim(),
       description: description.value.trim(),
-      category: category.value.trim(),
-      muscleGroup: muscleGroup.value.trim(),
-      muscles: parseCsv(muscles.value),
-      equipment: parseCsv(equipment.value),
+      category: category.value,
+      muscleGroup: muscles.primary.value,
+      muscles: muscles.secondaryValues(),
+      equipment: equipment.values(),
       difficulty: difficulty.value,
       tags: parseCsv(tags.value),
       instructions: parseLines(instructions.value),
@@ -239,6 +231,10 @@ export function createExerciseEditorForm(
     if (!payload.name) {
       status.textContent = 'Name is required.'
       name.focus()
+      return
+    }
+    if (!payload.category || !payload.muscleGroup || !payload.difficulty) {
+      status.textContent = 'Choose a category, primary muscle, and difficulty.'
       return
     }
     save.disabled = true

@@ -1142,6 +1142,8 @@ src/client/exercises/
 - detail card layout and collapsed instructions in `detail-view.ts`;
 - exercise detail front/back muscle map;
 - feature-owned body geometry in `body-map.ts` and highlighting in `muscle-map.ts`;
+- canonical create/edit controls in `editor-taxonomy.ts`, consuming the shared
+  exercise taxonomy and rendering a synchronized primary/secondary muscle preview;
 - exercise selection surfaces;
 - public tabs, image, formatting, filter controls, and detail card components
   consumed by Discover without relay logic entering Exercises.
@@ -1611,10 +1613,13 @@ Do not implement duplicate Quick Workout logic in both AI and workouts.
 
 # 31. Equipment ownership
 
-Equipment is user training configuration.
+Equipment is user training configuration. Canonical exercise equipment identifiers,
+along with exercise categories, difficulty levels, and recovery-safe muscle choices,
+live in `src/shared/exercise-taxonomy.json`. The Exercises server validates manual
+writes from it and the Exercises client builds editor controls from it.
 
-The canonical model should belong to the profile/preferences or dedicated
-configuration service rather than being duplicated across:
+Profile/preferences should consume the same identifiers rather than duplicating
+equipment values across:
 
 - exercises;
 - AI;
@@ -1623,8 +1628,7 @@ configuration service rather than being duplicated across:
 
 Consumers should receive equipment through a documented contract.
 
-When the final implementation is chosen, update this entry with the concrete file
-location.
+Display labels may evolve independently, but persisted identifiers remain stable.
 
 ---
 

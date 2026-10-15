@@ -1,5 +1,12 @@
 // src/server/exercises/write.js
 // Normalize create/update payloads from API (camelCase or snake_case).
+import {
+  canonicalCategory,
+  canonicalDifficulty,
+  canonicalEquipment,
+  canonicalPrimaryMuscle,
+  canonicalSecondaryMuscles
+} from './taxonomy.js'
 
 function clientError(message, statusCode = 400) {
   const error = new Error(message)
@@ -65,19 +72,19 @@ export function normalizeExerciseWrite(input, { partial = false } = {}) {
   if (description !== undefined) result.description = description
 
   const category = asString(pick(input, 'category', 'category'), 'category', { max: 80 })
-  if (category !== undefined) result.category = category
+  if (category !== undefined) result.category = category ? canonicalCategory(category) : ''
 
   const muscleGroup = asString(pick(input, 'muscleGroup', 'muscle_group'), 'muscleGroup', { max: 80 })
-  if (muscleGroup !== undefined) result.muscle_group = muscleGroup
+  if (muscleGroup !== undefined) result.muscle_group = muscleGroup ? canonicalPrimaryMuscle(muscleGroup) : ''
 
   const muscles = asStringArray(pick(input, 'muscles', 'muscles'), 'muscles')
-  if (muscles !== undefined) result.muscles = muscles
+  if (muscles !== undefined) result.muscles = canonicalSecondaryMuscles(muscles)
 
   const equipment = asStringArray(pick(input, 'equipment', 'equipment'), 'equipment')
-  if (equipment !== undefined) result.equipment = equipment
+  if (equipment !== undefined) result.equipment = canonicalEquipment(equipment)
 
   const difficulty = asString(pick(input, 'difficulty', 'difficulty'), 'difficulty', { max: 40 })
-  if (difficulty !== undefined) result.difficulty = difficulty
+  if (difficulty !== undefined) result.difficulty = difficulty ? canonicalDifficulty(difficulty) : ''
 
   const tags = asStringArray(pick(input, 'tags', 'tags'), 'tags')
   if (tags !== undefined) result.tags = tags

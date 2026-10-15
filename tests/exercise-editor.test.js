@@ -30,8 +30,8 @@ test('normalizeExerciseWrite maps camelCase create payload', () => {
     imageUrl: '/media/exercises/demo.png'
   })
   assert.equal(body.name, 'Goblet Squat')
-  assert.equal(body.muscle_group, 'legs')
-  assert.deepEqual(body.muscles, ['quads', 'glutes'])
+  assert.equal(body.muscle_group, 'quadriceps')
+  assert.deepEqual(body.muscles, ['quadriceps', 'glutes'])
   assert.equal(body.default_sets, 4)
   assert.equal(body.image_url, '/media/exercises/demo.png')
   assert.equal(body.source_type, 'manual')
@@ -41,6 +41,35 @@ test('normalizeExerciseWrite rejects unsafe image urls', () => {
   assert.throws(
     () => normalizeExerciseWrite({ name: 'X', imageUrl: 'javascript:alert(1)' }, { partial: true }),
     /imageUrl/
+  )
+})
+
+test('normalizeExerciseWrite canonicalizes supported taxonomy aliases', () => {
+  const body = normalizeExerciseWrite({
+    name: 'Incline press',
+    category: 'strength',
+    muscleGroup: 'pecs',
+    muscles: ['front delts', 'triceps'],
+    equipment: ['dumbbell', 'bench'],
+    difficulty: 'intermediate'
+  })
+  assert.equal(body.muscle_group, 'chest')
+  assert.deepEqual(body.muscles, ['anterior-deltoid', 'triceps'])
+  assert.deepEqual(body.equipment, ['dumbbells', 'bench'])
+})
+
+test('normalizeExerciseWrite rejects unknown structural taxonomy values', () => {
+  assert.throws(
+    () => normalizeExerciseWrite({ name: 'X', muscleGroup: 'quadreceps' }),
+    /muscleGroup must use a supported value/
+  )
+  assert.throws(
+    () => normalizeExerciseWrite({ name: 'X', equipment: ['dumbell'] }),
+    /equipment must use a supported value/
+  )
+  assert.throws(
+    () => normalizeExerciseWrite({ name: 'X', category: 'power-ish' }),
+    /category must use a supported value/
   )
 })
 

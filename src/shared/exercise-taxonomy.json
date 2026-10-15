@@ -1,0 +1,78 @@
+{
+  "categories": [
+    { "value": "strength", "label": "Strength" },
+    { "value": "bodyweight", "label": "Bodyweight" }
+  ],
+  "primaryMuscles": [
+    { "value": "chest", "label": "Chest" },
+    { "value": "back", "label": "Back" },
+    { "value": "shoulders", "label": "Shoulders" },
+    { "value": "biceps", "label": "Biceps / forearms" },
+    { "value": "triceps", "label": "Triceps" },
+    { "value": "core", "label": "Core" },
+    { "value": "quadriceps", "label": "Quadriceps" },
+    { "value": "hamstrings", "label": "Hamstrings" },
+    { "value": "glutes", "label": "Glutes" },
+    { "value": "calves", "label": "Calves" }
+  ],
+  "secondaryMuscles": [
+    { "value": "chest", "label": "Chest" },
+    { "value": "upper-chest", "label": "Upper chest" },
+    { "value": "back", "label": "Back" },
+    { "value": "lats", "label": "Lats" },
+    { "value": "upper-back", "label": "Upper back" },
+    { "value": "lower-back", "label": "Lower back" },
+    { "value": "traps", "label": "Traps" },
+    { "value": "shoulders", "label": "Shoulders" },
+    { "value": "anterior-deltoid", "label": "Front deltoid" },
+    { "value": "lateral-deltoid", "label": "Lateral deltoid" },
+    { "value": "posterior-deltoid", "label": "Rear deltoid" },
+    { "value": "biceps", "label": "Biceps" },
+    { "value": "forearms", "label": "Forearms" },
+    { "value": "triceps", "label": "Triceps" },
+    { "value": "core", "label": "Core" },
+    { "value": "abs", "label": "Abs" },
+    { "value": "obliques", "label": "Obliques" },
+    { "value": "quadriceps", "label": "Quadriceps" },
+    { "value": "hamstrings", "label": "Hamstrings" },
+    { "value": "glutes", "label": "Glutes" },
+    { "value": "calves", "label": "Calves" }
+  ],
+  "equipment": [
+    { "value": "bodyweight", "label": "Bodyweight" },
+    { "value": "barbell", "label": "Barbell" },
+    { "value": "dumbbells", "label": "Dumbbells" },
+    { "value": "kettlebell", "label": "Kettlebell" },
+    { "value": "bench", "label": "Bench" },
+    { "value": "cable-machine", "label": "Cable machine" },
+    { "value": "machine", "label": "Machine" },
+    { "value": "pull-up-bar", "label": "Pull-up bar" },
+    { "value": "steel-mace", "label": "Steel mace" }
+  ],
+  "difficulties": [
+    { "value": "beginner", "label": "Beginner" },
+    { "value": "intermediate", "label": "Intermediate" },
+    { "value": "advanced", "label": "Advanced" }
+  ],
+  "aliases": {
+    "primaryMuscles": {
+      "pecs": "chest", "pectorals": "chest", "upper-chest": "chest",
+      "lats": "back", "upper-back": "back", "mid-back": "back", "middle-back": "back", "lower-back": "back", "traps": "back", "trapezius": "back",
+      "shoulder": "shoulders", "deltoids": "shoulders", "delts": "shoulders", "anterior-deltoid": "shoulders", "lateral-deltoid": "shoulders", "posterior-deltoid": "shoulders",
+      "bicep": "biceps", "forearm": "biceps", "forearms": "biceps", "arms": "biceps", "brachialis": "biceps",
+      "tricep": "triceps", "abs": "core", "abdominals": "core", "obliques": "core", "full-body": "core",
+      "legs": "quadriceps", "quads": "quadriceps", "quad": "quadriceps", "hamstring": "hamstrings", "hams": "hamstrings",
+      "glute": "glutes", "gluteus-maximus": "glutes", "calf": "calves"
+    },
+    "secondaryMuscles": {
+      "pecs": "chest", "pectorals": "chest", "front-delts": "anterior-deltoid", "front-deltoid": "anterior-deltoid",
+      "rear-deltoid": "posterior-deltoid", "deltoids": "shoulders", "quads": "quadriceps", "quad": "quadriceps",
+      "hamstring": "hamstrings", "glute": "glutes", "calf": "calves", "trapezius": "traps"
+    },
+    "equipment": {
+      "body-weight": "bodyweight", "none": "bodyweight", "dumbbell": "dumbbells", "cables": "cable-machine",
+      "cable": "cable-machine", "pullup-bar": "pull-up-bar", "pull-up bar": "pull-up-bar", "kettlebells": "kettlebell",
+      "steel mace": "steel-mace", "mace": "steel-mace"
+    }
+  }
+}

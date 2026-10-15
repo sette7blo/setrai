@@ -263,6 +263,16 @@ Useful exercise metadata may include:
 - image;
 - tags.
 
+Exercise create/edit uses the canonical taxonomy in
+`src/shared/exercise-taxonomy.json`. Category, primary muscle, secondary muscles,
+equipment, and difficulty are controlled choices rather than free text. The
+primary choice is a Recovery group; secondary choices may be anatomically more
+specific but must map to the front/back body preview. The editor updates that
+preview immediately, using a strong primary highlight and quieter secondary
+highlight. Tags, descriptions, and instructions remain free-form. The server
+normalizes known aliases and rejects unsupported structural values so Recovery,
+filters, body maps, and Quick Workout do not diverge because of spelling variants.
+
 The UI should avoid displaying excessive metadata on exercise cards.
 
 The normal card hierarchy should favor:
