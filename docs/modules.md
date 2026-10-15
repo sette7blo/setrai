@@ -774,6 +774,16 @@ and `workoutReadiness` exports in `service.js` (implemented by `readiness.js`)
 canonicalize primary groups and aggregate readiness conservatively for Quick
 Workout; absent groups are treated as fresh by the generator.
 
+Every controlled primary and secondary muscle declares or resolves to one of the
+ten Recovery groups in `src/shared/exercise-taxonomy.json`. Detailed values are
+folded into their anatomical Recovery region: chest variants to chest; back,
+lats and traps to back; deltoids to shoulders; forearms to biceps; abs and
+obliques to core; hip abductors to glutes; and hip adductors to quadriceps. This
+same mapping drives the server readiness contract and the client body map so a
+controlled muscle cannot be silently omitted. The calculator applies full load
+to the primary muscle and half load to each secondary muscle; if normalization
+collapses both to the same muscle, the full primary load wins.
+
 ---
 
 # 16. Quick Workout server feature

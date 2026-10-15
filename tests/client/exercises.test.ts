@@ -254,6 +254,10 @@ test('primary highlighting takes precedence and unknown muscles stay unpainted',
   assert.match(markup, /data-muscle="Chest"[^>]*class="muscle-map__primary"/)
   assert.equal(markup.includes('<script>'), false)
   assert.equal(muscleRegion('Anterior Deltoid'), 'Shoulders')
+  assert.equal(muscleRegion('abdominals'), 'Core')
+  assert.equal(muscleRegion('full-body'), 'Core')
+  assert.equal(muscleRegion('abductors'), 'Glutes')
+  assert.equal(muscleRegion('adductors'), 'Quadriceps')
   assert.equal(muscleRegion('unknown'), undefined)
 })
 

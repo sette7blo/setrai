@@ -26,26 +26,28 @@ export function normalizeMuscle(value) {
   return MUSCLE_ALIASES.get(normalized) ?? normalized
 }
 
-export function getExerciseMuscles(exercise) {
-  if (!exercise) {
-    return []
+export const PRIMARY_MUSCLE_LOAD = 1
+export const SECONDARY_MUSCLE_LOAD = 0.5
+
+export function getExerciseMuscleLoads(exercise) {
+  if (!exercise) return []
+
+  const loads = new Map()
+  const add = (value, factor) => {
+    const muscle = normalizeMuscle(value)
+    if (muscle) loads.set(muscle, Math.max(loads.get(muscle) ?? 0, factor))
   }
 
-  const muscles = []
-
-  if (exercise.muscle_group) {
-    muscles.push(exercise.muscle_group)
-  }
-
+  if (exercise.muscle_group) add(exercise.muscle_group, PRIMARY_MUSCLE_LOAD)
   if (Array.isArray(exercise.muscles)) {
-    muscles.push(...exercise.muscles)
+    for (const muscle of exercise.muscles) add(muscle, SECONDARY_MUSCLE_LOAD)
   }
 
-  const normalized = muscles
-    .map(normalizeMuscle)
-    .filter(Boolean)
+  return [...loads.entries()]
+    .map(([muscle, factor]) => ({ muscle, factor }))
+    .sort((a, b) => a.muscle.localeCompare(b.muscle))
+}
 
-  return [...new Set(normalized)].sort((a, b) =>
-    a.localeCompare(b)
-  )
+export function getExerciseMuscles(exercise) {
+  return getExerciseMuscleLoads(exercise).map(load => load.muscle)
 }

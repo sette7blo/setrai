@@ -1,7 +1,7 @@
 // src/server/recovery/calculator.js
 
 import {
-  getExerciseMuscles
+  getExerciseMuscleLoads
 } from './muscle-map.js'
 
 const HOUR_MS = 60 * 60 * 1000
@@ -121,10 +121,10 @@ export function calculateRecovery({
       }
 
       const exercise = exerciseService.getExercise(set.exerciseId)
-      const muscles = getExerciseMuscles(exercise)
+      const muscleLoads = getExerciseMuscleLoads(exercise)
 
-      for (const muscle of muscles) {
-        addMuscleLoad(loads, muscle, finishedAt, stimulus)
+      for (const { muscle, factor } of muscleLoads) {
+        addMuscleLoad(loads, muscle, finishedAt, stimulus * factor)
       }
     }
   }

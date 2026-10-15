@@ -268,7 +268,8 @@ Exercise create/edit uses the canonical taxonomy in
 equipment, difficulty, and movement type (`compound` or `isolation`) are controlled
 choices rather than free text. The
 primary choice is a Recovery group; secondary choices may be anatomically more
-specific and map to the front/back body preview when a matching region exists. The editor updates that
+specific, but every controlled value maps to a Recovery group and the front/back
+body preview. The editor updates that
 preview immediately, using a strong primary highlight and quieter secondary
 highlight. Movement type is required for new manual exercises and is used by Quick
 Workout scoring. Tags are retained only as internal catalog metadata and are not

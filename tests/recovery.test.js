@@ -7,6 +7,7 @@ import test from 'node:test'
 import { openDatabase } from '../src/server/db/connection.js'
 import { createExerciseService } from '../src/server/exercises/service.js'
 import { createProgramService } from '../src/server/programs/service.js'
+import { getExerciseMuscleLoads } from '../src/server/recovery/muscle-map.js'
 import { createRecoveryService } from '../src/server/recovery/service.js'
 import { createSessionService } from '../src/server/sessions/service.js'
 
@@ -205,9 +206,27 @@ test('maps primary and secondary muscles deterministically', () => {
       getMuscle(services.recovery.getRecovery(), 'back'),
       undefined
     )
+    const nextDay = createRecoveryService(db, {
+      now: () => new Date('2026-10-06T18:00:00.000Z')
+    }).getRecovery()
+    assert.ok(
+      getMuscle(nextDay, 'chest').recovery <
+      getMuscle(nextDay, 'triceps').recovery
+    )
   } finally {
     cleanupDatabase(db, directory)
   }
+})
+
+test('primary muscles receive full load and secondary muscles receive partial load', () => {
+  assert.deepEqual(getExerciseMuscleLoads({
+    muscle_group: 'chest',
+    muscles: ['triceps', 'front delts', 'chest']
+  }), [
+    { muscle: 'anterior-deltoid', factor: 0.5 },
+    { muscle: 'chest', factor: 1 },
+    { muscle: 'triceps', factor: 0.5 }
+  ])
 })
 
 test('multiple recent sessions accumulate fatigue', () => {

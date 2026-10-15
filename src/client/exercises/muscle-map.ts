@@ -1,20 +1,10 @@
 import { EXERCISE_BODY_SVG } from './body-map.js'
 import { displayName } from './format.js'
+import { recoveryMuscleRegion } from './taxonomy.js'
 import type { Exercise } from './types.js'
 
-const regions: Record<string, string> = {
-  chest: 'Chest', 'upper-chest': 'Chest', pectorals: 'Chest', back: 'Back', lats: 'Back',
-  'upper-back': 'Back', 'lower-back': 'Back', trapezius: 'Back', traps: 'Back',
-  shoulders: 'Shoulders', deltoids: 'Shoulders', 'anterior-deltoid': 'Shoulders',
-  'lateral-deltoid': 'Shoulders', 'posterior-deltoid': 'Shoulders',
-  biceps: 'Biceps', brachialis: 'Biceps', forearms: 'Biceps',
-  triceps: 'Triceps', core: 'Core', abs: 'Core', obliques: 'Core',
-  quadriceps: 'Quadriceps', quads: 'Quadriceps', legs: 'Quadriceps',
-  hamstrings: 'Hamstrings', glutes: 'Glutes', calves: 'Calves'
-}
-
 export function muscleRegion(muscle: string): string | undefined {
-  return regions[muscle.trim().toLowerCase().replace(/[ _]+/g, '-')]
+  return recoveryMuscleRegion(muscle)
 }
 
 export function muscleMapMarkupForMuscles(primaryMuscles: string[], secondaryMuscles: string[]): string {

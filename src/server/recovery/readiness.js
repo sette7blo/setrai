@@ -1,22 +1,25 @@
 // Public recovery contract for grouping exercise metadata and workout readiness.
+import taxonomy from '../../shared/exercise-taxonomy.json' with { type: 'json' }
 import { normalizeMuscle } from './muscle-map.js'
 
-const GROUPS = {
-  chest: ['chest', 'pecs', 'pectorals', 'upper-chest'],
-  back: ['back', 'lats', 'latissimus-dorsi', 'upper-back', 'mid-back', 'middle-back', 'lower-back', 'lumbar', 'erector-spinae', 'traps', 'trapezius'],
-  shoulders: ['shoulders', 'shoulder', 'deltoids', 'deltoid', 'delts', 'front-delts', 'anterior-deltoid', 'lateral-deltoid', 'posterior-deltoid'],
-  biceps: ['biceps', 'bicep', 'brachialis', 'forearms', 'forearm', 'arms'],
-  triceps: ['triceps', 'tricep'],
-  core: ['core', 'abs', 'abdominals', 'obliques', 'full-body'],
-  quadriceps: ['quadriceps', 'quads', 'quad', 'legs'],
-  hamstrings: ['hamstrings', 'hamstring', 'hams'],
-  glutes: ['glutes', 'glute', 'gluteus-maximus'],
-  calves: ['calves', 'calf']
+const groupByMuscle = new Map()
+
+for (const option of taxonomy.primaryMuscles) {
+  groupByMuscle.set(option.value, option.value)
 }
-const aliases = new Map(Object.entries(GROUPS).flatMap(([group, names]) => names.map(name => [name, group])))
+for (const option of taxonomy.secondaryMuscles) {
+  groupByMuscle.set(option.value, option.recoveryGroup)
+}
+for (const [alias, target] of Object.entries(taxonomy.aliases.primaryMuscles)) {
+  groupByMuscle.set(alias, target)
+}
+for (const [alias, target] of Object.entries(taxonomy.aliases.secondaryMuscles)) {
+  const group = groupByMuscle.get(target)
+  if (group) groupByMuscle.set(alias, group)
+}
 
 export function recoveryMuscleGroup(value) {
-  return aliases.get(normalizeMuscle(value)) ?? ''
+  return groupByMuscle.get(normalizeMuscle(value)) ?? ''
 }
 
 export function workoutReadiness(recovery) {
