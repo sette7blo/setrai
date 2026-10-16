@@ -841,6 +841,9 @@ and same-group alternative pools. It never fills the plan with tired muscles.
 Every generated prescription comes from the active Profile goal preset; exercise
 default sets, reps, and rest do not override it. Those legacy exercise fields are
 retained only for storage and catalog compatibility.
+Goal labels, descriptions, and prescription values are owned by
+`src/shared/training-goals.json` and consumed by both Quick Workout and the
+Settings Training guide.
 Session startup may seed a missing target weight from the exercise's latest completed
 weighted set. It never replaces an explicit Program weight, and historical achieved
 reps do not override the current goal-based target reps or rest.

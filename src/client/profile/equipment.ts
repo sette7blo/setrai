@@ -1,3 +1,16 @@
+import trainingGoals from '../../shared/training-goals.json' with { type: 'json' }
+
+export interface TrainingGoal {
+  value: string
+  label: string
+  description: string
+  sets: number
+  reps: string
+  restSec: number
+}
+
+export const TRAINING_GOALS = trainingGoals.goals as TrainingGoal[]
+
 export const EQUIPMENT_OPTIONS = [
   'bodyweight',
   'dumbbells',
@@ -24,11 +37,14 @@ export function equipmentLabel(value: string): string {
 }
 
 export function goalLabel(value: string): string {
-  const known: Record<string, string> = {
-    strength: 'Strength',
-    hypertrophy: 'Hypertrophy',
-    'general-fitness': 'General Fitness',
-    endurance: 'Endurance'
-  }
-  return known[value] ?? (value ? equipmentLabel(value) : 'Not set')
+  return TRAINING_GOALS.find(goal => goal.value === value)?.label ?? (value ? equipmentLabel(value) : 'Not set')
+}
+
+export function effectiveTrainingGoal(value: string): TrainingGoal {
+  return TRAINING_GOALS.find(goal => goal.value === value)
+    ?? TRAINING_GOALS.find(goal => goal.value === 'general-fitness')!
+}
+
+export function goalPrescription(goal: TrainingGoal): string {
+  return `${goal.sets} sets · ${goal.reps} reps · ${goal.restSec} sec rest`
 }

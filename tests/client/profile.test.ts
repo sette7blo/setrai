@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs'
 
 import { ApiClient } from '../../src/client/shared/api/client.js'
 import { normalizeProfile, updateProfile } from '../../src/client/profile/api.js'
-import { equipmentLabel, goalLabel } from '../../src/client/profile/equipment.js'
+import { effectiveTrainingGoal, equipmentLabel, goalLabel, goalPrescription, TRAINING_GOALS } from '../../src/client/profile/equipment.js'
 
 test('settings gates identity on the Nostr identity capability and keeps training preferences', () => {
   const page = readFileSync('src/client/profile/page.ts', 'utf8')
@@ -48,4 +48,22 @@ test('maps equipment and goal labels with fallback', () => {
   assert.equal(equipmentLabel('odd-tool'), 'Odd Tool')
   assert.equal(goalLabel('general-fitness'), 'General Fitness')
   assert.equal(goalLabel(''), 'Not set')
+})
+
+test('documents every Quick Workout goal from the shared prescription source', () => {
+  assert.deepEqual(
+    TRAINING_GOALS.map(goal => [goal.value, goalPrescription(goal)]),
+    [
+      ['strength', '4 sets · 3-6 reps · 150 sec rest'],
+      ['hypertrophy', '3 sets · 8-12 reps · 90 sec rest'],
+      ['general-fitness', '3 sets · 8-15 reps · 75 sec rest'],
+      ['endurance', '3 sets · 12-20 reps · 45 sec rest']
+    ]
+  )
+  assert.equal(effectiveTrainingGoal('').value, 'general-fitness')
+  assert.ok(TRAINING_GOALS.every(goal => goal.description.length > 30))
+  const page = readFileSync('src/client/profile/page.ts', 'utf8')
+  assert.match(page, /What each goal changes/)
+  assert.match(page, /Not set — use General Fitness/)
+  assert.match(page, /trainingGoalGuide\(goal\.value\)/)
 })

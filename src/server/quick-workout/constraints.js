@@ -1,35 +1,18 @@
 // src/server/quick-workout/constraints.js
+import trainingGoals from '../../shared/training-goals.json' with { type: 'json' }
 
 const MIN_DURATION = 15
 const MAX_DURATION = 90
 const DEFAULT_DURATION = 30
 
-const GOAL_PRESETS = {
-  strength: {
-    sets: 4,
-    reps: '3-6',
-    restSec: 150,
-    recentPenalty: 35
-  },
-  hypertrophy: {
-    sets: 3,
-    reps: '8-12',
-    restSec: 90,
-    recentPenalty: 30
-  },
-  'general-fitness': {
-    sets: 3,
-    reps: '8-15',
-    restSec: 75,
-    recentPenalty: 25
-  },
-  endurance: {
-    sets: 3,
-    reps: '12-20',
-    restSec: 45,
-    recentPenalty: 20
-  }
-}
+const GOAL_PRESETS = Object.fromEntries(
+  trainingGoals.goals.map(goal => [goal.value, {
+    sets: goal.sets,
+    reps: goal.reps,
+    restSec: goal.restSec,
+    recentPenalty: goal.recentPenalty
+  }])
+)
 
 function clientError(message) {
   const error = new Error(message)

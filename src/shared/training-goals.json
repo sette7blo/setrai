@@ -1,0 +1,40 @@
+{
+  "goals": [
+    {
+      "value": "strength",
+      "label": "Strength",
+      "description": "Build maximal force with lower reps and longer recovery.",
+      "sets": 4,
+      "reps": "3-6",
+      "restSec": 150,
+      "recentPenalty": 35
+    },
+    {
+      "value": "hypertrophy",
+      "label": "Hypertrophy",
+      "description": "Emphasize muscle growth with moderate reps and rest.",
+      "sets": 3,
+      "reps": "8-12",
+      "restSec": 90,
+      "recentPenalty": 30
+    },
+    {
+      "value": "general-fitness",
+      "label": "General Fitness",
+      "description": "Balance strength, conditioning, and manageable recovery.",
+      "sets": 3,
+      "reps": "8-15",
+      "restSec": 75,
+      "recentPenalty": 25
+    },
+    {
+      "value": "endurance",
+      "label": "Endurance",
+      "description": "Build muscular stamina with higher reps and shorter rest.",
+      "sets": 3,
+      "reps": "12-20",
+      "restSec": 45,
+      "recentPenalty": 20
+    }
+  ]
+}
