@@ -660,9 +660,9 @@ An empty local profile must not display a fabricated identity.
 Settings hides the Profile identity section unless Nostr is enabled and a
 nonempty `NOSTR_NSEC` is configured. Public discovery alone does not enable
 identity settings. Training and Equipment remain available in either mode.
-The Training settings accordion explains every goal with its intent and exact
-Quick Workout starting prescription. If no goal is selected, the UI states that
-General Fitness is the effective default. These descriptions and the generator
+The Training settings accordion presents every goal as a directly selectable
+description with its intent and exact Quick Workout starting prescription.
+General Fitness is selected by default. These descriptions and the generator
 presets share `src/shared/training-goals.json` so displayed guidance cannot drift
 from runtime behavior.
 

@@ -3,6 +3,9 @@
 import {
   createSettingsRepository
 } from '../db/repositories/settings.js'
+import trainingGoals from '../../shared/training-goals.json' with { type: 'json' }
+
+const TRAINING_GOALS = new Set(trainingGoals.goals.map(goal => goal.value))
 
 const PROFILE_KEYS = {
   displayName: 'profile.displayName',
@@ -18,7 +21,7 @@ const DEFAULT_PROFILE = {
   displayName: '',
   avatarUrl: '',
   weightUnit: 'kg',
-  trainingGoal: '',
+  trainingGoal: 'general-fitness',
   equipment: [],
   heightCm: null,
   targetWeightKg: null
@@ -107,9 +110,11 @@ function normalizeField(field, value) {
   }
 
   if (field === 'trainingGoal') {
-    return trimString(value, 'trainingGoal', 80)
+    const goal = trimString(value, 'trainingGoal', 80)
       .toLowerCase()
       .replace(/\s+/g, '-')
+    if (!TRAINING_GOALS.has(goal)) throw clientError('Invalid training goal')
+    return goal
   }
 
   if (field === 'equipment') {
@@ -141,12 +146,12 @@ export function createProfileService(db) {
       Object.values(PROFILE_KEYS)
     )
 
-    return Object.fromEntries(
-      Object.entries(PROFILE_KEYS).map(([field, key]) => [
-        field,
-        stored[key] ?? DEFAULT_PROFILE[field]
-      ])
-    )
+    return Object.fromEntries(Object.entries(PROFILE_KEYS).map(([field, key]) => {
+      const value = stored[key] ?? DEFAULT_PROFILE[field]
+      return [field, field === 'trainingGoal' && !TRAINING_GOALS.has(value)
+        ? DEFAULT_PROFILE.trainingGoal
+        : value]
+    }))
   }
 
   function updateProfile(input) {

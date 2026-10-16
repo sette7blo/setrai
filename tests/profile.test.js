@@ -29,7 +29,7 @@ const DEFAULT_PROFILE = {
   displayName: '',
   avatarUrl: '',
   weightUnit: 'kg',
-  trainingGoal: '',
+  trainingGoal: 'general-fitness',
   equipment: [],
   heightCm: null,
   targetWeightKg: null
@@ -165,6 +165,18 @@ test('updates training goal as a normalized string', () => {
       service.getTrainingGoal(),
       'general-fitness'
     )
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})
+
+test('rejects empty and unknown training goals', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    const service = createProfileService(db)
+    assert.throws(() => service.updateProfile({ trainingGoal: '' }), /Invalid training goal/)
+    assert.throws(() => service.updateProfile({ trainingGoal: 'powerlifting' }), /Invalid training goal/)
   } finally {
     cleanupDatabase(db, directory)
   }

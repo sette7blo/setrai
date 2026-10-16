@@ -37,7 +37,8 @@ export function equipmentLabel(value: string): string {
 }
 
 export function goalLabel(value: string): string {
-  return TRAINING_GOALS.find(goal => goal.value === value)?.label ?? (value ? equipmentLabel(value) : 'Not set')
+  return TRAINING_GOALS.find(goal => goal.value === value)?.label
+    ?? (value ? equipmentLabel(value) : 'General Fitness')
 }
 
 export function effectiveTrainingGoal(value: string): TrainingGoal {

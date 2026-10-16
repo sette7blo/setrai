@@ -117,43 +117,44 @@ function input(name: string, value: string, label: string, type = 'text'): HTMLI
   return field
 }
 
-function trainingGoalGuide(selectedValue: string): HTMLElement {
+function trainingGoalPicker(selectedValue: string): HTMLElement {
   const selected = effectiveTrainingGoal(selectedValue)
   const section = document.createElement('section')
   section.className = 'training-goal-guide'
-  section.setAttribute('aria-label', 'Training goal guide')
+  section.setAttribute('role', 'radiogroup')
+  section.setAttribute('aria-label', 'Training goal')
 
   const heading = document.createElement('div')
   heading.className = 'training-goal-guide__heading'
   const title = document.createElement('strong')
-  title.textContent = 'What each goal changes'
+  title.textContent = 'Training goal'
   const help = document.createElement('small')
-  help.textContent = 'Quick Workout uses these starting prescriptions. You can still edit the workout.'
+  help.textContent = 'Select a goal directly. Quick Workout uses its starting prescription, which you can still edit.'
   heading.append(title, help)
 
   const list = document.createElement('div')
   list.className = 'training-goal-guide__list'
   for (const option of TRAINING_GOALS) {
-    const item = document.createElement('article')
-    item.className = option.value === selected.value
-      ? 'training-goal-option training-goal-option--active'
-      : 'training-goal-option'
+    const item = document.createElement('label')
+    item.className = 'training-goal-option'
     item.dataset.goal = option.value
+    const choice = document.createElement('input')
+    choice.type = 'radio'
+    choice.name = 'trainingGoal'
+    choice.value = option.value
+    choice.checked = option.value === selected.value
 
     const top = document.createElement('div')
     const name = document.createElement('strong')
     name.textContent = option.label
-    top.append(name)
-    if (option.value === selected.value) {
-      const badge = document.createElement('span')
-      badge.textContent = selectedValue ? 'Selected' : 'Default'
-      top.append(badge)
-    }
+    const badge = document.createElement('span')
+    badge.textContent = 'Selected'
+    top.append(name, badge)
     const description = document.createElement('p')
     description.textContent = option.description
     const prescription = document.createElement('small')
     prescription.textContent = goalPrescription(option)
-    item.append(top, description, prescription)
+    item.append(choice, top, description, prescription)
     list.append(item)
   }
 
@@ -197,33 +198,17 @@ function profileSection(state: ProfileState, rerender: () => void): HTMLDetailsE
 }
 
 function trainingSection(state: ProfileState, rerender: () => void): HTMLDetailsElement {
-  const activeGoal = state.profile.trainingGoal
-    ? goalLabel(state.profile.trainingGoal)
-    : 'General Fitness default'
-  const details = category(Activity, 'Training', `${activeGoal} · ${state.profile.weightUnit.toUpperCase()}`, state.profile.weightUnit.toUpperCase())
+  const details = category(Activity, 'Training', `${goalLabel(state.profile.trainingGoal)} · ${state.profile.weightUnit.toUpperCase()}`, state.profile.weightUnit.toUpperCase())
   const body = categoryBody(details)
   const form = document.createElement('form')
   form.className = 'profile-settings-form'
   form.append(subsection('Preferences'))
-  const goal = document.createElement('select')
-  goal.name = 'trainingGoal'
-  goal.setAttribute('aria-label', 'Training goal')
-  goal.append(new Option('Not set — use General Fitness', ''))
-  for (const option of TRAINING_GOALS) goal.append(new Option(option.label, option.value))
-  goal.value = state.profile.trainingGoal
+  form.append(trainingGoalPicker(state.profile.trainingGoal))
   const unit = document.createElement('select')
   unit.name = 'weightUnit'
   unit.setAttribute('aria-label', 'Weight unit')
   unit.append(new Option('Kilograms', 'kg'), new Option('Pounds', 'lb'))
   unit.value = state.profile.weightUnit
-  let guide = trainingGoalGuide(goal.value)
-  goal.addEventListener('change', () => {
-    const next = trainingGoalGuide(goal.value)
-    guide.replaceWith(next)
-    guide = next
-  })
-  form.append(row('Training goal', 'Sets the default prescription used by Recovery Quick Workout.', goal))
-  form.append(guide)
   form.append(row('Display unit', 'Used for workouts, history, home, and body weight.', unit))
   const save = document.createElement('button')
   save.type = 'submit'
@@ -232,7 +217,8 @@ function trainingSection(state: ProfileState, rerender: () => void): HTMLDetails
   form.append(row('Apply changes', 'Persist training preferences.', save))
   form.addEventListener('submit', (event) => {
     event.preventDefault()
-    void updateProfile({ trainingGoal: goal.value, weightUnit: unit.value as 'kg' | 'lb' }).then((profile) => {
+    const data = new FormData(form)
+    void updateProfile({ trainingGoal: String(data.get('trainingGoal')), weightUnit: unit.value as 'kg' | 'lb' }).then((profile) => {
       state.profile = profile
       state.message = 'Training settings saved.'
       rerender()

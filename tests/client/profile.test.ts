@@ -23,6 +23,7 @@ test('normalizes Profile API payload', () => {
   assert.deepEqual(profile.equipment, ['barbell'])
   assert.equal(profile.heightCm, 180)
   assert.equal(profile.targetWeightKg, 75)
+  assert.equal(normalizeProfile({}).trainingGoal, 'general-fitness')
 })
 
 test('Profile PATCH sends changed payload', async () => {
@@ -47,7 +48,7 @@ test('maps equipment and goal labels with fallback', () => {
   assert.equal(equipmentLabel('cable-machine'), 'Cable Machine')
   assert.equal(equipmentLabel('odd-tool'), 'Odd Tool')
   assert.equal(goalLabel('general-fitness'), 'General Fitness')
-  assert.equal(goalLabel(''), 'Not set')
+  assert.equal(goalLabel(''), 'General Fitness')
 })
 
 test('documents every Quick Workout goal from the shared prescription source', () => {
@@ -63,7 +64,7 @@ test('documents every Quick Workout goal from the shared prescription source', (
   assert.equal(effectiveTrainingGoal('').value, 'general-fitness')
   assert.ok(TRAINING_GOALS.every(goal => goal.description.length > 30))
   const page = readFileSync('src/client/profile/page.ts', 'utf8')
-  assert.match(page, /What each goal changes/)
-  assert.match(page, /Not set — use General Fitness/)
-  assert.match(page, /trainingGoalGuide\(goal\.value\)/)
+  assert.match(page, /trainingGoalPicker\(state\.profile\.trainingGoal\)/)
+  assert.match(page, /choice\.type = 'radio'/)
+  assert.doesNotMatch(page, /Not set/)
 })
