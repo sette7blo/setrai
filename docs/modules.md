@@ -838,6 +838,12 @@ goal preferences rather than duplicating settings, and generates preview plans
 without persisting them automatically. Ready-only selection uses primary groups
 at 80% or higher, round-robin group balancing, completed-before/compound scoring,
 and same-group alternative pools. It never fills the plan with tired muscles.
+Every generated prescription comes from the active Profile goal preset; exercise
+default sets, reps, and rest do not override it. Those legacy exercise fields are
+retained only for storage and catalog compatibility.
+Session startup may seed a missing target weight from the exercise's latest completed
+weighted set. It never replaces an explicit Program weight, and historical achieved
+reps do not override the current goal-based target reps or rest.
 
 ---
 

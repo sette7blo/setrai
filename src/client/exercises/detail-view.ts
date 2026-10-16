@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronDown, Star, Download, Layers, Repeat, Timer, Dumbbell, ListOrdered, Pencil } from 'lucide'
+import { ChevronLeft, ChevronDown, Star, Download, Dumbbell, ListOrdered, Pencil } from 'lucide'
 import { iconElement } from '../app/navigation.js'
 import { displayName } from './format.js'
 import { createExerciseImage } from './image.js'
@@ -108,23 +108,6 @@ export function createExerciseDetailView(exercise: Exercise, onFavourite: () => 
   description.textContent = exercise.description
   description.hidden = !exercise.description || exercise.description.trim() === exercise.instructions.join(' ').trim()
 
-  const prescription = document.createElement('div')
-  prescription.className = 'detail-prescription'
-  const stats: Array<[string, string, typeof Layers]> = [
-    [String(exercise.defaultSets), 'Sets', Layers],
-    [exercise.defaultReps, 'Reps', Repeat],
-    [`${exercise.defaultRest}s`, 'Rest', Timer]
-  ]
-  stats.forEach(([value, label, icon]) => {
-    const tile = document.createElement('div')
-    const strong = document.createElement('strong')
-    strong.textContent = value
-    const caption = document.createElement('span')
-    caption.textContent = label
-    tile.append(iconElement(icon), strong, caption)
-    prescription.append(tile)
-  })
-
   const map = createMuscleMap(exercise)
   map.querySelector('h2')!.after(pills([...new Set([exercise.muscleGroup, ...exercise.muscles])]))
 
@@ -133,7 +116,6 @@ export function createExerciseDetailView(exercise: Exercise, onFavourite: () => 
     titleRow,
     badges,
     description,
-    prescription,
     map,
     metadataSection('Equipment', exercise.equipment, Dumbbell),
     createInstructions(exercise)

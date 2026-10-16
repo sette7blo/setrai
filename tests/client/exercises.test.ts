@@ -301,6 +301,15 @@ test('aggregate muscle map highlights multiple primary regions for workout histo
   assert.match(markup, /data-muscle="Biceps"[^>]*class="muscle-map__secondary"/)
 })
 
+test('exercise detail and editor do not present workout prescriptions', () => {
+  const detail = readFileSync('src/client/exercises/detail-view.ts', 'utf8')
+  const editor = readFileSync('src/client/exercises/editor-page.ts', 'utf8')
+  const styles = readFileSync('src/client/exercises/styles.css', 'utf8')
+  assert.doesNotMatch(detail, /detail-prescription|['"]Sets['"]|['"]Reps['"]|['"]Rest['"]/)
+  assert.doesNotMatch(editor, /formSection\(['"]Prescription|Rest \(sec\)/)
+  assert.doesNotMatch(styles, /detail-prescription|field-grid--prescription/)
+})
+
 test('detail normalization preserves all instruction steps', () => {
   const steps = ['Plant your feet.', 'Lower under control.', 'Press upward.']
   assert.deepEqual(normalizeExercise({ id: 1, slug: 'bench-press', name: 'Bench Press', instructions: steps }).instructions, steps)

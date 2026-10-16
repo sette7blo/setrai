@@ -69,12 +69,20 @@ export function createSessionService(db) {
       throw clientError('Program not found', 404)
     }
 
+    const plannedExercises = program.exercises.map((entry) => {
+      const lastSet = repository.latestCompletedSet(entry.exerciseSlug)
+      return {
+        ...entry,
+        targetWeight: entry.targetWeight ?? lastSet?.weight ?? null,
+        exercise: exerciseService.getExercise(entry.exerciseId)
+      }
+    })
     const session = repository.create({
       programId: program.id,
       programName: program.name,
       notes: input.notes ?? '',
       plan: {
-        exercises: program.exercises.map((entry) => ({ ...entry, exercise: exerciseService.getExercise(entry.exerciseId) })),
+        exercises: plannedExercises,
         blocks: program.blocks ?? []
       }
     })

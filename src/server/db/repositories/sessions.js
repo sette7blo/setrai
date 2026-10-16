@@ -238,6 +238,20 @@ export function createSessionRepository(db) {
     return readSets(db, sessionId)
   }
 
+  function latestCompletedSet(exerciseSlug) {
+    return mapSetRow(db.prepare(`
+      SELECT session_sets.*
+      FROM session_sets
+      JOIN sessions ON sessions.id = session_sets.session_id
+      WHERE session_sets.exercise_slug = ?
+        AND session_sets.done = 1
+        AND session_sets.weight IS NOT NULL
+        AND sessions.finished_at IS NOT NULL
+      ORDER BY sessions.finished_at DESC, session_sets.logged_at DESC, session_sets.id DESC
+      LIMIT 1
+    `).get(exerciseSlug))
+  }
+
   function saveRuntime(id, runtime) {
     db.prepare('UPDATE sessions SET runtime_json = ? WHERE id = ?').run(JSON.stringify(runtime), id)
     return getById(id)
@@ -257,6 +271,7 @@ export function createSessionRepository(db) {
     updateSet,
     deleteSet,
     listSets,
+    latestCompletedSet,
     saveRuntime,
     remove
   }

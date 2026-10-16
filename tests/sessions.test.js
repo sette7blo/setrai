@@ -83,6 +83,39 @@ test('starts a session from a valid program and preserves program name', () => {
   }
 })
 
+test('new sessions reuse the last completed load unless the workout prescribes one', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    const services = createServices(db)
+    const { bench, program } = seedProgram(services)
+    const first = services.sessions.startSession({ programId: program.id })
+    services.sessions.logSet(first.id, {
+      exerciseId: bench.id,
+      setNumber: 1,
+      reps: 8,
+      weight: 72.5,
+      done: true
+    })
+    services.sessions.finishSession(first.id)
+
+    const repeated = services.sessions.startSession({ programId: program.id })
+    assert.equal(
+      repeated.plannedExercises.find(entry => entry.exerciseId === bench.id).targetWeight,
+      72.5
+    )
+
+    const explicit = services.programs.createProgram({
+      name: 'Prescribed load',
+      exercises: [{ exerciseId: bench.id, targetWeight: 80 }]
+    })
+    const prescribed = services.sessions.startSession({ programId: explicit.id })
+    assert.equal(prescribed.plannedExercises[0].targetWeight, 80)
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})
+
 test('rejects a missing program when starting a session', () => {
   const { db, directory } = createTestDatabase()
 

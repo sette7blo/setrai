@@ -24,15 +24,6 @@ function loggedExerciseSlugs(sessions) {
 
 function exercisePrescription(exercise, goal) {
   const preset = getGoalPreset(goal)
-
-  if (goal === 'general-fitness') {
-    return {
-      sets: Number(exercise.default_sets) || preset.sets,
-      reps: exercise.default_reps || preset.reps,
-      restSec: Number(exercise.default_rest) || preset.restSec
-    }
-  }
-
   return {
     sets: preset.sets,
     reps: preset.reps,

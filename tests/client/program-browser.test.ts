@@ -57,9 +57,13 @@ test('Upper workout matches Workstr duration and displays names and Arms without
   assert.equal(estimateProgramSeconds(mixed), 435)
 })
 
-test('builder uses exercise defaults, saves reordered prescriptions and validates empty plans', () => {
-  const first = builderEntry(squat, 0)
+test('builder owns neutral starting values, saves reordered prescriptions and validates empty plans', () => {
+  const first = builderEntry({ ...squat, defaultSets: 9, defaultReps: '1', defaultRest: 300 }, 0)
   const second = builderEntry(press, 1)
+  assert.deepEqual(
+    { sets: first.sets, reps: first.reps, restSec: first.restSec },
+    { sets: 3, reps: '8-12', restSec: 90 }
+  )
   first.sets = 5
   first.reps = '5'
   first.weight = 75

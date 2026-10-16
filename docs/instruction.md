@@ -282,6 +282,14 @@ duplicate of its primary muscle. Explicit secondary muscles from newer events re
 authoritative. Existing exercises persist a successful image upload immediately instead
 of requiring a second Save action; new exercises attach the uploaded image when the
 exercise is created. JPEG, PNG, WebP, GIF, and SVG uploads may be up to 10 MB.
+Sets, reps, weight, and rest are workout prescriptions, not exercise identity, so
+exercise cards, details, and editing do not present them. New manual workout rows
+start with neutral editable values, while Quick Workout derives its prescription
+from the active Profile training goal. Legacy exercise default fields remain API and
+catalog compatibility metadata only.
+When a new workout does not prescribe a load, the session starts from the most
+recent completed weight for that exercise. An explicit workout weight always wins;
+sets, target reps, and rest remain owned by the current workout.
 
 The UI should avoid displaying excessive metadata on exercise cards.
 

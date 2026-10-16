@@ -244,7 +244,7 @@ test('goal prescriptions differ deterministically', () => {
   })
 })
 
-test('general fitness uses exercise defaults where sensible', () => {
+test('general fitness uses its profile goal preset instead of exercise defaults', () => {
   runWithDb((db) => {
     const workout = makeService(db, {
       exercises: [exercise({
@@ -258,9 +258,9 @@ test('general fitness uses exercise defaults where sensible', () => {
       goal: 'general-fitness'
     }).generate({ durationMinutes: 15 })
 
-    assert.equal(workout.exercises[0].sets, 2)
-    assert.equal(workout.exercises[0].reps, '6-10')
-    assert.equal(workout.exercises[0].restSec, 50)
+    assert.equal(workout.exercises[0].sets, 3)
+    assert.equal(workout.exercises[0].reps, '8-15')
+    assert.equal(workout.exercises[0].restSec, 75)
   })
 })
 

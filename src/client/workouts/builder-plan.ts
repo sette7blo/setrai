@@ -3,10 +3,12 @@ import type { Program, ProgramExercise, ProgramInput, TrainingBlock } from './ty
 
 export interface BuilderEntry extends ProgramExercise { section: number; interval: number; workSec: number; superset: string }
 
+const NEW_WORKOUT_DEFAULTS = { sets: 3, reps: '8-12', restSec: 90 }
+
 export function builderEntry(exercise: Exercise, position: number): BuilderEntry {
   return {
     id: null, exerciseId: exercise.id, exerciseSlug: exercise.slug, exerciseName: exercise.name, exercise,
-    position, sets: exercise.defaultSets, reps: exercise.defaultReps, restSec: exercise.defaultRest,
+    position, ...NEW_WORKOUT_DEFAULTS,
     weight: null, notes: '', section: 0, interval: 0, workSec: 0, superset: ''
   }
 }

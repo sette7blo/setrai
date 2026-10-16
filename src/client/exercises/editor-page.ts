@@ -117,9 +117,6 @@ export function createExerciseEditorForm(
   const movementType = taxonomySelect(MOVEMENT_TYPES, initial.movementType, 'Select movement type')
   movementType.required = true
   const instructions = textArea(linesValue(initial.instructions), 6)
-  const defaultSets = textInput(String(initial.defaultSets), { type: 'number', min: '1', max: '50' })
-  const defaultReps = textInput(initial.defaultReps, { placeholder: '8-12' })
-  const defaultRest = textInput(String(initial.defaultRest), { type: 'number', min: '0', max: '600' })
 
   let imageUrl = initial.imageUrl
   const preview = document.createElement('div')
@@ -231,13 +228,6 @@ export function createExerciseEditorForm(
     ),
     formSection('Target muscles', muscles.element),
     formSection('Equipment', equipment.element),
-    formSection('Prescription',
-      fieldGrid('exercise-editor__field-grid--prescription',
-        field('Sets', defaultSets),
-        field('Reps', defaultReps),
-        field('Rest (sec)', defaultRest)
-      )
-    ),
     formSection('Coaching',
       field('Instructions', instructions, 'One step per line')
     ),
@@ -259,10 +249,7 @@ export function createExerciseEditorForm(
       difficulty: difficulty.value,
       movementType: movementType.value,
       instructions: parseLines(instructions.value),
-      imageUrl,
-      defaultSets: Number(defaultSets.value || 3),
-      defaultReps: defaultReps.value.trim() || '8-12',
-      defaultRest: Number(defaultRest.value || 90)
+      imageUrl
     }
     if (!payload.name) {
       status.textContent = 'Name is required.'
