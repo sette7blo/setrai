@@ -1,5 +1,3 @@
-// src/server/db/repositories/body.js
-
 function mapBodyEntry(row) {
   if (!row) {
     return null

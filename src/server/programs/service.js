@@ -1,5 +1,3 @@
-// src/server/programs/service.js
-
 import {
   createProgramRepository
 } from '../db/repositories/programs/index.js'

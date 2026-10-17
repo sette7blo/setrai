@@ -1,5 +1,3 @@
-// src/server/db/repositories/settings.js
-
 function serializeValue(value) {
   return JSON.stringify(value)
 }

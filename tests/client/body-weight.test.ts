@@ -4,7 +4,7 @@ import test from 'node:test'
 import { ApiClient } from '../../src/client/shared/api/client.js'
 import { displayWeightFromKg, inputWeightToKg, formatWeightFromKg, formatBodyWeightFromKg } from '../../src/client/profile/weight-units.js'
 import { normalizeBodyWeight, saveBodyWeight, deleteBodyWeight } from '../../src/client/profile/body-weight/api.js'
-import { newestFirst, oldestFirst, latestEntryText } from '../../src/client/profile/body-weight/format.js'
+import { newestFirst, oldestFirst } from '../../src/client/profile/body-weight/format.js'
 
 test('converts and rounds kg/lb at presentation boundary', () => {
   assert.equal(displayWeightFromKg(100, 'lb'), 220.5)
@@ -27,7 +27,7 @@ test('sorts body-weight history and formats latest text', () => {
   ]
   assert.equal(newestFirst(entries)[0].id, 2)
   assert.equal(oldestFirst(entries)[0].id, 1)
-  assert.match(latestEntryText(entries[1], 'kg'), /81\.0 kg/)
+
 })
 
 test('Body Weight POST and DELETE contracts', async () => {

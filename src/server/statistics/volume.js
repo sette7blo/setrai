@@ -1,5 +1,3 @@
-// src/server/statistics/volume.js
-
 import {
   parseSetraiDateTime,
   weekStartKey

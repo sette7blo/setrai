@@ -1,41 +1,4 @@
-// src/server/programs/routes.js
-
-function sendJson(res, status, body) {
-  res.writeHead(status, {
-    'Content-Type': 'application/json'
-  })
-
-  res.end(JSON.stringify(body))
-}
-
-async function readJsonBody(req) {
-  const chunks = []
-  let size = 0
-
-  for await (const chunk of req) {
-    size += chunk.length
-    if (size > 262144) {
-      const error = new Error('Program request is too large')
-      error.statusCode = 413
-      throw error
-    }
-    chunks.push(chunk)
-  }
-
-  if (chunks.length === 0) {
-    return {}
-  }
-
-  try {
-    return JSON.parse(
-      Buffer.concat(chunks).toString('utf8')
-    )
-  } catch {
-    const error = new Error('Invalid JSON body')
-    error.statusCode = 400
-    throw error
-  }
-}
+import { readJsonBody, sendJson } from '../shared/http.js'
 
 function parseProgramId(pathname) {
   const match = pathname.match(

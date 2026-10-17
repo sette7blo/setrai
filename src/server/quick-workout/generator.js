@@ -1,5 +1,3 @@
-// src/server/quick-workout/generator.js
-
 import {
   getGoalPreset,
   workoutExerciseCount
@@ -22,7 +20,7 @@ function loggedExerciseSlugs(sessions) {
     .filter(set => set.done).map(set => set.exerciseSlug)))
 }
 
-function exercisePrescription(exercise, goal) {
+function exercisePrescription(goal) {
   const preset = getGoalPreset(goal)
   return {
     sets: preset.sets,
@@ -37,7 +35,7 @@ function buildWorkoutExercise(exercise, goal) {
     exerciseSlug: exercise.slug,
     exerciseName: exercise.name,
     muscleGroup: recoveryMuscleGroup(exercise.muscle_group),
-    ...exercisePrescription(exercise, goal)
+    ...exercisePrescription(goal)
   }
 }
 

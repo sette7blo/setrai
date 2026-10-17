@@ -1,4 +1,3 @@
-// src/server/exercises/write.js
 // Normalize create/update payloads from API (camelCase or snake_case).
 import {
   canonicalCategory,

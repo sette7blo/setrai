@@ -1,11 +1,4 @@
-// src/server/recovery/routes.js
-
-function sendJson(res, status, body) {
-  res.writeHead(status, {
-    'Content-Type': 'application/json'
-  })
-  res.end(JSON.stringify(body))
-}
+import { sendJson } from '../shared/http.js'
 
 export function createRecoveryRoutes(recoveryService) {
   async function handle(req, res, url) {

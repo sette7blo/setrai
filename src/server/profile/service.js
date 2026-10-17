@@ -1,5 +1,3 @@
-// src/server/profile/service.js
-
 import {
   createSettingsRepository
 } from '../db/repositories/settings.js'

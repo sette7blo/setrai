@@ -1,5 +1,3 @@
-// src/server/recovery/muscle-map.js
-
 const MUSCLE_ALIASES = new Map([
   ['front delts', 'anterior-deltoid'],
   ['front-delts', 'anterior-deltoid'],

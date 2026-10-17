@@ -1,5 +1,3 @@
-// src/server/db/repositories/programs/index.js
-
 import {
   mapProgramRow,
   normalizeProgramInput

@@ -1,5 +1,3 @@
-// src/server/db/schema.js
-
 export const INITIAL_SCHEMA = `
 CREATE TABLE IF NOT EXISTS exercises (
   id INTEGER PRIMARY KEY AUTOINCREMENT,

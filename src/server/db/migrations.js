@@ -1,5 +1,3 @@
-// src/server/db/migrations.js
-
 import { INITIAL_SCHEMA } from './schema.js'
 import { retainLocalColumns } from './local-schema.js'
 import secondaryMuscleCorrections from '../../shared/exercise-secondary-muscles.json' with { type: 'json' }

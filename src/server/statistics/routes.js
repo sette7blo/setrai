@@ -1,11 +1,4 @@
-// src/server/statistics/routes.js
-
-function sendJson(res, status, body) {
-  res.writeHead(status, {
-    'Content-Type': 'application/json'
-  })
-  res.end(JSON.stringify(body))
-}
+import { sendJson } from '../shared/http.js'
 
 export function createStatisticsRoutes(statisticsService) {
   async function handle(req, res, url) {

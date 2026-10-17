@@ -1,5 +1,3 @@
-// src/server/statistics/dates.js
-
 const DATE_ONLY_LENGTH = 10
 const DAY_MS = 24 * 60 * 60 * 1000
 

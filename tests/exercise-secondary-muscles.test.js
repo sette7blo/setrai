@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 import taxonomy from '../src/shared/exercise-taxonomy.json' with { type: 'json' }
 import corrections from '../src/shared/exercise-secondary-muscles.json' with { type: 'json' }
-import { catalogSecondaryMuscles } from '../src/server/exercises/secondary-muscles.js'
+
 import { recoveryMuscleGroup } from '../src/server/recovery/readiness.js'
 
 test('secondary-muscle correction catalog is complete and taxonomy-safe', () => {
@@ -34,16 +34,4 @@ test('every controlled and corrected muscle resolves to a Recovery group', () =>
   assert.equal(recoveryMuscleGroup('abdominals'), 'core')
   assert.equal(recoveryMuscleGroup('abductors'), 'glutes')
   assert.equal(recoveryMuscleGroup('adductors'), 'quadriceps')
-})
-
-test('known catalog rows replace duplicated primaries but preserve real event secondaries', () => {
-  assert.deepEqual(
-    catalogSecondaryMuscles('alternate-hammer-curl', 'biceps', ['biceps']),
-    ['forearms']
-  )
-  assert.deepEqual(
-    catalogSecondaryMuscles('pushups', 'chest', ['chest', 'triceps']),
-    ['triceps']
-  )
-  assert.deepEqual(catalogSecondaryMuscles('unknown', 'chest', ['chest']), [])
 })

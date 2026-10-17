@@ -1,4 +1,3 @@
-// src/server/exercises/service.js
 import { normalizeExerciseWrite } from './write.js'
 import {
   createExerciseRepository

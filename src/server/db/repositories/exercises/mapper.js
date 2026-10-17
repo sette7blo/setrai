@@ -1,5 +1,3 @@
-// src/server/db/repositories/exercises/mapper.js
-
 const JSON_FIELDS = [
   'muscles',
   'equipment',

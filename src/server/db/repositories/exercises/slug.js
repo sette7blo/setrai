@@ -1,5 +1,3 @@
-// src/server/db/repositories/exercises/slug.js
-
 function slugify(value) {
   return String(value)
     .trim()

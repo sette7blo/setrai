@@ -1,5 +1,3 @@
-// src/server/recovery/calculator.js
-
 import {
   getExerciseMuscleLoads
 } from './muscle-map.js'

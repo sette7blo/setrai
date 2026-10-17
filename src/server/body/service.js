@@ -1,5 +1,3 @@
-// src/server/body/service.js
-
 import {
   createBodyRepository
 } from '../db/repositories/body.js'

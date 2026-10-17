@@ -7,6 +7,7 @@ import type { Profile, WeightUnit } from '../profile/types.js'
 import { updateProfile } from '../profile/api.js'
 import type { BodyWeightEntry } from '../profile/body-weight/types.js'
 import { deleteBodyWeight, saveBodyWeight } from '../profile/body-weight/api.js'
+import { newestFirst, oldestFirst } from '../profile/body-weight/format.js'
 import { displayWeightFromKg, formatBodyWeightFromKg, inputWeightToKg } from '../profile/weight-units.js'
 import type { StatisticsOverview } from './types.js'
 
@@ -38,7 +39,7 @@ function sectionHead(icon: Icon, title: string, note = ''): HTMLElement {
 }
 
 function statsHero(unit: WeightUnit, entries: BodyWeightEntry[]): HTMLElement {
-  const latest = newest(entries)[0]
+  const latest = newestFirst(entries)[0]
   const line = latest ? `Last logged ${shortDate(latest.date)}. Weights in ${unit}.` : `Track weight over time. Weights in ${unit}.`
   return pageSummary({
     icon: Weight,
@@ -48,24 +49,6 @@ function statsHero(unit: WeightUnit, entries: BodyWeightEntry[]): HTMLElement {
   })
 }
 
-function statTile(icon: Icon, value: string, label: string, tone = ''): HTMLElement {
-  const tile = document.createElement('article')
-  tile.className = `summary-stat${tone ? ` ${tone}` : ''}`
-  tile.append(iconWrap('ss-icon', icon))
-  tile.append(
-    Object.assign(document.createElement('div'), { className: 'ss-val', textContent: value }),
-    Object.assign(document.createElement('div'), { className: 'ss-label', textContent: label })
-  )
-  return tile
-}
-
-function newest(entries: BodyWeightEntry[]): BodyWeightEntry[] {
-  return [...entries].sort((a, b) => b.date.localeCompare(a.date))
-}
-
-function oldest(entries: BodyWeightEntry[]): BodyWeightEntry[] {
-  return [...entries].sort((a, b) => a.date.localeCompare(b.date))
-}
 
 function shortDate(date: string): string {
   return new Date(`${date}T00:00:00`).toLocaleDateString('en', { month: 'short', day: 'numeric' })
@@ -88,7 +71,7 @@ function bodyCards(entries: BodyWeightEntry[], unit: WeightUnit): HTMLElement {
   if (entries.length === 0) return mount
   const cards = document.createElement('div')
   cards.className = 'body-cards'
-  const sorted = oldest(entries)
+  const sorted = oldestFirst(entries)
   const first = sorted[0]
   const latest = sorted[sorted.length - 1]
   const last7 = sorted.slice(-7)
@@ -108,7 +91,7 @@ function bmiMarkup(entries: BodyWeightEntry[], heightCm?: number | null): HTMLEl
   const wrap = document.createElement('div')
   wrap.id = 'body-bmi'
   if (!entries.length || !heightCm) return wrap
-  const latest = oldest(entries).at(-1)
+  const latest = oldestFirst(entries).at(-1)
   if (!latest) return wrap
   const meters = heightCm / 100
   const bmi = latest.weightKg / (meters * meters)
@@ -135,7 +118,7 @@ function bodyChart(entries: BodyWeightEntry[], unit: WeightUnit): HTMLElement {
   }
   const chart = document.createElement('div')
   chart.className = 'body-chart'
-  const sorted = oldest(entries).slice(-12)
+  const sorted = oldestFirst(entries).slice(-12)
   const values = sorted.map((entry) => displayWeightFromKg(entry.weightKg, unit))
   const min = Math.min(...values) * .995
   const max = Math.max(...values) * 1.005
@@ -167,7 +150,7 @@ function goalMarkup(entries: BodyWeightEntry[], targetWeightKg: number | null | 
   const wrap = document.createElement('div')
   wrap.id = 'body-goal'
   if (!entries.length || !targetWeightKg) return wrap
-  const sorted = oldest(entries)
+  const sorted = oldestFirst(entries)
   const first = sorted[0].weightKg
   const latest = sorted[sorted.length - 1].weightKg
   const totalNeeded = targetWeightKg - first
@@ -182,7 +165,7 @@ function entriesList(entries: BodyWeightEntry[], unit: WeightUnit, onRefresh: ()
   const list = document.createElement('div')
   list.id = 'body-list'
   list.className = 'list body-entries'
-  for (const entry of newest(entries).slice(0, 10)) {
+  for (const entry of newestFirst(entries).slice(0, 10)) {
     const row = document.createElement('article')
     row.className = 'row body-entry'
     row.append(iconWrap('body-entry-icon', Weight))
@@ -208,7 +191,7 @@ function bodyForms(profile: Profile, entries: BodyWeightEntry[], onRefresh: () =
   const unit = profile.weightUnit
   const panel = document.createElement('section')
   panel.className = 'panel stats-panel body-forms'
-  const latest = newest(entries)[0]
+  const latest = newestFirst(entries)[0]
   panel.append(sectionHead(Plus, 'Log weight'))
   const form = document.createElement('form')
   form.id = 'body-form'

@@ -1,5 +1,3 @@
-// src/server/statistics/service.js
-
 import {
   createBodyService
 } from '../body/service.js'

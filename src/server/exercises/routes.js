@@ -1,31 +1,10 @@
-// src/server/exercises/routes.js
-
 import {
   parseImageMultipart,
-  readRequestBody,
   resolveExerciseMediaFile,
   sendExerciseMediaFile,
   storeExerciseImage
 } from './media.js'
-
-function sendJson(res, status, body) {
-  res.writeHead(status, {
-    'Content-Type': 'application/json'
-  })
-  res.end(JSON.stringify(body))
-}
-
-async function readJsonBody(req, maxBytes = 256_000) {
-  const raw = await readRequestBody(req, maxBytes)
-  if (raw.length === 0) return {}
-  try {
-    return JSON.parse(raw.toString('utf8'))
-  } catch {
-    const error = new Error('Invalid JSON body')
-    error.statusCode = 400
-    throw error
-  }
-}
+import { readJsonBody, sendJson } from '../shared/http.js'
 
 function parseExerciseId(pathname) {
   const match = pathname.match(/^\/api\/exercises\/(\d+)$/)

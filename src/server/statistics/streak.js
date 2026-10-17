@@ -1,5 +1,3 @@
-// src/server/statistics/streak.js
-
 import {
   addDays,
   formatDate,

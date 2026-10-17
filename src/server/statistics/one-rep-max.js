@@ -1,5 +1,3 @@
-// src/server/statistics/one-rep-max.js
-
 export function estimateOneRepMax(weight, reps) {
   if (
     !Number.isFinite(weight) ||

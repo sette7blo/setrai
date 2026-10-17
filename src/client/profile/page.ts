@@ -80,18 +80,6 @@ function row(title: string, help: string, control: HTMLElement): HTMLElement {
   return item
 }
 
-function showToast(container: HTMLElement, message: string) {
-  const toast = document.createElement("div")
-  toast.className = "settings-toast"
-  toast.textContent = message
-  container.appendChild(toast)
-  setTimeout(() => {
-    toast.style.transition = "opacity 0.2s ease"
-    toast.style.opacity = "0"
-    setTimeout(() => toast.remove(), 200)
-  }, 2200)
-}
-
 function trainingGoalPicker(selectedValue: string): HTMLElement {
   const selected = effectiveTrainingGoal(selectedValue)
   const section = document.createElement('section')

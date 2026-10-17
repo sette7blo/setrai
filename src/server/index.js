@@ -1,5 +1,3 @@
-// src/server/index.js
-
 import http from 'node:http'
 
 import { loadConfig } from './config/config.js'

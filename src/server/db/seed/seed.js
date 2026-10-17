@@ -53,10 +53,11 @@ function validateSeeds(exercises = exerciseSeeds, programs = programSeeds) {
 function reconcileExercises(db, seeds = exerciseSeeds) {
   const repository = createExerciseRepository(db)
   const result = { checked: seeds.length, inserted: 0, adopted: 0, updated: 0, unchanged: 0, tombstoned: 0 }
+  const rows = repository.list({ status: null })
+  const bySeedKey = new Map(rows.filter(row => row.seed_key).map(row => [row.seed_key, row]))
+  const unseededBySlug = new Map(rows.filter(row => !row.seed_key).map(row => [row.slug, row]))
   for (const seed of seeds) {
-    const rows = repository.list({ status: null })
-    let existing = rows.find(row => row.seed_key === seed.seedKey)
-    if (!existing) existing = rows.find(row => !row.seed_key && row.slug === seed.slug)
+    const existing = bySeedKey.get(seed.seedKey) ?? unseededBySlug.get(seed.slug)
     if (!existing && tombstoned(db, 'exercise', seed.seedKey)) { result.tombstoned++; continue }
     const baseline = exerciseBaseline(seed)
     if (!existing) {
@@ -124,10 +125,11 @@ function reconcilePrograms(db, seeds = programSeeds) {
   const repository = createProgramRepository(db)
   const exercises = createExerciseRepository(db).list({ status: null })
   const result = { checked: seeds.length, inserted: 0, adopted: 0, updated: 0, unchanged: 0, tombstoned: 0 }
+  const rows = repository.list()
+  const bySeedKey = new Map(rows.filter(row => row.seedKey).map(row => [row.seedKey, row]))
+  const unseededBySlug = new Map(rows.filter(row => !row.seedKey).map(row => [row.slug, row]))
   for (const seed of seeds) {
-    const rows = repository.list()
-    let existing = rows.find(row => row.seedKey === seed.seedKey)
-    if (!existing) existing = rows.find(row => !row.seedKey && row.slug === seed.slug)
+    const existing = bySeedKey.get(seed.seedKey) ?? unseededBySlug.get(seed.slug)
     if (!existing && tombstoned(db, 'program', seed.seedKey)) { result.tombstoned++; continue }
     const baseline = programBaseline(seed)
     if (!existing) {

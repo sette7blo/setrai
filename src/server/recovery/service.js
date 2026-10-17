@@ -1,5 +1,3 @@
-// src/server/recovery/service.js
-
 import {
   createExerciseService
 } from '../exercises/service.js'

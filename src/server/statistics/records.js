@@ -1,5 +1,3 @@
-// src/server/statistics/records.js
-
 import {
   estimateOneRepMax,
   roundMetric

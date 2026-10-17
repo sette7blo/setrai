@@ -1,33 +1,4 @@
-// src/server/body/routes.js
-
-function sendJson(res, status, body) {
-  res.writeHead(status, {
-    'Content-Type': 'application/json'
-  })
-  res.end(JSON.stringify(body))
-}
-
-async function readJsonBody(req) {
-  const chunks = []
-
-  for await (const chunk of req) {
-    chunks.push(chunk)
-  }
-
-  if (chunks.length === 0) {
-    return {}
-  }
-
-  try {
-    return JSON.parse(
-      Buffer.concat(chunks).toString('utf8')
-    )
-  } catch {
-    const error = new Error('Invalid JSON body')
-    error.statusCode = 400
-    throw error
-  }
-}
+import { readJsonBody, sendJson } from '../shared/http.js'
 
 function parseEntryId(pathname) {
   const match = pathname.match(

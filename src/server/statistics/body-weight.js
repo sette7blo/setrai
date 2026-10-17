@@ -1,5 +1,3 @@
-// src/server/statistics/body-weight.js
-
 export function getChronologicalBodyWeight(bodyService) {
   return bodyService
     .listBodyWeight()

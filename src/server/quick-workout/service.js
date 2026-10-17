@@ -1,5 +1,3 @@
-// src/server/quick-workout/service.js
-
 import {
   createExerciseService
 } from '../exercises/service.js'

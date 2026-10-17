@@ -1,5 +1,3 @@
-// src/server/db/repositories/sessions.js
-
 function mapSessionRow(row, sets = []) {
   if (!row) {
     return null

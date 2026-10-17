@@ -1,5 +1,3 @@
-// src/server/sessions/service.js
-
 import {
   createSessionRepository
 } from '../db/repositories/sessions.js'

@@ -9,24 +9,12 @@
   align-items: center;
 }
 
-.page-toolbar--actions-2,
-.program-toolbar:not(.program-toolbar--catalog) {
+.program-toolbar {
   --toolbar-actions: 2;
 }
 
-.page-toolbar--actions-3,
-.program-toolbar--catalog {
-  --toolbar-actions: 3;
-}
-
-.page-toolbar--actions-4,
-.exercise-controls:not(.exercise-controls--catalog) {
+.exercise-controls {
   --toolbar-actions: 4;
-}
-
-.page-toolbar--actions-5,
-.exercise-controls--catalog {
-  --toolbar-actions: 5;
 }
 
 .page-toolbar-search,

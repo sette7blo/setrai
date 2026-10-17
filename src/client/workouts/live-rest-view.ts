@@ -1,4 +1,4 @@
-import { action, countdown, glyph, labeledAction, node, paintCountdown } from './live-components.js'
+import { countdown, glyph, labeledAction, node, paintCountdown } from './live-components.js'
 import { nextSet, setCount } from './live-plan.js'
 import type { LiveActions, LiveModel } from './live-model.js'
 

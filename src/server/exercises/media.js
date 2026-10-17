@@ -1,4 +1,3 @@
-// src/server/exercises/media.js
 // Uploaded exercise images live under SETRAI_DATA_DIR/media/exercises/
 
 import fs from 'node:fs'

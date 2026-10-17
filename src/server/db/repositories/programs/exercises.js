@@ -1,5 +1,3 @@
-// src/server/db/repositories/programs/exercises.js
-
 import {
   mapProgramExercise
 } from './mapper.js'

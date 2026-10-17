@@ -60,8 +60,7 @@
 .workout-exercise-link { display: inline-flex; align-items: center; min-height: 44px; padding: 0 10px; color: var(--color-primary); font-size: 12px; }
 .workout-card-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
 .workout-card-actions .button { justify-content: center; width: 100%; min-width: 0; padding-inline: 8px !important; font-size: 12px; }
-.workout-card-action--start, .workout-card-action--import, .workout-card-action--open { grid-column: 1 / -1; }
-.workout-card-action--review { grid-column: 1 / -1; }
+.workout-card-action--start { grid-column: 1 / -1; }
 .workout-card-action--delete { color: var(--color-error) !important; border-color: rgba(158, 55, 48, .34) !important; background: rgba(158, 55, 48, .06) !important; }
 .workout-card-action--delete svg { color: currentColor !important; }
 .workout-action-error { margin: 8px 0 0; color: var(--color-error); font-size: 12px; line-height: 1.5; }

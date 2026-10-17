@@ -1,5 +1,3 @@
-// src/server/db/repositories/programs/mapper.js
-
 function parseJson(value, fallback = []) {
   if (!value) {
     return fallback

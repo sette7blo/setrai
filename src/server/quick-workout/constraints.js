@@ -1,4 +1,3 @@
-// src/server/quick-workout/constraints.js
 import trainingGoals from '../../shared/training-goals.json' with { type: 'json' }
 
 const MIN_DURATION = 15

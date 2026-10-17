@@ -8,7 +8,7 @@ import { renderLiveShell, updateLiveClocks } from './live-shell.js'
 import { clockValue, compileIntervals, intervalPhase, phaseEndsAt, nextSet, setCount, strengthExercises, supersetNext } from './live-plan.js'
 import { createCountdownAudio } from './live-audio.js'
 import type { LiveModel, LiveActions } from './live-model.js'
-import type { LiveRuntime, Program, ProgramExercise, Session } from './types.js'
+import type { LiveRuntime, Program, Session } from './types.js'
 
 function summaryProgram(session: Session): Program {
   return { id: session.programId ?? 0, slug: '', name: session.programName, description: '', difficulty: '', tags: [],

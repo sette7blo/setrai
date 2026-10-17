@@ -1,5 +1,3 @@
-// src/server/db/repositories/exercises/index.js
-
 import {
   mapExercise,
   movementTypeFromTags,

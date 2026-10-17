@@ -206,25 +206,6 @@
   transition: background 0.2s ease;
 }
 
-/* Toast for success messages */
-.settings-toast {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 8px;
-  padding: 8px 14px;
-  border-radius: 999px;
-  background: #000;
-  color: #fff;
-  font: 600 13px/1 Inter, ui-sans-serif, sans-serif;
-  animation: toastPop 0.2s ease forwards;
-}
-
-@keyframes toastPop {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
 /* Improved input focus */
 .profile-settings-form input:focus,
 .profile-settings-form select:focus {
