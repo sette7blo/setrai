@@ -170,7 +170,10 @@ function entriesList(entries: BodyWeightEntry[], unit: WeightUnit, onRefresh: ()
     row.className = 'row body-entry'
     row.append(iconWrap('body-entry-icon', Weight))
     const copy = document.createElement('div')
-    copy.innerHTML = `<strong>${formatBodyWeightFromKg(entry.weightKg, unit)}</strong><small>${formatDate(entry.date)}${entry.notes ? ` · ${entry.notes}` : ''}</small>`
+    copy.append(
+      Object.assign(document.createElement('strong'), { textContent: formatBodyWeightFromKg(entry.weightKg, unit) }),
+      Object.assign(document.createElement('small'), { textContent: `${formatDate(entry.date)}${entry.notes ? ` · ${entry.notes}` : ''}` })
+    )
     const remove = document.createElement('button')
     remove.type = 'button'
     remove.className = 'button quiet danger small body-entry-delete'

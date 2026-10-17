@@ -164,7 +164,10 @@ function recordsList(records: PersonalRecord[], unit: WeightUnit): HTMLElement {
     else rank.textContent = String(index + 1)
     row.append(rank)
     const copy = document.createElement('div')
-    copy.innerHTML = `<strong>${record.exerciseName}</strong><small>top set ${formatWeightFromKg(record.maxWeight, unit)}</small>`
+    copy.append(
+      Object.assign(document.createElement('strong'), { textContent: record.exerciseName }),
+      Object.assign(document.createElement('small'), { textContent: `top set ${formatWeightFromKg(record.maxWeight, unit)}` })
+    )
     const badge = document.createElement('span')
     badge.className = 'badge muscle'
     badge.textContent = `${formatWeightFromKg(record.estimated1RM, unit)} 1RM`
