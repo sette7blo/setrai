@@ -32,7 +32,7 @@ storage. Host settings are independent of any Docker install folder.
 ## Install the published image
 
 Requires Docker Engine with the Compose v2 plugin (or Docker Desktop). No Node.js,
-Git checkout, Ollama, Nostr identity, or wallet is required.
+Git checkout, Ollama, or wallet is required.
 
 **Preferred:** create an empty directory and paste `compose.yaml` + `.env` from the
 [README](../README.md).
@@ -105,8 +105,6 @@ that network in your deployment override.
 Edit `.env`, then use `docker compose up -d --force-recreate --wait` to apply
 changes. `restart` alone does not reload changed container environment values.
 
-- Set `NOSTR_ENABLED=true` for public discovery/import. A key is not required.
-  Without `NOSTR_NSEC`, the Profile identity section stays hidden.
 - Set `AI_ENABLED=true`, an appropriate `AI_MODEL`, and an `OLLAMA_URL` reachable
   from the container. `127.0.0.1` inside the container refers to that container,
   not the host. The installer does not provision Ollama automatically.

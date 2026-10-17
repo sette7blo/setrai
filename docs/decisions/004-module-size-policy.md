@@ -101,16 +101,6 @@ Code should be organized around clear feature ownership.
 
 Examples:
 
-```text
-src/server/exercises/
-src/server/programs/
-src/server/sessions/
-src/server/statistics/
-src/server/recovery/
-src/server/ai/
-src/server/nostr/
-src/server/monero/
-```
 
 Each feature should own its internal implementation.
 
@@ -172,17 +162,6 @@ AI
 training services
 ```
 
-```text
-Nostr
- ↓
-program/exercise/session services
-```
-
-```text
-Monero
- ↓
-wallet/node adapters
-```
 
 Circular dependencies should be avoided.
 
@@ -249,7 +228,6 @@ Examples:
 program-validator.ts
 session-summary.ts
 exercise-filter.ts
-relay-publisher.ts
 wallet-send.ts
 ```
 
@@ -487,18 +465,11 @@ SQLite
 
 ## Optional integration isolation
 
-AI, Nostr, and Monero should each remain isolated modules.
 
 A task involving one optional integration should not normally require loading the others.
 
 For example:
 
-A Nostr publish change should not require reading:
-
-```text
-src/server/monero/
-src/server/ai/
-```
 
 unless the requested behavior explicitly crosses those features.
 
@@ -630,13 +601,3 @@ Changing the numeric limit must not be used to justify architectural degradation
 ---
 
 ## Related documents
-
-```text
-AGENTS.md
-docs/architecture.md
-docs/modules.md
-docs/instruction.md
-docs/decisions/001-self-hosted-architecture.md
-docs/decisions/002-optional-nostr.md
-docs/decisions/003-monero-hot-wallet.md
-```

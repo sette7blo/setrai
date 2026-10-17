@@ -12,9 +12,6 @@ const BANNED_UI = [
   'Statistics sections',
   'building your statistics',
   'Add equipment in Profile',
-  'Back to Discover',
-  'Search Discover exercises',
-  'Discover is unavailable',
 ]
 
 test('user-facing client copy follows Home / Settings / Exercises glossary', () => {
@@ -25,12 +22,10 @@ test('user-facing client copy follows Home / Settings / Exercises glossary', () 
     'src/client/exercises/page.ts',
     'src/client/exercises/detail-view.ts',
     'src/client/exercises/detail-page.ts',
-    'src/client/exercises/catalog.ts',
     'src/client/statistics/page.ts',
     'src/client/statistics/body-tab.ts',
     'src/client/profile/page.ts',
     'src/client/quick-workout/recovery-panel.ts',
-    'src/client/exercises/catalog-api.ts',
     'index.html',
     'public/manifest.webmanifest',
   ]

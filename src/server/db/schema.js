@@ -17,7 +17,6 @@ CREATE TABLE IF NOT EXISTS exercises (
   instructions TEXT NOT NULL DEFAULT '[]',
 
   image_url TEXT NOT NULL DEFAULT '',
-  image_publish_url TEXT NOT NULL DEFAULT '',
 
   favourite INTEGER NOT NULL DEFAULT 0,
 
@@ -27,11 +26,6 @@ CREATE TABLE IF NOT EXISTS exercises (
 
   source_type TEXT NOT NULL DEFAULT 'manual',
   status TEXT NOT NULL DEFAULT 'active',
-
-  nostr_event_id TEXT,
-  nostr_pubkey TEXT,
-  nostr_address TEXT,
-  nostr_published_at TEXT,
 
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
@@ -50,11 +44,6 @@ CREATE TABLE IF NOT EXISTS programs (
   blocks TEXT NOT NULL DEFAULT '[]',
 
   is_temporary INTEGER NOT NULL DEFAULT 0,
-
-  nostr_event_id TEXT,
-  nostr_pubkey TEXT,
-  nostr_address TEXT,
-  nostr_published_at TEXT,
 
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
@@ -98,8 +87,6 @@ CREATE TABLE IF NOT EXISTS sessions (
 
   notes TEXT NOT NULL DEFAULT '',
 
-  summary_event_id TEXT,
-  summary_image_url TEXT,
 
   FOREIGN KEY (program_id)
     REFERENCES programs(id)

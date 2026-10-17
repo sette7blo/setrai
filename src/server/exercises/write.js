@@ -104,13 +104,11 @@ export function normalizeExerciseWrite(input, { partial = false, requireMovement
 
   const imageUrl = asString(pick(input, 'imageUrl', 'image_url'), 'imageUrl', { max: 500 })
   if (imageUrl !== undefined) {
-    if (
-      imageUrl &&
-      !imageUrl.startsWith('/images/') &&
-      !imageUrl.startsWith('/media/exercises/') &&
-      !imageUrl.startsWith('https://')
-    ) {
-      throw clientError('imageUrl must be a local media path or https URL')
+    if (imageUrl && (
+      !/^\/(?:images|media\/exercises)\/[a-zA-Z0-9_./-]+$/.test(imageUrl) ||
+      imageUrl.split('/').includes('..')
+    )) {
+      throw clientError('imageUrl must be a local exercise image path')
     }
     result.image_url = imageUrl
   }

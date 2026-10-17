@@ -19,8 +19,6 @@ Its core functions include:
 - statistics;
 - recovery;
 - optional AI assistance;
-- optional Nostr integration;
-- optional Monero wallet functionality.
 
 The application must remain useful without depending on Setrai-operated cloud infrastructure.
 
@@ -90,8 +88,6 @@ Setrai must not require:
 
 - a Setrai account;
 - a Setrai-operated backend;
-- a Setrai-operated relay;
-- a Setrai-operated Monero node;
 - a third-party identity provider.
 
 Optional features may use operator-selected public or private infrastructure.
@@ -100,25 +96,11 @@ Optional features may use operator-selected public or private infrastructure.
 
 ## Optional integrations
 
-AI, Nostr, and Monero are treated as optional server-side capabilities.
 
 They must not redefine the core storage model.
 
 Conceptually:
 
-```text
-Core Setrai
-├── exercises
-├── programs
-├── sessions
-├── statistics
-└── recovery
-
-Optional capabilities
-├── AI
-├── Nostr
-└── Monero
-```
 
 Core Setrai must remain functional when all optional capabilities are disabled.
 
@@ -157,16 +139,6 @@ Setrai uses environment-based configuration for deployment concerns.
 
 Examples:
 
-```env
-SETRAI_HOST=0.0.0.0
-SETRAI_PORT=3000
-
-AI_ENABLED=true
-
-NOSTR_ENABLED=false
-
-MONERO_WALLET_ENABLED=false
-```
 
 Ordinary user data and training preferences belong in SQLite instead of `.env`.
 
@@ -178,13 +150,6 @@ The server is authoritative for all privileged behavior.
 
 Examples:
 
-```text
-Nostr signing
-Monero spending
-AI provider credentials
-database writes
-backup restore
-```
 
 The client requests actions through defined APIs.
 
@@ -200,8 +165,6 @@ This architecture was chosen because it provides:
 - simple backup and recovery;
 - clear secret boundaries;
 - server-side AI integration;
-- server-side Nostr signing;
-- server-side Monero wallet support;
 - deterministic local data ownership;
 - fewer synchronization problems;
 - clearer module boundaries;
@@ -247,8 +210,6 @@ That model would complicate:
 - server-side AI access;
 - multi-device consistency;
 - backup ownership;
-- Nostr signing;
-- Monero wallet integration;
 - privileged secrets;
 - deterministic self-hosted state.
 
@@ -268,22 +229,6 @@ It conflicts with Setrai's self-hosted product identity and would create unneces
 - external data custody.
 
 Hosted options could exist in the future, but they must not become a requirement for the self-hosted product.
-
----
-
-## Rejected alternative: protocol as data layer
-
-Nostr will not be used as the canonical Setrai database.
-
-Nostr may provide:
-
-- discovery;
-- publishing;
-- public identity.
-
-Local Setrai data remains canonical in SQLite.
-
-Similarly, Monero is a payment capability, not an application data store.
 
 ---
 

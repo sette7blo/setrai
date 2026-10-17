@@ -41,7 +41,7 @@ test('live image size defaults to compact, toggles, persists, and works without 
     globalThis.localStorage = { getItem: (key: string) => values.get(key) ?? null,
       setItem: (key: string, value: string) => { values.set(key, value) } } as unknown as Storage
     const entry = normalizeProgramExercise({ exerciseSlug: 'press', exerciseName: 'Press',
-      exercise: { id: 1, slug: 'press', name: 'Press', imageUrl: 'https://example.test/image.jpg' } })
+      exercise: { id: 1, slug: 'press', name: 'Press', imageUrl: '/images/exercises/seed/press.webp' } })
     const hero = exerciseHero(entry) as unknown as Element
     const toggle = hero.children[1]
     assert.equal(hero.dataset.size, 'compact')
@@ -62,6 +62,12 @@ test('live image size defaults to compact, toggles, persists, and works without 
     const empty = exerciseHero(undefined) as unknown as Element
     assert.equal(empty.children.length, 1)
     assert.equal(empty.children[0].textContent, 'Training session')
+    const remote = normalizeProgramExercise({ exerciseSlug: 'legacy', exerciseName: 'Legacy',
+      exercise: { id: 2, slug: 'legacy', name: 'Legacy', imageUrl: 'https://example.test/image.jpg' } })
+    const fallback = exerciseHero(remote) as unknown as Element
+    assert.equal(fallback.querySelector('img'), null)
+    assert.equal(fallback.children.length, 1)
+    assert.equal(fallback.children[0].textContent, 'Legacy')
   } finally {
     globalThis.document = originalDocument
     globalThis.localStorage = originalStorage

@@ -6,7 +6,7 @@ try {
   })
   if (!response.ok) throw new Error('Unavailable')
   const capabilities = await response.json()
-  if (typeof capabilities.nostr !== 'boolean' || typeof capabilities.ai !== 'boolean') {
+  if (typeof capabilities.ai !== 'boolean' || Object.keys(capabilities).some(key => key !== 'ai')) {
     throw new Error('Unexpected response')
   }
 } catch {

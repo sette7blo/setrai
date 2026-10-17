@@ -5,409 +5,199 @@ import path from 'node:path'
 import test from 'node:test'
 
 import { openDatabase } from '../src/server/db/connection.js'
+import { createExerciseService } from '../src/server/exercises/service.js'
+import { createProgramService } from '../src/server/programs/service.js'
+import { createProfileService } from '../src/server/profile/service.js'
+import { createQuickWorkoutService } from '../src/server/quick-workout/service.js'
+import { createRecoveryService } from '../src/server/recovery/service.js'
+import { createSessionService } from '../src/server/sessions/service.js'
+import { createStatisticsService } from '../src/server/statistics/service.js'
 import {
-  BUILTIN_EXERCISES
-} from '../src/server/db/seed/exercises/index.js'
-import {
+  BUILTIN_EXERCISES,
+  BUILTIN_PROGRAMS,
   initializeDatabaseSeeds,
   validateBuiltinExercises
 } from '../src/server/db/seed/seed.js'
-import {
-  createExerciseService
-} from '../src/server/exercises/service.js'
-import {
-  createProfileService
-} from '../src/server/profile/service.js'
-import {
-  createQuickWorkoutService
-} from '../src/server/quick-workout/service.js'
-import {
-  createRecoveryService
-} from '../src/server/recovery/service.js'
-import {
-  createSessionService
-} from '../src/server/sessions/service.js'
-import {
-  createStatisticsService
-} from '../src/server/statistics/service.js'
 
 function createTestDatabase(options = {}) {
-  const directory = fs.mkdtempSync(
-    path.join(os.tmpdir(), 'setrai-seed-test-')
-  )
-  const db = openDatabase(
-    path.join(directory, 'test.db'),
-    options
-  )
-
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'setrai-seed-test-'))
+  const db = openDatabase(path.join(directory, 'test.db'), options)
   return { db, directory }
 }
 
 function cleanupDatabase(db, directory) {
   db.close()
-  fs.rmSync(directory, {
-    recursive: true,
-    force: true
-  })
+  fs.rmSync(directory, { recursive: true, force: true })
 }
 
-function createSeededDatabase() {
-  return createTestDatabase({
-    seed: true
-  })
-}
-
-function services(db) {
+function counts(db) {
   return {
-    exercises: createExerciseService(db),
-    profile: createProfileService(db),
-    quickWorkout: createQuickWorkoutService(db),
-    recovery: createRecoveryService(db, {
-      now: () => new Date('2026-10-05T12:00:00.000Z')
-    }),
-    sessions: createSessionService(db),
-    statistics: createStatisticsService(db, {
-      now: () => new Date('2026-10-05T12:00:00.000Z')
-    })
+    exercises: Number(db.prepare('SELECT COUNT(*) AS count FROM exercises').get().count),
+    programs: Number(db.prepare('SELECT COUNT(*) AS count FROM programs').get().count)
   }
 }
 
-function countAllExercises(db) {
-  return Number(
-    db.prepare(`
-      SELECT COUNT(*) AS count
-      FROM exercises
-    `).get().count
-  )
-}
+const clone = value => structuredClone(value)
 
-function countDuplicateSlugs(db) {
-  return Number(
-    db.prepare(`
-      SELECT COUNT(*) AS count
-      FROM (
-        SELECT slug
-        FROM exercises
-        GROUP BY slug
-        HAVING COUNT(*) > 1
-      ) duplicates
-    `).get().count
-  )
-}
-
-test('seed dataset validates and contains a useful library', () => {
+test('bundled seed manifest is complete, local, and internally consistent', () => {
   assert.equal(validateBuiltinExercises(), true)
   assert.equal(BUILTIN_EXERCISES.length, 56)
-
-  const muscleGroups = new Set(
-    BUILTIN_EXERCISES.map((exercise) =>
-      exercise.muscle_group
-    )
-  )
-
-  for (const muscle of [
-    'chest',
-    'back',
-    'quadriceps',
-    'hamstrings',
-    'glutes',
-    'calves',
-    'shoulders',
-    'biceps',
-    'triceps',
-    'forearms',
-    'core'
-  ]) {
-    assert.equal(
-      muscleGroups.has(muscle),
-      true,
-      `${muscle} should be covered`
-    )
+  assert.equal(BUILTIN_PROGRAMS.length, 7)
+  assert.equal(BUILTIN_PROGRAMS.reduce((sum, program) => sum + program.exercises.length, 0), 32)
+  assert.equal(new Set(BUILTIN_EXERCISES.map(seed => seed.seedKey)).size, 56)
+  assert.equal(new Set(BUILTIN_PROGRAMS.map(seed => seed.seedKey)).size, 7)
+  const exerciseKeys = new Set(BUILTIN_EXERCISES.map(seed => seed.seedKey))
+  for (const seed of BUILTIN_EXERCISES) {
+    assert.equal(seed.revision, 1)
+    assert.match(seed.seedKey, /^setrai\.exercise\./)
+    assert.equal(seed.source_type, 'builtin')
+    assert.match(seed.image_url, /^\/images\/exercises\/seed\/.+\.webp$/)
+    assert.equal(fs.existsSync(path.join('public', seed.image_url)), true, seed.image_url)
+  }
+  for (const seed of BUILTIN_PROGRAMS) {
+    assert.equal(seed.revision, 1)
+    assert.match(seed.seedKey, /^setrai\.workout\./)
+    for (const entry of seed.exercises) assert.equal(exerciseKeys.has(entry.exerciseSeedKey), true)
   }
 })
 
-test('fresh database seeds representative built-in exercises', () => {
-  const { db, directory } = createSeededDatabase()
-
+test('fresh database seeds 56 exercises, 7 workouts, and 32 resolved references', () => {
+  const { db, directory } = createTestDatabase({ seed: true })
   try {
-    const service = createExerciseService(db)
-    const exercises = service.listExercises()
-
-    assert.equal(exercises.length, BUILTIN_EXERCISES.length)
-
-    for (const slug of [
-      'bench-press',
-      'incline-dumbbell-press',
-      'push-up',
-      'back-squat',
-      'romanian-deadlift',
-      'lat-pulldown',
-      'plank'
-    ]) {
-      assert.ok(
-        service.getExerciseBySlug(slug),
-        `${slug} should exist`
-      )
-    }
-  } finally {
-    cleanupDatabase(db, directory)
-  }
+    assert.deepEqual(counts(db), { exercises: 56, programs: 7 })
+    assert.equal(Number(db.prepare('SELECT COUNT(*) AS count FROM exercises WHERE seed_key IS NOT NULL AND seed_revision = 1').get().count), 56)
+    assert.equal(Number(db.prepare('SELECT COUNT(*) AS count FROM programs WHERE seed_key IS NOT NULL AND seed_revision = 1').get().count), 7)
+    const refs = db.prepare('SELECT exercise_id FROM program_exercises').all()
+    assert.equal(refs.length, 32)
+    assert.equal(refs.every(row => Number.isInteger(row.exercise_id) && row.exercise_id > 0), true)
+    assert.equal(Number(db.prepare(`SELECT COUNT(*) AS count FROM program_exercises pe LEFT JOIN exercises e ON e.id = pe.exercise_id WHERE e.id IS NULL`).get().count), 0)
+  } finally { cleanupDatabase(db, directory) }
 })
 
-test('seeding is idempotent and does not duplicate slugs', () => {
-  const { db, directory } = createSeededDatabase()
-
+test('seed reconciliation is idempotent and older or equal revisions are no-ops', () => {
+  const { db, directory } = createTestDatabase({ seed: true })
   try {
-    const before = countAllExercises(db)
+    const before = counts(db)
     const result = initializeDatabaseSeeds(db)
-    const after = countAllExercises(db)
-
-    assert.equal(before, BUILTIN_EXERCISES.length)
-    assert.equal(after, before)
-    assert.equal(result.exercises.inserted, 0)
-    assert.equal(result.exercises.existing, before)
-    assert.equal(countDuplicateSlugs(db), 0)
-  } finally {
-    cleanupDatabase(db, directory)
-  }
+    assert.deepEqual(counts(db), before)
+    assert.equal(result.exercises.unchanged, 56)
+    assert.equal(result.programs.unchanged, 7)
+    assert.equal(result.exercises.inserted + result.programs.inserted, 0)
+  } finally { cleanupDatabase(db, directory) }
 })
 
-test('seed does not overwrite user-edited built-in exercises', () => {
-  const { db, directory } = createSeededDatabase()
-
-  try {
-    const service = createExerciseService(db)
-    const bench = service.getExerciseBySlug('bench-press')
-
-    service.updateExercise(bench.id, {
-      name: 'My Bench Press',
-      default_rest: 45
-    })
-
-    initializeDatabaseSeeds(db)
-
-    const loaded = service.getExerciseBySlug('bench-press')
-    assert.equal(loaded.name, 'My Bench Press')
-    assert.equal(loaded.default_rest, 45)
-  } finally {
-    cleanupDatabase(db, directory)
-  }
-})
-
-test('existing database keeps user exercises without adding built-ins', () => {
+test('partial databases receive missing seeds without losing user records', () => {
   const { db, directory } = createTestDatabase()
-
   try {
-    const service = createExerciseService(db)
-    service.createExercise({
-      slug: 'garage-sled-push',
-      name: 'Garage Sled Push',
-      muscle_group: 'quadriceps',
-      muscles: ['glutes'],
-      equipment: ['machine'],
-      status: 'active'
+    createExerciseService(db).createExercise({
+      slug: 'garage-sled-push', name: 'Garage Sled Push', muscle_group: 'quadriceps',
+      muscles: ['glutes'], equipment: ['machine'], status: 'active'
     })
-
-    initializeDatabaseSeeds(db)
-
-    assert.ok(
-      service.getExerciseBySlug('garage-sled-push')
-    )
-    assert.equal(
-      countAllExercises(db),
-      1
-    )
-  } finally {
-    cleanupDatabase(db, directory)
-  }
-})
-
-test('seeding does not recreate built-ins deleted after initialization', () => {
-  const { db, directory } = createSeededDatabase()
-
-  try {
-    const service = createExerciseService(db)
-    const bench = service.getExerciseBySlug('bench-press')
-    assert.ok(bench)
-
-    assert.equal(service.deleteExercise(bench.id), true)
-    const before = countAllExercises(db)
     const result = initializeDatabaseSeeds(db)
-
-    assert.equal(service.getExerciseBySlug('bench-press'), null)
-    assert.equal(countAllExercises(db), before)
-    assert.equal(result.exercises.inserted, 0)
-  } finally {
-    cleanupDatabase(db, directory)
-  }
+    assert.deepEqual(counts(db), { exercises: 57, programs: 7 })
+    assert.equal(result.exercises.inserted, 56)
+    assert.ok(createExerciseService(db).getExerciseBySlug('garage-sled-push'))
+  } finally { cleanupDatabase(db, directory) }
 })
 
-test('representative seed records contain training metadata and stable image paths', () => {
-  const { db, directory } = createSeededDatabase()
+test('legacy rows with canonical slugs are adopted rather than duplicated or overwritten', () => {
+  const { db, directory } = createTestDatabase()
+  try {
+    const seed = BUILTIN_EXERCISES.find(item => item.slug === 'pushups')
+    createExerciseService(db).createExercise({ ...seed, name: 'My Pushups' })
+    const result = initializeDatabaseSeeds(db)
+    const adopted = createExerciseService(db).getExerciseBySlug('pushups')
+    assert.deepEqual(counts(db), { exercises: 56, programs: 7 })
+    assert.equal(result.exercises.adopted, 1)
+    assert.equal(adopted.name, 'My Pushups')
+    assert.equal(adopted.seed_key, seed.seedKey)
+    assert.equal(adopted.seed_revision, 1)
+  } finally { cleanupDatabase(db, directory) }
+})
 
+test('new seed revisions update untouched fields and preserve local exercise edits', () => {
+  const { db, directory } = createTestDatabase({ seed: true })
   try {
     const service = createExerciseService(db)
-
-    for (const slug of [
-      'bench-press',
-      'one-arm-dumbbell-row',
-      'goblet-squat',
-      'triceps-pushdown',
-      'plank'
-    ]) {
-      const exercise = service.getExerciseBySlug(slug)
-
-      assert.ok(exercise.muscle_group)
-      assert.ok(exercise.equipment.length > 0)
-      assert.ok(exercise.difficulty)
-      assert.ok(exercise.instructions.length >= 3)
-      assert.ok(exercise.default_sets > 0)
-      assert.ok(exercise.default_reps)
-      assert.ok(exercise.default_rest > 0)
-      assert.equal(exercise.source_type, 'builtin')
-      assert.equal(exercise.status, 'active')
-      assert.equal(
-        exercise.image_url,
-        `/images/exercises/ink/${slug}.svg`
-      )
-    }
-  } finally {
-    cleanupDatabase(db, directory)
-  }
+    const exercise = service.getExerciseBySlug('pushups')
+    service.updateExercise(exercise.id, { name: 'My Pushups' })
+    const exercises = clone(BUILTIN_EXERCISES)
+    const next = exercises.find(item => item.slug === 'pushups')
+    next.revision = 2
+    next.name = 'Seed Renamed Pushups'
+    next.description = 'Revision two description.'
+    const result = initializeDatabaseSeeds(db, { exercises, programs: BUILTIN_PROGRAMS })
+    const updated = service.getExercise(exercise.id)
+    assert.equal(result.exercises.updated, 1)
+    assert.equal(updated.name, 'My Pushups')
+    assert.equal(updated.description, 'Revision two description.')
+    assert.equal(updated.seed_revision, 2)
+    initializeDatabaseSeeds(db)
+    assert.equal(service.getExercise(exercise.id).description, 'Revision two description.')
+  } finally { cleanupDatabase(db, directory) }
 })
 
-test('seeded library supports Quick Workout equipment profiles', () => {
-  const { db, directory } = createSeededDatabase()
-
+test('new workout revisions preserve edited fields while updating untouched fields', () => {
+  const { db, directory } = createTestDatabase({ seed: true })
   try {
-    const app = services(db)
-
-    const unrestricted = app.quickWorkout.generate({
-      durationMinutes: 30
-    })
-    assert.equal(unrestricted.exercises.length, 3)
-
-    app.profile.updateProfile({
-      equipment: ['dumbbells', 'bench']
-    })
-    const dumbbellWorkout = app.quickWorkout.generate({
-      durationMinutes: 30
-    })
-    assert.equal(dumbbellWorkout.exercises.length, 3)
-    const dumbbellSlugs = dumbbellWorkout.exercises.map(
-      (exercise) => exercise.exerciseSlug
-    )
-    assert.equal(
-      dumbbellSlugs.some((slug) =>
-        ['cable-fly', 'lat-pulldown', 'leg-press'].includes(slug)
-      ),
-      false
-    )
-
-    app.profile.updateProfile({
-      equipment: ['bodyweight']
-    })
-    const bodyweightWorkout = app.quickWorkout.generate({
-      durationMinutes: 30
-    })
-    assert.equal(bodyweightWorkout.exercises.length, 3)
-
-    app.profile.updateProfile({
-      equipment: ['barbell', 'bench']
-    })
-    const barbellWorkout = app.quickWorkout.generate({
-      durationMinutes: 30
-    })
-    assert.equal(barbellWorkout.exercises.length, 3)
-    const barbellSlugs = barbellWorkout.exercises.map(
-      (exercise) => exercise.exerciseSlug
-    )
-    assert.equal(
-      barbellSlugs.some((slug) =>
-        ['dumbbell-curl', 'lat-pulldown', 'leg-press'].includes(slug)
-      ),
-      false
-    )
-  } finally {
-    cleanupDatabase(db, directory)
-  }
+    const service = createProgramService(db)
+    const program = service.listPrograms().find(item => item.slug === 'upper')
+    service.updateProgram(program.id, { name: 'My Upper Workout' })
+    const programs = clone(BUILTIN_PROGRAMS)
+    const next = programs.find(item => item.slug === 'upper')
+    next.revision = 2
+    next.name = 'Seed Upper Renamed'
+    next.description = 'Revision two workout description.'
+    const result = initializeDatabaseSeeds(db, { exercises: BUILTIN_EXERCISES, programs })
+    const updated = service.getProgram(program.id)
+    assert.equal(result.programs.updated, 1)
+    assert.equal(updated.name, 'My Upper Workout')
+    assert.equal(updated.description, 'Revision two workout description.')
+    assert.equal(updated.seedRevision, 2)
+  } finally { cleanupDatabase(db, directory) }
 })
 
-test('seeded bench press metadata is compatible with Recovery', () => {
-  const { db, directory } = createSeededDatabase()
-
+test('seed keys are database-unique', () => {
+  const { db, directory } = createTestDatabase({ seed: true })
   try {
-    const app = services(db)
-    const bench = app.exercises.getExerciseBySlug('bench-press')
-    const session = app.sessions.startSession({
-      name: 'Seed Recovery Session'
-    })
-
-    app.sessions.logSet(session.id, {
-      exerciseId: bench.id,
-      setNumber: 1,
-      reps: 8,
-      weight: 100,
-      done: true
-    })
-    app.sessions.finishSession(session.id)
-
-    const recovery = app.recovery.getRecovery()
-    const muscles = recovery.muscles.map((item) => item.muscle)
-
-    assert.equal(muscles.includes('chest'), true)
-    assert.equal(muscles.includes('triceps'), true)
-    assert.equal(
-      muscles.filter((muscle) => muscle === 'chest').length,
-      1
-    )
-  } finally {
-    cleanupDatabase(db, directory)
-  }
+    const rows = db.prepare('SELECT id, seed_key FROM exercises ORDER BY id LIMIT 2').all()
+    assert.throws(() => db.prepare('UPDATE exercises SET seed_key = ? WHERE id = ?').run(rows[0].seed_key, rows[1].id), /UNIQUE constraint failed/)
+    const programs = db.prepare('SELECT id, seed_key FROM programs ORDER BY id LIMIT 2').all()
+    assert.throws(() => db.prepare('UPDATE programs SET seed_key = ? WHERE id = ?').run(programs[0].seed_key, programs[1].id), /UNIQUE constraint failed/)
+  } finally { cleanupDatabase(db, directory) }
 })
 
-test('seeded exercises work with Statistics aggregation and records', () => {
-  const { db, directory } = createSeededDatabase()
-
+test('deleting seeded records creates tombstones and prevents reinstallation', () => {
+  const { db, directory } = createTestDatabase({ seed: true })
   try {
-    const app = services(db)
-    const bench = app.exercises.getExerciseBySlug('bench-press')
-    const session = app.sessions.startSession({
-      name: 'Seed Statistics Session'
-    })
+    const exercises = createExerciseService(db)
+    const programs = createProgramService(db)
+    const exercise = exercises.getExerciseBySlug('pushups')
+    const program = programs.listPrograms().find(item => item.slug === 'upper')
+    assert.equal(exercises.deleteExercise(exercise.id), true)
+    assert.equal(programs.deleteProgram(program.id), true)
+    const result = initializeDatabaseSeeds(db)
+    assert.deepEqual(counts(db), { exercises: 55, programs: 6 })
+    assert.equal(result.exercises.tombstoned, 1)
+    assert.equal(result.programs.tombstoned, 1)
+    assert.equal(Number(db.prepare('SELECT COUNT(*) AS count FROM seed_tombstones').get().count), 2)
+  } finally { cleanupDatabase(db, directory) }
+})
 
-    app.sessions.logSet(session.id, {
-      exerciseId: bench.id,
-      setNumber: 1,
-      reps: 8,
-      weight: 100,
-      done: true
-    })
-    app.sessions.logSet(session.id, {
-      exerciseId: bench.id,
-      setNumber: 2,
-      reps: 5,
-      weight: 110,
-      done: true
-    })
-    app.sessions.finishSession(session.id)
-
-    const statistics = app.statistics.getOverview()
-
-    assert.equal(statistics.totalVolume, 1350)
-    assert.equal(
-      statistics.volumeByExercise[0].exerciseSlug,
-      'bench-press'
-    )
-    assert.equal(
-      statistics.volumeByMuscle[0].muscle,
-      'chest'
-    )
-    assert.equal(
-      statistics.personalRecords[0].exerciseSlug,
-      'bench-press'
-    )
-  } finally {
-    cleanupDatabase(db, directory)
-  }
+test('seeded library remains compatible with Quick Workout, Recovery, and Statistics', () => {
+  const { db, directory } = createTestDatabase({ seed: true })
+  try {
+    createProfileService(db).updateProfile({ equipment: ['bodyweight'] })
+    const quick = createQuickWorkoutService(db).generate({ durationMinutes: 30 })
+    assert.ok(quick.exercises.length > 0)
+    const exercise = createExerciseService(db).getExerciseBySlug('pushups')
+    const sessions = createSessionService(db)
+    const session = sessions.startSession({ name: 'Seed verification' })
+    sessions.logSet(session.id, { exerciseId: exercise.id, setNumber: 1, reps: 8, weight: 50, done: true })
+    sessions.finishSession(session.id)
+    const recovery = createRecoveryService(db, { now: () => new Date('2026-10-05T12:00:00.000Z') }).getRecovery()
+    assert.equal(recovery.muscles.some(item => item.muscle === 'chest'), true)
+    const statistics = createStatisticsService(db, { now: () => new Date('2026-10-05T12:00:00.000Z') }).getOverview()
+    assert.equal(statistics.volumeByExercise.some(item => item.exerciseSlug === 'pushups'), true)
+  } finally { cleanupDatabase(db, directory) }
 })

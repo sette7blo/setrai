@@ -1,0 +1,566 @@
+[
+  {
+    "seedKey": "setrai.workout.cardio-carnage",
+    "revision": 1,
+    "slug": "cardio-carnage",
+    "name": "Cardio Carnage",
+    "description": "This program consist of 3 circuits",
+    "difficulty": "intermediate",
+    "tags": [
+      "Cardio"
+    ],
+    "blocks": [
+      {
+        "type": "emom",
+        "rounds": 10,
+        "intervals": [
+          {
+            "durationSec": 60,
+            "steps": [
+              {
+                "exerciseSlug": "burpees",
+                "exerciseName": "Burpees",
+                "targetReps": "5"
+              }
+            ]
+          }
+        ],
+        "totalDurationSec": 600
+      },
+      {
+        "type": "emom",
+        "rounds": 15,
+        "intervals": [
+          {
+            "durationSec": 60,
+            "steps": [
+              {
+                "exerciseSlug": "sit-up",
+                "exerciseName": "Sit-Up",
+                "targetReps": "8"
+              }
+            ]
+          }
+        ],
+        "totalDurationSec": 900
+      },
+      {
+        "type": "emom",
+        "rounds": 10,
+        "intervals": [
+          {
+            "durationSec": 60,
+            "steps": [
+              {
+                "exerciseSlug": "jumping-jack",
+                "exerciseName": "Jumping Jack",
+                "targetDurationSec": 40
+              }
+            ]
+          }
+        ],
+        "totalDurationSec": 600
+      }
+    ],
+    "exercises": [
+      {
+        "exerciseSeedKey": "setrai.exercise.burpees",
+        "position": 0,
+        "sets": 10,
+        "reps": "5",
+        "restSeconds": 60,
+        "targetWeight": null,
+        "notes": ""
+      },
+      {
+        "exerciseSeedKey": "setrai.exercise.sit-up",
+        "position": 1,
+        "sets": 15,
+        "reps": "8",
+        "restSeconds": 60,
+        "targetWeight": null,
+        "notes": ""
+      },
+      {
+        "exerciseSeedKey": "setrai.exercise.jumping-jack",
+        "position": 2,
+        "sets": 10,
+        "reps": "8-12",
+        "restSeconds": 60,
+        "targetWeight": null,
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "seedKey": "setrai.workout.cardio-carnage-2",
+    "revision": 1,
+    "slug": "cardio-carnage-2",
+    "name": "Cardio Carnage #2",
+    "description": "",
+    "difficulty": "beginner",
+    "tags": [
+      "endurance"
+    ],
+    "blocks": [
+      {
+        "type": "emom",
+        "rounds": 5,
+        "intervals": [
+          {
+            "durationSec": 60,
+            "steps": [
+              {
+                "exerciseSlug": "mountain-climbers",
+                "exerciseName": "Mountain Climbers",
+                "targetReps": "8-12",
+                "targetDurationSec": 30
+              }
+            ]
+          },
+          {
+            "durationSec": 60,
+            "steps": [
+              {
+                "exerciseSlug": "burpees",
+                "exerciseName": "Burpees",
+                "targetReps": "8-12",
+                "targetDurationSec": 30
+              }
+            ]
+          }
+        ],
+        "totalDurationSec": 600
+      },
+      {
+        "type": "emom",
+        "rounds": 5,
+        "intervals": [
+          {
+            "durationSec": 60,
+            "steps": [
+              {
+                "exerciseSlug": "air-bike",
+                "exerciseName": "Air Bike",
+                "targetReps": "8-12",
+                "targetDurationSec": 30
+              }
+            ]
+          },
+          {
+            "durationSec": 60,
+            "steps": [
+              {
+                "exerciseSlug": "jumping-jack",
+                "exerciseName": "Jumping Jack",
+                "targetReps": "30"
+              }
+            ]
+          }
+        ],
+        "totalDurationSec": 600
+      }
+    ],
+    "exercises": [
+      {
+        "exerciseSeedKey": "setrai.exercise.mountain-climbers",
+        "position": 0,
+        "sets": 5,
+        "reps": "8-12",
+        "restSeconds": 60,
+        "targetWeight": null,
+        "notes": ""
+      },
+      {
+        "exerciseSeedKey": "setrai.exercise.burpees",
+        "position": 1,
+        "sets": 5,
+        "reps": "8-12",
+        "restSeconds": 60,
+        "targetWeight": null,
+        "notes": ""
+      },
+      {
+        "exerciseSeedKey": "setrai.exercise.air-bike",
+        "position": 2,
+        "sets": 5,
+        "reps": "8-12",
+        "restSeconds": 60,
+        "targetWeight": null,
+        "notes": ""
+      },
+      {
+        "exerciseSeedKey": "setrai.exercise.jumping-jack",
+        "position": 3,
+        "sets": 5,
+        "reps": "30",
+        "restSeconds": 60,
+        "targetWeight": null,
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "seedKey": "setrai.workout.full-body-2",
+    "revision": 1,
+    "slug": "full-body-2",
+    "name": "Core Stability Starter",
+    "description": "Safe beginner core without crushing people with sit-ups",
+    "difficulty": "beginner",
+    "tags": [],
+    "blocks": [],
+    "exercises": [
+      {
+        "exerciseSeedKey": "setrai.exercise.dead-bug",
+        "position": 0,
+        "sets": 2,
+        "reps": "8-12",
+        "restSeconds": 45,
+        "targetWeight": null,
+        "notes": ""
+      },
+      {
+        "exerciseSeedKey": "setrai.exercise.bird-dog",
+        "position": 1,
+        "sets": 2,
+        "reps": "8-12",
+        "restSeconds": 45,
+        "targetWeight": null,
+        "notes": ""
+      },
+      {
+        "exerciseSeedKey": "setrai.exercise.plank",
+        "position": 2,
+        "sets": 2,
+        "reps": "30-60s",
+        "restSeconds": 45,
+        "targetWeight": null,
+        "notes": ""
+      },
+      {
+        "exerciseSeedKey": "setrai.exercise.side-bridge",
+        "position": 3,
+        "sets": 2,
+        "reps": "15-20s",
+        "restSeconds": 45,
+        "targetWeight": null,
+        "notes": ""
+      },
+      {
+        "exerciseSeedKey": "setrai.exercise.superman",
+        "position": 4,
+        "sets": 2,
+        "reps": "8-12",
+        "restSeconds": 45,
+        "targetWeight": null,
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "seedKey": "setrai.workout.lower-body",
+    "revision": 1,
+    "slug": "lower-body",
+    "name": "Legs & Glutes",
+    "description": "Legs/glutes with no jumping and no equipment.",
+    "difficulty": "beginner",
+    "tags": [],
+    "blocks": [],
+    "exercises": [
+      {
+        "exerciseSeedKey": "setrai.exercise.bodyweight-squat",
+        "position": 0,
+        "sets": 3,
+        "reps": "8-12",
+        "restSeconds": 45,
+        "targetWeight": null,
+        "notes": ""
+      },
+      {
+        "exerciseSeedKey": "setrai.exercise.glute-kickback",
+        "position": 1,
+        "sets": 3,
+        "reps": "10-12",
+        "restSeconds": 45,
+        "targetWeight": null,
+        "notes": ""
+      },
+      {
+        "exerciseSeedKey": "setrai.exercise.wall-sit",
+        "position": 2,
+        "sets": 3,
+        "reps": "20-30s",
+        "restSeconds": 45,
+        "targetWeight": null,
+        "notes": ""
+      },
+      {
+        "exerciseSeedKey": "setrai.exercise.ankle-circles",
+        "position": 3,
+        "sets": 3,
+        "reps": "60s",
+        "restSeconds": 45,
+        "targetWeight": null,
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "seedKey": "setrai.workout.program-3",
+    "revision": 1,
+    "slug": "program-3",
+    "name": "Foundation Full Body",
+    "description": "First full-body routine, low intimidation, simple movements.",
+    "difficulty": "beginner",
+    "tags": [],
+    "blocks": [],
+    "exercises": [
+      {
+        "exerciseSeedKey": "setrai.exercise.ankle-circles",
+        "position": 0,
+        "sets": 1,
+        "reps": "60",
+        "restSeconds": 15,
+        "targetWeight": null,
+        "notes": ""
+      },
+      {
+        "exerciseSeedKey": "setrai.exercise.bodyweight-squat",
+        "position": 1,
+        "sets": 2,
+        "reps": "10",
+        "restSeconds": 45,
+        "targetWeight": null,
+        "notes": ""
+      },
+      {
+        "exerciseSeedKey": "setrai.exercise.pushups",
+        "position": 2,
+        "sets": 2,
+        "reps": "6-10",
+        "restSeconds": 45,
+        "targetWeight": null,
+        "notes": ""
+      },
+      {
+        "exerciseSeedKey": "setrai.exercise.glute-kickback",
+        "position": 3,
+        "sets": 2,
+        "reps": "8-12",
+        "restSeconds": 45,
+        "targetWeight": null,
+        "notes": ""
+      },
+      {
+        "exerciseSeedKey": "setrai.exercise.dead-bug",
+        "position": 4,
+        "sets": 2,
+        "reps": "8-12",
+        "restSeconds": 45,
+        "targetWeight": null,
+        "notes": ""
+      },
+      {
+        "exerciseSeedKey": "setrai.exercise.plank",
+        "position": 5,
+        "sets": 2,
+        "reps": "20-30s",
+        "restSeconds": 45,
+        "targetWeight": null,
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "seedKey": "setrai.workout.upper",
+    "revision": 1,
+    "slug": "upper",
+    "name": "Upper",
+    "description": "",
+    "difficulty": "beginner",
+    "tags": [
+      "strength",
+      "hypertrophy",
+      "normal",
+      "full-body",
+      "pull",
+      "legs",
+      "dumbbell",
+      "bodyweight",
+      "minimal-equipment",
+      "quick"
+    ],
+    "blocks": [],
+    "exercises": [
+      {
+        "exerciseSeedKey": "setrai.exercise.alternate-hammer-curl",
+        "position": 0,
+        "sets": 3,
+        "reps": "8-12",
+        "restSeconds": 90,
+        "targetWeight": null,
+        "notes": ""
+      },
+      {
+        "exerciseSeedKey": "setrai.exercise.alternating-renegade-row",
+        "position": 1,
+        "sets": 3,
+        "reps": "8-12",
+        "restSeconds": 90,
+        "targetWeight": null,
+        "notes": ""
+      },
+      {
+        "exerciseSeedKey": "setrai.exercise.ankle-circles",
+        "position": 2,
+        "sets": 3,
+        "reps": "8-12",
+        "restSeconds": 90,
+        "targetWeight": null,
+        "notes": ""
+      }
+    ]
+  },
+  {
+    "seedKey": "setrai.workout.upper-body",
+    "revision": 1,
+    "slug": "upper-body",
+    "name": "Upper Body",
+    "description": "",
+    "difficulty": "beginner",
+    "tags": [
+      "Strength"
+    ],
+    "blocks": [
+      {
+        "type": "emom",
+        "rounds": 4,
+        "intervals": [
+          {
+            "durationSec": 60,
+            "steps": [
+              {
+                "exerciseSlug": "plank",
+                "exerciseName": "Plank",
+                "targetDurationSec": 40
+              }
+            ]
+          },
+          {
+            "durationSec": 60,
+            "steps": [
+              {
+                "exerciseSlug": "air-bike",
+                "exerciseName": "Air Bike",
+                "targetDurationSec": 40
+              }
+            ]
+          },
+          {
+            "durationSec": 60,
+            "steps": [
+              {
+                "exerciseSlug": "burpees",
+                "exerciseName": "Burpees",
+                "targetDurationSec": 40
+              }
+            ]
+          },
+          {
+            "durationSec": 60,
+            "steps": [
+              {
+                "exerciseSlug": "alternating-renegade-row",
+                "exerciseName": "Alternating Renegade Row",
+                "targetDurationSec": 40
+              }
+            ]
+          }
+        ],
+        "totalDurationSec": 960
+      },
+      {
+        "type": "emom",
+        "rounds": 4,
+        "intervals": [
+          {
+            "durationSec": 60,
+            "steps": [
+              {
+                "exerciseSlug": "all-fours-quad-stretch",
+                "exerciseName": "All Fours Quad Stretch",
+                "targetDurationSec": 40
+              }
+            ]
+          }
+        ],
+        "totalDurationSec": 240
+      }
+    ],
+    "exercises": [
+      {
+        "exerciseSeedKey": "setrai.exercise.pushups",
+        "position": 0,
+        "sets": 4,
+        "reps": "15",
+        "restSeconds": 30,
+        "targetWeight": null,
+        "notes": ""
+      },
+      {
+        "exerciseSeedKey": "setrai.exercise.sit-up",
+        "position": 1,
+        "sets": 4,
+        "reps": "15",
+        "restSeconds": 45,
+        "targetWeight": null,
+        "notes": ""
+      },
+      {
+        "exerciseSeedKey": "setrai.exercise.plank",
+        "position": 2,
+        "sets": 4,
+        "reps": "8-12",
+        "restSeconds": 60,
+        "targetWeight": null,
+        "notes": ""
+      },
+      {
+        "exerciseSeedKey": "setrai.exercise.air-bike",
+        "position": 3,
+        "sets": 4,
+        "reps": "8-12",
+        "restSeconds": 60,
+        "targetWeight": null,
+        "notes": ""
+      },
+      {
+        "exerciseSeedKey": "setrai.exercise.burpees",
+        "position": 4,
+        "sets": 4,
+        "reps": "8-12",
+        "restSeconds": 60,
+        "targetWeight": null,
+        "notes": ""
+      },
+      {
+        "exerciseSeedKey": "setrai.exercise.alternating-renegade-row",
+        "position": 5,
+        "sets": 4,
+        "reps": "8-12",
+        "restSeconds": 60,
+        "targetWeight": null,
+        "notes": ""
+      },
+      {
+        "exerciseSeedKey": "setrai.exercise.all-fours-quad-stretch",
+        "position": 6,
+        "sets": 4,
+        "reps": "8-12",
+        "restSeconds": 60,
+        "targetWeight": null,
+        "notes": ""
+      }
+    ]
+  }
+]

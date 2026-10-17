@@ -53,21 +53,6 @@ business logic must remain in the owning modules below.
 
 Server modules:
 
-```text
-src/server/config/
-src/server/db/
-src/server/exercises/
-src/server/programs/
-src/server/sessions/
-src/server/body/
-src/server/profile/
-src/server/statistics/
-src/server/recovery/
-src/server/quick-workout/
-src/server/ai/
-src/server/nostr/
-src/server/monero/
-```
 
 Client modules:
 
@@ -98,7 +83,6 @@ src/server/config/
 - environment validation;
 - typed application configuration;
 - feature capability evaluation;
-- Workstr catalog relay defaults and secure overrides in `nostr-relays.js`;
 - startup configuration errors.
 
 ## Typical files
@@ -119,8 +103,6 @@ capabilities.ts
 - exercises;
 - programs;
 - sessions;
-- Nostr implementation;
-- Monero implementation;
 - AI implementation;
 - client code.
 
@@ -131,17 +113,9 @@ environment variables throughout the codebase.
 
 Avoid:
 
-```ts
-process.env.NOSTR_ENABLED
-```
-
 inside unrelated features.
 
 Prefer:
-
-```ts
-config.nostr.enabled
-```
 
 ---
 
@@ -178,8 +152,6 @@ migrations.ts
 ## Must not depend on
 
 - client code;
-- Nostr;
-- Monero;
 - AI;
 - HTTP route handlers.
 
@@ -197,14 +169,26 @@ Seed initialization lives under:
 src/server/db/seed/
 ```
 
-It owns built-in startup data such as the initial Exercise library, seed-data
-validation, and idempotent insertion after migrations. Seed code may use the
-Exercise repository as a database-initialization concern, but it must not own
-normal Exercise CRUD behavior or overwrite existing records on restart.
+It owns the bundled local startup library (56 Exercises and seven Workouts),
+seed-data validation, and transactional per-record reconciliation after migrations.
+Every bundled entity has an immutable Setrai `seed_key`, a monotonic
+`seed_revision`, and a stored baseline. Equal or older revisions are no-ops;
+newer revisions update only fields that still match the prior baseline, preserving
+local edits. Partial databases receive missing seeds without losing user records,
+and deletion tombstones prevent intentionally removed seeds from returning.
+Workout seed members reference Exercise seed keys and resolve to installation-local
+numeric IDs during reconciliation. Seed code may use the Exercise and Program
+repositories as a database-initialization concern, but it must not own normal CRUD
+behavior.
 
-Large files under `src/server/db/seed/exercises/` are pure built-in data and are
-exempt from the normal handwritten logic line-size warning. Application logic in
+The data manifests are `src/server/db/seed/exercise-seeds.json` and
+`src/server/db/seed/program-seeds.json`. Bundled exercise artwork lives under
+`public/images/exercises/seed/`. Application logic in
 `src/server/db/seed/seed.js` remains subject to normal size rules.
+
+`src/server/db/local-schema.js` owns the migration-only supported-column contract.
+Migrations retain local training columns derived from the canonical schema and
+remove obsolete extra metadata without changing entity IDs or logged history.
 
 ---
 
@@ -237,9 +221,7 @@ Persistence for:
 
 - HTTP routes;
 - client code;
-- Nostr implementation;
 - AI prompts;
-- Monero.
 
 ## Public consumers
 
@@ -368,11 +350,6 @@ It does not own deployment-level secrets.
 
 Examples of deployment configuration that do not belong here:
 
-```text
-NOSTR_NSEC
-MONERO_SEED
-AI API keys
-```
 
 Those remain in environment configuration.
 
@@ -396,14 +373,12 @@ src/server/exercises/
 - exercise validation;
 - canonical compound/isolation movement type persistence and migration from safe
   legacy tags (database migration 5);
-- audited secondary-muscle repair for legacy Workstr events that repeated only the
+- audited secondary-muscle repair for legacy exercise records that repeated only the
   primary muscle (shared correction data plus database migration 6);
 - exercise availability;
-- exercise service contracts, including idempotent `importDiscoveredExercise`
-  for validated server-side discovery data;
-- publishable exercise representation when needed.
-- reviewed `updateDiscoveredExercise` updates in `catalog-update.js`, preserving
-  edited fields with a persisted import baseline (database migration 3).
+- local-only exercise CRUD service contracts;
+- local image path validation and suppression of legacy external image references;
+- no remote discovery, import, or publication contracts.
 
 ## Typical files
 
@@ -427,20 +402,17 @@ src/server/config/
 - programs;
 - recovery;
 - AI;
-- Nostr.
 
 ## Must not depend on
 
-- Nostr internals;
-- Monero internals;
 - client implementation;
 - AI implementation.
 
 ## Important rule
 
-Nostr may ask the exercise service for publishable exercise data.
-
-The exercise module must not know how Nostr publishes it.
+Exercises remain local. Bundled content is reconciled by database seeds;
+image uploads are stored on the Setrai server. No exercise service contract
+fetches or publishes external content.
 
 ---
 
@@ -462,11 +434,7 @@ src/server/programs/
 - duplication;
 - program detail;
 - program service contracts;
-- publishable program representation.
-- atomic discovered-program import through `discovery-import.js` and the program
-  repository's `importWithExercises` transaction contract;
-- read-only program update review and edit-preserving application in
-  `catalog-update.js`, with persisted program baselines (database migration 4);
+- local program representation and stable seeded workout references;
 - bounded program metadata and prescription validation in `validation.js`.
 
 ## Typical files
@@ -490,13 +458,10 @@ exercise service
 
 - sessions;
 - AI;
-- Nostr;
 - recovery where required.
 
 ## Must not depend on
 
-- Nostr internals;
-- Monero internals;
 - client implementation.
 
 ---
@@ -546,13 +511,10 @@ exercise service
 - statistics;
 - recovery;
 - AI;
-- Nostr session publishing.
 
 ## Must not depend on
 
 - AI implementation;
-- Nostr implementation;
-- Monero implementation.
 
 ---
 
@@ -597,8 +559,6 @@ body repository
 
 - statistics;
 - AI implementation;
-- Nostr implementation;
-- Monero implementation.
 
 ---
 
@@ -646,16 +606,12 @@ settings repository
 ## Must not depend on
 
 - deployment configuration secrets;
-- Nostr internals;
-- Monero internals;
 - AI implementation;
 - statistics internals.
 
 ## Important rule
 
 Deployment configuration remains in `.env`. Local profile preferences live in
-SQLite through the settings repository. Profile must not expose Nostr private
-keys, Monero wallet secrets, AI provider settings, or raw server environment
 configuration.
 
 ---
@@ -703,8 +659,6 @@ profile service where needed
 
 ## Must not depend on
 
-- Nostr;
-- Monero;
 - AI.
 
 ## Important rule
@@ -759,8 +713,6 @@ exercise service
 ## Must not depend on
 
 - AI;
-- Nostr;
-- Monero.
 
 ## Important rule
 
@@ -825,8 +777,6 @@ session service
 ## Must not depend on
 
 - AI;
-- Nostr;
-- Monero;
 - Statistics;
 - feature repositories directly.
 
@@ -840,7 +790,7 @@ at 80% or higher, round-robin group balancing, completed-before/compound scoring
 and same-group alternative pools. It never fills the plan with tired muscles.
 Every generated prescription comes from the active Profile goal preset; exercise
 default sets, reps, and rest do not override it. Those legacy exercise fields are
-retained only for storage and catalog compatibility.
+retained only for storage compatibility.
 Goal labels, descriptions, and prescription values are owned by
 `src/shared/training-goals.json` and consumed by both Quick Workout and the
 Settings Training guide.
@@ -897,8 +847,6 @@ profile/preferences
 ## Must not depend on
 
 - raw database internals when a service contract exists;
-- Nostr internals;
-- Monero internals;
 - client code.
 
 ## Important rule
@@ -906,193 +854,6 @@ profile/preferences
 AI owns generated interpretation and suggestions.
 
 AI does not own canonical training data.
-
----
-
-# 17. Nostr server feature
-
-## Location
-
-```text
-src/server/nostr/
-```
-
-## Owns
-
-- Nostr configuration interpretation;
-- private-key signer;
-- public-key derivation;
-- relay connections;
-- profile loading;
-- public exercise discovery in `discovery-service.js`;
-- official/creator workout discovery in `program-discovery.js` through Program
-  and Exercise service contracts;
-- verified kind 33402 parsing in `program-event.js` and bounded structured block
-  parsing in `program-blocks.js`;
-- bounded read-only relay queries in `relay-query.js`;
-- signature verification and Workstr event parsing in `exercise-event.js`;
-- catalog/import HTTP endpoints and verified program review/update endpoints in
-  `routes.js`; `program-discovery.js` checks the selected verified event before
-  calling Program service review/update contracts;
-- event construction;
-- event signing;
-- event publishing;
-- Nostr-specific parsing.
-
-## Typical files
-
-```text
-config.ts
-signer.ts
-relays.ts
-profile.ts
-discover.ts
-publish.ts
-events.ts
-types.ts
-```
-
-## May depend on
-
-Service contracts from:
-
-```text
-exercises
-programs
-sessions
-```
-
-and:
-
-```text
-server configuration
-```
-
-## Must not depend on
-
-- Monero internals;
-- client internals;
-- raw program SQL;
-- raw exercise SQL;
-- raw session SQL.
-
-## Important rule
-
-Nostr is an integration.
-
-It does not own canonical exercise, program, or session data.
-
-Correct dependency:
-
-```text
-Nostr
-  ↓
-program service
-```
-
-Incorrect dependency:
-
-```text
-Nostr
-  ↓
-program repository internals
-```
-
----
-
-# 18. Monero server feature
-
-## Location
-
-```text
-src/server/monero/
-```
-
-## Owns
-
-- hot-wallet lifecycle;
-- seed loading;
-- wallet initialization;
-- node connection;
-- balance;
-- receive address;
-- QR payment data;
-- transaction history;
-- send flow;
-- transaction creation;
-- transaction broadcast;
-- wallet-specific errors.
-
-## Typical files
-
-```text
-config.ts
-wallet.ts
-node.ts
-balance.ts
-receive.ts
-send.ts
-transactions.ts
-routes.ts
-types.ts
-```
-
-## May depend on
-
-```text
-server configuration
-Monero library/provider adapter
-```
-
-## Must not depend on
-
-- Nostr internals;
-- AI internals;
-- exercises;
-- programs;
-- sessions unless a future documented payment feature requires a narrow contract.
-
-## Important rule
-
-The Monero seed remains server-side.
-
-The client interacts with a wallet service/API rather than with the wallet library
-directly.
-
----
-
-# 19. Nostr + Monero payment orchestration
-
-Creator tipping may require both Nostr and Monero.
-
-Neither feature should own the other's behavior.
-
-Preferred flow:
-
-```text
-Nostr discover
-    ↓
-creator payment target
-    ↓
-client/orchestration layer
-    ↓
-Monero wallet API
-```
-
-Avoid:
-
-```text
-nostr/publish.ts imports monero/wallet.ts
-```
-
-and avoid:
-
-```text
-monero/send.ts parses Nostr events
-```
-
-If more orchestration becomes necessary later, introduce a narrowly scoped payment
-or integration coordinator rather than coupling the modules directly.
 
 ---
 
@@ -1136,8 +897,6 @@ Client feature public APIs.
 
 - exercise-specific business logic;
 - workout runner internals;
-- Nostr relay logic;
-- Monero wallet internals.
 
 ---
 
@@ -1152,9 +911,8 @@ src/client/exercises/
 ## Owns
 
 - exercise library UI;
-- unified local-first list and Local/Update/Web strips with a direct Update action in
-  `catalog.ts`; optional loading/saving is injected by the app shell through
-  the public `ExerciseCatalog` contract;
+- local-only exercise list backed by the exercise API, without Web/Update status
+  strips or catalog import controls;
 - exercise cards;
 - search UI;
 - filter UI;
@@ -1167,12 +925,10 @@ src/client/exercises/
 - feature-owned body geometry in `body-map.ts` and highlighting in `muscle-map.ts`;
 - canonical create/edit controls in `editor-taxonomy.ts`, consuming the shared
   exercise taxonomy, exposing controlled movement type, and rendering a synchronized
-  primary/secondary muscle preview; free-form tags remain hidden catalog metadata;
+  primary/secondary muscle preview; free-form tags remain hidden compatibility metadata;
 - exercise selection surfaces;
-- public tabs, image, formatting, filter controls, and detail card components
-  consumed by Discover without relay logic entering Exercises.
-- public informational `statusLabel` presentation contract consumed by Workouts
-  to keep Local/Update/Web card strips consistent;
+- public local-image and formatting helpers consumed by Workouts; external image
+  URLs produce a local fallback and are never assigned to image elements;
 - public `muscleRegion` and `muscleMapMarkup` presentation contracts consumed by
   Workouts for aggregate front/back muscle maps and focus labels.
 
@@ -1198,8 +954,6 @@ exercise API
 ## Must not depend on
 
 - server internals;
-- Monero;
-- Nostr relay implementation;
 - statistics internals.
 
 ---
@@ -1216,13 +970,10 @@ src/client/workouts/
 
 - program library;
 - shared client filter sheet presentation contract for program facets and chips;
-- History/Recovery routing and legacy Discover redirects in `page.ts`; unified
-  local-first Library orchestration in `program-library.ts`, address deduplication
-  and Local/Update/Web ordering in `program-catalog.ts`; compact chrome and filter
-  sheet in `program-browser.ts`, and styles in `browser.css`;
-- read-only comparison and explicit update application in `program-update.ts`;
-- program discovery HTTP client in `discovery-api.ts` (no browser relay SDK);
-- expandable local/remote cards in `program-card.ts` and `program-preview.ts`;
+- Library/History/Recovery routing in `page.ts`;
+- local-only Library orchestration in `program-library.ts`, compact chrome and
+  filter sheets in `program-browser.ts`, and styles in `browser.css`;
+- expandable local cards in `program-card.ts` and `program-preview.ts`;
 - derived program taxonomy/search in `program-taxonomy.ts`;
 - program editor;
 - program builder dialog in `program-builder.ts`, pure prescription/block
@@ -1265,15 +1016,12 @@ exercise client public components where appropriate
 program/session APIs
 public local profile API for saved equipment and weight units
 public profile weight-unit conversion helpers
-program discovery API
 Quick Workout public recovery panel
 ```
 
 ## Must not depend on
 
 - server implementation files;
-- Nostr signer;
-- Monero wallet library.
 
 ---
 
@@ -1334,7 +1082,6 @@ client shared formatting
 
 - recalculate recovery thresholds;
 - duplicate backend recovery math;
-- depend on AI, Nostr, or Monero.
 
 ---
 
@@ -1356,20 +1103,12 @@ src/client/profile/
 - units;
 - profile-related settings.
 
-When Nostr is enabled, this feature may display Nostr-derived identity information
-returned safely by the server.
-The application shell passes the safe `nostrIdentity` capability to Settings.
-The Profile identity section requires both Nostr enabled and a nonempty
-`NOSTR_NSEC` configured; public discovery (`nostr`) does not imply identity.
-Training and Equipment remain available. Configuration retains only an
-`identityEnabled` boolean for this visibility contract, never the key value.
+The current local-only Settings page presents Training and Equipment. Profile
+identity controls are hidden; the shell passes no identity capability.
 
 ## Must not
 
-- receive nsec;
 - parse private keys;
-- connect to relays directly unless architecture is explicitly changed;
-- receive Monero seed material.
 
 ---
 
@@ -1406,43 +1145,6 @@ client shared API
 
 - duplicate backend generation/scoring logic;
 - create client-only workout sessions;
-- depend on AI, Nostr, or Monero.
-
----
-
-# 26. Exercise catalog client (Nostr)
-
-## Location
-
-```text
-src/client/exercises/catalog-api.ts
-```
-
-## Owns
-
-- official Workstr/Nostr exercise catalog API adapter consumed by the app shell
-  to inject the optional `ExerciseCatalog` contract into Exercises;
-- catalog loading and local import API contracts;
-- no standalone Discover product UI (removed; `/exercises/discover` redirects to Exercises).
-
-## Availability
-
-Catalog import may be inactive when Nostr is disabled.
-
-## May depend on
-
-```text
-safe Nostr-backed server APIs
-Exercise client public types and formatting
-client shared
-```
-
-## Must not depend on
-
-- server Nostr internals;
-- nsec;
-- Monero seed;
-- relay libraries directly.
 
 ---
 
@@ -1565,18 +1267,6 @@ Tests should mirror feature ownership.
 
 Recommended structure:
 
-```text
-tests/
-├── exercises/
-├── programs/
-├── sessions/
-├── statistics/
-├── recovery/
-├── ai/
-├── nostr/
-├── monero/
-└── architecture/
-```
 
 Feature tests should load only the smallest practical dependency set.
 
@@ -1590,8 +1280,6 @@ Example capabilities:
 
 ```text
 ai
-nostr
-moneroWallet
 ```
 
 Server configuration determines whether a capability is enabled.
@@ -1698,12 +1386,7 @@ src/server/auth/
 
 Authentication should remain separate from:
 
-- Nostr identity;
 - local training profile;
-- Monero wallet.
-
-Nostr identity should not automatically become Setrai authentication unless a
-future architecture decision explicitly changes that model.
 
 ---
 
@@ -1734,7 +1417,7 @@ Example:
 ```ts
 programService.getProgram(id)
 programService.createProgram(input)
-programService.getPublishableProgram(id)
+programService.getProgram(id)
 ```
 
 Do not expose every internal helper simply because another module wants access.
@@ -1755,7 +1438,7 @@ For example:
 src/server/programs/validator.ts
 ```
 
-should not normally be imported by Nostr or AI.
+should not normally be imported by AI.
 
 They should import:
 
@@ -1793,17 +1476,6 @@ AI
 core service contracts
 ```
 
-```text
-Nostr
- ↓
-core service contracts
-```
-
-```text
-Monero
- ↓
-wallet/node adapters
-```
 
 Avoid circular feature dependencies.
 
@@ -1830,11 +1502,6 @@ src/client/shared/ui/
 
 Do not read:
 
-```text
-src/server/nostr/
-src/server/monero/
-src/server/ai/
-```
 
 unless explicitly required.
 
@@ -1909,38 +1576,6 @@ Then only the service contracts required by the task.
 
 ---
 
-## Nostr publish change
-
-Read:
-
-```text
-docs/instruction.md → Nostr
-docs/security.md → Nostr secrets
-docs/modules.md → Nostr
-src/server/nostr/
-```
-
-Then the relevant core service contract.
-
-Do not scan all training modules.
-
----
-
-## Monero send change
-
-Read:
-
-```text
-docs/instruction.md → Monero
-docs/security.md → Monero wallet
-docs/modules.md → Monero
-src/server/monero/
-```
-
-Do not read Nostr unless the change specifically involves creator tipping.
-
----
-
 # 40. Updating this map
 
 Update `docs/modules.md` whenever:
@@ -1994,13 +1629,13 @@ integration internals
 
 the module architecture has degraded and should be corrected.
 
-
 # 42. Deployment packaging
 
 Deployment owns `Dockerfile`, `.dockerignore`, `deploy/compose.yaml` (public
 image installer), the optional source-build override `deploy/compose.build.yaml`,
 and `deploy/.env.example`. There is no root `compose.yaml`; install folders are
 empty directories that paste or download those templates.
+The image includes shared taxonomy and training-goal definitions in both stages.
 The multi-stage image builds the client and runs the existing server as a non-root
 user; persistent application data lives in the `/data` named volume. Secrets are
 supplied at runtime and never enter the Docker build context.

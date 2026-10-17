@@ -86,13 +86,12 @@ function renderHistoryView(page: HTMLElement, sessions: Session[], exercises: Ex
   page.append(calendar, list)
 }
 
-export async function renderWorkoutsPage(root: HTMLElement, enabled = false, mode: boolean | 'library' | 'history' | 'recovery' = false): Promise<void> {
-  const view = mode === true || mode === false ? 'library' : mode
+export async function renderWorkoutsPage(root: HTMLElement, view: 'library' | 'history' | 'recovery' = 'library'): Promise<void> {
   const history = view === 'history'
   const recovery = view === 'recovery'
   const page = document.createElement('div')
   page.className = `workouts-page workout-browser workout-browser--${view}`
-  const heading = workoutHeading(view, enabled)
+  const heading = workoutHeading(view)
   const state = document.createElement('p')
   state.className = 'workout-browser-status'
   state.setAttribute('role', 'status')
@@ -118,7 +117,7 @@ export async function renderWorkoutsPage(root: HTMLElement, enabled = false, mod
     }
     skeleton?.remove()
     state.textContent = ''
-    await renderProgramLibrary(page, enabled, sessionLinks)
+    await renderProgramLibrary(page, sessionLinks)
   } catch (error) {
     skeleton?.remove()
     state.remove()
@@ -128,7 +127,7 @@ export async function renderWorkoutsPage(root: HTMLElement, enabled = false, mod
       message: readableApiError(error),
       className: 'workouts-empty',
     })
-    bindPageRetry(viewError, () => { void renderWorkoutsPage(root, enabled, view) })
+    bindPageRetry(viewError, () => { void renderWorkoutsPage(root, view) })
     page.append(viewError)
   }
 }

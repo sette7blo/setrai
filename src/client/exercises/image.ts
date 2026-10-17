@@ -1,11 +1,17 @@
 import { Dumbbell } from 'lucide'
 import { iconElement } from '../app/navigation.js'
 
+export function localExerciseImageUrl(value: string): string {
+  return /^\/(?:images|media\/exercises)\/[a-zA-Z0-9_./-]+$/.test(value)
+    && !value.split('/').includes('..') ? value : ''
+}
+
 export function createExerciseImage(
   imageUrl: string,
   alt: string,
   className = 'exercise-image'
 ): HTMLElement {
+  imageUrl = localExerciseImageUrl(imageUrl)
   const frame = document.createElement('div')
   frame.className = `${className} exercise-image-frame`
 
@@ -39,5 +45,5 @@ export function createExerciseImage(
 }
 
 export function imageFallbackState(imageUrl: string, failed: boolean): 'image' | 'fallback' {
-  return imageUrl && !failed ? 'image' : 'fallback'
+  return localExerciseImageUrl(imageUrl) && !failed ? 'image' : 'fallback'
 }

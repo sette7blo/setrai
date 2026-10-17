@@ -1,6 +1,6 @@
-export type CapabilityKey = 'ai' | 'nostr' | 'moneroWallet'
+export type CapabilityKey = 'ai'
 
-export type Capabilities = Record<CapabilityKey, boolean> & { nostrIdentity?: boolean }
+export type Capabilities = Record<CapabilityKey, boolean>
 
 export type HttpMethod =
   | 'GET'

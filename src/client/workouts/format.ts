@@ -40,9 +40,6 @@ export function normalizeProgram(payload: ProgramApiPayload): Program {
     tags: textArray(payload.tags),
     isTemporary: Boolean(payload.isTemporary ?? payload.is_temporary),
     blocks: payload.blocks ?? [],
-    nostrAddress: payload.nostrAddress ?? null,
-    nostrPubkey: payload.nostrPubkey ?? null,
-    nostrEventId: payload.nostrEventId ?? null,
     exercises: (payload.exercises ?? [])
       .map(normalizeProgramExercise)
       .sort((a, b) => a.position - b.position)

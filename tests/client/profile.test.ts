@@ -6,15 +6,14 @@ import { ApiClient } from '../../src/client/shared/api/client.js'
 import { normalizeProfile, updateProfile } from '../../src/client/profile/api.js'
 import { effectiveTrainingGoal, equipmentLabel, goalLabel, goalPrescription, TRAINING_GOALS } from '../../src/client/profile/equipment.js'
 
-test('settings gates identity on the Nostr identity capability and keeps training preferences', () => {
+test('settings exposes training and equipment without a local identity section', () => {
   const page = readFileSync('src/client/profile/page.ts', 'utf8')
   const app = readFileSync('src/client/app/application.ts', 'utf8')
-  assert.match(app, /renderProfilePage\(container, capabilities\.nostrIdentity === true\)/)
-  assert.match(page, /renderProfilePage\(root: HTMLElement, nostrIdentityEnabled = false\)/)
-  assert.match(page, /if \(state\.nostrIdentityEnabled\) list\.append\(profileSection/)
-  assert.match(page, /\n  list\.append\(trainingSection\(state,.*equipmentSection\(state,/)
-  assert.match(page, /renderLoaded\(root, \{ profile, message: '', nostrIdentityEnabled \}\)/)
-  assert.match(page, /renderProfilePage\(root, nostrIdentityEnabled\)/)
+  assert.match(app, /renderProfilePage\(container\)/)
+  assert.match(page, /renderProfilePage\(root: HTMLElement\)/)
+  assert.match(page, /list\.append\(trainingSection\(state,.*equipmentSection\(state,/)
+  assert.doesNotMatch(page, /profileSection|Display name|Avatar URL/)
+  assert.match(page, /renderLoaded\(root, \{ profile, message: '' \}\)/)
 })
 
 test('normalizes Profile API payload', () => {

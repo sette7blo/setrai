@@ -45,6 +45,34 @@ test('normalizeExerciseWrite rejects unsafe image urls', () => {
   )
 })
 
+test('exercise images accept only bundled paths and local uploads', () => {
+  for (const imageUrl of ['https://example.test/exercise.png', '//example.test/a.png',
+    '/images/../../remote.png', '/images/seed/../../a.png', '/images/%2e%2e/a.png',
+    '/images/a.png?redirect=https://example.test', '/images/seed/..\\evil.png']) {
+    for (const partial of [false, true]) {
+      assert.throws(() => normalizeExerciseWrite({ name: 'Local', imageUrl }, { partial }), /local exercise image path/)
+    }
+  }
+  for (const imageUrl of ['', '/images/exercises/seed/pushups.webp', '/media/exercises/upload.png']) {
+    assert.equal(normalizeExerciseWrite({ name: 'Local', imageUrl }).image_url, imageUrl)
+  }
+})
+
+test('legacy remote exercise images are hidden without fetching or modifying stored records', () => {
+  const { db, directory } = createTestDatabase()
+  try {
+    const service = createExerciseService(db)
+    const exercise = service.createExercise({ name: 'Legacy exercise' })
+    db.prepare('UPDATE exercises SET image_url = ? WHERE id = ?')
+      .run('https://example.test/old.png', exercise.id)
+    for (const result of [service.getExercise(exercise.id), service.getExerciseBySlug(exercise.slug), ...service.listExercises()]) {
+      assert.equal(result.image_url, '')
+    }
+    assert.equal(db.prepare('SELECT image_url FROM exercises WHERE id = ?').get(exercise.id).image_url,
+      'https://example.test/old.png')
+  } finally { db.close(); fs.rmSync(directory, { recursive: true, force: true }) }
+})
+
 test('normalizeExerciseWrite canonicalizes supported taxonomy aliases', () => {
   const body = normalizeExerciseWrite({
     name: 'Incline press',

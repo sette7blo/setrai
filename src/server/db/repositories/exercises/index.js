@@ -10,7 +10,7 @@ import {
 } from './slug.js'
 
 const ALLOWED_UPDATE_FIELDS = [
-  'catalog_baseline',
+
   'name',
   'description',
   'category',
@@ -22,17 +22,15 @@ const ALLOWED_UPDATE_FIELDS = [
   'tags',
   'instructions',
   'image_url',
-  'image_publish_url',
   'favourite',
   'default_sets',
   'default_reps',
   'default_rest',
   'source_type',
   'status',
-  'nostr_event_id',
-  'nostr_pubkey',
-  'nostr_address',
-  'nostr_published_at'
+  'seed_key',
+  'seed_revision',
+  'seed_baseline'
 ]
 
 function buildListQuery({ search, favourite, status }) {
@@ -135,12 +133,12 @@ export function createExerciseRepository(db) {
         INSERT INTO exercises (
           slug, name, description, category, muscle_group,
           muscles, equipment, difficulty, movement_type, tags, instructions,
-          image_url, image_publish_url, favourite,
+          image_url, favourite,
           default_sets, default_reps, default_rest,
-          source_type, status, nostr_event_id, nostr_pubkey,
-          nostr_address, nostr_published_at
+          source_type, status,
+          seed_key, seed_revision, seed_baseline
         )
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `)
       .run(
         slug,
@@ -155,17 +153,15 @@ export function createExerciseRepository(db) {
         values.tags ?? '[]',
         values.instructions ?? '[]',
         values.image_url ?? '',
-        values.image_publish_url ?? '',
         values.favourite ?? 0,
         values.default_sets ?? 3,
         values.default_reps ?? '8-12',
         values.default_rest ?? 90,
         values.source_type ?? 'manual',
         values.status ?? 'active',
-        values.nostr_event_id ?? null,
-        values.nostr_pubkey ?? null,
-        values.nostr_address ?? null,
-        values.nostr_published_at ?? null
+        values.seed_key ?? null,
+        values.seed_revision ?? 0,
+        values.seed_baseline ?? null
       )
 
     return getById(Number(result.lastInsertRowid))
@@ -220,6 +216,14 @@ export function createExerciseRepository(db) {
   }
 
   function remove(id) {
+    const existing = getById(id)
+    if (existing?.seed_key) {
+      db.prepare(`
+        INSERT INTO seed_tombstones (entity_type, seed_key)
+        VALUES ('exercise', ?)
+        ON CONFLICT(entity_type, seed_key) DO NOTHING
+      `).run(existing.seed_key)
+    }
     const result = db
       .prepare(`DELETE FROM exercises WHERE id = ?`)
       .run(id)

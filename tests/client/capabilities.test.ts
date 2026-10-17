@@ -12,34 +12,28 @@ import {
 
 test('capabilities parsing keeps missing or malformed integrations disabled', () => {
   assert.deepEqual(
-    parseCapabilities({ ai: true, nostr: 'yes' }),
+    parseCapabilities({ ai: true }),
     {
-      ai: true,
-      nostr: false,
-      nostrIdentity: false,
-      moneroWallet: false
+      ai: true
     }
   )
 
   assert.deepEqual(
     parseCapabilities(null),
     {
-      ai: false,
-      nostr: false,
-      nostrIdentity: false,
-      moneroWallet: false
+      ai: false
     }
   )
 })
 
 test('capability label avoids disabled integration placeholders', () => {
   assert.equal(
-    capabilityLabel({ ai: false, nostr: false, moneroWallet: false }),
+    capabilityLabel({ ai: false }),
     'Self-hosted training mode'
   )
 
   assert.equal(
-    capabilityLabel({ ai: true, nostr: false, moneroWallet: false }),
+    capabilityLabel({ ai: true }),
     'Training plus ai'
   )
 })
@@ -56,13 +50,4 @@ test('home body route stays under Home primary navigation', () => {
   assert.equal(primaryNavPath('/statistics/body'), '/statistics')
   assert.equal(primaryNavPath('/statistics/training'), '/statistics')
   assert.equal(primaryNavPath('/'), '/statistics')
-})
-
-
-test('public discovery does not imply a configured identity', () => {
-  assert.equal(parseCapabilities({ nostr: true }).nostrIdentity, false)
-  assert.equal(parseCapabilities({ nostr: true, nostrIdentity: 'true' }).nostrIdentity, false)
-  assert.equal(parseCapabilities({ nostr: false, nostrIdentity: true }).nostrIdentity, false)
-  assert.equal(parseCapabilities({ nostr: true, nostrIdentity: true }).nostrIdentity, true)
-  assert.equal(capabilityLabel({ ai: false, nostr: true, nostrIdentity: true, moneroWallet: false }), 'Training plus nostr')
 })

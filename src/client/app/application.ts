@@ -1,6 +1,5 @@
 import type { Capabilities } from '../shared/api/types.js'
 import { readableApiError } from '../shared/api/errors.js'
-import { loadCatalog, importCatalogExercise } from '../exercises/catalog-api.js'
 import { renderExerciseDetail } from '../exercises/detail-page.js'
 import { renderExerciseEditor } from '../exercises/editor-page.js'
 import { renderExerciseLibrary } from '../exercises/page.js'
@@ -12,7 +11,9 @@ import { renderProfilePage } from '../profile/page.js'
 import { Settings } from 'lucide'
 import {
   iconElement,
-  NAVIGATION_ITEMS
+  NAVIGATION_ITEMS,
+  DESKTOP_NAVIGATION_ITEMS,
+  type NavigationItem
 } from './navigation.js'
 import {
   capabilityLabel,
@@ -26,13 +27,7 @@ import {
 import { installMenuNavigation } from './menu-navigation.js'
 import { loadCapabilities } from './capabilities.js'
 
-function navLink(itemPath: string, activePath: string): HTMLAnchorElement {
-  const item = NAVIGATION_ITEMS.find((entry) => entry.path === itemPath)
-
-  if (!item) {
-    throw new Error(`Unknown navigation item: ${itemPath}`)
-  }
-
+function navLink(item: NavigationItem, activePath: string): HTMLAnchorElement {
   const link = document.createElement('a')
   link.href = item.path
   link.className = item.path === activePath
@@ -56,8 +51,8 @@ function desktopNavigation(activePath: string): HTMLElement {
   nav.className = 'sidebar-nav'
   nav.setAttribute('aria-label', 'Primary navigation')
 
-  for (const item of NAVIGATION_ITEMS) {
-    nav.append(navLink(item.path, activePath))
+  for (const item of DESKTOP_NAVIGATION_ITEMS) {
+    nav.append(navLink(item, activePath))
   }
 
   return nav
@@ -69,7 +64,7 @@ function mobileNavigation(activePath: string): HTMLElement {
   nav.setAttribute('aria-label', 'Primary navigation')
 
   for (const item of NAVIGATION_ITEMS) {
-    nav.append(navLink(item.path, activePath))
+    nav.append(navLink(item, activePath))
   }
 
   return nav
@@ -125,46 +120,39 @@ async function renderRoute(container: HTMLElement, capabilities: Capabilities): 
     return
   }
 
-  if (path === '/exercises' || path === '/exercises/discover') {
-    if (path === '/exercises/discover') window.history.replaceState({}, '', `/exercises${window.location.search}`)
-    await renderExerciseLibrary(container, capabilities.nostr ? { load: loadCatalog, save: importCatalogExercise } : undefined)
+  if (path === '/exercises') {
+    await renderExerciseLibrary(container)
     return
   }
 
   if (path === '/workouts') {
-    await renderWorkoutsPage(container, capabilities.nostr)
-    return
-  }
-
-  if (path === '/workouts/discover') {
-    window.history.replaceState({}, '', `/workouts${window.location.search}`)
-    await renderWorkoutsPage(container, capabilities.nostr, 'library')
+    await renderWorkoutsPage(container)
     return
   }
 
   if (path === '/workouts/history') {
-    await renderWorkoutsPage(container, capabilities.nostr, 'history')
+    await renderWorkoutsPage(container, 'history')
     return
   }
 
   if (path === '/workouts/recovery') {
-    await renderWorkoutsPage(container, capabilities.nostr, 'recovery')
+    await renderWorkoutsPage(container, 'recovery')
     return
   }
 
   if (path === '/quick-workout') {
     window.history.replaceState({}, '', '/workouts/recovery')
-    await renderWorkoutsPage(container, capabilities.nostr, 'recovery')
+    await renderWorkoutsPage(container, 'recovery')
     return
   }
 
   if (path === '/recovery') {
-    await renderWorkoutsPage(container, capabilities.nostr, 'recovery')
+    await renderWorkoutsPage(container, 'recovery')
     return
   }
 
   if (path === '/profile') {
-    await renderProfilePage(container, capabilities.nostrIdentity === true)
+    await renderProfilePage(container)
     return
   }
 

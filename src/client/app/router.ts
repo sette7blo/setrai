@@ -97,7 +97,7 @@ export function findRoute(path: string): RouteDefinition {
 
 export function capabilityLabel(capabilities: Capabilities): string {
   const enabled = Object.entries(capabilities)
-    .filter(([key, value]) => key !== 'nostrIdentity' && value)
+    .filter(([, value]) => value)
     .map(([key]) => key)
 
   return enabled.length === 0

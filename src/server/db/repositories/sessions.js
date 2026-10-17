@@ -14,9 +14,7 @@ function mapSessionRow(row, sets = []) {
     notes: row.notes,
     sets,
     plan: row.plan_json ? JSON.parse(row.plan_json) : null,
-    runtime: JSON.parse(row.runtime_json || '{}'),
-    summaryEventId: row.summary_event_id ?? null,
-    summaryImageUrl: row.summary_image_url ?? null
+    runtime: JSON.parse(row.runtime_json || '{}')
   }
 }
 

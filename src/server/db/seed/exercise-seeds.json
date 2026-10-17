@@ -1,0 +1,2070 @@
+[
+  {
+    "seedKey": "setrai.exercise.air-bike",
+    "revision": 1,
+    "slug": "air-bike",
+    "name": "Air Bike",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "core",
+    "muscles": [
+      "shoulders",
+      "chest",
+      "back",
+      "biceps",
+      "triceps",
+      "quadriceps",
+      "hamstrings",
+      "glutes",
+      "calves"
+    ],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "compound",
+    "tags": [
+      "pull",
+      "compound"
+    ],
+    "instructions": [
+      "Lie flat on the floor with your lower back pressed to the ground. For this exercise, you will need to put your hands beside your head. Be careful however to not strain with the neck as you perform it. Now lift your shoulders into the crunch position.",
+      "Bring knees up to where they are perpendicular to the floor, with your lower legs parallel to the floor. This will be your starting position.",
+      "Now simultaneously, slowly go through a cycle pedal motion kicking forward with the right leg and bringing in the knee of the left leg. Bring your right elbow close to your left knee by crunching to the side, as you breathe out.",
+      "Go back to the initial position as you breathe in.",
+      "Crunch to the opposite side as you cycle your legs and bring closer your left elbow to your right knee and exhale.",
+      "Continue alternating in this manner until all of the recommended repetitions for each side have been completed."
+    ],
+    "image_url": "/images/exercises/seed/air-bike.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.all-fours-quad-stretch",
+    "revision": 1,
+    "slug": "all-fours-quad-stretch",
+    "name": "All Fours Quad Stretch",
+    "description": "",
+    "category": "stretching",
+    "muscle_group": "quadriceps",
+    "muscles": [],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "intermediate",
+    "movement_type": "",
+    "tags": [
+      "static"
+    ],
+    "instructions": [
+      "Start off on your hands and knees, then lift your leg off the floor and hold the foot with your hand.",
+      "Use your hand to hold the foot or ankle, keeping the knee fully flexed, stretching the quadriceps and hip flexors.",
+      "Focus on extending your hips, thrusting them towards the floor. Hold for 10-20 seconds and then switch sides."
+    ],
+    "image_url": "/images/exercises/seed/all-fours-quad-stretch.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.alternate-hammer-curl",
+    "revision": 1,
+    "slug": "alternate-hammer-curl",
+    "name": "Alternate Hammer Curl",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "biceps",
+    "muscles": [
+      "forearms"
+    ],
+    "equipment": [
+      "dumbbells"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "isolation",
+    "tags": [
+      "pull",
+      "isolation"
+    ],
+    "instructions": [
+      "Stand up with your torso upright and a dumbbell in each hand being held at arms length. The elbows should be close to the torso.",
+      "The palms of the hands should be facing your torso. This will be your starting position.",
+      "While holding the upper arm stationary, curl the right weight forward while contracting the biceps as you breathe out. Continue the movement until your biceps is fully contracted and the dumbbells are at shoulder level. Hold the contracted position for a second as you squeeze the biceps. Tip: Only the forearms should move.",
+      "Slowly begin to bring the dumbbells back to starting position as your breathe in.",
+      "Repeat the movement with the left hand. This equals one repetition.",
+      "Continue alternating in this manner for the recommended amount of repetitions."
+    ],
+    "image_url": "/images/exercises/seed/alternate-hammer-curl.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.alternate-heel-touchers",
+    "revision": 1,
+    "slug": "alternate-heel-touchers",
+    "name": "Alternate Heel Touchers",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "core",
+    "muscles": [
+      "obliques"
+    ],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "isolation",
+    "tags": [
+      "pull",
+      "isolation"
+    ],
+    "instructions": [
+      "Lie on the floor with the knees bent and the feet on the floor around 18-24 inches apart. Your arms should be extended by your side. This will be your starting position.",
+      "Crunch over your torso forward and up about 3-4 inches to the right side and touch your right heel as you hold the contraction for a second. Exhale while performing this movement.",
+      "Now go back slowly to the starting position as you inhale.",
+      "Now crunch over your torso forward and up around 3-4 inches to the left side and touch your left heel as you hold the contraction for a second. Exhale while performing this movement and then go back to the starting position as you inhale. Now that both heels have been touched, that is considered 1 repetition.",
+      "Continue alternating sides in this manner until all prescribed repetitions are done."
+    ],
+    "image_url": "/images/exercises/seed/alternate-heel-touchers.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.alternating-renegade-row",
+    "revision": 1,
+    "slug": "alternating-renegade-row",
+    "name": "Alternating Renegade Row",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "back",
+    "muscles": [
+      "chest",
+      "lats",
+      "upper-back",
+      "biceps",
+      "triceps",
+      "core"
+    ],
+    "equipment": [
+      "dumbbells"
+    ],
+    "difficulty": "advanced",
+    "movement_type": "compound",
+    "tags": [
+      "pull",
+      "compound"
+    ],
+    "instructions": [
+      "Place two dumbbells on the floor about shoulder width apart. Position yourself on your toes and your hands as though you were doing a pushup, with the body straight and extended. Use the handles of the dumbbells to support your upper body. You may need to position your feet wide for support.",
+      "Push one dumbbell into the floor and row the other kettlebell, retracting the shoulder blade of the working side as you flex the elbow, pulling it to your side.",
+      "Then lower the dumbbell to the floor and begin the dumbbell in the opposite hand. Repeat for several reps."
+    ],
+    "image_url": "/images/exercises/seed/alternating-renegade-row.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.ankle-circles",
+    "revision": 1,
+    "slug": "ankle-circles",
+    "name": "Ankle Circles",
+    "description": "",
+    "category": "stretching",
+    "muscle_group": "calves",
+    "muscles": [],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "isolation",
+    "tags": [
+      "pull",
+      "isolation"
+    ],
+    "instructions": [
+      "Use a sturdy object like a squat rack to hold yourself.",
+      "Lift the right leg in the air (just around 2 inches from the floor) and perform a circular motion with the big toe. Pretend that you are drawing a big circle with it. Tip: One circle equals 1 repetition. Breathe normally as you perform the movement.",
+      "When you are done with the right foot, then repeat with the left leg."
+    ],
+    "image_url": "/images/exercises/seed/ankle-circles.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.arnold-dumbbell-press",
+    "revision": 1,
+    "slug": "arnold-dumbbell-press",
+    "name": "Arnold Dumbbell Press",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "shoulders",
+    "muscles": [
+      "triceps"
+    ],
+    "equipment": [
+      "dumbbells"
+    ],
+    "difficulty": "intermediate",
+    "movement_type": "compound",
+    "tags": [
+      "push",
+      "compound"
+    ],
+    "instructions": [
+      "Stand and hold two dumbbells in front of you at about upper chest level with your palms facing your body and your elbows bent. Tip: Your arms should be next to your torso. The starting position should look like the contracted portion of a dumbbell curl.",
+      "Now to perform the movement, raise the dumbbells as you rotate the palms of your hands until they are facing forward.",
+      "Continue lifting the dumbbells until your arms are extended above you in straight arm position. Breathe out as you perform this portion of the movement.",
+      "After a second pause at the top, begin to lower the dumbbells to the original position by rotating the palms of your hands towards you. Tip: The left arm will be rotated in a counter clockwise manner while the right one will be rotated clockwise. Breathe in as you perform this portion of the movement.",
+      "Repeat for the recommended amount of repetitions."
+    ],
+    "image_url": "/images/exercises/seed/arnold-dumbbell-press.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.bear-crawl",
+    "revision": 1,
+    "slug": "bear-crawl",
+    "name": "Bear Crawl",
+    "description": "A loaded locomotion drill that trains core stiffness, shoulder stability, hips, coordination, and total-body endurance.",
+    "category": "strength",
+    "muscle_group": "full-body",
+    "muscles": [
+      "shoulders",
+      "triceps",
+      "core",
+      "quadriceps",
+      "glutes"
+    ],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "intermediate",
+    "movement_type": "",
+    "tags": [
+      "full-body",
+      "locomotion",
+      "core",
+      "shoulder-stability",
+      "conditioning"
+    ],
+    "instructions": [
+      "Start on hands and knees with hands under shoulders and knees under hips.",
+      "Lift the knees a few inches off the floor while keeping the back flat.",
+      "Move the opposite hand and foot forward together for a small controlled step.",
+      "Continue crawling forward while keeping hips low and stable.",
+      "Avoid twisting, bouncing, or letting the knees touch the floor between steps.",
+      "Crawl backward or sideways for variation once forward movement is controlled."
+    ],
+    "image_url": "/images/exercises/seed/bear-crawl.webp",
+    "default_sets": 3,
+    "default_reps": "20-40",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.bench-dips",
+    "revision": 1,
+    "slug": "bench-dips",
+    "name": "Tricep Dips",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "triceps",
+    "muscles": [
+      "chest",
+      "shoulders"
+    ],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "compound",
+    "tags": [
+      "push",
+      "compound"
+    ],
+    "instructions": [
+      "For this exercise you will need to place a bench behind your back. With the bench perpendicular to your body, and while looking away from it, hold on to the bench on its edge with the hands fully extended, separated at shoulder width. The legs will be extended forward, bent at the waist and perpendicular to your torso. This will be your starting position.",
+      "Slowly lower your body as you inhale by bending at the elbows until you lower yourself far enough to where there is an angle slightly smaller than 90 degrees between the upper arm and the forearm. Tip: Keep the elbows as close as possible throughout the movement. Forearms should always be pointing down.",
+      "Using your triceps to bring your torso up again, lift yourself back to the starting position.",
+      "Repeat for the recommended amount of repetitions."
+    ],
+    "image_url": "/images/exercises/seed/bench-dips.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.bent-over-two-dumbbell-row",
+    "revision": 1,
+    "slug": "bent-over-two-dumbbell-row",
+    "name": "Bent Over Two-Dumbbell Row",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "back",
+    "muscles": [
+      "biceps",
+      "lats",
+      "posterior-deltoid"
+    ],
+    "equipment": [
+      "dumbbells"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "compound",
+    "tags": [
+      "pull",
+      "compound"
+    ],
+    "instructions": [
+      "With a dumbbell in each hand (palms facing your torso), bend your knees slightly and bring your torso forward by bending at the waist; as you bend make sure to keep your back straight until it is almost parallel to the floor. Tip: Make sure that you keep the head up. The weights should hang directly in front of you as your arms hang perpendicular to the floor and your torso. This is your starting position.",
+      "While keeping the torso stationary, lift the dumbbells to your side (as you breathe out), keeping the elbows close to the body (do not exert any force with the forearm other than holding the weights). On the top contracted position, squeeze the back muscles and hold for a second.",
+      "Slowly lower the weight again to the starting position as you inhale.",
+      "Repeat for the recommended amount of repetitions."
+    ],
+    "image_url": "/images/exercises/seed/bent-over-two-dumbbell-row.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.bent-over-two-dumbbell-row-with-palms-in",
+    "revision": 1,
+    "slug": "bent-over-two-dumbbell-row-with-palms-in",
+    "name": "Bent Over Two-Dumbbell Row With Palms In",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "back",
+    "muscles": [
+      "lats",
+      "biceps"
+    ],
+    "equipment": [
+      "dumbbells"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "compound",
+    "tags": [
+      "pull",
+      "compound"
+    ],
+    "instructions": [
+      "With a dumbbell in each hand (palms facing each other), bend your knees slightly and bring your torso forward, by bending at the waist, while keeping the back straight until it is almost parallel to the floor. Tip: Make sure that you keep the head up. The weights should hang directly in front of you as your arms hang perpendicular to the floor and your torso. This is your starting position.",
+      "While keeping the torso stationary, lift the dumbbells to your side as you breathe out, squeezing your shoulder blades together. On the top contracted position, squeeze the back muscles and hold for a second.",
+      "Slowly lower the weight again to the starting position as you inhale.",
+      "Repeat for the recommended amount of repetitions."
+    ],
+    "image_url": "/images/exercises/seed/bent-over-two-dumbbell-row-with-palms-in.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.bird-dog",
+    "revision": 1,
+    "slug": "bird-dog",
+    "name": "Bird Dog",
+    "description": "A low-impact core and posterior-chain stability drill that trains anti-rotation control, spinal position, glutes, and shoulder coordination.",
+    "category": "strength",
+    "muscle_group": "core",
+    "muscles": [
+      "lower-back",
+      "shoulders",
+      "glutes"
+    ],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "",
+    "tags": [
+      "core",
+      "stability",
+      "anti-rotation",
+      "posterior-chain",
+      "low-impact"
+    ],
+    "instructions": [
+      "Start on hands and knees with hands under shoulders and knees under hips.",
+      "Brace the core and keep the spine neutral.",
+      "Reach one arm forward while extending the opposite leg backward.",
+      "Pause briefly with hips and shoulders square to the floor.",
+      "Return under control without shifting weight or arching the back.",
+      "Alternate sides for the target reps, moving slowly and deliberately."
+    ],
+    "image_url": "/images/exercises/seed/bird-dog.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 60,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.bodyweight-squat",
+    "revision": 1,
+    "slug": "bodyweight-squat",
+    "name": "Bodyweight Squat",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "quadriceps",
+    "muscles": [
+      "hamstrings",
+      "glutes"
+    ],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "compound",
+    "tags": [
+      "push",
+      "compound"
+    ],
+    "instructions": [
+      "Stand with your feet shoulder width apart. You can place your hands behind your head. This will be your starting position.",
+      "Begin the movement by flexing your knees and hips, sitting back with your hips.",
+      "Continue down to full depth if you are able,and quickly reverse the motion until you return to the starting position. As you squat, keep your head and chest up and push your knees out."
+    ],
+    "image_url": "/images/exercises/seed/bodyweight-squat.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.bulgarian-split-squat",
+    "revision": 1,
+    "slug": "bulgarian-split-squat",
+    "name": "Bulgarian Split Squat",
+    "description": "An advanced rear-foot-elevated split squat that heavily challenges the quadriceps, glutes, adductors, balance, and hip mobility using bodyweight only.",
+    "category": "strength",
+    "muscle_group": "quadriceps",
+    "muscles": [
+      "core",
+      "hamstrings",
+      "glutes"
+    ],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "advanced",
+    "movement_type": "compound",
+    "tags": [
+      "lower-body",
+      "unilateral",
+      "compound",
+      "rear-foot-elevated",
+      "balance"
+    ],
+    "instructions": [
+      "Stand a few feet in front of a bench, step, couch, or other stable raised surface.",
+      "Place the top of the back foot on the elevated surface and set the front foot far enough forward for a comfortable lunge.",
+      "Brace your core and lower under control by bending the front knee and hip.",
+      "Keep the front knee tracking over the toes and avoid pushing off the rear foot.",
+      "Descend until the front thigh is near parallel or your comfortable range ends.",
+      "Drive through the front foot to return to the starting position, then complete all reps before switching sides."
+    ],
+    "image_url": "/images/exercises/seed/bulgarian-split-squat.webp",
+    "default_sets": 3,
+    "default_reps": "6-10",
+    "default_rest": 120,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.burpees",
+    "revision": 1,
+    "slug": "burpees",
+    "name": "Burpees",
+    "description": "A full-body conditioning movement combining a squat, plank, push-up optional, and jump. Trains power, work capacity, and total-body coordination.",
+    "category": "cardio",
+    "muscle_group": "full-body",
+    "muscles": [
+      "chest",
+      "shoulders",
+      "triceps",
+      "core",
+      "quadriceps",
+      "glutes"
+    ],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "intermediate",
+    "movement_type": "compound",
+    "tags": [
+      "full-body",
+      "conditioning",
+      "plyometric",
+      "compound",
+      "high-intensity"
+    ],
+    "instructions": [
+      "Stand tall with feet about shoulder-width apart.",
+      "Squat down and place both hands on the floor in front of the feet.",
+      "Jump or step the feet back into a strong plank position.",
+      "Optionally perform a controlled push-up, or hold the plank for a low-impact version.",
+      "Jump or step the feet back toward the hands.",
+      "Stand up explosively and jump, reaching the hands overhead, then land softly and repeat."
+    ],
+    "image_url": "/images/exercises/seed/burpees.webp",
+    "default_sets": 3,
+    "default_reps": "8-15",
+    "default_rest": 120,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.cross-body-hammer-curl",
+    "revision": 1,
+    "slug": "cross-body-hammer-curl",
+    "name": "Cross Body Hammer Curl",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "biceps",
+    "muscles": [
+      "forearms"
+    ],
+    "equipment": [
+      "dumbbells"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "isolation",
+    "tags": [
+      "pull",
+      "isolation"
+    ],
+    "instructions": [
+      "Stand up straight with a dumbbell in each hand. Your hands should be down at your side with your palms facing in.",
+      "While keeping your palms facing in and without twisting your arm, curl the dumbbell of the right arm up towards your left shoulder as you exhale. Touch the top of the dumbbell to your shoulder and hold the contraction for a second.",
+      "Slowly lower the dumbbell along the same path as you inhale and then repeat the same movement for the left arm.",
+      "Continue alternating in this fashion until the recommended amount of repetitions is performed for each arm."
+    ],
+    "image_url": "/images/exercises/seed/cross-body-hammer-curl.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.crunches",
+    "revision": 1,
+    "slug": "crunches",
+    "name": "Crunches",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "core",
+    "muscles": [],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "isolation",
+    "tags": [
+      "pull",
+      "isolation"
+    ],
+    "instructions": [
+      "Lie flat on your back with your feet flat on the ground, or resting on a bench with your knees bent at a 90 degree angle. If you are resting your feet on a bench, place them three to four inches apart and point your toes inward so they touch.",
+      "Now place your hands lightly on either side of your head keeping your elbows in. Tip: Don't lock your fingers behind your head.",
+      "While pushing the small of your back down in the floor to better isolate your abdominal muscles, begin to roll your shoulders off the floor.",
+      "Continue to push down as hard as you can with your lower back as you contract your abdominals and exhale. Your shoulders should come up off the floor only about four inches, and your lower back should remain on the floor. At the top of the movement, contract your abdominals hard and keep the contraction for a second. Tip: Focus on slow, controlled movement - don't cheat yourself by using momentum.",
+      "After the one second contraction, begin to come down slowly again to the starting position as you inhale.",
+      "Repeat for the recommended amount of repetitions."
+    ],
+    "image_url": "/images/exercises/seed/crunches.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.dead-bug",
+    "revision": 1,
+    "slug": "dead-bug",
+    "name": "Dead Bug",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "core",
+    "muscles": [],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "compound",
+    "tags": [
+      "pull",
+      "compound"
+    ],
+    "instructions": [
+      "Begin lying on your back with your hands extended above you toward the ceiling.",
+      "Bring your feet, knees, and hips up to 90 degrees.",
+      "Exhale hard to bring your ribcage down and flatten your back onto the floor, rotating your pelvis up and squeezing your glutes. Hold this position throughout the movement. This will be your starting position.",
+      "Initiate the exercise by extending one leg, straightening the knee and hip to bring the leg just above the ground.",
+      "Maintain the position of your lumbar and pelvis as you perform the movement, as your back is going to want to arch.",
+      "Stay tight and return the working leg to the starting position.",
+      "Repeat on the opposite side, alternating until the set is complete."
+    ],
+    "image_url": "/images/exercises/seed/dead-bug.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.devils-press",
+    "revision": 1,
+    "slug": "devils-press",
+    "name": "Devil's Press",
+    "description": "The Devil's Press combines a burpee with a dumbbell shoulder press, creating a full-body explosive movement that builds strength, power, and cardiovascular endurance. This advanced exercise targets multiple muscle groups simultaneously while improving functional fitness and athletic performance.",
+    "category": "plyometrics",
+    "muscle_group": "quadriceps",
+    "muscles": [
+      "glutes",
+      "hamstrings",
+      "chest",
+      "shoulders",
+      "triceps",
+      "core"
+    ],
+    "equipment": [
+      "dumbbells"
+    ],
+    "difficulty": "advanced",
+    "movement_type": "compound",
+    "tags": [
+      "compound",
+      "full body",
+      "explosive",
+      "cardio",
+      "strength"
+    ],
+    "instructions": [
+      "Stand with feet shoulder-width apart, holding a dumbbell in each hand at shoulder height.",
+      "Drop into a squat position and place the dumbbells on the ground in front of you.",
+      "Jump or step your feet back into a plank position with hands on the dumbbells.",
+      "Perform a push-up while keeping your hands on the dumbbells.",
+      "Jump or step your feet back toward the dumbbells, returning to a squat position.",
+      "Explosively stand up while simultaneously pressing the dumbbells overhead to full arm extension.",
+      "Lower the dumbbells back to shoulder height and repeat for the desired number of reps."
+    ],
+    "image_url": "/images/exercises/seed/devils-press.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 120,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.dumbbell-bicep-curl",
+    "revision": 1,
+    "slug": "dumbbell-bicep-curl",
+    "name": "Dumbbell Bicep Curl",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "biceps",
+    "muscles": [
+      "forearms"
+    ],
+    "equipment": [
+      "dumbbells"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "isolation",
+    "tags": [
+      "pull",
+      "isolation"
+    ],
+    "instructions": [
+      "Stand up straight with a dumbbell in each hand at arm's length. Keep your elbows close to your torso and rotate the palms of your hands until they are facing forward. This will be your starting position.",
+      "Now, keeping the upper arms stationary, exhale and curl the weights while contracting your biceps. Continue to raise the weights until your biceps are fully contracted and the dumbbells are at shoulder level. Hold the contracted position for a brief pause as you squeeze your biceps.",
+      "Then, inhale and slowly begin to lower the dumbbells back to the starting position.",
+      "Repeat for the recommended amount of repetitions."
+    ],
+    "image_url": "/images/exercises/seed/dumbbell-bicep-curl.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.dumbbell-deadlift",
+    "revision": 1,
+    "slug": "dumbbell-deadlift",
+    "name": "Dumbbell Deadlift",
+    "description": "A lower body compound exercise where you lift dumbbells from the ground using hip and knee extension. This movement builds posterior chain strength, improves posture, and enhances functional pulling power while being accessible for all fitness levels.",
+    "category": "strength",
+    "muscle_group": "glutes",
+    "muscles": [
+      "hamstrings",
+      "quadriceps",
+      "lower-back",
+      "traps"
+    ],
+    "equipment": [
+      "dumbbells"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "compound",
+    "tags": [
+      "compound",
+      "pull",
+      "lower body",
+      "posterior chain",
+      "hip hinge"
+    ],
+    "instructions": [
+      "Stand with feet shoulder-width apart, dumbbells on the ground just outside your feet.",
+      "Bend at the hips and knees, keeping your chest up and back straight, and grip the dumbbells firmly.",
+      "Engage your core and drive through your heels to stand up, extending your hips and knees simultaneously.",
+      "Keep the dumbbells close to your body throughout the movement.",
+      "Pause briefly at the top, squeezing your glutes and hamstrings.",
+      "Lower the dumbbells back to the ground in a controlled manner by hinging at the hips and bending your knees.",
+      "Repeat for the desired number of repetitions."
+    ],
+    "image_url": "/images/exercises/seed/dumbbell-deadlift.webp",
+    "default_sets": 4,
+    "default_reps": "6-8",
+    "default_rest": 120,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.dumbbell-hammer-curl-to-press",
+    "revision": 1,
+    "slug": "dumbbell-hammer-curl-to-press",
+    "name": "Dumbbell Hammer Curl to Press",
+    "description": "A compound upper body exercise that combines a hammer curl with an overhead press in one fluid motion. This movement targets the biceps, shoulders, and triceps while building functional strength and coordination. The hammer grip variation reduces stress on the wrists while engaging the brachialis muscle.",
+    "category": "strength",
+    "muscle_group": "biceps",
+    "muscles": [
+      "shoulders",
+      "forearms",
+      "triceps"
+    ],
+    "equipment": [
+      "dumbbells"
+    ],
+    "difficulty": "intermediate",
+    "movement_type": "compound",
+    "tags": [
+      "compound",
+      "upper body",
+      "arms",
+      "shoulders",
+      "functional"
+    ],
+    "instructions": [
+      "Stand with feet shoulder-width apart, holding dumbbells at your sides with a neutral grip (palms facing each other).",
+      "Curl the dumbbells up toward your shoulders, keeping your elbows stationary and maintaining the neutral hammer grip.",
+      "At the top of the curl, rotate your wrists so your palms face forward.",
+      "Press the dumbbells overhead in a controlled manner, fully extending your arms.",
+      "Lower the dumbbells back down to shoulder height with palms facing forward.",
+      "Rotate your wrists back to neutral grip position and lower the dumbbells to your sides.",
+      "Repeat for the desired number of repetitions."
+    ],
+    "image_url": "/images/exercises/seed/dumbbell-hammer-curl-to-press.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.dumbbell-lateral-raise",
+    "revision": 1,
+    "slug": "dumbbell-lateral-raise",
+    "name": "Dumbbell Lateral Raise",
+    "description": "A shoulder isolation exercise where dumbbells are lifted out to the sides from a standing position, targeting the lateral deltoids. This movement builds shoulder width and improves shoulder stability and mobility.",
+    "category": "strength",
+    "muscle_group": "lateral-deltoid",
+    "muscles": [
+      "traps"
+    ],
+    "equipment": [
+      "dumbbells"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "isolation",
+    "tags": [
+      "isolation",
+      "shoulder",
+      "upper body",
+      "lateral deltoid"
+    ],
+    "instructions": [
+      "Stand upright with feet shoulder-width apart, holding a dumbbell in each hand at your sides with palms facing inward.",
+      "Maintain a slight bend in your elbows and engage your core.",
+      "Raise the dumbbells out to the sides in a controlled motion until your arms are parallel to the ground, leading with your elbows.",
+      "Pause briefly at the top, ensuring your shoulders are not shrugged up toward your ears.",
+      "Lower the dumbbells back to the starting position in a controlled manner.",
+      "Repeat for the desired number of repetitions."
+    ],
+    "image_url": "/images/exercises/seed/dumbbell-lateral-raise.webp",
+    "default_sets": 3,
+    "default_reps": "12-15",
+    "default_rest": 60,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.dumbbell-lunges",
+    "revision": 1,
+    "slug": "dumbbell-lunges",
+    "name": "Dumbbell Lunges",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "quadriceps",
+    "muscles": [
+      "calves",
+      "glutes",
+      "hamstrings"
+    ],
+    "equipment": [
+      "dumbbells"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "compound",
+    "tags": [
+      "push",
+      "compound"
+    ],
+    "instructions": [
+      "Stand with your torso upright holding two dumbbells in your hands by your sides. This will be your starting position.",
+      "Step forward with your right leg around 2 feet or so from the foot being left stationary behind and lower your upper body down, while keeping the torso upright and maintaining balance. Inhale as you go down. Note: As in the other exercises, do not allow your knee to go forward beyond your toes as you come down, as this will put undue stress on the knee joint. Make sure that you keep your front shin perpendicular to the ground.",
+      "Using mainly the heel of your foot, push up and go back to the starting position as you exhale.",
+      "Repeat the movement for the recommended amount of repetitions and then perform with the left leg."
+    ],
+    "image_url": "/images/exercises/seed/dumbbell-lunges.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.dumbbell-reverse-bicep-curl",
+    "revision": 1,
+    "slug": "dumbbell-reverse-bicep-curl",
+    "name": "Dumbbell Reverse Bicep Curl",
+    "description": "A variation of the traditional bicep curl performed with an overhand (pronated) grip, which emphasizes the brachialis and brachioradialis muscles while reducing biceps involvement. This exercise builds forearm strength and adds variety to arm training routines.",
+    "category": "strength",
+    "muscle_group": "biceps",
+    "muscles": [
+      "forearms"
+    ],
+    "equipment": [
+      "dumbbells"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "isolation",
+    "tags": [
+      "isolation",
+      "pull",
+      "upper body",
+      "arms",
+      "forearms"
+    ],
+    "instructions": [
+      "Stand upright with feet shoulder-width apart, holding a dumbbell in each hand at your sides.",
+      "Rotate your wrists so your palms face downward (pronated grip), keeping your elbows stationary at your sides.",
+      "Exhale and curl the dumbbells upward by bending your elbows, bringing them toward your shoulders.",
+      "Squeeze your forearms and brachialis at the top of the movement.",
+      "Inhale and slowly lower the dumbbells back to the starting position with control.",
+      "Repeat for the desired number of repetitions."
+    ],
+    "image_url": "/images/exercises/seed/dumbbell-reverse-bicep-curl.webp",
+    "default_sets": 3,
+    "default_reps": "10-12",
+    "default_rest": 60,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.dumbbell-shrug",
+    "revision": 1,
+    "slug": "dumbbell-shrug",
+    "name": "Dumbbell Shrug",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "back",
+    "muscles": [
+      "traps"
+    ],
+    "equipment": [
+      "dumbbells"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "isolation",
+    "tags": [
+      "pull",
+      "isolation"
+    ],
+    "instructions": [
+      "Stand erect with a dumbbell on each hand (palms facing your torso), arms extended on the sides.",
+      "Lift the dumbbells by elevating the shoulders as high as possible while you exhale. Hold the contraction at the top for a second. Tip: The arms should remain extended at all times. Refrain from using the biceps to help lift the dumbbells. Only the shoulders should be moving up and down.",
+      "Lower the dumbbells back to the original position.",
+      "Repeat for the recommended amount of repetitions."
+    ],
+    "image_url": "/images/exercises/seed/dumbbell-shrug.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.dumbbell-side-bend",
+    "revision": 1,
+    "slug": "dumbbell-side-bend",
+    "name": "Dumbbell Side Bend",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "core",
+    "muscles": [
+      "obliques"
+    ],
+    "equipment": [
+      "dumbbells"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "isolation",
+    "tags": [
+      "pull",
+      "isolation"
+    ],
+    "instructions": [
+      "Stand up straight while holding a dumbbell on the left hand (palms facing the torso) as you have the right hand holding your waist. Your feet should be placed at shoulder width. This will be your starting position.",
+      "While keeping your back straight and your head up, bend only at the waist to the right as far as possible. Breathe in as you bend to the side. Then hold for a second and come back up to the starting position as you exhale. Tip: Keep the rest of the body stationary.",
+      "Now repeat the movement but bending to the left instead. Hold for a second and come back to the starting position.",
+      "Repeat for the recommended amount of repetitions and then change hands."
+    ],
+    "image_url": "/images/exercises/seed/dumbbell-side-bend.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.dumbbell-squat",
+    "revision": 1,
+    "slug": "dumbbell-squat",
+    "name": "Dumbbell Squat",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "quadriceps",
+    "muscles": [
+      "calves",
+      "glutes",
+      "hamstrings",
+      "lower-back"
+    ],
+    "equipment": [
+      "dumbbells"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "compound",
+    "tags": [
+      "push",
+      "compound"
+    ],
+    "instructions": [
+      "Stand up straight while holding a dumbbell on each hand (palms facing the side of your legs).",
+      "Position your legs using a shoulder width medium stance with the toes slightly pointed out. Keep your head up at all times as looking down will get you off balance and also maintain a straight back. This will be your starting position. Note: For the purposes of this discussion we will use the medium stance described above which targets overall development; however you can choose any of the three stances discussed in the foot stances section.",
+      "Begin to slowly lower your torso by bending the knees as you maintain a straight posture with the head up. Continue down until your thighs are parallel to the floor. Tip: If you performed the exercise correctly, the front of the knees should make an imaginary straight line with the toes that is perpendicular to the front. If your knees are past that imaginary line (if they are past your toes) then you are placing undue stress on the knee and the exercise has been performed incorrectly.",
+      "Begin to raise your torso as you exhale by pushing the floor with the heel of your foot mainly as you straighten the legs again and go back to the starting position.",
+      "Repeat for the recommended amount of repetitions."
+    ],
+    "image_url": "/images/exercises/seed/dumbbell-squat.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.elbow-to-knee",
+    "revision": 1,
+    "slug": "elbow-to-knee",
+    "name": "Elbow to Knee",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "core",
+    "muscles": [
+      "obliques"
+    ],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "compound",
+    "tags": [
+      "pull",
+      "compound"
+    ],
+    "instructions": [
+      "Lie on the floor, crossing your right leg across your bent left knee. Clasp your hands behind your head, beginning with your shoulder blades on the ground. This will be your starting position.",
+      "Perform the motion by flexing the spine and rotating your torso to bring the left elbow to the right knee.",
+      "Return to the starting position and repeat the movement for the desired number of repetitions before switching sides."
+    ],
+    "image_url": "/images/exercises/seed/elbow-to-knee.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.freehand-jump-squat",
+    "revision": 1,
+    "slug": "freehand-jump-squat",
+    "name": "Freehand Jump Squat",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "quadriceps",
+    "muscles": [
+      "hamstrings",
+      "glutes",
+      "calves"
+    ],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "intermediate",
+    "movement_type": "compound",
+    "tags": [
+      "push",
+      "compound"
+    ],
+    "instructions": [
+      "Cross your arms over your chest.",
+      "With your head up and your back straight, position your feet at shoulder width.",
+      "Keeping your back straight and chest up, squat down as you inhale until your upper thighs are parallel, or lower, to the floor.",
+      "Now pressing mainly with the ball of your feet, jump straight up in the air as high as possible, using the thighs like springs. Exhale during this portion of the movement.",
+      "When you touch the floor again, immediately squat down and jump again.",
+      "Repeat for the recommended amount of repetitions."
+    ],
+    "image_url": "/images/exercises/seed/freehand-jump-squat.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.glute-kickback",
+    "revision": 1,
+    "slug": "glute-kickback",
+    "name": "Glute Kickback",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "glutes",
+    "muscles": [
+      "hamstrings"
+    ],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "compound",
+    "tags": [
+      "push",
+      "compound"
+    ],
+    "instructions": [
+      "Kneel on the floor or an exercise mat and bend at the waist with your arms extended in front of you (perpendicular to the torso) in order to get into a kneeling push-up position but with the arms spaced at shoulder width. Your head should be looking forward and the bend of the knees should create a 90-degree angle between the hamstrings and the calves. This will be your starting position.",
+      "As you exhale, lift up your right leg until the hamstrings are in line with the back while maintaining the 90-degree angle bend. Contract the glutes throughout this movement and hold the contraction at the top for a second. Tip: At the end of the movement the upper leg should be parallel to the floor while the calf should be perpendicular to it.",
+      "Go back to the initial position as you inhale and now repeat with the left leg.",
+      "Continue to alternate legs until all of the recommended repetitions have been performed."
+    ],
+    "image_url": "/images/exercises/seed/glute-kickback.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.hammer-curls",
+    "revision": 1,
+    "slug": "hammer-curls",
+    "name": "Hammer Curls",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "biceps",
+    "muscles": [
+      "forearms"
+    ],
+    "equipment": [
+      "dumbbells"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "isolation",
+    "tags": [
+      "pull",
+      "isolation"
+    ],
+    "instructions": [
+      "Stand up with your torso upright and a dumbbell on each hand being held at arms length. The elbows should be close to the torso.",
+      "The palms of the hands should be facing your torso. This will be your starting position.",
+      "Now, while holding your upper arm stationary, exhale and curl the weight forward while contracting the biceps. Continue to raise the weight until the biceps are fully contracted and the dumbbell is at shoulder level. Hold the contracted position for a brief moment as you squeeze the biceps. Tip: Focus on keeping the elbow stationary and only moving your forearm.",
+      "After the brief pause, inhale and slowly begin the lower the dumbbells back down to the starting position.",
+      "Repeat for the recommended amount of repetitions."
+    ],
+    "image_url": "/images/exercises/seed/hammer-curls.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.high-knees",
+    "revision": 1,
+    "slug": "high-knees",
+    "name": "High Knees",
+    "description": "A simple bodyweight cardio drill that raises heart rate while training running mechanics, hip flexors, calves, and coordination.",
+    "category": "cardio",
+    "muscle_group": "full-body",
+    "muscles": [
+      "quadriceps",
+      "calves",
+      "core"
+    ],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "",
+    "tags": [
+      "conditioning",
+      "warm-up",
+      "cardio",
+      "running-drill",
+      "low-skill"
+    ],
+    "instructions": [
+      "Stand tall with feet hip-width apart and arms bent like a running posture.",
+      "Run in place while driving one knee up toward hip height.",
+      "Switch legs quickly and coordinate the opposite arm with each knee drive.",
+      "Stay tall through the torso and avoid leaning backward.",
+      "Land softly on the balls of the feet.",
+      "Continue for the target time while keeping a steady rhythm."
+    ],
+    "image_url": "/images/exercises/seed/high-knees.webp",
+    "default_sets": 3,
+    "default_reps": "30-60",
+    "default_rest": 60,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.hollow-body-hold",
+    "revision": 1,
+    "slug": "hollow-body-hold",
+    "name": "Hollow Body Hold",
+    "description": "A foundational gymnastics core hold that trains anterior core tension, rib control, and total-body bracing.",
+    "category": "strength",
+    "muscle_group": "core",
+    "muscles": [
+      "quadriceps"
+    ],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "intermediate",
+    "movement_type": "",
+    "tags": [
+      "core",
+      "isometric",
+      "gymnastics",
+      "anti-extension",
+      "body-control"
+    ],
+    "instructions": [
+      "Lie on your back with arms overhead and legs extended.",
+      "Press the lower back firmly into the floor by tucking the ribs and pelvis.",
+      "Lift the shoulders and legs slightly off the floor while keeping the lower back down.",
+      "Reach long through the arms and legs without relaxing the brace.",
+      "Hold for the target time, breathing shallowly without losing position.",
+      "Make it easier by bending the knees or keeping the arms by the sides."
+    ],
+    "image_url": "/images/exercises/seed/hollow-body-hold.webp",
+    "default_sets": 3,
+    "default_reps": "20-40",
+    "default_rest": 60,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.jumping-jack",
+    "revision": 1,
+    "slug": "jumping-jack",
+    "name": "Jumping Jack",
+    "description": "A simple full-body cardio drill for warming up, conditioning circuits, and EMOM intervals. Jump the feet out while raising the arms overhead, then return to the starting stance with a steady rhythm.",
+    "category": "cardio",
+    "muscle_group": "calves",
+    "muscles": [
+      "abductors",
+      "adductors",
+      "shoulders"
+    ],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "",
+    "tags": [
+      "cardio",
+      "conditioning",
+      "bodyweight",
+      "plyometric",
+      "full-body",
+      "warm-up"
+    ],
+    "instructions": [
+      "Stand tall with your feet together and arms relaxed at your sides.",
+      "Brace your core and keep your chest lifted.",
+      "Jump both feet out to about shoulder width while sweeping your arms out and up overhead.",
+      "Land softly on the balls of your feet with knees slightly bent.",
+      "Jump your feet back together while lowering your arms to your sides.",
+      "Continue at a smooth, controlled pace for the target reps or duration."
+    ],
+    "image_url": "/images/exercises/seed/jumping-jack.webp",
+    "default_sets": 3,
+    "default_reps": "30-60 sec",
+    "default_rest": 30,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.lateral-bound",
+    "revision": 1,
+    "slug": "lateral-bound",
+    "name": "Lateral Bound",
+    "description": "",
+    "category": "plyometrics",
+    "muscle_group": "adductors",
+    "muscles": [
+      "abductors",
+      "calves",
+      "glutes",
+      "hamstrings",
+      "quadriceps"
+    ],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "compound",
+    "tags": [
+      "push",
+      "compound"
+    ],
+    "instructions": [
+      "Assume a half squat position facing 90 degrees from your direction of travel. This will be your starting position.",
+      "Allow your lead leg to do a countermovement inward as you shift your weight to the outside leg.",
+      "Immediately push off and extend, attempting to bound to the side as far as possible.",
+      "Upon landing, immediately push off in the opposite direction, returning to your original start position.",
+      "Continue back and forth for several repetitions."
+    ],
+    "image_url": "/images/exercises/seed/lateral-bound.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.mountain-climbers",
+    "revision": 1,
+    "slug": "mountain-climbers",
+    "name": "Mountain Climbers",
+    "description": "A plank-based conditioning exercise that alternates knee drives to train core stiffness, hip flexors, shoulders, and cardio capacity.",
+    "category": "cardio",
+    "muscle_group": "core",
+    "muscles": [
+      "quadriceps",
+      "chest",
+      "hamstrings",
+      "shoulders"
+    ],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "",
+    "tags": [
+      "core",
+      "conditioning",
+      "plank",
+      "dynamic",
+      "cardio"
+    ],
+    "instructions": [
+      "Start in a high plank with hands under shoulders and body in a straight line.",
+      "Brace the core and keep the hips from rising or sagging.",
+      "Drive one knee toward the chest while the other leg stays extended.",
+      "Quickly switch legs, returning the first foot as the other knee drives forward.",
+      "Continue alternating at a controlled pace while maintaining plank posture.",
+      "Slow the tempo for core control or speed it up for conditioning."
+    ],
+    "image_url": "/images/exercises/seed/mountain-climbers.webp",
+    "default_sets": 3,
+    "default_reps": "30-45",
+    "default_rest": 60,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.pike-push-up",
+    "revision": 1,
+    "slug": "pike-push-up",
+    "name": "Pike Push-Up",
+    "description": "A bodyweight shoulder press progression that emphasizes the deltoids and triceps while building strength toward handstand push-ups.",
+    "category": "strength",
+    "muscle_group": "shoulders",
+    "muscles": [
+      "upper-chest",
+      "triceps",
+      "core"
+    ],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "intermediate",
+    "movement_type": "compound",
+    "tags": [
+      "upper-body",
+      "push",
+      "compound",
+      "vertical-push",
+      "handstand-progression"
+    ],
+    "instructions": [
+      "Start in a high plank, then walk the feet toward the hands and lift the hips into an inverted V shape.",
+      "Keep the arms straight, head between the arms, and heels lifted if hamstrings are tight.",
+      "Bend the elbows and lower the top of the head toward the floor between the hands.",
+      "Keep the elbows angled slightly back rather than flaring straight out.",
+      "Press through the hands to return to the pike position.",
+      "Make it easier by reducing the pike angle or harder by elevating the feet."
+    ],
+    "image_url": "/images/exercises/seed/pike-push-up.webp",
+    "default_sets": 3,
+    "default_reps": "6-12",
+    "default_rest": 120,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.plank",
+    "revision": 1,
+    "slug": "plank",
+    "name": "Plank",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "core",
+    "muscles": [
+      "shoulders",
+      "glutes"
+    ],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "isolation",
+    "tags": [
+      "static",
+      "isolation"
+    ],
+    "instructions": [
+      "Get into a prone position on the floor, supporting your weight on your toes and your forearms. Your arms are bent and directly below the shoulder.",
+      "Keep your body straight at all times, and hold this position as long as possible. To increase difficulty, an arm or leg can be raised."
+    ],
+    "image_url": "/images/exercises/seed/plank.webp",
+    "default_sets": 3,
+    "default_reps": "30-60s",
+    "default_rest": 60,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.plie-dumbbell-squat",
+    "revision": 1,
+    "slug": "plie-dumbbell-squat",
+    "name": "Plie Dumbbell Squat",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "quadriceps",
+    "muscles": [
+      "abs",
+      "calves",
+      "glutes",
+      "hamstrings"
+    ],
+    "equipment": [
+      "dumbbells"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "compound",
+    "tags": [
+      "push",
+      "compound"
+    ],
+    "instructions": [
+      "Hold a dumbbell at the base with both hands and stand straight up. Move your legs so that they are wider than shoulder width apart from each other with your knees slightly bent.",
+      "Your toes should be facing out. Note: Your arms should be stationary while performing the exercise. This is the starting position.",
+      "Slowly bend the knees and lower your legs until your thighs are parallel to the floor. Make sure to inhale as this is the eccentric part of the exercise.",
+      "Press mainly with the heel of the foot to bring the body back to the starting position while exhaling.",
+      "Repeat for the recommended amount of repetitions."
+    ],
+    "image_url": "/images/exercises/seed/plie-dumbbell-squat.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.push-up-to-side-plank",
+    "revision": 1,
+    "slug": "push-up-to-side-plank",
+    "name": "Push Up to Side Plank",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "chest",
+    "muscles": [
+      "shoulders",
+      "triceps",
+      "core"
+    ],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "compound",
+    "tags": [
+      "push",
+      "compound"
+    ],
+    "instructions": [
+      "Get into pushup position on the toes with your hands just outside of shoulder width.",
+      "Perform a pushup by allowing the elbows to flex. As you descend, keep your body straight.",
+      "Do one pushup and as you come up, shift your weight on the left side of the body, twist to the side while bringing the right arm up towards the ceiling in a side plank.",
+      "Lower the arm back to the floor for another pushup and then twist to the other side.",
+      "Repeat the series, alternating each side, for 10 or more reps."
+    ],
+    "image_url": "/images/exercises/seed/push-up-to-side-plank.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.push-up-wide",
+    "revision": 1,
+    "slug": "push-up-wide",
+    "name": "Push-Up Wide",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "chest",
+    "muscles": [
+      "shoulders",
+      "triceps",
+      "core"
+    ],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "compound",
+    "tags": [
+      "compound"
+    ],
+    "instructions": [
+      "With your hands wide apart, support your body on your toes and hands in a plank position. Your elbows should be extended and your body straight. Do not allow your hips to sag. This will be your starting position.",
+      "To begin, allow the elbows to flex, lowering your chest to the floor as you inhale.",
+      "Using your pectoral muscles, press your upper body back up to the starting position by extending the elbows. Exhale as you perform this step.",
+      "After pausing at the contracted position, repeat the movement for the prescribed amount of repetitions."
+    ],
+    "image_url": "/images/exercises/seed/push-up-wide.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.pushups",
+    "revision": 1,
+    "slug": "pushups",
+    "name": "Pushups",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "chest",
+    "muscles": [
+      "shoulders",
+      "triceps"
+    ],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "compound",
+    "tags": [
+      "push",
+      "compound"
+    ],
+    "instructions": [
+      "Lie on the floor face down and place your hands about 36 inches apart while holding your torso up at arms length.",
+      "Next, lower yourself downward until your chest almost touches the floor as you inhale.",
+      "Now breathe out and press your upper body back up to the starting position while squeezing your chest.",
+      "After a brief pause at the top contracted position, you can begin to lower yourself downward again for as many repetitions as needed."
+    ],
+    "image_url": "/images/exercises/seed/pushups.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.reverse-crunch",
+    "revision": 1,
+    "slug": "reverse-crunch",
+    "name": "Reverse Crunch",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "core",
+    "muscles": [],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "isolation",
+    "tags": [
+      "pull",
+      "isolation"
+    ],
+    "instructions": [
+      "Lie down on the floor with your legs fully extended and arms to the side of your torso with the palms on the floor. Your arms should be stationary for the entire exercise.",
+      "Move your legs up so that your thighs are perpendicular to the floor and feet are together and parallel to the floor. This is the starting position.",
+      "While inhaling, move your legs towards the torso as you roll your pelvis backwards and you raise your hips off the floor. At the end of this movement your knees will be touching your chest.",
+      "Hold the contraction for a second and move your legs back to the starting position while exhaling.",
+      "Repeat for the recommended amount of repetitions."
+    ],
+    "image_url": "/images/exercises/seed/reverse-crunch.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.reverse-lunge",
+    "revision": 1,
+    "slug": "reverse-lunge",
+    "name": "Reverse Lunge",
+    "description": "A knee-friendly unilateral squat pattern where one leg steps backward and the front leg performs most of the work. Builds quadriceps, glutes, balance, and single-leg control with no external load.",
+    "category": "strength",
+    "muscle_group": "quadriceps",
+    "muscles": [
+      "hamstrings",
+      "glutes",
+      "calves"
+    ],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "compound",
+    "tags": [
+      "lower-body",
+      "unilateral",
+      "compound",
+      "knee-dominant",
+      "balance"
+    ],
+    "instructions": [
+      "Stand tall with feet hip-width apart and brace your core.",
+      "Step one foot backward far enough that both knees can bend comfortably.",
+      "Lower under control until the front thigh is near parallel to the floor and the back knee hovers just above the ground.",
+      "Keep the front knee tracking over the toes and the torso tall rather than collapsing forward.",
+      "Drive through the front foot to return to standing.",
+      "Alternate sides or complete all repetitions on one side before switching."
+    ],
+    "image_url": "/images/exercises/seed/reverse-lunge.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.shoulder-taps",
+    "revision": 1,
+    "slug": "shoulder-taps",
+    "name": "Shoulder Taps",
+    "description": "An anti-rotation plank drill that trains shoulder stability, core control, and upper-body endurance.",
+    "category": "strength",
+    "muscle_group": "core",
+    "muscles": [
+      "shoulders",
+      "triceps"
+    ],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "",
+    "tags": [
+      "core",
+      "anti-rotation",
+      "shoulder-stability",
+      "plank",
+      "body-control"
+    ],
+    "instructions": [
+      "Start in a high plank with hands under shoulders and feet set wider than hip-width for stability.",
+      "Brace the core and squeeze the glutes so the hips stay level.",
+      "Lift one hand and tap the opposite shoulder without shifting the torso.",
+      "Place the hand back under the shoulder and repeat on the other side.",
+      "Move slowly and keep the hips from rocking side to side.",
+      "Bring the feet closer together to increase the challenge."
+    ],
+    "image_url": "/images/exercises/seed/shoulder-taps.webp",
+    "default_sets": 3,
+    "default_reps": "16-30",
+    "default_rest": 60,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.side-bridge",
+    "revision": 1,
+    "slug": "side-bridge",
+    "name": "Side Bridge",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "core",
+    "muscles": [
+      "obliques",
+      "shoulders"
+    ],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "",
+    "tags": [
+      "static"
+    ],
+    "instructions": [
+      "Lie on your side with your elbow directly beneath your shoulder.",
+      "Stack your feet and brace your core before lifting your hips.",
+      "Hold a straight line from head to feet without letting your hips rotate."
+    ],
+    "image_url": "/images/exercises/seed/side-bridge.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.side-laterals-to-front-raise",
+    "revision": 1,
+    "slug": "side-laterals-to-front-raise",
+    "name": "Side Laterals to Front Raise",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "shoulders",
+    "muscles": [
+      "traps"
+    ],
+    "equipment": [
+      "dumbbells"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "isolation",
+    "tags": [
+      "push",
+      "isolation"
+    ],
+    "instructions": [
+      "In a standing position, hold a pair of dumbbells at your side. This will be your starting position.",
+      "Keeping your elbows slightly bent, raise the weights directly in front of you to shoulder height, avoiding any swinging or cheating.",
+      "At the top of the exercise move the weights out in front of you, keeping your arms extended.",
+      "Lower the weights with a controlled motion.",
+      "On the next repetition, raise the weights in front of you to shoulder height before moving the weights laterally to your sides.",
+      "Lower the weights to the starting position."
+    ],
+    "image_url": "/images/exercises/seed/side-laterals-to-front-raise.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.single-arm-steel-mace-inside-mill",
+    "revision": 1,
+    "slug": "single-arm-steel-mace-inside-mill",
+    "name": "Steel Mace 360",
+    "description": "A foundational steel mace exercise that uses a controlled 360-degree swing around the head to build shoulder mobility, upper-body strength, grip, and stability.",
+    "category": "strength",
+    "muscle_group": "shoulders",
+    "muscles": [
+      "chest",
+      "lats",
+      "upper-back",
+      "traps",
+      "forearms",
+      "triceps",
+      "core",
+      "obliques"
+    ],
+    "equipment": [
+      "steel-mace"
+    ],
+    "difficulty": "intermediate",
+    "movement_type": "compound",
+    "tags": [
+      "compound",
+      "rotational",
+      "circular",
+      "full-body",
+      "mace",
+      "steel-mace",
+      "360",
+      "shoulder-mobility",
+      "upper-body-strength",
+      "grip",
+      "stability",
+      "reps-weight"
+    ],
+    "instructions": [
+      "Start in front \u2014 Hold the mace vertically in front of your chest with both hands stacked on the handle and the mace head pointing upward.",
+      "Cast over one shoulder \u2014 Move the mace head slightly to one side and allow it to travel behind your head. Keep your hands relatively close to your body.",
+      "Let the mace swing behind you \u2014 Bend your elbows and allow the mace head to make a smooth arc behind your back. Avoid stopping or muscling the mace through the bottom.",
+      "Pull it over the opposite shoulder \u2014 Engage your lats and triceps as the mace completes the swing, guiding it up over the opposite shoulder.",
+      "Return to center \u2014 Bring the mace back to the vertical starting position in front of your chest under control."
+    ],
+    "image_url": "/images/exercises/seed/single-arm-steel-mace-inside-mill.webp",
+    "default_sets": 3,
+    "default_reps": "6-10 / side",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.single-arm-steel-mace-mill",
+    "revision": 1,
+    "slug": "single-arm-steel-mace-mill",
+    "name": "Steel Mace Inward Mill",
+    "description": "A unilateral compound steel mace mill using a rotational/circular outward cast. Track with reps plus weight. Primary emphasis is shoulders/deltoids and lats, with upper back/traps, forearms/grip, and obliques/core assisting; triceps and chest stabilize the cast and shoulder position.",
+    "category": "strength",
+    "muscle_group": "shoulders",
+    "muscles": [
+      "chest",
+      "lats",
+      "upper-back",
+      "traps",
+      "forearms",
+      "triceps",
+      "core",
+      "obliques"
+    ],
+    "equipment": [
+      "steel-mace"
+    ],
+    "difficulty": "intermediate",
+    "movement_type": "compound",
+    "tags": [
+      "rotational",
+      "circular",
+      "compound",
+      "unilateral",
+      "mace",
+      "steel-mace",
+      "outward-mill",
+      "reps-weight",
+      "lats",
+      "grip"
+    ],
+    "instructions": [
+      "Set the mace behind you \u2014 Hold the mace in one hand with the mace head positioned behind your body, as though you\u2019re reaching for a sword.",
+      "Draw the sword \u2014 Pull the mace upward from behind you, leading with the elbow. Think of unsheathing a sword.",
+      "Bring it inward \u2014 Continue the pull so the mace travels up and inward across the body\u2019s centerline.",
+      "Let the mace drop \u2014 As the mace passes high, allow the weighted end to fall behind the shoulder/head. Bend the elbow and let the mace\u2019s momentum carry it.",
+      "Pull and return \u2014 Engage the lat and shoulder to guide the mace through the remainder of the circle and back into the starting position behind the body."
+    ],
+    "image_url": "/images/exercises/seed/single-arm-steel-mace-mill.webp",
+    "default_sets": 3,
+    "default_reps": "6-10 / side",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.single-arm-steel-mace-outside-mill",
+    "revision": 1,
+    "slug": "single-arm-steel-mace-outside-mill",
+    "name": "Steel Mace Outward Mill",
+    "description": "A unilateral compound steel mace mill using a rotational/circular outward cast. Track with reps plus weight. Primary emphasis is shoulders/deltoids and lats, with upper back/traps, forearms/grip, and obliques/core assisting; triceps and chest stabilize the cast and shoulder position.",
+    "category": "strength",
+    "muscle_group": "shoulders",
+    "muscles": [
+      "chest",
+      "lats",
+      "upper-back",
+      "traps",
+      "forearms",
+      "triceps",
+      "core",
+      "obliques"
+    ],
+    "equipment": [
+      "steel-mace"
+    ],
+    "difficulty": "intermediate",
+    "movement_type": "compound",
+    "tags": [
+      "rotational",
+      "circular",
+      "compound",
+      "unilateral",
+      "mace",
+      "steel-mace",
+      "outward-mill",
+      "reps-weight",
+      "lats",
+      "grip"
+    ],
+    "instructions": [
+      "Set your grip \u2014 Hold the mace with an upper-thumb grip and choke up to a comfortable point on the handle.",
+      "Punch toward your face \u2014 Bring your fist toward your face to initiate the mill.",
+      "Let the mace drop \u2014 Allow the mace head to fall behind you. Let your elbow naturally flare outward as the mace drops.",
+      "Drive toward the hip \u2014 Using the mace\u2019s momentum, drive your elbow down toward your hip to cast the mace outward.",
+      "Complete the circle \u2014 Guide the mace through its circular path and smoothly return to the starting position.",
+      "Key cue: Punch \u2192 Drop \u2192 Flare \u2192 Drive \u2192 Cast.",
+      "Rep: One complete outward circle and return to the starting position = 1 rep."
+    ],
+    "image_url": "/images/exercises/seed/single-arm-steel-mace-outside-mill.webp",
+    "default_sets": 3,
+    "default_reps": "6-10 / side",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.sit-up",
+    "revision": 1,
+    "slug": "sit-up",
+    "name": "Sit-Up",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "core",
+    "muscles": [],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "isolation",
+    "tags": [
+      "pull",
+      "isolation"
+    ],
+    "instructions": [
+      "Lie down on the floor placing your feet either under something that will not move or by having a partner hold them. Your legs should be bent at the knees.",
+      "Place your hands behind your head and lock them together by clasping your fingers. This is the starting position.",
+      "Elevate your upper body so that it creates an imaginary V-shape with your thighs. Breathe out when performing this part of the exercise.",
+      "Once you feel the contraction for a second, lower your upper body back down to the starting position while inhaling.",
+      "Repeat for the recommended amount of repetitions."
+    ],
+    "image_url": "/images/exercises/seed/sit-up.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.standing-bent-over-two-arm-dumbbell-triceps-extension",
+    "revision": 1,
+    "slug": "standing-bent-over-two-arm-dumbbell-triceps-extension",
+    "name": "Standing Bent-Over Two-Arm Dumbbell Triceps Extension",
+    "description": "",
+    "category": "strength",
+    "muscle_group": "triceps",
+    "muscles": [],
+    "equipment": [
+      "dumbbells"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "isolation",
+    "tags": [
+      "push",
+      "isolation"
+    ],
+    "instructions": [
+      "With a dumbbell in each hand and the palms facing your torso, bend your knees slightly and bring your torso forward, by bending at the waist, while keeping the back straight until it is almost parallel to the floor. Make sure that you keep the head up. The upper arms should be close to the torso and parallel to the floor while the forearms are pointing towards the floor as the hands hold the weights. Tip: There should be a 90-degree angle between the forearms and the upper arm. This is your starting position.",
+      "Keeping the upper arms stationary, use the triceps to lift the weights as you exhale until the forearms are parallel to the floor and the whole arms are extended. Like many other arm exercises, only the forearm moves.",
+      "After a second contraction at the top, slowly lower the dumbbells back to their starting position as you inhale.",
+      "Repeat the movement for the prescribed amount of repetitions."
+    ],
+    "image_url": "/images/exercises/seed/standing-bent-over-two-arm-dumbbell-triceps-extension.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.superman",
+    "revision": 1,
+    "slug": "superman",
+    "name": "Superman",
+    "description": "",
+    "category": "stretching",
+    "muscle_group": "lower-back",
+    "muscles": [
+      "glutes",
+      "hamstrings"
+    ],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "compound",
+    "tags": [
+      "static",
+      "compound"
+    ],
+    "instructions": [
+      "To begin, lie straight and face down on the floor or exercise mat. Your arms should be fully extended in front of you. This is the starting position.",
+      "Simultaneously raise your arms, legs, and chest off of the floor and hold this contraction for 2 seconds. Tip: Squeeze your lower back to get the best results from this exercise. Remember to exhale during this movement. Note: When holding the contracted position, you should look like superman when he is flying.",
+      "Slowly begin to lower your arms, legs and chest back down to the starting position while inhaling.",
+      "Repeat for the recommended amount of repetitions prescribed in your program."
+    ],
+    "image_url": "/images/exercises/seed/superman.webp",
+    "default_sets": 3,
+    "default_reps": "8-12",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.walking-lunge",
+    "revision": 1,
+    "slug": "walking-lunge",
+    "name": "Walking Lunge",
+    "description": "A dynamic unilateral lower-body exercise that trains leg strength, hip stability, coordination, and gait-like control by lunging forward continuously.",
+    "category": "strength",
+    "muscle_group": "quadriceps",
+    "muscles": [
+      "hamstrings",
+      "glutes",
+      "calves"
+    ],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "intermediate",
+    "movement_type": "compound",
+    "tags": [
+      "lower-body",
+      "unilateral",
+      "compound",
+      "dynamic",
+      "balance"
+    ],
+    "instructions": [
+      "Stand tall with feet hip-width apart and eyes forward.",
+      "Take a controlled step forward and lower into a lunge until both knees are bent about 90 degrees.",
+      "Keep the front heel planted and the front knee in line with the toes.",
+      "Push through the front foot and bring the back leg forward into the next lunge.",
+      "Continue alternating legs while keeping the torso upright and the core braced.",
+      "Use shorter steps for more quad emphasis or longer steps for more glute emphasis."
+    ],
+    "image_url": "/images/exercises/seed/walking-lunge.webp",
+    "default_sets": 3,
+    "default_reps": "10-20",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  },
+  {
+    "seedKey": "setrai.exercise.wall-sit",
+    "revision": 1,
+    "slug": "wall-sit",
+    "name": "Wall Sit",
+    "description": "An isometric lower-body hold for quad endurance, knee control, and mental toughness. Useful as a low-skill bodyweight finisher.",
+    "category": "strength",
+    "muscle_group": "quadriceps",
+    "muscles": [
+      "glutes",
+      "calves",
+      "core"
+    ],
+    "equipment": [
+      "bodyweight"
+    ],
+    "difficulty": "beginner",
+    "movement_type": "",
+    "tags": [
+      "lower-body",
+      "isometric",
+      "endurance",
+      "finisher"
+    ],
+    "instructions": [
+      "Stand with your back against a wall and feet roughly shoulder-width apart.",
+      "Walk the feet forward and slide down the wall until the knees are bent about 90 degrees or to a comfortable depth.",
+      "Keep the back, shoulders, and hips in contact with the wall.",
+      "Press evenly through both feet and keep knees tracking over the toes.",
+      "Hold the position without resting the hands on the thighs.",
+      "Stand up carefully when the target time is complete."
+    ],
+    "image_url": "/images/exercises/seed/wall-sit.webp",
+    "default_sets": 3,
+    "default_reps": "30-60",
+    "default_rest": 90,
+    "status": "active",
+    "source_type": "builtin"
+  }
+]

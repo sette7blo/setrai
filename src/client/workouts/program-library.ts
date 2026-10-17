@@ -1,28 +1,13 @@
-import { readableApiError } from '../shared/api/errors.js'
 import { pageEmpty } from '../shared/page-states.js'
 import { getProfile } from '../profile/api.js'
 import { listExercises } from '../exercises/api.js'
 import type { Exercise } from '../exercises/types.js'
 import { listPrograms, listSessions, startProgramSession, duplicateProgram, deleteProgram } from './api.js'
-import { loadProgramCatalog, importCatalogProgram } from './discovery-api.js'
 import { createProgramCard, type ProgramCardActions } from './program-card.js'
 import { programHero, programToolbar, programFilterChips, programFilterSheet } from './program-browser.js'
 import { emptyProgramFilters, matchesProgram, programTaxonomy } from './program-taxonomy.js'
-import { mergeProgramCatalog } from './program-catalog.js'
-import { openProgramUpdate } from './program-update.js'
 import { openProgramBuilder } from './program-builder.js'
 import type { Program, Session } from './types.js'
-
-export async function runCatalogRefresh<T>(load: () => Promise<T>, onPending: () => void, onSuccess: (value: T) => void, onError: (error: unknown) => void, onSettled: () => void): Promise<void> {
-  onPending()
-  try {
-    onSuccess(await load())
-  } catch (error) {
-    onError(error)
-  } finally {
-    onSettled()
-  }
-}
 
 function enrich(programs: Program[], exercises: Exercise[]): Program[] {
   return programs.map(program => ({ ...program, exercises: program.exercises.map(entry => ({
@@ -30,138 +15,89 @@ function enrich(programs: Program[], exercises: Exercise[]): Program[] {
   })) }))
 }
 
-export async function renderProgramLibrary(page: HTMLElement, enabled: boolean, sessionLinks: (sessions: Session[]) => HTMLElement): Promise<void> {
+export async function renderProgramLibrary(page: HTMLElement, sessionLinks: (sessions: Session[]) => HTMLElement): Promise<void> {
   const status = document.createElement('p')
-  status.className = 'workout-browser-status'; status.setAttribute('role', 'status'); status.textContent = enabled ? 'Loading your library and web workouts…' : 'Loading your library…'
+  status.className = 'workout-browser-status'
+  status.setAttribute('role', 'status')
+  status.textContent = 'Loading your library…'
   page.append(status)
   const params = new URLSearchParams(window.location.search)
   const filters = emptyProgramFilters()
   for (const key of Object.keys(filters) as (keyof typeof filters)[]) filters[key] = params.get(key) ?? ''
-  const [saved, initialExercises, sessions, profile] = await Promise.all([listPrograms(), listExercises(), listSessions(),
-    getProfile().catch(() => ({ equipment: [] as string[] }))])
+  const [saved, initialExercises, sessions, profile] = await Promise.all([
+    listPrograms(), listExercises(), listSessions(), getProfile().catch(() => ({ equipment: [] as string[] }))
+  ])
   let exercises = initialExercises
-  let local = enrich(saved, exercises)
-  let remote: Program[] = []
-  let refreshing = false
-  let fetchedAt = 0
-  let hero = programHero(local)
+  let programs = enrich(saved, exercises)
+  let hero = programHero(programs)
   const chips = document.createElement('div')
-  const results = document.createElement('div'); results.className = 'program-list'
-  const updateHero = (): void => {
-    const next = programHero(local)
-    if (enabled) {
-      const count = mergeProgramCatalog(local, remote).filter(card => card.status === 'Web').length
-      const web = document.createElement('span'); web.textContent = refreshing ? 'Loading web workouts…' : `${count} web workouts`
-      next.querySelector('.program-browse-metrics')?.append(web)
-      if (fetchedAt) next.title = `Web catalog updated ${new Date(fetchedAt).toLocaleTimeString()}`
-    }
-    hero.replaceWith(next); hero = next
-  }
+  const results = document.createElement('div')
+  results.className = 'program-list'
   const syncUrl = (): void => {
     const query = new URLSearchParams()
     for (const [key, value] of Object.entries(filters)) if (value) query.set(key, value)
     const next = `/workouts${query.size ? `?${query}` : ''}`
     if (next !== `${window.location.pathname}${window.location.search}`) window.history.replaceState({}, '', next)
   }
-  const reload = async (): Promise<void> => {
-    const [programs, updatedExercises] = await Promise.all([listPrograms(), listExercises()])
-    exercises = updatedExercises
-    local = enrich(programs, exercises)
-    // Reconcile status against the newly saved version without relying on stale relay localId values.
-    remote = remote.map(latest => ({ ...latest, localId: local.find(item => item.nostrAddress === latest.nostrAddress)?.id ?? null,
-      updateAvailable: local.some(item => item.nostrAddress === latest.nostrAddress && item.nostrEventId !== latest.nostrEventId && latest.updateAvailable) }))
-    updateHero(); renderResults()
+  const updateHero = (): void => {
+    const next = programHero(programs)
+    hero.replaceWith(next)
+    hero = next
   }
-  const localActions: ProgramCardActions = {
+  const reload = async (): Promise<void> => {
+    const [nextPrograms, nextExercises] = await Promise.all([listPrograms(), listExercises()])
+    exercises = nextExercises
+    programs = enrich(nextPrograms, exercises)
+    updateHero()
+    renderResults()
+  }
+  const actions: ProgramCardActions = {
     start: async program => {
       if (!program.exercises.length) throw new Error('Add exercises before starting this workout.')
-      const session = await startProgramSession(program.id); window.location.href = `/sessions/${session.id}`
+      const session = await startProgramSession(program.id)
+      window.location.href = `/sessions/${session.id}`
     },
     edit: program => openProgramBuilder(exercises, program, reload),
     duplicate: async program => { await duplicateProgram(program.id); await reload(); status.textContent = 'Workout duplicated.' },
     remove: async program => {
       if (!window.confirm(`Delete ${program.name}? Your workout history is kept.`)) return
-      await deleteProgram(program.id); await reload(); status.textContent = 'Workout deleted.'
+      await deleteProgram(program.id)
+      await reload()
+      status.textContent = 'Workout deleted.'
     }
   }
   const renderResults = (): number => {
     if (!page.isConnected) return 0
-    const cards = mergeProgramCatalog(local, remote)
-    const matches = cards.filter(card => matchesProgram(card.program, filters, profile.equipment))
+    const matches = programs.filter(program => matchesProgram(program, filters, profile.equipment))
     syncUrl()
     chips.replaceChildren(programFilterChips(filters, renderResults))
     const open = new Set(Array.from(results.querySelectorAll<HTMLDetailsElement>('.workout-card[open]'), card => card.dataset.programKey))
     results.replaceChildren()
-    for (const entry of matches) {
-      const actions: ProgramCardActions = entry.status === 'Web' ? {
-        import: async program => {
-          await importCatalogProgram(program.nostrEventId!); await reload()
-          status.textContent = `${program.name} added to Library.`
-        }
-      } : { ...localActions, ...(entry.status === 'Update' && entry.latest ? {
-        review: () => openProgramUpdate(entry.program, entry.latest!, reload)
-      } : {}) }
-      const wrapper = createProgramCard(entry.program, actions, entry.status)
-      const card = wrapper.querySelector<HTMLDetailsElement>('.workout-card')!
-      card.dataset.programKey = entry.program.nostrAddress || `local:${entry.program.id}`
-      card.open = open.has(card.dataset.programKey); results.append(wrapper)
+    for (const program of matches) {
+      const card = createProgramCard(program, actions)
+      card.dataset.programKey = `local:${program.id}`
+      ;(card as HTMLDetailsElement).open = open.has(card.dataset.programKey)
+      results.append(card)
     }
     if (!matches.length) {
       results.append(pageEmpty({
-        title: cards.length
-          ? 'No workouts match.'
-          : refreshing
-            ? 'Loading web workouts...'
-            : 'No workouts yet.',
-        description: cards.length
-          ? 'Clear a filter or try another search.'
-          : refreshing
-            ? undefined
-            : 'Create one with +.',
+        title: programs.length ? 'No workouts match.' : 'No workouts yet.',
+        description: programs.length ? 'Clear a filter or try another search.' : 'Create one with +.',
         compact: true,
-        className: 'workout-browser-empty',
+        className: 'workout-browser-empty'
       }))
     }
     const count = Object.entries(filters).filter(([key, value]) => key !== 'search' && value).length
     toolbar.querySelector('[aria-label="Filter programs"]')?.setAttribute('data-count', count ? String(count) : '')
     return matches.length
   }
-  const refresh = async (force = false): Promise<void> => {
-    if (!enabled || refreshing) return
-    const refreshButton = toolbar.querySelector<HTMLButtonElement>('[aria-label="Refresh web workouts"]')!
-    await runCatalogRefresh(
-      () => loadProgramCatalog(force),
-      () => {
-        refreshing = true; status.textContent = 'Loading web workouts...'
-        refreshButton.disabled = true
-        refreshButton.setAttribute('aria-busy', 'true')
-        refreshButton.classList.add('is-refreshing')
-        updateHero(); renderResults()
-      },
-      catalog => {
-        remote = catalog.programs; fetchedAt = catalog.fetchedAt
-        status.textContent = catalog.unavailableRelays ? 'Some relays are unavailable; saved workouts remain available.' : `Web workouts refreshed: ${catalog.programs.length} available.`
-      },
-      error => {
-        status.replaceChildren(document.createTextNode(`${readableApiError(error)} Saved workouts remain available.`))
-        const retry = document.createElement('button'); retry.type = 'button'; retry.className = 'button button--secondary'; retry.textContent = 'Try again'
-        retry.addEventListener('click', () => { void refresh(true) }); status.append(retry)
-      },
-      () => {
-        refreshing = false
-        refreshButton.disabled = false
-        refreshButton.removeAttribute('aria-busy')
-        refreshButton.classList.remove('is-refreshing')
-        updateHero(); renderResults()
-      }
-    )
-  }
   const toolbar = programToolbar(filters, renderResults, opener => {
-    const equipment = [...new Set(mergeProgramCatalog(local, remote).flatMap(card => programTaxonomy(card.program).equipment))].sort()
+    const equipment = [...new Set(programs.flatMap(program => programTaxonomy(program).equipment))].sort()
     const dialog = programFilterSheet(filters, equipment, profile.equipment.length > 0, renderResults, opener)
-    document.body.append(dialog); dialog.showModal()
-  }, () => openProgramBuilder(exercises, undefined, reload), enabled ? () => { void refresh(true) } : undefined)
+    document.body.append(dialog)
+    dialog.showModal()
+  }, () => openProgramBuilder(exercises, undefined, reload))
   page.append(hero, sessionLinks(sessions), toolbar, chips, results)
-  status.textContent = ''; renderResults(); updateHero()
-  await refresh()
+  status.textContent = ''
+  renderResults()
 }

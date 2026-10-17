@@ -18,8 +18,6 @@ and want:
 - full control of their training data;
 - a local server and database;
 - AI-assisted training features;
-- optional Nostr integration;
-- an optional Monero hot wallet;
 - no mandatory Setrai-operated cloud infrastructure.
 
 Setrai must remain useful as a complete workout tracker even when all optional
@@ -39,7 +37,6 @@ statistics and recovery
 optional AI assistance
 ```
 
-Nostr and Monero are optional capabilities rather than requirements.
 
 ---
 
@@ -62,12 +59,12 @@ SeTrai
 ```
 
 Setrai should be presented as a modern self-hosted training application rather
-than as a Nostr client, cryptocurrency application, or protocol-specific tool.
+than as a cryptocurrency application or protocol-specific tool.
 
 The UI should prioritize:
 
 - training;
-- exercise discovery;
+- local exercise library;
 - programs;
 - sessions;
 - statistics;
@@ -134,8 +131,6 @@ This includes:
 The following integrations are optional:
 
 - AI;
-- Nostr;
-- Monero.
 
 Each is controlled through deployment configuration.
 
@@ -154,11 +149,6 @@ rather than requiring consumer-style setup flows inside the application.
 
 Example:
 
-```env
-NOSTR_ENABLED=false
-MONERO_WALLET_ENABLED=false
-AI_ENABLED=true
-```
 
 Changes to deployment configuration may require restarting Setrai.
 
@@ -170,12 +160,6 @@ Secrets stay on the server.
 
 Examples:
 
-```text
-Nostr nsec
-Monero seed
-AI API keys
-authentication secrets
-```
 
 The browser never receives them.
 
@@ -194,16 +178,6 @@ Statistics
 Profile
 ```
 
-Optional capabilities may add or enhance navigation.
-
-For example, when Nostr is enabled:
-
-```text
-Discover
-```
-
-may become available.
-
 AI capabilities may introduce:
 
 ```text
@@ -213,6 +187,8 @@ Coach
 or AI actions inside existing features.
 
 The navigation should remain focused and avoid exposing implementation details.
+Desktop navigation includes a labeled Settings link with a gear icon to `/profile`.
+Mobile exposes Settings through the header gear.
 Menu navigation between core pages keeps the application shell mounted rather
 than reloading the document. Browser Back and Forward update the selected view.
 Live session navigation retains document teardown until its timer lifecycle has
@@ -224,23 +200,16 @@ an explicit client routing cleanup contract.
 
 The exercise library is a core feature.
 
-Exercises uses one unified list, with saved exercises first and relay-only
-exercises after them. Every card has a full-width bottom status strip below its
-details, with centered text and the card's rounded bottom corners, leaving the
-image unobstructed: Local in the Home Total
-Volume green, Update in the Home Daily Streak orange, or Web in the Home Total
-Sessions purple. Update replaces Local when the verified relay event differs
-from the last imported event; local edits alone do not trigger it. Search and
-muscle/equipment/difficulty filters cover the whole list, and favorites cover
-saved exercises. Refresh sits beside the filters when discovery is enabled.
-Web details offer Add to library. The orange Update strip is a button that
-applies the latest verified relay version directly, including its image, without
-a review screen. It preserves favorites and other locally edited fields through
-an import baseline. Older imports without a baseline preserve their other local
-fields while receiving the latest image and a new baseline. The Update button
-is disabled while saving, refreshing, or selecting cards. Relay failure never
-hides saved exercises; a failed update leaves its Update button available to retry.
-The former `/exercises/discover` URL opens the unified Exercises list.
+Exercises is a local-only list backed by SQLite. A fresh installation receives
+the bundled 56-exercise library and seven bundled Workouts. Bundled entities use
+immutable Setrai seed keys, monotonic revisions, and stored baselines: repeated
+startup is idempotent, older revisions are ignored, and newer revisions change
+only fields that the user has not edited locally. Deleting a bundled entity
+creates a tombstone so later startup does not reinstall it.
+Exercises have no Web status, publication, remote catalog, refresh, or import
+controls. Images use bundled `/images/` files or uploads under
+`/media/exercises/` on the Setrai server. External image URLs are rejected on
+create/update; legacy remote references display the local fallback without fetching.
 
 Users must be able to:
 
@@ -272,13 +241,13 @@ specific, but every controlled value maps to a Recovery group and the front/back
 body preview. The editor updates that
 preview immediately, using a strong primary highlight and quieter secondary
 highlight. Movement type is required for new manual exercises and is used by Quick
-Workout scoring. Tags are retained only as internal catalog metadata and are not
+Workout scoring. Tags are retained only as internal compatibility metadata and are not
 edited or displayed in normal exercise UI; descriptions and instructions remain free-form. The server
 normalizes known aliases and rejects unsupported structural values so Recovery,
 filters, body maps, and Quick Workout do not diverge because of spelling variants.
-Known Workstr catalog exercises use the audited correction data in
-`src/shared/exercise-secondary-muscles.json` when an older event contains only a
-duplicate of its primary muscle. Explicit secondary muscles from newer events remain
+Legacy exercise data uses the audited correction data in
+`src/shared/exercise-secondary-muscles.json` when older data contains only a
+duplicate of its primary muscle. Explicit secondary muscle selections remain
 authoritative. Existing exercises persist a successful image upload immediately instead
 of requiring a second Save action; new exercises attach the uploaded image when the
 exercise is created. JPEG, PNG, WebP, GIF, and SVG uploads may be up to 10 MB.
@@ -286,7 +255,7 @@ Sets, reps, weight, and rest are workout prescriptions, not exercise identity, s
 exercise cards, details, and editing do not present them. New manual workout rows
 start with neutral editable values, while Quick Workout derives its prescription
 from the active Profile training goal. Legacy exercise default fields remain API and
-catalog compatibility metadata only.
+storage compatibility metadata only.
 When a new workout does not prescribe a load, the session starts from the most
 recent completed weight for that exercise. An explicit workout weight always wins;
 sets, target reps, and rest remain owned by the current workout.
@@ -300,7 +269,6 @@ exercise image
 exercise name
 primary muscle
 difficulty
-Local / Update / Web status strip
 ```
 
 Secondary metadata belongs in filters or detail views when possible.
@@ -391,21 +359,12 @@ Users must be able to:
 - start a workout from a program;
 - duplicate or modify programs as product behavior evolves.
 
-Programs remain local data regardless of whether Nostr is enabled.
-
-Workouts merges saved and discovered programs into one Library list, ordered
-Local, Update, then Web by default, with alphabetical sorting within each group.
-When Nostr is disabled, only saved workouts are shown and no catalog requests,
-refresh, or update actions appear.
-Imported programs appear once by full Nostr address, retaining their local edits.
-Each collapsed or expanded card has an informational Local/Update/Web strip using
-the same muted sage/amber/lavender treatments as Exercises. Creator identity
-remains on the byline. Local cards support training/editing; Web cards support
-preview/import; Update cards provide Review update in their expanded actions.
-The former `/workouts/discover` URL opens the unified Library list.
+Workouts shows the locally saved Library, including the seven bundled seeds.
+There are no remote catalogs, publication, import, refresh, or Web/Update status
+controls.
 The list uses a search toolbar, goal/focus/format/level/equipment
 filters, and expandable program cards with front/back muscle maps, estimated
-duration, author, level, and goal/focus summaries. Filters use the same themed
+duration, level, and goal/focus summaries. Filters use the same themed
 sheet, searchable long lists, and removable chips as Exercises. Expanded cards show exercise
 prescriptions and structured block previews. Search keeps keyboard focus.
 Workout card estimates use 45 seconds per strength set plus rest between sets,
@@ -422,13 +381,6 @@ interval, and mixed strength/EMOM plans. Goals are author-selected; focus, forma
 and equipment filters derive from exercises and blocks. My equipment uses the
 saved local equipment profile. Library keeps an active-workout Resume action. Quick Workout lives in Recovery. Completed sessions appear in the History tab; Library
 does not duplicate them in a Recent sessions section.
-Catalog loading and relay failures never hide saved workouts. Update review is
-read-only and compares saved and latest content before a separate Apply update
-action. Imported-version baselines allow updates to untouched metadata and
-training plans while keeping edited fields; exercises and blocks are one plan
-unit. Legacy imports without a baseline retain all saved content. Accepting a
-review advances provenance/baseline; updates are atomic with any new exercises
-and do not change captured session plans or publish anything.
 
 ---
 
@@ -653,21 +605,16 @@ The local profile may include:
 - equipment;
 - unit preferences.
 
-The product must not require a Nostr identity for normal profile behavior.
-
 The app header uses a neutral Settings link without a placeholder name or avatar.
 An empty local profile must not display a fabricated identity.
-Settings hides the Profile identity section unless Nostr is enabled and a
-nonempty `NOSTR_NSEC` is configured. Public discovery alone does not enable
-identity settings. Training and Equipment remain available in either mode.
+The current local-only Settings page exposes Training and Equipment and hides
+the Profile identity section. Any future identity integration must explicitly
+restore its visibility contract.
 The Training settings accordion presents every goal as a directly selectable
 description with its intent and exact Quick Workout starting prescription.
 General Fitness is selected by default. These descriptions and the generator
 presets share `src/shared/training-goals.json` so displayed guidance cannot drift
 from runtime behavior.
-
-When Nostr is enabled, Nostr profile information may enhance or replace selected
-public-facing identity elements.
 
 ---
 
@@ -751,360 +698,10 @@ state.
 
 ---
 
-# 22. Nostr
-
-Nostr is an optional Setrai integration.
-
-It is disabled by default.
-
-Example:
-
-```env
-NOSTR_ENABLED=false
-NOSTR_NSEC=
-NOSTR_RELAYS=
-```
-
-The operator enables Nostr by editing `.env` and restarting Setrai.
-
-There is no requirement to configure Nostr from the application UI.
-
----
-
-# 23. Nostr identity
-
-Public exercise discovery and importing are read-only Nostr operations and do
-not require a private key. Signing and publishing, when implemented, require a
-configured Nostr private key server-side.
-
-Setrai derives the corresponding public identity.
-
-The private key must never be delivered to the browser.
-
-Nostr may provide:
-
-- profile name;
-- avatar;
-- npub;
-- creator identity;
-- publishing identity.
-
-The UI may display the Nostr avatar and name when the integration is enabled.
-
----
-
-# 24. Nostr profile
-
-When Nostr is enabled, Setrai may load standard profile metadata from public
-relays.
-
-Profile metadata may include:
-
-- display name;
-- avatar;
-- public key;
-- other supported metadata.
-
-Nostr profile functionality must remain isolated from the local training data
-model.
-
----
-
-# 25. Nostr discovery
-
-When enabled, Nostr can provide a discovery layer.
-
-Discover may include:
-
-- exercises;
-- programs;
-- creators;
-- published training content.
-
-The unified Exercises list reads the official Workstr exercise catalog (kind
-33401, author `ef24246321e47dd16cec960d4d374703af78505d0e59c532b054b5060e372bd6`).
-Events are signature-verified and validated server-side before display or import.
-Users can search, filter, inspect details, and import individual exercises.
-
-Import saves metadata, instructions, HTTPS image URLs, and Nostr provenance to
-SQLite through the Exercise service. Images remain hosted externally. Repeat
-imports reuse the existing record and preserve local edits and favorites. A slug
-collision with an unrelated local exercise creates a separate record instead of
-overwriting it. Imported exercises remain usable if Nostr is later disabled.
-
-Catalog responses are cached server-side for five minutes. Refresh fetches new
-relay data. Partial relay failures do not discard successful responses; complete
-failure offers retry without changing local data. No import publishes events.
-
-The unified Workout Library reads signature-verified kind 33402 programs from the official
-Workstr author and Workstr creator programs in the `workstr:beastmode:program:`
-namespace carrying `workstr`, `beastmode`, and `workstr-program` topics. It supports
-search, the same program filters, expanded previews, refresh, and import. Remote
-text is rendered as text, and image URLs must be HTTPS. Programs are deduplicated
-by full Nostr address, with the newest verified version selected.
-
-Import saves a program and missing exercise references in one SQLite transaction.
-Verified catalog exercise data is reused where available; otherwise a local
-exercise is created from the verified program's member metadata. Those fallback
-references retain program provenance and do not impersonate a verified catalog
-exercise event. Names/slug collisions do not overwrite unrelated library records.
-Repeated imports reuse the local program and preserve local edits. Duplicates
-have their own local identity. Imported blocks and interval durations remain
-available in previews and editing; imported programs remain usable with Nostr
-disabled. Program catalog caching and relay failure behavior follow Exercise
-Discover. No program import publishes or signs content.
-
-Content should be retrieved from configured public relays.
-
-Setrai does not require a Setrai-operated relay.
-
----
-
-# 26. Nostr publishing
-
-Setrai may publish supported training content through Nostr.
-
-Potential publishable objects include:
-
-- exercises;
-- programs;
-- workout summaries.
-
-Setrai should use appropriate standard or documented event formats.
-
-Publication must remain optional.
-
-Local data is saved independently of publication status.
-
-Example:
-
-```text
-save program locally
-       ↓
-optional publish
-       ↓
-Nostr relay
-```
-
-A Nostr failure must not cause the local program to be lost.
-
----
-
-# 27. Nostr relay configuration
-
-Relays are configured through `.env`.
-
-Example:
-
-```env
-NOSTR_RELAYS=wss://relay.example,wss://another.example
-```
-
-Setrai may provide reasonable public defaults if explicitly defined in
-`docs/configuration.md`.
-
-Setrai should not require the operator to run a private relay.
-
----
-
-# 28. Nostr disabled behavior
-
-When:
-
-```env
-NOSTR_ENABLED=false
-```
-
-Setrai should not:
-
-- initialize Nostr libraries unnecessarily;
-- connect to relays;
-- load Nostr profiles;
-- expose publish actions;
-- expose Nostr-specific settings;
-- require an nsec.
-
-Nostr-specific UI should disappear or remain inactive according to the owning
-feature specification.
-
-The application should still feel complete.
-
----
-
-# 29. Monero
-
-Setrai supports an optional Monero hot wallet.
-
-This is a real payment wallet, not merely a displayed donation address.
-
-It is disabled by default.
-
-Example:
-
-```env
-MONERO_WALLET_ENABLED=false
-MONERO_SEED=
-MONERO_NODE=
-```
-
-The operator enables it through `.env` and restarts Setrai.
-
----
-
-# 30. Monero hot-wallet purpose
-
-The integrated wallet is intended for everyday Setrai-related payments.
-
-Potential functions include:
-
-- receiving Monero;
-- sending Monero;
-- displaying balance;
-- transaction history;
-- tipping creators discovered through Nostr;
-- future payment-related Setrai functionality.
-
-The wallet is explicitly a hot wallet.
-
-Operators should use a dedicated wallet with limited funds rather than a primary
-savings wallet.
-
----
-
-# 31. Monero wallet UI
-
-When enabled, Setrai may expose:
-
-- wallet balance;
-- receive address;
-- QR code;
-- send form;
-- transaction history;
-- payment confirmation.
-
-When disabled, wallet UI should not be shown.
-
----
-
-# 32. Monero receive
-
-Users should be able to receive XMR through the integrated wallet.
-
-The UI should provide:
-
-- wallet address;
-- QR code;
-- copy action.
-
-Receiving should not require Nostr.
-
----
-
-# 33. Monero send
-
-Users should be able to send XMR from the hot wallet.
-
-The send flow should clearly show:
-
-- destination;
-- amount;
-- fee where available;
-- confirmation before broadcast;
-- success or failure state.
-
-Sending must require an explicit user action.
-
-Background or automatic spending is not part of the default product.
-
----
-
-# 34. Monero node
-
-Setrai may connect to:
-
-- a public Monero node;
-- a privately operated node;
-- a node elsewhere on the operator's network.
-
-Configuration should allow either.
-
-Example:
-
-```env
-MONERO_NODE=https://example-node
-```
-
-Setrai does not require the operator to run Monero infrastructure.
-
----
-
-# 35. Nostr creator tips
-
-If both Nostr and the Monero wallet are enabled, Setrai may allow tipping creators.
-
-Conceptually:
-
-```text
-Discover creator
-      ↓
-Monero payment target
-      ↓
-Tip
-      ↓
-Setrai hot wallet
-```
-
-Nostr identifies or discovers the creator/payment target.
-
-The Monero module performs the payment.
-
-Neither integration should directly own the other's internal logic.
-
----
-
 # 36. Capability combinations
 
-Setrai must support different valid deployment combinations.
-
-Example:
-
-```text
-AI ON
-Nostr OFF
-Monero OFF
-```
-
-This is a normal AI fitness application.
-
-Example:
-
-```text
-AI ON
-Nostr ON
-Monero OFF
-```
-
-Adds public discovery and publishing.
-
-Example:
-
-```text
-AI ON
-Nostr ON
-Monero ON
-```
-
-Adds creator payments and wallet functionality.
-
-Example:
-
-```text
-AI OFF
-Nostr OFF
-Monero OFF
-```
-
-Setrai remains a usable self-hosted workout tracker.
+Core training works with both optional integrations disabled. AI can be enabled
+wallet functionality. Neither changes the local exercise and workout library.
 
 ---
 
@@ -1122,10 +719,7 @@ Response:
 
 ```json
 {
-  "ai": true,
-  "nostr": false,
-  "nostrIdentity": false,
-  "moneroWallet": false
+  "ai": true
 }
 ```
 
@@ -1141,14 +735,6 @@ Setrai uses `.env` for deployment-level configuration.
 
 Important groups should include:
 
-```text
-Core
-AI
-Nostr
-Monero
-Network
-Authentication
-```
 
 Optional integrations should be OFF by default unless explicitly decided
 otherwise.
@@ -1182,8 +768,6 @@ Secrets require special handling.
 
 A backup mechanism must not casually expose:
 
-- Nostr private keys;
-- Monero seeds;
 - API keys.
 
 If `.env` is backed up, the backup should be treated as highly sensitive.
@@ -1266,9 +850,6 @@ Content hierarchy is more important than visual novelty.
 Setrai should have its own product identity rather than inheriting protocol-specific
 branding.
 
-Nostr purple should not define the default Setrai interface.
-
-Monero orange should not define the default Setrai interface.
 
 Protocol colors may appear inside their respective integrations.
 
@@ -1288,29 +869,11 @@ palette.
 
 ---
 
-# 46. Publishing and local state
+# 46. Local storage and seeds
 
-Publishing is never the canonical storage operation.
-
-Correct order:
-
-```text
-create/edit locally
-      ↓
-persist in SQLite
-      ↓
-optionally publish
-```
-
-Not:
-
-```text
-publish
-      ↓
-use relay as database
-```
-
-This distinction applies to all Nostr-enabled content.
+Exercises, programs, and workout history are saved directly in SQLite.
+Bundled exercises and workouts are installed through versioned local seeds.
+There is no external catalog, content publication, or public identity dependency.
 
 ---
 
@@ -1318,18 +881,6 @@ This distinction applies to all Nostr-enabled content.
 
 An optional integration should not bring down unrelated Setrai functions.
 
-Examples:
-
-If public Nostr relays are unavailable:
-
-```text
-training continues
-programs continue
-statistics continue
-AI can continue
-```
-
-If the Monero node is unavailable:
 
 ```text
 wallet functions fail gracefully
@@ -1357,7 +908,6 @@ At the product level:
 
 - secrets remain server-side;
 - private keys are never sent to the browser;
-- Monero seed material is never displayed after startup;
 - explicit confirmation is required before spending funds;
 - optional integrations must not weaken core-data integrity.
 
@@ -1400,7 +950,6 @@ New features should serve at least one of these product goals:
 - improve recovery understanding;
 - improve self-hosted ownership;
 - improve AI-assisted training;
-- improve optional decentralized discovery/publishing;
 - improve optional private payments.
 
 Protocol experimentation that does not improve the fitness product should not
@@ -1412,7 +961,7 @@ drive the core application.
 
 The initial Setrai implementation should focus on:
 
-1. exercise library;
+1. local exercise library and versioned seeds;
 2. programs;
 3. workout sessions;
 4. statistics;
@@ -1421,8 +970,6 @@ The initial Setrai implementation should focus on:
 7. body-weight tracking;
 8. backup/restore;
 9. optional AI;
-10. optional Nostr;
-11. optional Monero hot wallet.
 
 Additional features can be introduced after this base is stable.
 
@@ -1432,16 +979,11 @@ Additional features can be introduced after this base is stable.
 
 Setrai is not intended to be:
 
-- a general Nostr client;
 - a general-purpose cryptocurrency wallet;
 - a social network;
 - a cloud SaaS account system;
-- a replacement for a primary cold-storage Monero wallet;
 - dependent on Setrai-operated infrastructure.
 
-Nostr and Monero exist to enhance the fitness application.
-
-The fitness application does not exist to provide a UI for Nostr or Monero.
 
 ---
 
@@ -1470,8 +1012,6 @@ Setrai should be understandable as:
 A self-hosted training system
         +
 an optional AI coach
-        +
-optional decentralized publishing/discovery
         +
 an optional private payment wallet
 ```

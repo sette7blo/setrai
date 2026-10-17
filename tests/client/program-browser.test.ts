@@ -5,7 +5,7 @@ import { normalizeExercise } from '../../src/client/exercises/format.js'
 import { normalizeProgram, normalizeProgramExercise } from '../../src/client/workouts/format.js'
 import { emptyProgramFilters, estimateProgramSeconds, matchesProgram, programMuscleLabels, programTaxonomy } from '../../src/client/workouts/program-taxonomy.js'
 import { builderEntry, builderEntries, buildProgramInput } from '../../src/client/workouts/builder-plan.js'
-import { loadProgramCatalog, importCatalogProgram } from '../../src/client/workouts/discovery-api.js'
+
 import { saveProgram, duplicateProgram, deleteProgram } from '../../src/client/workouts/api.js'
 
 const squat = normalizeExercise({ id: 1, slug: 'squat', name: 'Squat', muscleGroup: 'quadriceps', equipment: ['barbell'] })
@@ -103,19 +103,14 @@ test('builder keeps multi-section EMOM timings and supersets', () => {
   assert.equal(edited.blocks?.[0].totalDurationSec, 180)
 })
 
-test('workout API mutations and discovery use server contracts and preserve metadata', async () => {
+test('workout API mutations use local server contracts', async () => {
   const original = globalThis.fetch
   const requests: { path: string; method: string; body: unknown }[] = []
   globalThis.fetch = (async (input, options) => {
     const path = String(input)
     requests.push({ path, method: options?.method ?? 'GET', body: options?.body ? JSON.parse(String(options.body)) : undefined })
     if (options?.method === 'DELETE') return new Response(null, { status: 204 })
-    if (path.includes('/nostr/programs?')) return Response.json({ fetchedAt: 100, unavailableRelays: 0, programs: [{
-      slug: 'test', name: 'Remote', description: '', difficulty: 'beginner', tags: ['strength'], blocks: [],
-      eventId: 'e'.repeat(64), address: '33402:author:workstr:program:test', pubkey: 'author', sourceLabel: 'Workstr', muscleMapUrl: '', localId: null,
-      exercises: [{ address: 'workstr:exercise:squat', name: 'Squat', muscleGroup: 'quadriceps', muscles: ['quadriceps'], equipment: ['barbell'], imageUrl: '', sets: 3, reps: '8', restSec: 90, weight: null, notes: '' }]
-    }] })
-    return Response.json({ program: { id: 7, slug: 'test', name: 'Saved', exercises: [], blocks: [], nostrAddress: 'remote' } })
+    return Response.json({ program: { id: 7, slug: 'test', name: 'Saved', exercises: [], blocks: [] } })
   }) as typeof fetch
   try {
     const client = new ApiClient('http://localhost')
@@ -124,12 +119,6 @@ test('workout API mutations and discovery use server contracts and preserve meta
     await saveProgram(input, 7, client)
     await duplicateProgram(7, client)
     await deleteProgram(7, client)
-    const catalog = await loadProgramCatalog(true, client)
-    assert.equal(catalog.programs[0].exercises[0].exercise?.muscleGroup, 'quadriceps')
-    assert.equal(catalog.programs[0].nostrEventId, 'e'.repeat(64))
-    assert.equal((await importCatalogProgram('e'.repeat(64), client)).id, 7)
-    assert.deepEqual(requests.map(request => request.method), ['POST', 'PATCH', 'POST', 'DELETE', 'GET', 'POST'])
-    assert.match(requests[4].path, /refresh=true$/)
-    assert.deepEqual(requests[5].body, { eventId: 'e'.repeat(64) })
+    assert.deepEqual(requests.map(request => request.method), ['POST', 'PATCH', 'POST', 'DELETE'])
   } finally { globalThis.fetch = original }
 })

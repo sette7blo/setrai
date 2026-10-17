@@ -6,9 +6,7 @@ import {
 import {
   createExerciseService
 } from '../exercises/service.js'
-import { createProgramImporter } from './discovery-import.js'
 import { validateProgramInput } from './validation.js'
-import { programUpdateReview } from './catalog-update.js'
 
 function validationError(message) {
   const error = new Error(message)
@@ -25,7 +23,7 @@ function notFoundError(message) {
 export function createProgramService(db) {
   const repository = createProgramRepository(db)
   const exerciseService = createExerciseService(db)
-  const importDiscoveredProgram = createProgramImporter(repository, exerciseService)
+
 
   function listPrograms(options = {}) {
     const programs = repository.list()
@@ -86,31 +84,6 @@ export function createProgramService(db) {
     return repository.count()
   }
 
-  function getPublishableProgram(id) {
-    const program = repository.getById(id)
-
-    if (!program) {
-      return null
-    }
-
-    return {
-      slug: program.slug,
-      name: program.name,
-      description: program.description,
-      difficulty: program.difficulty,
-      tags: program.tags,
-      blocks: program.blocks,
-      exercises: program.exercises.map((exercise) => ({
-        exerciseSlug: exercise.exerciseSlug,
-        position: exercise.position,
-        sets: exercise.sets,
-        reps: exercise.reps,
-        restSeconds: exercise.restSeconds,
-        targetWeight: exercise.targetWeight,
-        notes: exercise.notes
-      }))
-    }
-  }
 
   function requireProgram(id) {
     const program = repository.getById(id)
@@ -166,18 +139,11 @@ export function createProgramService(db) {
     getProgram,
     getProgramBySlug,
     createProgram,
-    importDiscoveredProgram,
-    updateDiscoveredProgram: (input, catalog) => importDiscoveredProgram(input, catalog, true),
-    reviewDiscoveredProgram(input) {
-      const existing = repository.list().find(program => program.nostrAddress === input.address)
-      if (!existing) throw notFoundError('Saved program not found')
-      return programUpdateReview(existing, input)
-    },
+
     updateProgram,
     deleteProgram,
     duplicateProgram,
     getProgramCount,
-    getPublishableProgram,
     requireProgram
   }
 }

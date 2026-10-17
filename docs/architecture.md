@@ -10,8 +10,6 @@ Setrai is a self-hosted fitness application designed around:
 - SQLite as the canonical data store;
 - a browser/PWA client;
 - optional AI capabilities;
-- optional Nostr integration;
-- an optional Monero hot wallet;
 - strict module boundaries so coding agents can work on small parts of the repository without loading unrelated code.
 
 This document defines how the system is organized and which parts of the code are allowed to depend on which other parts.
@@ -43,8 +41,6 @@ SQLite
 Setrai must not require:
 
 - a Setrai-operated cloud account;
-- a Setrai-operated relay;
-- a Setrai-operated Monero node;
 - a third-party identity provider;
 - an external application backend.
 
@@ -87,8 +83,6 @@ The following must work when all optional integrations are disabled:
 
 The core application must not require:
 
-- Nostr;
-- Monero;
 - AI.
 
 Optional capabilities must enhance Setrai rather than define its basic operation.
@@ -99,11 +93,6 @@ Optional modules are controlled through environment configuration.
 
 Examples:
 
-```env
-AI_ENABLED=true
-NOSTR_ENABLED=false
-MONERO_WALLET_ENABLED=false
-```
 
 Capabilities are evaluated when Setrai starts.
 
@@ -117,9 +106,7 @@ Example:
 
 ```json
 {
-  "ai": true,
-  "nostr": false,
-  "moneroWallet": false
+  "ai": true
 }
 ```
 
@@ -129,8 +116,6 @@ The browser must never receive server secrets.
 
 This includes, but is not limited to:
 
-- Nostr private keys;
-- Monero wallet seeds;
 - API keys;
 - backend authentication secrets;
 - internal signing material.
@@ -151,60 +136,6 @@ Secrets must never be exposed through:
 
 The expected high-level structure is:
 
-```text
-setrai/
-├── .github/
-│   └── workflows/
-│
-├── docs/
-│   ├── instruction.md
-│   ├── architecture.md
-│   ├── modules.md
-│   ├── security.md
-│   ├── configuration.md
-│   └── decisions/
-│
-├── src/
-│   ├── server/
-│   │   ├── config/
-│   │   ├── db/
-│   │   ├── exercises/
-│   │   ├── programs/
-│   │   ├── sessions/
-│   │   ├── statistics/
-│   │   ├── recovery/
-│   │   ├── ai/
-│   │   ├── nostr/
-│   │   └── monero/
-│   │
-│   └── client/
-│       ├── app/
-│       ├── exercises/
-│       ├── workouts/
-│       ├── statistics/
-│       ├── recovery/
-│       ├── profile/
-│       ├── quick-workout/
-│       └── shared/
-│
-├── scripts/
-│   └── check-architecture.mjs
-│
-├── tests/
-├── public/
-│
-├── .env.example
-├── .gitignore
-├── AGENTS.md
-├── CHANGELOG.md
-├── README.md
-├── package.json
-├── Dockerfile
-└── deploy/
-    ├── compose.yaml
-    ├── compose.build.yaml
-    └── .env.example
-```
 
 The exact implementation may evolve, but new structure must preserve the ownership and dependency rules in this document.
 
@@ -253,7 +184,6 @@ Preferred:
 exercise-filter.ts
 session-summary.ts
 program-validator.ts
-relay-publisher.ts
 wallet-send.ts
 ```
 
@@ -315,8 +245,6 @@ Repositories should contain:
 Repositories should not contain:
 
 - UI logic;
-- Nostr event construction;
-- Monero logic;
 - AI prompts;
 - business rules unrelated to persistence.
 
@@ -333,13 +261,11 @@ For example:
 ```ts
 exerciseService.getExercise(id)
 exerciseService.searchExercises(query)
-exerciseService.getPublishableExercise(id)
 ```
 
 ```ts
 programService.getProgram(id)
 programService.createProgram(input)
-programService.getPublishableProgram(id)
 ```
 
 ```ts
@@ -356,25 +282,8 @@ Other features should use these contracts instead of importing internal implemen
 
 Features must not freely import from each other's internals.
 
-For example, the Nostr module may need program data.
-
-Allowed:
-
-```text
-nostr
-  ↓
-program service contract
-  ↓
-program repository
-```
-
-Not allowed:
-
-```text
-nostr
-  ↓
-program internal SQL
-```
+For example, the Quick Workout feature uses the program service contract to
+create a local program instead of importing program SQL internals.
 
 Likewise, AI may need session history.
 
@@ -437,8 +346,6 @@ owns:
 It should not own:
 
 - workout runner logic;
-- Monero wallet behavior;
-- Nostr relay logic.
 
 ---
 
@@ -451,8 +358,6 @@ The server owns:
 - persistence;
 - secrets;
 - external integration credentials;
-- Nostr signing;
-- Monero wallet operations;
 - AI provider credentials;
 - privileged business logic.
 
@@ -482,29 +387,14 @@ Example response:
 
 ```json
 {
-  "ai": true,
-  "nostr": true,
-  "moneroWallet": false
+  "ai": true
 }
 ```
 
 The client uses capabilities to decide which UI surfaces to render.
 
-Example:
-
-```text
-nostr = false
-→ hide Discover
-→ hide Publish
-→ hide Nostr profile identity
-```
-
-```text
-nostr = true
-→ show Discover
-→ show Publish
-→ show Nostr profile identity
-```
+The `ai` capability controls coaching surfaces. Core navigation and local training
+data remain available in every mode.
 
 The client must not infer capabilities from unrelated conditions.
 
@@ -572,175 +462,6 @@ Setrai must continue to function when:
 ```env
 AI_ENABLED=false
 ```
-
----
-
-## 12. Nostr architecture
-
-Nostr is an optional integration.
-
-Expected location:
-
-```text
-src/server/nostr/
-```
-
-Recommended structure:
-
-```text
-config.ts
-signer.ts
-relays.ts
-profile.ts
-discover.ts
-publish.ts
-```
-
-Nostr is controlled by:
-
-```env
-NOSTR_ENABLED=false
-```
-
-When disabled:
-
-- no Nostr private key is required;
-- no relay pool is initialized;
-- no profile lookup occurs;
-- Nostr discovery is unavailable;
-- publishing controls are unavailable.
-
-When enabled:
-
-- Setrai validates the configured private key;
-- derives the public identity;
-- initializes configured relays;
-- loads profile metadata as needed;
-- enables discovery and publishing.
-
-The Nostr private key remains server-side.
-
-The browser must never receive the Nostr private key.
-
-### 12.1 Nostr is an integration, not the data layer
-
-Setrai data remains ordinary SQLite data.
-
-Nostr publication is an optional export/publication action.
-
-A program or exercise must remain usable locally even if:
-
-- Nostr is disabled;
-- relays are unavailable;
-- publication fails.
-
-Nostr metadata may be stored alongside local entities when needed.
-
-Examples:
-
-```text
-nostr_event_id
-nostr_pubkey
-nostr_address
-nostr_published_at
-```
-
-These fields do not make Nostr authoritative.
-
----
-
-## 13. Monero architecture
-
-Monero is an optional hot-wallet capability.
-
-Expected location:
-
-```text
-src/server/monero/
-```
-
-Recommended structure:
-
-```text
-config.ts
-wallet.ts
-node.ts
-balance.ts
-receive.ts
-send.ts
-transactions.ts
-routes.ts
-```
-
-Controlled by:
-
-```env
-MONERO_WALLET_ENABLED=false
-```
-
-When disabled:
-
-- no wallet is initialized;
-- no seed is required;
-- wallet UI is hidden;
-- no node connection is created.
-
-When enabled:
-
-- the wallet is initialized server-side;
-- the configured seed remains server-side;
-- Setrai connects to the configured public or self-hosted Monero node;
-- wallet features become available.
-
-Expected wallet capabilities may include:
-
-- balance;
-- receive address;
-- QR receive flow;
-- send payment;
-- transaction history;
-- Nostr creator tipping.
-
-### 13.1 Hot-wallet boundary
-
-The Monero wallet is explicitly a hot wallet.
-
-Operators should use a dedicated Setrai wallet rather than a primary savings wallet.
-
-The seed must never:
-
-- be returned by an API;
-- be embedded in browser code;
-- be logged;
-- appear in error messages.
-
-The client asks the server to perform wallet actions through defined APIs.
-
----
-
-## 14. Nostr and Monero interaction
-
-Nostr and Monero are separate features.
-
-Neither feature may directly import the other's internal implementation.
-
-If Nostr discovery exposes a creator payment address, the client or orchestration layer may request a payment through a public wallet contract.
-
-Example:
-
-```text
-Nostr creator profile
-        ↓
-payment target
-        ↓
-Monero wallet service
-        ↓
-send()
-```
-
-The Nostr module must not reach into Monero wallet internals.
-
-The Monero module must not understand Nostr events.
 
 ---
 
@@ -935,17 +656,8 @@ Errors should be useful without exposing:
 
 Integration failures should not corrupt core Setrai data.
 
-For example:
-
-```text
-program saved locally
-↓
-Nostr publish fails
-↓
-program remains saved
-↓
-publish operation reports failure
-```
+For example, an AI-provider failure returns a safe error while local programs,
+sessions, and statistics remain available.
 
 ---
 
@@ -956,8 +668,6 @@ External services must be isolated behind adapters.
 Examples include:
 
 - AI providers;
-- Nostr relays;
-- Monero nodes;
 - image hosts;
 - future integrations.
 
@@ -998,8 +708,6 @@ Setrai should cleanly close:
 
 - HTTP server;
 - SQLite connection;
-- Nostr relay connections;
-- Monero wallet resources;
 - AI/provider resources when applicable.
 
 Feature modules that allocate persistent resources should expose explicit lifecycle methods where appropriate.
@@ -1024,17 +732,8 @@ const config = loadConfig()
 
 Then:
 
-```ts
-config.nostr.enabled
-config.monero.enabled
-config.ai.provider
-```
 
 Avoid widespread direct access such as:
-
-```ts
-process.env.NOSTR_ENABLED
-```
 
 inside unrelated modules.
 
@@ -1046,17 +745,6 @@ Tests should mirror module ownership.
 
 Example:
 
-```text
-tests/
-├── exercises/
-├── programs/
-├── sessions/
-├── statistics/
-├── recovery/
-├── ai/
-├── nostr/
-└── monero/
-```
 
 Core business logic should be testable without starting the entire application.
 
@@ -1064,8 +752,6 @@ Optional integrations should use mocks/fakes where practical.
 
 Tests must not accidentally:
 
-- publish real Nostr events;
-- send Monero;
 - call paid AI APIs;
 - modify production data.
 

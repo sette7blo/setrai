@@ -31,11 +31,9 @@ export function mapProgramRow(row, exercises = []) {
     blocks: parseJson(row.blocks),
     isTemporary: Boolean(row.is_temporary),
     exercises,
-    nostrEventId: row.nostr_event_id ?? null,
-    nostrPubkey: row.nostr_pubkey ?? null,
-    nostrAddress: row.nostr_address ?? null,
-    nostrPublishedAt: row.nostr_published_at ?? null,
-    catalogBaseline: parseJson(row.catalog_baseline, null),
+    seedKey: row.seed_key ?? null,
+    seedRevision: Number(row.seed_revision ?? 0),
+    seedBaseline: parseJson(row.seed_baseline, null),
     createdAt: row.created_at,
     updatedAt: row.updated_at
   }
@@ -65,10 +63,8 @@ export function normalizeProgramInput(input) {
     tags: serializeJson(input.tags ?? []),
     blocks: serializeJson(input.blocks ?? []),
     is_temporary: input.isTemporary ? 1 : 0,
-    nostr_event_id: input.nostrEventId ?? null,
-    nostr_pubkey: input.nostrPubkey ?? null,
-    nostr_address: input.nostrAddress ?? null,
-    nostr_published_at: input.nostrPublishedAt ?? null,
-    catalog_baseline: input.catalogBaseline ? JSON.stringify(input.catalogBaseline) : null
+    seed_key: input.seedKey ?? null,
+    seed_revision: input.seedRevision ?? 0,
+    seed_baseline: input.seedBaseline ? JSON.stringify(input.seedBaseline) : null
   }
 }

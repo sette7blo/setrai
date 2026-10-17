@@ -1,4 +1,3 @@
-import { parseNostrRelays } from './nostr-relays.js'
 
 function parseBoolean(value, fallback = false) {
   if (value === undefined || value === '') {
@@ -42,20 +41,6 @@ export function loadConfig() {
       provider: process.env.AI_PROVIDER || 'ollama',
       model: process.env.AI_MODEL || '',
       ollamaUrl: process.env.OLLAMA_URL || 'http://127.0.0.1:11434'
-    },
-
-    nostr: {
-      enabled: parseBoolean(process.env.NOSTR_ENABLED, false),
-      identityEnabled: parseBoolean(process.env.NOSTR_ENABLED, false) &&
-        Boolean(process.env.NOSTR_NSEC?.trim()),
-      relays: parseBoolean(process.env.NOSTR_ENABLED, false)
-        ? parseNostrRelays(process.env.NOSTR_RELAYS || '')
-        : []
-    },
-
-    monero: {
-      enabled: parseBoolean(process.env.MONERO_WALLET_ENABLED, false),
-      node: process.env.MONERO_NODE || ''
     }
   }
 }

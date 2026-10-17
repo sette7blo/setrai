@@ -15,7 +15,7 @@ test('app header has a neutral settings link without a fabricated identity', () 
   assert.doesNotMatch(navigation, /label: 'Profile'/)
   const profile = fs.readFileSync(path.join(root, 'src/client/profile/page.ts'), 'utf8')
   assert.doesNotMatch(profile, /Settebello/)
-  assert.match(profile, /if \(state\.profile\.avatarUrl\) identity\.append/)
+  assert.doesNotMatch(profile, /profileSection|profile-identity-row|profile-avatar/)
 })
 
 test('PWA manifest is installability-ready for Setrai', () => {

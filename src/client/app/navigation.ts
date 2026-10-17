@@ -3,6 +3,7 @@ import {
   createElement,
   Dumbbell,
   House,
+  Settings,
   type IconNode
 } from 'lucide'
 
@@ -31,6 +32,16 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
     label: 'Workouts',
     icon: ClipboardList,
     description: 'Programs and live sessions'
+  }
+]
+
+export const DESKTOP_NAVIGATION_ITEMS: NavigationItem[] = [
+  ...NAVIGATION_ITEMS,
+  {
+    path: '/profile',
+    label: 'Settings',
+    icon: Settings,
+    description: 'Identity, equipment, and training preferences'
   }
 ]
 

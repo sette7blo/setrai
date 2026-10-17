@@ -40,13 +40,11 @@ function insertProgram(db, values, slug) {
         tags,
         blocks,
         is_temporary,
-        nostr_event_id,
-        nostr_pubkey,
-        nostr_address,
-        nostr_published_at,
-        catalog_baseline
+        seed_key,
+        seed_revision,
+        seed_baseline
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     `)
     .run(
       slug,
@@ -56,11 +54,9 @@ function insertProgram(db, values, slug) {
       values.tags,
       values.blocks,
       values.is_temporary,
-      values.nostr_event_id,
-      values.nostr_pubkey,
-      values.nostr_address,
-      values.nostr_published_at,
-      values.catalog_baseline
+      values.seed_key,
+      values.seed_revision,
+      values.seed_baseline
     )
 }
 
@@ -130,11 +126,9 @@ export function createProgramRepository(db) {
         tags = ?,
         blocks = ?,
         is_temporary = ?,
-        nostr_event_id = ?,
-        nostr_pubkey = ?,
-        nostr_address = ?,
-        nostr_published_at = ?,
-        catalog_baseline = ?,
+        seed_key = ?,
+        seed_revision = ?,
+        seed_baseline = ?,
         updated_at = datetime('now')
       WHERE id = ?
     `).run(
@@ -145,11 +139,9 @@ export function createProgramRepository(db) {
       values.tags,
       values.blocks,
       values.is_temporary,
-      values.nostr_event_id,
-      values.nostr_pubkey,
-      values.nostr_address,
-      values.nostr_published_at,
-      values.catalog_baseline,
+      values.seed_key,
+      values.seed_revision,
+      values.seed_baseline,
       id
     )
 
@@ -161,6 +153,14 @@ export function createProgramRepository(db) {
   }
 
   function remove(id) {
+    const existing = getById(id)
+    if (existing?.seedKey) {
+      db.prepare(`
+        INSERT INTO seed_tombstones (entity_type, seed_key)
+        VALUES ('program', ?)
+        ON CONFLICT(entity_type, seed_key) DO NOTHING
+      `).run(existing.seedKey)
+    }
     const result = db
       .prepare(`DELETE FROM programs WHERE id = ?`)
       .run(id)
@@ -179,11 +179,9 @@ export function createProgramRepository(db) {
       ...program,
       name: `${program.name} Copy`,
       slug: `${program.slug}-copy`,
-      nostrEventId: null,
-      nostrPubkey: null,
-      nostrAddress: null,
-      nostrPublishedAt: null,
-      catalogBaseline: null,
+      seedKey: null,
+      seedRevision: 0,
+      seedBaseline: null,
       exercises: program.exercises
     })
   }

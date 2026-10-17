@@ -1,3 +1,4 @@
+import { localExerciseImageUrl } from './image.js'
 import type { Exercise, ExerciseApiPayload } from './types.js'
 
 export function asTextArray(value: unknown): string[] {
@@ -22,7 +23,7 @@ export function normalizeExercise(payload: ExerciseApiPayload): Exercise {
     movementType: payload.movementType || payload.movement_type || '',
     tags: asTextArray(payload.tags),
     instructions: asTextArray(payload.instructions),
-    imageUrl: payload.imageUrl || payload.image_url || '',
+    imageUrl: localExerciseImageUrl(payload.imageUrl || payload.image_url || ''),
     favourite: Boolean(payload.favourite),
     defaultSets: Number(payload.defaultSets ?? payload.default_sets ?? 3),
     defaultReps: String(payload.defaultReps ?? payload.default_reps ?? '8-12'),

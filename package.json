@@ -32,7 +32,6 @@
     "vite": "^8.3.2"
   },
   "dependencies": {
-    "lucide": "^1.52.0",
-    "nostr-tools": "^2.25.2"
+    "lucide": "^1.52.0"
   }
 }

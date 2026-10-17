@@ -31,9 +31,6 @@ export interface ProgramApiPayload {
   is_temporary?: boolean
   exercises?: ProgramExerciseApiPayload[]
   blocks?: TrainingBlock[]
-  nostrAddress?: string | null
-  nostrPubkey?: string | null
-  nostrEventId?: string | null
 }
 
 export interface TrainingStep {
@@ -87,13 +84,6 @@ export interface Program {
   isTemporary: boolean
   exercises: ProgramExercise[]
   blocks?: TrainingBlock[]
-  nostrAddress?: string | null
-  nostrPubkey?: string | null
-  nostrEventId?: string | null
-  sourceLabel?: string
-  muscleMapUrl?: string
-  localId?: number | null
-  updateAvailable?: boolean
 }
 
 export interface SessionSetApiPayload {

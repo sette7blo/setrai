@@ -1,4 +1,4 @@
-import { Activity, ChevronDown, Dumbbell, Settings, UserRound } from 'lucide'
+import { Activity, ChevronDown, Dumbbell, Settings } from 'lucide'
 
 import { iconElement } from '../app/navigation.js'
 import { pageHeading, pageSummary } from '../shared/page-chrome.js'
@@ -11,7 +11,6 @@ import type { Profile } from './types.js'
 interface ProfileState {
   profile: Profile
   message: string
-  nostrIdentityEnabled: boolean
 }
 
 function loadingView(): HTMLElement {
@@ -20,21 +19,6 @@ function loadingView(): HTMLElement {
 
 function errorView(message: string): HTMLElement {
   return pageError({ eyebrow: 'Settings', title: 'Settings unavailable', message, className: 'profile-empty' })
-}
-
-function avatar(profile: Profile): HTMLElement {
-  const frame = document.createElement('div')
-  frame.className = 'profile-avatar'
-  if (!profile.avatarUrl) {
-    frame.textContent = profile.displayName.slice(0, 1).toUpperCase() || 'S'
-    return frame
-  }
-  const image = document.createElement('img')
-  image.src = profile.avatarUrl
-  image.alt = profile.displayName ? `${profile.displayName} avatar` : 'Profile avatar'
-  image.addEventListener('error', () => { frame.textContent = profile.displayName.slice(0, 1).toUpperCase() || 'S' })
-  frame.append(image)
-  return frame
 }
 
 function category(icon: Parameters<typeof iconElement>[0], title: string, summary: string, status = '', open = false): HTMLDetailsElement {
@@ -108,15 +92,6 @@ function showToast(container: HTMLElement, message: string) {
   }, 2200)
 }
 
-function input(name: string, value: string, label: string, type = 'text'): HTMLInputElement {
-  const field = document.createElement('input')
-  field.name = name
-  field.value = value
-  field.type = type
-  field.setAttribute('aria-label', label)
-  return field
-}
-
 function trainingGoalPicker(selectedValue: string): HTMLElement {
   const selected = effectiveTrainingGoal(selectedValue)
   const section = document.createElement('section')
@@ -160,41 +135,6 @@ function trainingGoalPicker(selectedValue: string): HTMLElement {
 
   section.append(heading, list)
   return section
-}
-
-function profileSection(state: ProfileState, rerender: () => void): HTMLDetailsElement {
-  const details = category(UserRound, 'Profile', state.profile.displayName || 'Set display name and avatar', state.profile.displayName || 'LOCAL')
-  const body = categoryBody(details)
-  const form = document.createElement('form')
-  form.className = 'profile-settings-form'
-  const identity = document.createElement('div')
-  identity.className = 'profile-identity-row'
-  const copy = document.createElement('div')
-  copy.className = 'profile-identity-copy'
-  copy.append(Object.assign(document.createElement('strong'), { textContent: state.profile.displayName }), Object.assign(document.createElement('small'), { textContent: state.profile.avatarUrl ? 'Avatar configured' : 'No avatar URL set' }))
-  if (state.profile.avatarUrl) identity.append(avatar(state.profile))
-  if (state.profile.displayName) identity.append(copy)
-  if (identity.childElementCount) form.append(identity)
-  form.append(subsection('Identity'))
-  form.append(row('Display name', 'Shown in the app header and profile surfaces.', input('displayName', state.profile.displayName, 'Display name')))
-  form.append(row('Avatar URL', 'Optional image URL for the profile chip.', input('avatarUrl', state.profile.avatarUrl, 'Avatar URL', 'url')))
-  const save = document.createElement('button')
-  save.className = 'button button--primary settings-row-button'
-  save.type = 'submit'
-  save.textContent = 'Save'
-  form.append(row('Apply changes', 'Update profile identity on this device.', save))
-  form.addEventListener('submit', (event) => {
-    event.preventDefault()
-    save.disabled = true
-    const data = new FormData(form)
-    void updateProfile({ displayName: String(data.get('displayName') ?? ''), avatarUrl: String(data.get('avatarUrl') ?? '') }).then((profile) => {
-      state.profile = profile
-      state.message = 'Profile saved.'
-      rerender()
-    }).catch(() => { save.disabled = false })
-  })
-  body.append(form)
-  return details
 }
 
 function trainingSection(state: ProfileState, rerender: () => void): HTMLDetailsElement {
@@ -266,25 +206,24 @@ function renderLoaded(root: HTMLElement, state: ProfileState): void {
   const summary = pageSummary({
     icon: Settings,
     title: 'Preferences',
-    description: state.nostrIdentityEnabled ? 'Identity, training preferences, and equipment.' : 'Training preferences and equipment.',
+    description: 'Training preferences and equipment.',
     className: 'page-summary',
   })
   const list = document.createElement('section')
   list.className = 'profile-settings-list'
-  if (state.nostrIdentityEnabled) list.append(profileSection(state, () => renderLoaded(root, state)))
   list.append(trainingSection(state, () => renderLoaded(root, state)), equipmentSection(state, () => renderLoaded(root, state)))
   page.append(heading, summary, list)
   root.replaceChildren(page)
 }
 
-export async function renderProfilePage(root: HTMLElement, nostrIdentityEnabled = false): Promise<void> {
+export async function renderProfilePage(root: HTMLElement): Promise<void> {
   root.replaceChildren(loadingView())
   try {
     const profile = await getProfile()
-    renderLoaded(root, { profile, message: '', nostrIdentityEnabled })
+    renderLoaded(root, { profile, message: '' })
   } catch (error) {
     const view = errorView(readableApiError(error))
-    bindPageRetry(view, () => { void renderProfilePage(root, nostrIdentityEnabled) })
+    bindPageRetry(view, () => { void renderProfilePage(root) })
     root.replaceChildren(view)
   }
 }

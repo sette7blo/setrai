@@ -11,6 +11,8 @@
 !src/client/**
 !src/server/
 !src/server/**
+!src/shared/
+!src/shared/**
 !public/
 !public/**
 !scripts/

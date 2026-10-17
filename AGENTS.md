@@ -10,7 +10,7 @@ modular, and easy to understand without loading unrelated parts of the repositor
 3. Read only the owning feature and its documented dependencies.
 4. Follow the boundaries defined in `docs/architecture.md`.
 5. Follow the security rules in `docs/security.md` when working with secrets,
-   Nostr, Monero, authentication, or external services.
+   authentication, or external services.
 
 Do not scan unrelated feature directories unless the requested change genuinely
 crosses those boundaries.
@@ -28,7 +28,7 @@ crosses those boundaries.
 - Do not import another feature's internal implementation directly.
 - Database access must go through the database/repository layer.
 - Client code must never receive server secrets.
-- Nostr, Monero, and AI integrations must remain optional capabilities and must
+- AI integrations must remain optional capabilities and must
   not become required dependencies of the core training application.
 
 ## Feature boundaries
@@ -41,8 +41,6 @@ The major server features are:
 - `src/server/statistics/`
 - `src/server/recovery/`
 - `src/server/ai/`
-- `src/server/nostr/`
-- `src/server/monero/`
 
 The major client features are:
 
@@ -50,7 +48,6 @@ The major client features are:
 - `src/client/workouts/`
 - `src/client/statistics/`
 - `src/client/profile/`
-- `src/client/discover/`
 
 Use `docs/modules.md` to determine ownership before modifying code.
 
@@ -62,7 +59,7 @@ Deployment configuration belongs in `.env` and is documented in
 Optional integrations must be disabled by default unless the specification says
 otherwise.
 
-Secrets such as Nostr private keys and Monero wallet seeds:
+Secrets such as provider API keys:
 
 - must never be committed to Git;
 - must never be returned to the browser;

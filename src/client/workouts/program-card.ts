@@ -1,9 +1,9 @@
-import { ChevronDown, Copy, Download, Pencil, Play, Trash2 } from 'lucide'
+import { ChevronDown, Copy, Pencil, Play, Trash2 } from 'lucide'
 import { iconElement } from '../app/navigation.js'
 import { muscleMapMarkupForMuscles } from '../exercises/muscle-map.js'
 import { displayName } from '../exercises/format.js'
 import { readableApiError } from '../shared/api/errors.js'
-import { statusLabel } from '../exercises/catalog.js'
+
 import type { Program } from './types.js'
 import { createProgramBody } from './program-preview.js'
 import { estimateProgramSeconds, programFocusLabel, programMuscles, programTaxonomy } from './program-taxonomy.js'
@@ -13,11 +13,9 @@ export interface ProgramCardActions {
   edit?: (program: Program) => void
   duplicate?: (program: Program) => Promise<void>
   remove?: (program: Program) => Promise<void>
-  import?: (program: Program) => Promise<void>
-  review?: (program: Program) => Promise<void>
 }
 
-export function createProgramCard(program: Program, actions: ProgramCardActions, status?: 'Local' | 'Update' | 'Web'): HTMLElement {
+export function createProgramCard(program: Program, actions: ProgramCardActions): HTMLElement {
   const card = document.createElement('details')
   card.className = 'workout-card'
   const summary = document.createElement('summary')
@@ -36,15 +34,10 @@ export function createProgramCard(program: Program, actions: ProgramCardActions,
   name.className = 'workout-card-name'
   name.textContent = program.name
   titleRow.append(name)
-  if (status) {
-    const badge = statusLabel(status)
-    badge.classList.add('workout-card-status')
-    titleRow.append(badge)
-  }
+
   const byline = document.createElement('span')
   byline.className = 'workout-card-byline'
-  const author = program.sourceLabel || (program.nostrPubkey === 'ef24246321e47dd16cec960d4d374703af78505d0e59c532b054b5060e372bd6' ? 'Workstr' : program.nostrPubkey ? 'Nostr creator' : 'Your program')
-  byline.textContent = [author, displayName(program.difficulty)].filter(Boolean).join(' · ')
+  byline.textContent = displayName(program.difficulty)
   const meta = document.createElement('span')
   meta.className = 'workout-card-meta'
   const formats = programTaxonomy(program).format.filter(value => value !== 'normal').map(value => value === 'emom' ? 'EMOM' : displayName(value))
@@ -77,25 +70,9 @@ export function createProgramCard(program: Program, actions: ProgramCardActions,
   if (actions.edit) addAction('edit', 'Edit', Pencil, () => actions.edit!(program))
   if (actions.duplicate) addAction('duplicate', 'Duplicate', Copy, () => actions.duplicate!(program))
   if (actions.remove) addAction('delete', 'Delete', Trash2, () => actions.remove!(program))
-  if (actions.review) addAction('review', 'Review update', Download, () => actions.review!(program))
-  if (actions.import) {
-    if (program.localId) {
-      const link = document.createElement('a')
-      link.className = 'button button--secondary'
-      link.classList.add('workout-card-action', 'workout-card-action--open')
-      link.href = `/programs/${program.localId}`
-      link.textContent = 'In Library · Open'
-      bar.append(link)
-    } else addAction('import', 'Import', Download, () => actions.import!(program), true)
-  }
+
   body.append(bar, error)
   card.append(summary, body)
   card.addEventListener('toggle', () => { summary.setAttribute('aria-label', `${card.open ? 'Collapse' : 'Expand'} ${program.name}`) })
-  if (status) {
-    const wrapper = document.createElement('article')
-    wrapper.className = 'program-catalog-card'
-    wrapper.append(card)
-    return wrapper
-  }
   return card
 }

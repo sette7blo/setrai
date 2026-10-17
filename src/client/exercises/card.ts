@@ -3,12 +3,12 @@ import { iconElement } from '../app/navigation.js'
 import type { Exercise } from './types.js'
 import { displayName } from './format.js'
 import { createExerciseImage } from './image.js'
-import { statusLabel } from './catalog.js'
+
 
 export function createExerciseCard(
   exercise: Exercise,
   onFavourite: (exercise: Exercise) => void,
-  options: { selectable?: boolean, selected?: boolean, onSelect?: (exercise: Exercise) => void, status?: 'Local' | 'Update' | 'Web', onOpen?: () => void, onUpdate?: () => void, busy?: boolean } = {}
+  options: { selectable?: boolean, selected?: boolean, onSelect?: (exercise: Exercise) => void, busy?: boolean } = {}
 ): HTMLElement {
   const article = document.createElement('article')
   article.className = options.selected ? 'exercise-card exercise-card--selected' : 'exercise-card'
@@ -18,7 +18,7 @@ export function createExerciseCard(
   link.className = 'exercise-card__link'
   link.href = `/exercises/${exercise.id}`
   link.setAttribute('aria-label', options.selectable ? `${options.selected ? 'Deselect' : 'Select'} ${exercise.name}` : `Open ${exercise.name} details`)
-  if (options.onOpen && !options.selectable) link.addEventListener('click', event => { event.preventDefault(); options.onOpen?.() })
+
   if (options.selectable) {
     link.addEventListener('click', (event) => {
       event.preventDefault()
@@ -67,9 +67,8 @@ export function createExerciseCard(
     onFavourite(exercise)
   })
 
-  if (options.status !== 'Web' && !options.selectable) body.append(favourite)
+  if (!options.selectable) body.append(favourite)
   article.append(link)
-  if (options.status) article.append(statusLabel(options.status, options.onUpdate, options.busy || options.selectable))
   if (options.selectable) {
     const select = document.createElement('button')
     select.type = 'button'

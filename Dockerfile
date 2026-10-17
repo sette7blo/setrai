@@ -6,6 +6,7 @@ COPY package.json package-lock.json ./
 RUN npm ci --ignore-scripts
 COPY tsconfig.client.json vite.config.ts index.html ./
 COPY src/client ./src/client
+COPY src/shared ./src/shared
 COPY public ./public
 RUN npm run build
 
@@ -24,6 +25,7 @@ RUN npm ci --omit=dev --omit=optional --ignore-scripts \
     && mkdir -p /data \
     && chown node:node /data
 COPY src/server ./src/server
+COPY src/shared ./src/shared
 COPY scripts/docker-healthcheck.mjs ./scripts/docker-healthcheck.mjs
 COPY --from=build /app/dist/client ./dist/client
 USER node

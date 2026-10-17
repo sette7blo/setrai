@@ -72,9 +72,7 @@ const SERVER_FEATURES = new Set([
   'statistics',
   'recovery',
   'quick-workout',
-  'ai',
-  'nostr',
-  'monero'
+  'ai'
 ])
 
 const CLIENT_FEATURES = new Set([
@@ -85,7 +83,6 @@ const CLIENT_FEATURES = new Set([
   'recovery',
   'profile',
   'quick-workout',
-  'discover',
   'shared'
 ])
 
@@ -133,13 +130,6 @@ const ALLOWED_SERVER_FEATURE_IMPORTS = {
     'recovery'
   ]),
 
-  nostr: new Set([
-    'exercises',
-    'programs',
-    'sessions'
-  ]),
-
-  monero: new Set([])
 }
 
 const errors = []
@@ -434,9 +424,7 @@ function checkRepositoryAccess(filePath, imports) {
       statistics: new Set([]),
       recovery: new Set([]),
       'quick-workout': new Set([]),
-      ai: new Set([]),
-      nostr: new Set([]),
-      monero: new Set([])
+      ai: new Set([])
     }
 
     const allowed =
@@ -459,8 +447,6 @@ function checkDangerousClientSecretNames(filePath, content) {
   }
 
   const forbiddenPatterns = [
-    /\bNOSTR_NSEC\b/,
-    /\bMONERO_SEED\b/,
     /\bSETRAI_AUTH_PASSWORD\b/,
     /\bAI_API_KEY\b/
   ]
@@ -537,8 +523,6 @@ function checkRequiredDocumentation() {
     'docs/security.md',
     'docs/configuration.md',
     'docs/decisions/001-self-hosted-architecture.md',
-    'docs/decisions/002-optional-nostr.md',
-    'docs/decisions/003-monero-hot-wallet.md',
     'docs/decisions/004-module-size-policy.md'
   ]
 
@@ -564,8 +548,6 @@ function checkRequiredDirectories() {
     'src/server/recovery',
     'src/server/quick-workout',
     'src/server/ai',
-    'src/server/nostr',
-    'src/server/monero',
 
     'src/client/app',
     'src/client/exercises',
@@ -574,7 +556,6 @@ function checkRequiredDirectories() {
     'src/client/recovery',
     'src/client/profile',
     'src/client/quick-workout',
-    'src/client/discover',
     'src/client/shared'
   ]
 

@@ -1,4 +1,4 @@
-import { ClipboardList, Dumbbell, Plus, RefreshCw, Search, SlidersHorizontal } from 'lucide'
+import { ClipboardList, Dumbbell, Plus, Search, SlidersHorizontal } from 'lucide'
 import { iconElement } from '../app/navigation.js'
 import { displayName } from '../exercises/format.js'
 import { PROGRAM_GOALS, PROGRAM_FOCUS, PROGRAM_FORMATS, emptyProgramFilters } from './program-taxonomy.js'
@@ -7,7 +7,7 @@ import type { Program } from './types.js'
 import { createFilterChips, createFilterSheet, type FilterGroup } from '../shared/filter-sheet.js'
 import { pageHeading, pageSummary } from '../shared/page-chrome.js'
 
-export function workoutHeading(active: 'library' | 'history' | 'recovery', _enabled: boolean): HTMLElement {
+export function workoutHeading(active: 'library' | 'history' | 'recovery'): HTMLElement {
   return pageHeading({
     title: 'Workouts',
     className: 'workout-heading',
@@ -34,7 +34,7 @@ export function programHero(programs: Program[]): HTMLElement {
   })
 }
 
-export function programToolbar(filters: ProgramFilters, onSearch: () => void, onFilters: (opener: HTMLButtonElement) => void, onAction: () => void, onRefresh?: () => void): HTMLElement {
+export function programToolbar(filters: ProgramFilters, onSearch: () => void, onFilters: (opener: HTMLButtonElement) => void, onAction: () => void): HTMLElement {
   const toolbar = document.createElement('div')
   toolbar.className = 'page-toolbar program-toolbar'
   const label = document.createElement('label')
@@ -60,15 +60,6 @@ export function programToolbar(filters: ProgramFilters, onSearch: () => void, on
   action.append(iconElement(Plus))
   action.addEventListener('click', onAction)
   toolbar.append(label, toggle, action)
-  if (onRefresh) {
-    toolbar.classList.add('program-toolbar--catalog')
-    const refresh = document.createElement('button')
-    refresh.type = 'button'; refresh.className = 'page-toolbar-action program-toolbar-action'
-    refresh.setAttribute('aria-label', 'Refresh web workouts')
-    refresh.append(iconElement(RefreshCw))
-    refresh.addEventListener('click', onRefresh)
-    toolbar.insertBefore(refresh, action)
-  }
   return toolbar
 }
 

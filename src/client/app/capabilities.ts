@@ -2,10 +2,7 @@ import { apiClient } from '../shared/api/client.js'
 import type { Capabilities } from '../shared/api/types.js'
 
 const DEFAULT_CAPABILITIES: Capabilities = {
-  ai: false,
-  nostr: false,
-  nostrIdentity: false,
-  moneroWallet: false
+  ai: false
 }
 
 function readCapability(value: unknown): boolean {
@@ -20,10 +17,7 @@ export function parseCapabilities(input: unknown): Capabilities {
   const record = input as Record<string, unknown>
 
   return {
-    ai: readCapability(record.ai),
-    nostr: readCapability(record.nostr),
-    nostrIdentity: readCapability(record.nostr) && readCapability(record.nostrIdentity),
-    moneroWallet: readCapability(record.moneroWallet)
+    ai: readCapability(record.ai)
   }
 }
 

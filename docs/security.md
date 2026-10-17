@@ -6,8 +6,6 @@ This document defines the security boundaries and security expectations for Setr
 
 Setrai is a self-hosted fitness application with optional integrations that may handle highly sensitive credentials, including:
 
-- Nostr private keys;
-- Monero wallet seeds;
 - AI provider API keys;
 - authentication credentials;
 - external-service tokens.
@@ -45,12 +43,9 @@ The browser may receive:
 - wallet receive address;
 - transaction history;
 - transaction status;
-- public Nostr identity.
 
 The browser must not receive:
 
-- Nostr private keys;
-- Monero wallet seeds;
 - AI provider secrets;
 - application authentication secrets;
 - raw server environment configuration.
@@ -77,25 +72,6 @@ The server performs privileged work.
 
 Examples:
 
-```text
-Browser requests Nostr publish
-        ↓
-Server creates and signs event
-        ↓
-Server publishes to relays
-```
-
-```text
-Browser requests Monero payment
-        ↓
-Server validates request
-        ↓
-Server creates transaction
-        ↓
-User confirms
-        ↓
-Server broadcasts transaction
-```
 
 The browser should never need direct possession of the underlying private credential.
 
@@ -107,12 +83,6 @@ Deployment-level secrets are stored through environment configuration.
 
 Typical `.env` values may include:
 
-```env
-NOSTR_NSEC=
-MONERO_SEED=
-AI_API_KEY=
-SETRAI_AUTH_PASSWORD=
-```
 
 The real `.env` file must never be committed to Git.
 
@@ -139,19 +109,9 @@ if required by the repository setup.
 
 Allowed:
 
-```env
-NOSTR_NSEC=
-MONERO_SEED=
-AI_API_KEY=
-```
 
 Not allowed:
 
-```env
-NOSTR_NSEC=nsec1realprivatekey...
-MONERO_SEED=actual wallet words...
-AI_API_KEY=actual-secret-key
-```
 
 Comments should clearly indicate when a field is sensitive.
 
@@ -169,7 +129,6 @@ A restart boundary simplifies:
 
 - secret loading;
 - integration initialization;
-- relay lifecycle;
 - wallet lifecycle;
 - capability evaluation.
 
@@ -177,150 +136,8 @@ Setrai does not need to dynamically reload every secret at runtime.
 
 ---
 
-## 7. Nostr private-key security
-
-Nostr integration is optional.
-
-The private key is configured server-side.
-
-Example:
-
-```env
-NOSTR_ENABLED=true
-NOSTR_NSEC=nsec1...
-```
-
-The Nostr private key must:
-
-- remain server-side;
-- never be returned by an API;
-- never be included in browser JavaScript;
-- never be written to logs;
-- never appear in error messages;
-- never be included in telemetry;
-- never be embedded in generated HTML.
-
-The server derives the public identity from the private key.
-
-The browser may receive:
-
-```text
-npub
-hex pubkey where required
-display name
-avatar
-profile metadata
-```
-
-The browser must never receive the private key.
-
----
-
-## 8. Nostr signing
-
-Nostr events must be signed server-side.
-
-Preferred flow:
-
-```text
-client requests publish
-      ↓
-server loads canonical Setrai data
-      ↓
-server constructs event
-      ↓
-server signs using configured nsec
-      ↓
-server publishes to configured relays
-      ↓
-server returns safe publication result
-```
-
-The client should not sign events with the server's private key.
-
----
-
-## 9. Nostr input validation
-
-When Nostr is enabled, Setrai should validate the configured private key during initialization.
-
-Invalid configuration should produce a safe startup or capability error.
-
-The error may say:
-
-```text
-Nostr private key is invalid
-```
-
-It must not echo the configured secret.
-
----
-
-## 10. Nostr relay security
-
-Setrai may connect to public relays.
-
-Public relays are external infrastructure and must be treated as untrusted.
-
-Do not assume:
-
-- availability;
-- persistence;
-- privacy;
-- honest content;
-- correct metadata;
-- permanent retention.
-
-All remote events should be treated as untrusted input.
-
-Where signatures are expected, they must be verified before use.
-
-Remote data should be validated before importing into canonical Setrai storage.
-
----
-
-## 11. Nostr publication boundary
-
-Publishing data to Nostr is public unless the selected event format explicitly provides privacy.
-
-Users should not assume published training content is private.
-
-Setrai should avoid unintentionally publishing sensitive local data.
-
-Only the content required by the defined publication format should be sent.
-
-Local canonical data remains independent of publication.
-
----
-
-## 12. Monero wallet security
-
-Setrai may contain an optional Monero hot wallet.
-
-The wallet seed is one of the most sensitive values in the application.
-
-Example:
-
-```env
-MONERO_WALLET_ENABLED=true
-MONERO_SEED=
-```
-
-The seed must:
-
-- remain server-side;
-- never be sent to the browser;
-- never be logged;
-- never appear in an API response;
-- never be shown in debug output;
-- never be embedded in generated frontend assets;
-- never appear in an exception returned to the client.
-
----
-
 ## 13. Hot-wallet model
 
-The Setrai Monero wallet is explicitly a hot wallet.
 
 It is intended for operational payments.
 
@@ -344,9 +161,6 @@ This is a product security expectation, not merely documentation advice.
 
 The wallet should be initialized only when:
 
-```env
-MONERO_WALLET_ENABLED=true
-```
 
 If disabled:
 
@@ -357,69 +171,8 @@ If disabled:
 
 ---
 
-## 15. Monero node trust
-
-Setrai may connect to public or private Monero nodes.
-
-A remote node is not trusted with wallet secrets.
-
-The wallet must never send:
-
-- seed phrase;
-- private spend key;
-- other private wallet material
-
-to the remote node.
-
-The configured node should be treated as an external service that may:
-
-- be unavailable;
-- be slow;
-- provide incomplete information;
-- observe network-level wallet activity.
-
-Users who want stronger privacy may configure their own node.
-
----
-
-## 16. Monero receive operations
-
-Receiving XMR may safely expose the public receive address to the browser.
-
-Allowed browser data includes:
-
-```text
-wallet address
-payment URI
-QR payload
-balance
-transaction confirmations
-```
-
-Private wallet material remains server-side.
-
----
-
-## 17. Monero send operations
-
-Sending funds is a privileged operation.
-
-A normal send flow must require an explicit user action.
-
-The UI should display:
-
-- destination;
-- amount;
-- fee where available;
-- final confirmation.
-
-The server must not automatically broadcast a payment simply because a destination was discovered.
-
----
-
 ## 18. Payment confirmation
 
-Before broadcasting a Monero transaction, Setrai should require a clear confirmation step.
 
 Conceptually:
 
@@ -448,7 +201,6 @@ Background automatic spending is outside the default product model.
 
 ## 19. Payment API validation
 
-Monero payment endpoints must validate:
 
 - destination format;
 - amount;
@@ -621,27 +373,8 @@ API responses should use explicit response shapes.
 
 Avoid returning raw internal objects that may accidentally include sensitive fields.
 
-Preferred:
-
-```ts
-return {
-  enabled: true,
-  pubkey,
-  profile
-}
-```
-
-Avoid:
-
-```ts
-return config.nostr
-```
-
-if the configuration object also contains:
-
-```text
-nsec
-```
+Return an explicit public shape such as `{ ai: false }`.
+Never return the raw server configuration or secret-bearing internal objects.
 
 ---
 
@@ -654,7 +387,6 @@ Sensitive keys should be treated as forbidden log fields.
 Examples:
 
 ```text
-nsec
 seed
 privateKey
 apiKey
@@ -666,18 +398,9 @@ When configuration is logged for diagnostics, sensitive values must be omitted o
 
 Allowed:
 
-```text
-Nostr enabled: true
-Monero wallet enabled: true
-AI provider: ollama
-```
 
 Not allowed:
 
-```text
-NOSTR_NSEC=nsec1...
-MONERO_SEED=...
-```
 
 ---
 
@@ -687,13 +410,6 @@ Production logs should contain enough information to diagnose problems without e
 
 Safe examples:
 
-```text
-Connected to Nostr relay
-Nostr publish failed
-Monero node unavailable
-AI provider timeout
-Database migration completed
-```
 
 Unsafe examples:
 
@@ -721,11 +437,7 @@ If Setrai is exposed beyond a trusted local network, application authentication 
 
 Authentication is separate from:
 
-- Nostr identity;
-- Monero identity;
 - local training profile.
-
-A Nostr private key should not automatically become the application login credential.
 
 If authentication is implemented, it belongs in a dedicated auth module.
 
@@ -757,7 +469,6 @@ HTTPS protects:
 - authentication credentials;
 - training data;
 - wallet requests;
-- Nostr publication requests;
 - AI prompts;
 - session cookies or tokens.
 
@@ -769,13 +480,6 @@ State-changing endpoints should be designed so that an unrelated website cannot 
 
 This is especially important for:
 
-```text
-Monero send
-Nostr publish
-program deletion
-backup restore
-settings changes
-```
 
 The final authentication/session implementation should include appropriate CSRF protections where required by the chosen architecture.
 
@@ -790,11 +494,9 @@ This includes:
 - API request bodies;
 - query parameters;
 - uploaded files;
-- Nostr events;
 - AI-generated structured output;
-- Monero destinations;
-- imported programs;
-- imported exercises.
+- locally created programs;
+- locally created exercises.
 
 Validation should occur before canonical persistence.
 
@@ -806,32 +508,10 @@ Data received from public services must be treated as untrusted.
 
 Examples:
 
-```text
-Nostr event content
-Nostr profile metadata
-remote images
-AI responses
-Monero node responses
-```
 
 Do not assume external content is safe for direct HTML insertion.
 
 UI rendering must avoid unsafe HTML injection.
-
----
-
-## 37. Imported Nostr content
-
-Before importing Nostr-discovered data into SQLite:
-
-1. verify required signatures where applicable;
-2. validate event structure;
-3. validate expected event kind;
-4. validate supported fields;
-5. sanitize user-facing text where needed;
-6. reject malformed objects.
-
-Imported content becomes local only after validation.
 
 ---
 
@@ -875,12 +555,6 @@ Secrets should not automatically be included unless explicitly designed.
 
 The `.env` file may contain:
 
-```text
-Nostr nsec
-Monero seed
-AI keys
-passwords
-```
 
 Therefore `.env` must be treated as highly sensitive.
 
@@ -976,8 +650,6 @@ Avoid adding large libraries for trivial behavior.
 Dependencies handling:
 
 - cryptography;
-- Nostr signing;
-- Monero wallets;
 - HTTP parsing;
 - database access
 
@@ -991,17 +663,6 @@ A disabled integration should reduce attack surface.
 
 When:
 
-```env
-NOSTR_ENABLED=false
-```
-
-Nostr routes and services should not perform privileged Nostr operations.
-
-When:
-
-```env
-MONERO_WALLET_ENABLED=false
-```
 
 wallet routes should not initialize a wallet or permit spending.
 
@@ -1017,10 +678,7 @@ Client capability checks exist for UX.
 
 Example:
 
-```text
-moneroWallet=false
-→ hide Wallet
-```
+
 
 But the server must independently enforce the same capability.
 
@@ -1036,16 +694,9 @@ Examples:
 
 The statistics module does not need:
 
-```text
-Nostr private key
-Monero wallet access
-```
 
 The exercises module does not need:
 
-```text
-Monero seed
-```
 
 The client does not need:
 
@@ -1064,16 +715,9 @@ Secrets should have one clear owning module.
 Examples:
 
 ```text
-NOSTR_NSEC
 → server/config
-→ nostr module
 ```
 
-```text
-MONERO_SEED
-→ server/config
-→ monero module
-```
 
 ```text
 AI_API_KEY
@@ -1119,45 +763,11 @@ service-worker caches
 
 ---
 
-## 53. Monero wallet state
+## 55. Images
 
-If the Monero wallet library requires persistent wallet files, those files must live in server-controlled persistent storage.
-
-They should not be placed in:
-
-```text
-public/
-src/client/
-browser storage
-```
-
-Wallet files should be treated as sensitive even if encrypted.
-
----
-
-## 54. Nostr profile data
-
-Nostr profile data is public remote metadata.
-
-It may be cached locally if useful.
-
-Cached public profile metadata must remain distinct from:
-
-```text
-Nostr private key
-```
-
-Public profile caching must never result in private-key persistence outside the approved secret path.
-
----
-
-## 55. External images
-
-Remote images may create privacy or availability issues.
-
-Where Setrai supports externally hosted exercise or profile images, the implementation should avoid trusting arbitrary content types or executing remote content.
-
-Images should be rendered as media, not treated as HTML.
+Exercise images use bundled files or locally stored uploads. External exercise
+image URLs are rejected, and legacy remote references produce a local fallback.
+Uploaded content must be validated and served without executing embedded code.
 
 ---
 
@@ -1165,8 +775,6 @@ Images should be rendered as media, not treated as HTML.
 
 The following should be treated as privileged actions:
 
-- sending Monero;
-- publishing to Nostr;
 - replacing configuration secrets;
 - restoring backups;
 - deleting large amounts of training history;
@@ -1178,29 +786,28 @@ These operations should require explicit user intent.
 
 ## 57. No silent spending
 
-Setrai must never silently spend Monero as a side effect of another action.
 
 For example:
 
 ```text
-import program
+create a local program
 ```
 
 must never cause:
 
 ```text
-automatic creator tip
+automatic payment
 ```
 
 without explicit user confirmation.
 
 ---
 
-## 58. No silent publishing
+## 58. Local training data
 
-Setrai must not publish private training content to Nostr merely because Nostr is enabled.
-
-Publishing remains an explicit action unless a future product specification clearly introduces an opt-in automatic publishing mode.
+Exercise and workout data remains local. The application does not publish
+training content. External provider requests must use their explicit service
+contracts and respect the applicable data-access settings.
 
 ---
 
@@ -1219,13 +826,6 @@ before making changes.
 
 Security-sensitive modules include:
 
-```text
-src/server/nostr/
-src/server/monero/
-src/server/auth/
-src/server/config/
-backup/restore
-```
 
 ---
 
@@ -1235,10 +835,6 @@ Tests should verify at minimum:
 
 - secrets are not returned by configuration APIs;
 - disabled capabilities reject privileged API actions;
-- invalid Nostr keys fail safely;
-- invalid Monero destinations are rejected;
-- Monero sends require explicit confirmation;
-- Nostr publishing does not alter local persistence on failure;
 - malformed imported content is rejected;
 - logs do not deliberately include secrets.
 
@@ -1255,7 +851,6 @@ dummy keys
 test fixtures
 mock wallets
 mock providers
-local relay mocks
 ```
 
 where practical.
@@ -1270,7 +865,6 @@ CI must not require production secrets for ordinary tests.
 
 Tests involving external systems should be mocked or explicitly separated.
 
-Pull-request checks must not publish real Nostr events or send real Monero transactions.
 
 ---
 
@@ -1299,7 +893,6 @@ If a feature requires changing:
 - trust boundaries;
 - browser/server responsibility;
 - wallet confirmation behavior;
-- Nostr signing responsibility;
 
 the change must also update:
 
@@ -1319,7 +912,7 @@ When tradeoffs arise, prioritize:
 
 1. protecting private keys and wallet seeds;
 2. preventing unauthorized spending;
-3. preventing accidental public publishing;
+3. preventing unintended disclosure of local training data;
 4. protecting private training data;
 5. maintaining clear server/browser boundaries;
 6. minimizing unnecessary secret exposure;

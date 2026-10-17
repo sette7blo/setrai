@@ -1,6 +1,17 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 import { menuDestination } from '../../src/client/app/menu-navigation.js'
+import { DESKTOP_NAVIGATION_ITEMS, NAVIGATION_ITEMS } from '../../src/client/app/navigation.js'
+import { primaryNavPath } from '../../src/client/app/router.js'
+
+test('desktop Settings uses the profile route while mobile retains its header gear', () => {
+  const settings = DESKTOP_NAVIGATION_ITEMS.find(item => item.label === 'Settings')
+  assert.equal(settings?.path, '/profile')
+  assert.ok(settings?.icon)
+  assert.equal(primaryNavPath('/profile'), settings?.path)
+  assert.equal(menuDestination(settings!.path, 'http://localhost:3191/exercises')?.pathname, '/profile')
+  assert.deepEqual(NAVIGATION_ITEMS.map(item => item.path), ['/statistics', '/exercises', '/workouts'])
+})
 
 const current = 'http://localhost:3191/exercises'
 test('same-origin menu destinations support navigation without reloading', () => {

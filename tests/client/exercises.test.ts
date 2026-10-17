@@ -15,7 +15,7 @@ import {
   normalizeExercise,
   pluralizeExercise
 } from '../../src/client/exercises/format.js'
-import { imageFallbackState } from '../../src/client/exercises/image.js'
+import { imageFallbackState, localExerciseImageUrl } from '../../src/client/exercises/image.js'
 import { applyExerciseImage, MAX_EXERCISE_IMAGE_BYTES } from '../../src/client/exercises/image-upload.js'
 import { muscleMapMarkup, muscleMapMarkupForMuscles, muscleRegion } from '../../src/client/exercises/muscle-map.js'
 import type { Exercise } from '../../src/client/exercises/types.js'
@@ -187,6 +187,18 @@ test('reports image fallback state without external placeholder URLs', () => {
   assert.equal(imageFallbackState('/images/exercises/bench-press.webp', false), 'image')
   assert.equal(imageFallbackState('/images/exercises/missing.webp', true), 'fallback')
   assert.equal(imageFallbackState('', false), 'fallback')
+})
+
+test('remote and malformed exercise images stay local fallbacks', () => {
+  for (const imageUrl of ['https://example.test/a.png', '//example.test/a.png',
+    '/images/../outside.png', '/images/%2e%2e/outside.png', '/images/a.png?redirect=external']) {
+    assert.equal(localExerciseImageUrl(imageUrl), '')
+    assert.equal(imageFallbackState(imageUrl, false), 'fallback')
+    assert.equal(normalizeExercise({ id: 1, slug: 'local', name: 'Local', image_url: imageUrl }).imageUrl, '')
+  }
+  assert.equal(localExerciseImageUrl('/media/exercises/upload.png'), '/media/exercises/upload.png')
+  const detail = readFileSync('src/client/exercises/detail-view.ts', 'utf8')
+  assert.doesNotMatch(detail, /actionLabel|Download|Catalog import/)
 })
 
 test('normalizes expected API payload into safe client fields', () => {

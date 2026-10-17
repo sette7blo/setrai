@@ -15,7 +15,7 @@ const envFile = path.join(directory, '.env')
 fs.copyFileSync(path.join(root, 'deploy', 'compose.yaml'), composeFile)
 fs.writeFileSync(envFile, [
   `SETRAI_IMAGE=${image}`, 'SETRAI_BIND_ADDRESS=127.0.0.1', 'SETRAI_HTTP_PORT=0',
-  'AI_ENABLED=false', 'NOSTR_ENABLED=false', 'NOSTR_NSEC=', 'MONERO_WALLET_ENABLED=false'
+  'AI_ENABLED=false'
 ].join('\n') + '\n', { mode: 0o600 })
 const composeArgs = ['compose', '--project-directory', directory, '--env-file', envFile,
   '--file', composeFile, '--project-name', project]
@@ -46,9 +46,7 @@ try {
   }
   const capabilities = await json('/api/capabilities')
   assert.equal(capabilities.ai, false)
-  assert.equal(capabilities.nostr, false)
-  assert.equal(capabilities.nostrIdentity, false)
-  assert.equal(capabilities.moneroWallet, false)
+  assert.deepEqual(Object.keys(capabilities), ['ai'])
   const html = await (await fetch(base)).text()
   const script = html.match(/src="([^" ]+\.js)"/)?.[1]
   assert.ok(script, 'built client HTML references a JavaScript bundle')
@@ -56,16 +54,17 @@ try {
   assert.ok(asset.ok)
   assert.match(asset.headers.get('content-type') || '', /javascript/)
   const { exercises } = await json('/api/exercises')
-  assert.ok(exercises.length > 0, 'fresh database seeds the exercise library')
+  assert.equal(exercises.length, 56, 'fresh database seeds the complete exercise library')
   const imageUrl = exercises.find(item => (item.image_url || item.imageUrl || '').startsWith('/images/'))
   assert.ok(imageUrl, 'seeded exercises include bundled image assets')
   const picture = await fetch(`${base}${imageUrl.image_url || imageUrl.imageUrl}`)
   assert.ok(picture.ok)
   assert.match(picture.headers.get('content-type') || '', /image/)
-  assert.deepEqual((await json('/api/programs')).programs, [])
+  const seededPrograms = (await json('/api/programs')).programs
+  assert.equal(seededPrograms.length, 7)
   const { workout } = await json('/api/quick-workout', 'POST', { durationMinutes: 20 })
   assert.ok(workout.exercises.length > 0)
-  assert.deepEqual((await json('/api/programs')).programs, [], 'preview does not save a program')
+  assert.deepEqual((await json('/api/programs')).programs, seededPrograms, 'preview does not save a program')
   const { session } = await json('/api/quick-workout/start', 'POST', { workout })
   await json('/api/profile', 'PATCH', { trainingGoal: 'strength', weightUnit: 'lb' })
   const id = compose(['ps', '--quiet', 'setrai'])
@@ -80,21 +79,17 @@ try {
   `])
   // Remove/recreate the container, retaining this test's named volume.
   compose(['down', '--timeout', '30'])
-  // Ensure optional Nostr modules can still initialize with runtime-only deps.
-  // This relay is never queried; capability/health checks do not open sockets.
-  fs.appendFileSync(envFile, 'NOSTR_ENABLED=true\nNOSTR_RELAYS=wss://relay.invalid\n')
   compose(['up', '--detach', '--pull', 'never', '--wait', '--wait-timeout', '120'])
   base = `http://${compose(['port', 'setrai', '3000'])}`
-  const enabled = await json('/api/capabilities')
-  assert.equal(enabled.nostr, true)
-  assert.equal(enabled.nostrIdentity, false)
+  assert.deepEqual(await json('/api/capabilities'), capabilities)
   const { profile } = await json('/api/profile')
   assert.equal(profile.trainingGoal, 'strength')
   assert.equal(profile.weightUnit, 'lb')
+  assert.equal((await json('/api/exercises')).exercises.length, 56, 'restart does not duplicate exercises')
   const loaded = (await json(`/api/sessions/${session.id}`)).session
   assert.equal(loaded.id, session.id)
   assert.equal(loaded.plannedExercises.length, workout.exercises.length)
-  assert.deepEqual((await json('/api/programs')).programs, [], 'temporary workout stays out of Library')
+  assert.deepEqual((await json('/api/programs')).programs, seededPrograms, 'temporary workout stays out of Library')
   console.log('PASS Compose starts healthy, serves built app/images, seeds SQLite, and runs without optional integrations.')
   console.log('PASS non-root/read-only runtime excludes secrets and build tools; profile/session data survives container replacement.')
 } finally {

@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronDown, Star, Download, Dumbbell, ListOrdered, Pencil } from 'lucide'
+import { ChevronLeft, ChevronDown, Star, Dumbbell, ListOrdered, Pencil } from 'lucide'
 import { iconElement } from '../app/navigation.js'
 import { displayName } from './format.js'
 import { createExerciseImage } from './image.js'
@@ -56,7 +56,7 @@ function iconChromeButton(label: string, pressed?: boolean): HTMLButtonElement {
   return button
 }
 
-export function createExerciseDetailView(exercise: Exercise, onFavourite: () => void, actionLabel?: string): HTMLElement {
+export function createExerciseDetailView(exercise: Exercise, onFavourite: () => void): HTMLElement {
   const page = document.createElement('article')
   page.className = 'exercise-detail'
   const back = document.createElement('a')
@@ -79,26 +79,24 @@ export function createExerciseDetailView(exercise: Exercise, onFavourite: () => 
   chrome.className = 'detail-chrome'
   titleRow.append(heading, chrome)
 
-  if (!actionLabel) {
-    const favourite = iconChromeButton(
-      exercise.favourite ? `Remove ${exercise.name} from favorites` : `Add ${exercise.name} to favorites`,
-      exercise.favourite
-    )
-    favourite.classList.add('detail-chrome-btn--favourite')
-    if (exercise.favourite) favourite.classList.add('detail-chrome-btn--active')
-    favourite.append(iconElement(Star))
-    favourite.addEventListener('click', onFavourite)
-    chrome.append(favourite)
+  const favourite = iconChromeButton(
+    exercise.favourite ? `Remove ${exercise.name} from favorites` : `Add ${exercise.name} to favorites`,
+    exercise.favourite
+  )
+  favourite.classList.add('detail-chrome-btn--favourite')
+  if (exercise.favourite) favourite.classList.add('detail-chrome-btn--active')
+  favourite.append(iconElement(Star))
+  favourite.addEventListener('click', onFavourite)
+  chrome.append(favourite)
 
-    if (exercise.id > 0) {
-      const edit = document.createElement('a')
-      edit.className = 'detail-chrome-btn detail-chrome-btn--edit'
-      edit.href = `/exercises/${exercise.id}/edit`
-      edit.setAttribute('aria-label', `Edit ${exercise.name}`)
-      edit.title = 'Edit exercise'
-      edit.append(iconElement(Pencil))
-      chrome.append(edit)
-    }
+  if (exercise.id > 0) {
+    const edit = document.createElement('a')
+    edit.className = 'detail-chrome-btn detail-chrome-btn--edit'
+    edit.href = `/exercises/${exercise.id}/edit`
+    edit.setAttribute('aria-label', `Edit ${exercise.name}`)
+    edit.title = 'Edit exercise'
+    edit.append(iconElement(Pencil))
+    chrome.append(edit)
   }
 
   const badges = pills([exercise.difficulty, exercise.category, exercise.movementType])
@@ -120,16 +118,6 @@ export function createExerciseDetailView(exercise: Exercise, onFavourite: () => 
     metadataSection('Equipment', exercise.equipment, Dumbbell),
     createInstructions(exercise)
   )
-
-  // Catalog import keeps one full-width primary action at the bottom.
-  if (actionLabel) {
-    const primary = document.createElement('button')
-    primary.type = 'button'
-    primary.className = 'button button--primary detail-primary-action'
-    primary.append(iconElement(Download), document.createTextNode(actionLabel))
-    primary.addEventListener('click', onFavourite)
-    card.append(primary)
-  }
 
   page.append(back, card)
   return page

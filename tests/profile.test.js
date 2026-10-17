@@ -273,7 +273,7 @@ test('rejects unknown and invalid fields', () => {
     const service = createProfileService(db)
 
     assert.throws(
-      () => service.updateProfile({ nostrNsec: 'nsec1...' }),
+      () => service.updateProfile({ unsupportedField: 'value' }),
       /Unknown profile field/
     )
     assert.throws(

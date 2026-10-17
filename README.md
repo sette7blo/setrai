@@ -1,7 +1,7 @@
 # Setrai
 
 Self-hosted training, workout sessions, statistics, and muscle recovery. Data stays
-in your SQLite database; Nostr, AI, and Monero are optional.
+in your SQLite database; AI is optional.
 
 **Three tracks (do not mix them):**
 
@@ -66,8 +66,6 @@ SETRAI_BIND_ADDRESS=127.0.0.1
 SETRAI_HTTP_PORT=3000
 
 AI_ENABLED=false
-NOSTR_ENABLED=false
-MONERO_WALLET_ENABLED=false
 
 # Built-in auth is not implemented yet. Keep this off the public internet
 # or put it behind a trusted VPN / authenticated reverse proxy.
