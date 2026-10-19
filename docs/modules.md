@@ -983,6 +983,8 @@ src/client/workouts/
 - runner lifecycle, saved clocks and training mutations in `session-page.ts`;
 - deadline-based five-second countdown sound scheduling and cancellation in
   `live-audio.ts`, independent of UI polling and using device output timing;
+- live-session screen-awake lifecycle and native/iOS fallback in
+  `live-wake-lock.ts`, activated by training interaction and released on cleanup;
 - pure strength/superset planning and EMOM schedule/phase clocks in `live-plan.ts`;
 - full-screen chrome and clock painting in `live-shell.ts`, strength and EMOM
   worksheets in `live-strength-view.ts`/`live-emom-view.ts`, image sizing and

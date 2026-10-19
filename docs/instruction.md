@@ -431,6 +431,12 @@ against the same deadline as the displayed clock. Pausing, seeking, skipping,
 changing a deadline, or leaving the foreground cancels obsolete sound cues;
 returning does not replay missed beeps. Sound remains optional.
 
+While a live session is open and visible, Setrai requests a screen wake lock and
+falls back to the iOS-compatible media technique when the native API is unavailable
+(including non-HTTPS self-hosted origins). The lock is retried on the first training
+interaction, reacquired after returning to the foreground, and released when leaving
+or completing the session.
+
 The header End control discards an active session after confirmation; finishing
 preserves logged work in history. Completed sessions cannot be discarded through
 the live session endpoint.

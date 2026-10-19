@@ -7,6 +7,7 @@ import { renderSessionSummary } from './session-summary.js'
 import { renderLiveShell, updateLiveClocks } from './live-shell.js'
 import { clockValue, compileIntervals, intervalPhase, phaseEndsAt, nextSet, setCount, strengthExercises, supersetNext } from './live-plan.js'
 import { createCountdownAudio } from './live-audio.js'
+import { createLiveWakeLock } from './live-wake-lock.js'
 import type { LiveModel, LiveActions } from './live-model.js'
 import type { LiveRuntime, Program, Session } from './types.js'
 
@@ -46,8 +47,8 @@ function runSession(root: HTMLElement, model: LiveModel): void {
   let phaseKey = ''
   let disposed = false
   let writes: Promise<unknown> = Promise.resolve()
-  let wakeLock: { release(): Promise<void> } | null = null
   const audio = createCountdownAudio()
+  const wakeLock = createLiveWakeLock()
   const runtime = () => model.session.runtime!
   const report = (error: unknown) => { model.error = readableApiError(error); render() }
   function persist(patch: LiveRuntime): Promise<unknown> {
@@ -55,14 +56,10 @@ function runSession(root: HTMLElement, model: LiveModel): void {
     writes = writes.catch(() => undefined).then(() => saveLiveState(model.session.id, patch))
     return writes
   }
-  async function wake() {
-    try {
-      const navigatorWithWake = navigator as Navigator & { wakeLock?: { request(type: string): Promise<{ release(): Promise<void> }> } }
-      wakeLock = await navigatorWithWake.wakeLock?.request('screen') ?? null
-      if (disposed) await wakeLock?.release()
-    } catch { /* Training remains available when screen wake locks are unavailable. */ }
+  function activateMedia() {
+    void audio.unlock().then(() => syncAudio())
+    void wakeLock.enable()
   }
-  function unlockAudio() { void audio.unlock().then(() => syncAudio()) }
   function syncAudio(now = Date.now()) {
     if (document.hidden || disposed) { audio.sync(null); return }
     if (runtime().restEndsAt && runtime().restEndsAt! > now) {
@@ -81,11 +78,11 @@ function runSession(root: HTMLElement, model: LiveModel): void {
     window.clearInterval(timer)
     document.removeEventListener('visibilitychange', visible)
     window.removeEventListener('pagehide', cleanup)
-    root.removeEventListener('pointerdown', unlockAudio)
-    void wakeLock?.release()
+    root.removeEventListener('pointerdown', activateMedia)
+    wakeLock.disable()
     audio.close()
   }
-  function visible() { syncAudio(); if (!document.hidden) { void wake(); tick() } }
+  function visible() { syncAudio(); if (!document.hidden) { void wakeLock.enable(); tick() } }
   function render() {
     if (disposed) return
     const scroll = root.querySelector('.live-body')?.scrollTop ?? 0
@@ -212,8 +209,8 @@ function runSession(root: HTMLElement, model: LiveModel): void {
   render()
   tick()
   timer = window.setInterval(tick, 100)
-  root.addEventListener('pointerdown', unlockAudio)
+  root.addEventListener('pointerdown', activateMedia)
   window.addEventListener('pagehide', cleanup)
   document.addEventListener('visibilitychange', visible)
-  void wake()
+  void wakeLock.enable()
 }
