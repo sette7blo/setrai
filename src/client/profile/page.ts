@@ -190,35 +190,35 @@ function equipmentSection(state: ProfileState, rerender: () => void): HTMLDetail
 }
 
 function backupSection(state: ProfileState, rerender: () => void): HTMLDetailsElement {
-  const details = category(DatabaseBackup, 'Backup', 'Export or restore your Setrai database.', state.backupBusy ? 'WORKING' : 'READY')
+  const details = category(DatabaseBackup, 'Backup', 'Export or restore all Setrai data.', state.backupBusy ? 'WORKING' : 'READY')
   const body = categoryBody(details)
-  body.append(subsection('Database'))
+  body.append(subsection('Full backup'))
   const notice = document.createElement('p')
   notice.className = 'section-help settings-backup-notice'
-  notice.textContent = 'The database contains your preferences, body weight, exercises, workouts, and training history. Treat the downloaded file as private.'
+  notice.textContent = 'The backup contains your database and uploaded exercise images: preferences, body weight, exercises, workouts, and training history. Treat it as private.'
 
   const download = document.createElement('a')
   download.className = 'button button--secondary settings-row-button'
   download.href = DATABASE_BACKUP_URL
   download.download = ''
-  download.append(iconElement(Download), document.createTextNode('Export database'))
+  download.append(iconElement(Download), document.createTextNode('Export full backup'))
 
   const upload = document.createElement('button')
   upload.type = 'button'
   upload.className = 'button button--secondary settings-row-button'
   upload.disabled = state.backupBusy
-  upload.append(iconElement(Upload), document.createTextNode(state.backupBusy ? 'Restoring…' : 'Import database'))
+  upload.append(iconElement(Upload), document.createTextNode(state.backupBusy ? 'Restoring…' : 'Import backup'))
 
   const picker = document.createElement('input')
   picker.className = 'settings-backup-input'
   picker.type = 'file'
-  picker.accept = '.db,.sqlite,.sqlite3,application/vnd.sqlite3,application/x-sqlite3,application/octet-stream'
-  picker.setAttribute('aria-label', 'Select Setrai database backup')
+  picker.accept = '.setrai-backup,.db,.sqlite,.sqlite3,application/vnd.setrai.backup,application/vnd.sqlite3,application/x-sqlite3,application/octet-stream'
+  picker.setAttribute('aria-label', 'Select Setrai backup')
   upload.addEventListener('click', () => picker.click())
   picker.addEventListener('change', () => {
     const file = picker.files?.[0]
     if (!file) return
-    const confirmed = window.confirm(`Restore ${file.name}? This replaces the current Setrai database. A safety backup will be created first.`)
+    const confirmed = window.confirm(`Restore ${file.name}? This replaces the current Setrai database and uploaded images. A full safety backup will be created first.`)
     if (!confirmed) {
       picker.value = ''
       return
@@ -228,7 +228,7 @@ function backupSection(state: ProfileState, rerender: () => void): HTMLDetailsEl
     rerender()
     void restoreDatabase(file).then(async result => {
       state.profile = await getProfile()
-      state.message = `Database restored. Safety backup: ${result.safetyBackup}`
+      state.message = `Backup restored. Safety backup: ${result.safetyBackup}`
     }).catch(error => {
       state.message = readableApiError(error)
     }).finally(() => {
@@ -239,8 +239,8 @@ function backupSection(state: ProfileState, rerender: () => void): HTMLDetailsEl
 
   body.append(
     notice,
-    row('Export database', 'Download a consistent SQLite snapshot.', download),
-    row('Import database', 'Replace current data from a Setrai .db backup.', upload),
+    row('Export full backup', 'Download the database and uploaded exercise images.', download),
+    row('Import backup', 'Restore a .setrai-backup archive or legacy .db file.', upload),
     picker
   )
   if (state.message) {
@@ -252,7 +252,7 @@ function backupSection(state: ProfileState, rerender: () => void): HTMLDetailsEl
   }
   const media = document.createElement('p')
   media.className = 'settings-backup-footnote'
-  media.textContent = 'Uploaded exercise image files are stored separately under data/media and are not embedded in the database file.'
+  media.textContent = 'Deployment secrets and .env are never included. Bundled exercise artwork ships with Setrai itself.'
   body.append(media)
   return details
 }

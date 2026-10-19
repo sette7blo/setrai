@@ -1369,13 +1369,14 @@ It owns:
 - SQLite backup;
 - restore validation;
 - restore lifecycle;
-- the explicit boundary between database records and separately stored exercise media.
+- full archive packaging and restoration for files under `data/media`.
 
 It must not casually include `.env` secrets.
 
-The module exposes `GET /api/backup/database` for a consistent SQLite snapshot and
-`POST /api/backup/database` for validated restore. Restore creates a safety snapshot,
-upgrades older supported schemas, and replaces canonical database rows transactionally.
+The module exposes `GET /api/backup/database` for a complete `.setrai-backup` archive
+and `POST /api/backup/database` for validated restore. Restore creates a complete safety
+archive, upgrades older supported schemas, swaps media safely, and replaces canonical
+database rows transactionally. Legacy standalone SQLite imports remain supported.
 The Settings UI that invokes these routes remains owned by `src/client/profile/`.
 
 ---

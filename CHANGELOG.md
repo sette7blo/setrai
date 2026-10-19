@@ -11,7 +11,7 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 ## [Unreleased]
 
-- Added Settings → Backup with consistent SQLite database export, confirmed and validated import, automatic schema upgrades, transactional restore, and a server-side pre-restore safety snapshot.
+- Added Settings → Backup with a complete `.setrai-backup` archive containing the SQLite database and uploaded exercise images, confirmed and validated import, automatic schema upgrades, transactional database restore, safe media replacement, legacy `.db` import, and a complete server-side pre-restore safety archive.
 
 ## [v0.2.0] — 2026-10-17
 
