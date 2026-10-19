@@ -67,7 +67,7 @@ test('restores database and media while creating a full safety backup', () => {
     assert.equal(fs.readFileSync(mediaPath, 'utf8'), 'original image')
     assert.equal(fs.existsSync(path.join(path.dirname(mediaPath), 'extra.webp')), false)
     assert.equal(result.mediaFiles, 1)
-    assert.match(result.safetyBackup, /^setrai-before-restore-.*\.setrai-backup$/)
+    assert.match(result.safetyBackup, /^setrai-before-restore-.*\.setrai$/)
     assert.ok(fs.existsSync(path.join(f.dataDir, 'backups', result.safetyBackup)))
     assert.equal(f.db.prepare('PRAGMA foreign_key_check').all().length, 0)
   } finally {

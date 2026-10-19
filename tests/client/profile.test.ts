@@ -25,11 +25,11 @@ test('database restore sends the selected SQLite file with explicit replacement 
   try {
     globalThis.fetch = async (url, init) => {
       calls.push({ url: String(url), init })
-      return new Response(JSON.stringify({ restored: true, safetyBackup: 'before.setrai-backup', mediaFiles: 2 }), { status: 200 })
+      return new Response(JSON.stringify({ restored: true, safetyBackup: 'before.setrai', mediaFiles: 2 }), { status: 200 })
     }
     const file = new File([new Uint8Array([1, 2, 3])], 'setrai.db', { type: 'application/vnd.sqlite3' })
     const result = await restoreDatabase(file)
-    assert.equal(result.safetyBackup, 'before.setrai-backup')
+    assert.equal(result.safetyBackup, 'before.setrai')
     assert.equal(calls[0].url, DATABASE_BACKUP_URL)
     assert.equal(calls[0].init?.method, 'POST')
     assert.equal((calls[0].init?.headers as Record<string, string>)['X-Setrai-Restore-Confirm'], 'replace')

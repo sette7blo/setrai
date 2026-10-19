@@ -764,7 +764,7 @@ At minimum this includes:
 - locally stored exercise media where applicable;
 - relevant application-owned data.
 
-The downloadable `.setrai-backup` archive includes the SQLite database plus all
+The downloadable `.setrai` archive includes the SQLite database plus all
 uploaded files under `data/media`, including custom exercise images. Import validates
 the archive and database, requires explicit replacement confirmation, migrates older
 Setrai databases forward, rejects backups from newer schema versions, and creates a

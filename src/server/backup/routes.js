@@ -19,7 +19,7 @@ export function createBackupRoutes(service) {
         const date = new Date().toISOString().slice(0, 10)
         res.writeHead(200, {
           'Content-Type': 'application/vnd.setrai.backup',
-          'Content-Disposition': `attachment; filename="setrai-backup-${date}.setrai-backup"`,
+          'Content-Disposition': `attachment; filename="setrai-backup-${date}.setrai"`,
           'Content-Length': backup.length,
           'Cache-Control': 'no-store',
           'X-Content-Type-Options': 'nosniff'

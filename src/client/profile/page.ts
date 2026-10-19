@@ -212,7 +212,7 @@ function backupSection(state: ProfileState, rerender: () => void): HTMLDetailsEl
   const picker = document.createElement('input')
   picker.className = 'settings-backup-input'
   picker.type = 'file'
-  picker.accept = '.setrai-backup,.db,.sqlite,.sqlite3,application/vnd.setrai.backup,application/vnd.sqlite3,application/x-sqlite3,application/octet-stream'
+  picker.accept = '.setrai,.db,.sqlite,.sqlite3,application/vnd.setrai.backup,application/vnd.sqlite3,application/x-sqlite3,application/octet-stream'
   picker.setAttribute('aria-label', 'Select Setrai backup')
   upload.addEventListener('click', () => picker.click())
   picker.addEventListener('change', () => {
@@ -240,7 +240,7 @@ function backupSection(state: ProfileState, rerender: () => void): HTMLDetailsEl
   body.append(
     notice,
     row('Export full backup', 'Download the database and uploaded exercise images.', download),
-    row('Import backup', 'Restore a .setrai-backup archive or legacy .db file.', upload),
+    row('Import backup', 'Restore a .setrai archive or legacy .db file.', upload),
     picker
   )
   if (state.message) {

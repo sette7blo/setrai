@@ -1373,7 +1373,7 @@ It owns:
 
 It must not casually include `.env` secrets.
 
-The module exposes `GET /api/backup/database` for a complete `.setrai-backup` archive
+The module exposes `GET /api/backup/database` for a complete `.setrai` archive
 and `POST /api/backup/database` for validated restore. Restore creates a complete safety
 archive, upgrades older supported schemas, swaps media safely, and replaces canonical
 database rows transactionally. Legacy standalone SQLite imports remain supported.

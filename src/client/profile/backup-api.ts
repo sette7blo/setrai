@@ -12,7 +12,7 @@ export async function restoreDatabase(file: File): Promise<RestoreResult> {
   const response = await fetch(DATABASE_BACKUP_URL, {
     method: 'POST',
     headers: {
-      'Content-Type': file.type || (file.name.endsWith('.setrai-backup') ? 'application/vnd.setrai.backup' : 'application/octet-stream'),
+      'Content-Type': file.type || (/\.setrai(?:-backup)?$/i.test(file.name) ? 'application/vnd.setrai.backup' : 'application/octet-stream'),
       'X-Setrai-Restore-Confirm': 'replace'
     },
     body: file

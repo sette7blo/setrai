@@ -197,7 +197,7 @@ export function createBackupService(db, { dataDir }) {
   function restoreBackup(buffer) {
     const isLegacyDatabase = buffer.subarray(0, SQLITE_HEADER.length).equals(SQLITE_HEADER)
     const incoming = isLegacyDatabase ? { database: buffer, media: null } : decodeArchive(buffer)
-    const safetyName = `setrai-before-restore-${backupStamp()}-${randomUUID().slice(0, 8)}.setrai-backup`
+    const safetyName = `setrai-before-restore-${backupStamp()}-${randomUUID().slice(0, 8)}.setrai`
     fs.writeFileSync(path.join(backupDir, safetyName), exportBackup(), { mode: 0o600 })
 
     let stage = null
