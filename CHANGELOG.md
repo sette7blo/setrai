@@ -12,6 +12,7 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 ## [Unreleased]
 
 - Added Settings → Backup with a complete `.setrai-backup` archive containing the SQLite database and uploaded exercise images, confirmed and validated import, automatic schema upgrades, transactional database restore, safe media replacement, legacy `.db` import, and a complete server-side pre-restore safety archive.
+- Promoted the 33 operator-curated exercise images to bundled seed artwork so fresh installations receive the updated images without importing an existing database or media directory.
 
 ## [v0.2.0] — 2026-10-17
 
