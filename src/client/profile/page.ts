@@ -1,16 +1,18 @@
-import { Activity, ChevronDown, Dumbbell, Settings } from 'lucide'
+import { Activity, ChevronDown, DatabaseBackup, Download, Dumbbell, Settings, Upload } from 'lucide'
 
 import { iconElement } from '../app/navigation.js'
 import { pageHeading, pageSummary } from '../shared/page-chrome.js'
 import { bindPageRetry, pageError, pageLoading } from '../shared/page-states.js'
 import { readableApiError } from '../shared/api/errors.js'
 import { getProfile, updateProfile } from './api.js'
+import { DATABASE_BACKUP_URL, restoreDatabase } from './backup-api.js'
 import { effectiveTrainingGoal, EQUIPMENT_OPTIONS, equipmentLabel, goalLabel, goalPrescription, TRAINING_GOALS } from './equipment.js'
 import type { Profile } from './types.js'
 
 interface ProfileState {
   profile: Profile
   message: string
+  backupBusy: boolean
 }
 
 function loadingView(): HTMLElement {
@@ -187,6 +189,74 @@ function equipmentSection(state: ProfileState, rerender: () => void): HTMLDetail
   return details
 }
 
+function backupSection(state: ProfileState, rerender: () => void): HTMLDetailsElement {
+  const details = category(DatabaseBackup, 'Backup', 'Export or restore your Setrai database.', state.backupBusy ? 'WORKING' : 'READY')
+  const body = categoryBody(details)
+  body.append(subsection('Database'))
+  const notice = document.createElement('p')
+  notice.className = 'section-help settings-backup-notice'
+  notice.textContent = 'The database contains your preferences, body weight, exercises, workouts, and training history. Treat the downloaded file as private.'
+
+  const download = document.createElement('a')
+  download.className = 'button button--secondary settings-row-button'
+  download.href = DATABASE_BACKUP_URL
+  download.download = ''
+  download.append(iconElement(Download), document.createTextNode('Export database'))
+
+  const upload = document.createElement('button')
+  upload.type = 'button'
+  upload.className = 'button button--secondary settings-row-button'
+  upload.disabled = state.backupBusy
+  upload.append(iconElement(Upload), document.createTextNode(state.backupBusy ? 'Restoring…' : 'Import database'))
+
+  const picker = document.createElement('input')
+  picker.className = 'settings-backup-input'
+  picker.type = 'file'
+  picker.accept = '.db,.sqlite,.sqlite3,application/vnd.sqlite3,application/x-sqlite3,application/octet-stream'
+  picker.setAttribute('aria-label', 'Select Setrai database backup')
+  upload.addEventListener('click', () => picker.click())
+  picker.addEventListener('change', () => {
+    const file = picker.files?.[0]
+    if (!file) return
+    const confirmed = window.confirm(`Restore ${file.name}? This replaces the current Setrai database. A safety backup will be created first.`)
+    if (!confirmed) {
+      picker.value = ''
+      return
+    }
+    state.backupBusy = true
+    state.message = 'Restoring database…'
+    rerender()
+    void restoreDatabase(file).then(async result => {
+      state.profile = await getProfile()
+      state.message = `Database restored. Safety backup: ${result.safetyBackup}`
+    }).catch(error => {
+      state.message = readableApiError(error)
+    }).finally(() => {
+      state.backupBusy = false
+      rerender()
+    })
+  })
+
+  body.append(
+    notice,
+    row('Export database', 'Download a consistent SQLite snapshot.', download),
+    row('Import database', 'Replace current data from a Setrai .db backup.', upload),
+    picker
+  )
+  if (state.message) {
+    const status = document.createElement('p')
+    status.className = 'settings-backup-status'
+    status.setAttribute('role', 'status')
+    status.textContent = state.message
+    body.append(status)
+  }
+  const media = document.createElement('p')
+  media.className = 'settings-backup-footnote'
+  media.textContent = 'Uploaded exercise image files are stored separately under data/media and are not embedded in the database file.'
+  body.append(media)
+  return details
+}
+
 function renderLoaded(root: HTMLElement, state: ProfileState): void {
   const page = document.createElement('div')
   page.className = 'profile-page profile-settings-page'
@@ -199,7 +269,8 @@ function renderLoaded(root: HTMLElement, state: ProfileState): void {
   })
   const list = document.createElement('section')
   list.className = 'profile-settings-list'
-  list.append(trainingSection(state, () => renderLoaded(root, state)), equipmentSection(state, () => renderLoaded(root, state)))
+  const rerender = () => renderLoaded(root, state)
+  list.append(trainingSection(state, rerender), equipmentSection(state, rerender), backupSection(state, rerender))
   page.append(heading, summary, list)
   root.replaceChildren(page)
 }
@@ -208,7 +279,7 @@ export async function renderProfilePage(root: HTMLElement): Promise<void> {
   root.replaceChildren(loadingView())
   try {
     const profile = await getProfile()
-    renderLoaded(root, { profile, message: '' })
+    renderLoaded(root, { profile, message: '', backupBusy: false })
   } catch (error) {
     const view = errorView(readableApiError(error))
     bindPageRetry(view, () => { void renderProfilePage(root) })

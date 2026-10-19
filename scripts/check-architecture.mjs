@@ -72,6 +72,7 @@ const SERVER_FEATURES = new Set([
   'statistics',
   'recovery',
   'quick-workout',
+  'backup',
   'ai'
 ])
 
@@ -121,6 +122,8 @@ const ALLOWED_SERVER_FEATURE_IMPORTS = {
     'programs',
     'sessions'
   ]),
+
+  backup: new Set([]),
 
   ai: new Set([
     'exercises',

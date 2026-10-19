@@ -11,6 +11,8 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 ## [Unreleased]
 
+- Added Settings → Backup with consistent SQLite database export, confirmed and validated import, automatic schema upgrades, transactional restore, and a server-side pre-restore safety snapshot.
+
 ## [v0.2.0] — 2026-10-17
 
 - Replaced remote exercise/workout discovery with versioned local seeds: 56 bundled exercises, seven bundled workouts, immutable seed keys, local-edit-safe revisions, deletion tombstones, and bundled local artwork. Removed remote catalog configuration, dependencies, routes, UI, and stored provenance.

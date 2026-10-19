@@ -1101,9 +1101,10 @@ src/client/profile/
 - training preferences;
 - equipment;
 - units;
-- profile-related settings.
+- profile-related settings;
+- database backup and restore controls through the backup server API.
 
-The current local-only Settings page presents Training and Equipment. Profile
+The current local-only Settings page presents Training, Equipment, and Backup. Profile
 identity controls are hidden; the shell passes no identity capability.
 
 ## Must not
@@ -1357,22 +1358,25 @@ Statistics and AI should consume that contract rather than duplicate queries.
 
 # 33. Backup and restore ownership
 
-Backup/restore should eventually live in a dedicated server module, for example:
+Backup/restore lives in a dedicated server module:
 
 ```text
 src/server/backup/
 ```
 
-It should own:
+It owns:
 
 - SQLite backup;
-- application-owned media backup;
 - restore validation;
-- restore lifecycle.
+- restore lifecycle;
+- the explicit boundary between database records and separately stored exercise media.
 
 It must not casually include `.env` secrets.
 
-When this module is implemented, add it to the repository structure and this map.
+The module exposes `GET /api/backup/database` for a consistent SQLite snapshot and
+`POST /api/backup/database` for validated restore. Restore creates a safety snapshot,
+upgrades older supported schemas, and replaces canonical database rows transactionally.
+The Settings UI that invokes these routes remains owned by `src/client/profile/`.
 
 ---
 

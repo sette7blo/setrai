@@ -754,15 +754,22 @@ restart.
 
 # 40. Backup and restore
 
-Setrai should support backup and restore.
+Setrai supports database backup and restore from Settings → Backup.
 
 Backups should cover canonical application data.
 
 At minimum this includes:
 
-- SQLite database;
+- SQLite database, exported as a consistent `.db` snapshot;
 - locally stored exercise media where applicable;
 - relevant application-owned data.
+
+Database import validates the SQLite file, requires an explicit replacement
+confirmation, migrates older Setrai backups forward, rejects backups from newer
+schema versions, and creates a server-side safety snapshot before replacing current
+data. The downloadable database includes profile/preferences, body-weight history,
+exercises, workouts, sessions, and seed state. Uploaded exercise media remains in
+`data/media` and must be copied separately when moving to another server.
 
 Secrets require special handling.
 

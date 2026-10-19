@@ -55,6 +55,9 @@ import {
 import {
   createQuickWorkoutRoutes
 } from './quick-workout/routes.js'
+import { createBackupService } from './backup/service.js'
+import { createBackupRoutes } from './backup/routes.js'
+import { sendJson } from './shared/http.js'
 import {
   handleStaticClientRoute
 } from './shared/static-client.js'
@@ -80,6 +83,8 @@ const recoveryService =
   createRecoveryService(db)
 const quickWorkoutService =
   createQuickWorkoutService(db)
+const backupService =
+  createBackupService(db, { dataDir: config.server.dataDir })
 
 const exerciseRoutes =
   createExerciseRoutes(exerciseService, {
@@ -99,15 +104,8 @@ const recoveryRoutes =
   createRecoveryRoutes(recoveryService)
 const quickWorkoutRoutes =
   createQuickWorkoutRoutes(quickWorkoutService)
-
-
-function sendJson(res, status, body) {
-  res.writeHead(status, {
-    'Content-Type': 'application/json'
-  })
-
-  res.end(JSON.stringify(body))
-}
+const backupRoutes =
+  createBackupRoutes(backupService)
 
 const server = http.createServer(
   async (req, res) => {
@@ -216,6 +214,13 @@ const server = http.createServer(
         )
 
       if (handledQuickWorkoutRoute) {
+        return
+      }
+
+      const handledBackupRoute =
+        await backupRoutes.handle(req, res, url)
+
+      if (handledBackupRoute) {
         return
       }
 

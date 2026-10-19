@@ -9,7 +9,7 @@ export function sendJson(res, status, body) {
   res.end(JSON.stringify(body))
 }
 
-export async function readJsonBody(req, { maxBytes = DEFAULT_MAX_JSON_BYTES, tooLargeMessage = 'Request body is too large' } = {}) {
+export async function readRequestBuffer(req, { maxBytes, tooLargeMessage = 'Request body is too large' }) {
   const chunks = []
   let size = 0
   for await (const chunk of req) {
@@ -18,9 +18,14 @@ export async function readJsonBody(req, { maxBytes = DEFAULT_MAX_JSON_BYTES, too
     if (size > maxBytes) throw httpError(tooLargeMessage, 413)
     chunks.push(buffer)
   }
-  if (!chunks.length) return {}
+  return Buffer.concat(chunks)
+}
+
+export async function readJsonBody(req, { maxBytes = DEFAULT_MAX_JSON_BYTES, tooLargeMessage = 'Request body is too large' } = {}) {
+  const buffer = await readRequestBuffer(req, { maxBytes, tooLargeMessage })
+  if (!buffer.length) return {}
   try {
-    return JSON.parse(Buffer.concat(chunks).toString('utf8'))
+    return JSON.parse(buffer.toString('utf8'))
   } catch {
     throw httpError('Invalid JSON body', 400)
   }

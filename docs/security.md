@@ -577,6 +577,9 @@ This may include:
 - personal preferences.
 
 Backup downloads should only be available to authorized users.
+Setrai's current trusted-mesh deployment has no built-in account gate, so database
+backup routes inherit the deployment boundary and must not be exposed to an
+untrusted network. Download responses use `no-store` and never include `.env`.
 
 ---
 
@@ -589,6 +592,9 @@ Restoring a database may overwrite current application state.
 The UI should require explicit confirmation before restore.
 
 Uploaded backup files should be validated before use.
+Setrai validates the SQLite header, integrity, required Setrai tables, schema version,
+and foreign-key relationships. Restore requires an explicit confirmation header and
+creates a private server-side safety snapshot before changing current data.
 
 Unexpected files must not be allowed to overwrite arbitrary server paths.
 
