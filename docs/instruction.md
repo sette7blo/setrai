@@ -379,7 +379,9 @@ weight/notes, duplicating, deleting, and starting programs. The builder uses loc
 exercises and supports normal sets, supersets, EMOM sections, circuits sharing an
 interval, and mixed strength/EMOM plans. Goals are author-selected; focus, format,
 and equipment filters derive from exercises and blocks. My equipment uses the
-saved local equipment profile. Library keeps an active-workout Resume action. Quick Workout lives in Recovery. Completed sessions appear in the History tab; Library
+saved local equipment profile. Library keeps an active-workout Resume action. Quick Workout lives in Recovery, with a prominent mobile bottom-navigation shortcut that
+opens and focuses the recovery-aware composer; while a session is active, that
+shortcut becomes Resume. Completed sessions appear in the History tab; Library
 does not duplicate them in a Recent sessions section.
 
 ---

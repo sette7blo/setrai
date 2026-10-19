@@ -12,6 +12,7 @@ import type { QuickWorkout } from './types.js'
 export function createRecoveryWorkoutPanel(equipment: string[] = []): HTMLElement {
   const panel = document.createElement('section')
   panel.className = 'recovery-quick-panel'
+  panel.id = 'quick-workout'
   panel.setAttribute('aria-label', 'Quick Workout')
   const heading = document.createElement('div')
   heading.className = 'recovery-quick-heading'

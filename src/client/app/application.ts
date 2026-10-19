@@ -6,12 +6,13 @@ import { renderExerciseLibrary } from '../exercises/page.js'
 import { renderProgramDetail } from '../workouts/program-detail-page.js'
 import { renderSessionPage } from '../workouts/session-page.js'
 import { renderWorkoutsPage } from '../workouts/page.js'
+import { listSessions } from '../workouts/api.js'
 import { renderStatisticsPage } from '../statistics/page.js'
 import { renderProfilePage } from '../profile/page.js'
 import { Settings } from 'lucide'
 import {
   iconElement,
-  NAVIGATION_ITEMS,
+  mobileNavigationItems,
   DESKTOP_NAVIGATION_ITEMS,
   type NavigationItem
 } from './navigation.js'
@@ -58,16 +59,45 @@ function desktopNavigation(activePath: string): HTMLElement {
   return nav
 }
 
-function mobileNavigation(activePath: string): HTMLElement {
+interface MobileNavigation {
+  element: HTMLElement
+  quickAction: HTMLAnchorElement
+}
+
+function setNavigationItem(link: HTMLAnchorElement, item: NavigationItem): void {
+  link.href = item.path
+  link.setAttribute('aria-label', item.label)
+  const label = document.createElement('span')
+  label.textContent = item.label
+  link.replaceChildren(iconElement(item.icon), label)
+}
+
+function mobileNavigation(activePath: string, activeSessionId?: number): MobileNavigation {
   const nav = document.createElement('nav')
   nav.className = 'bottom-nav'
   nav.setAttribute('aria-label', 'Primary navigation')
+  const items = mobileNavigationItems(activeSessionId)
+  let quickAction: HTMLAnchorElement | null = null
 
-  for (const item of NAVIGATION_ITEMS) {
-    nav.append(navLink(item, activePath))
+  for (const [index, item] of items.entries()) {
+    const link = navLink(item, activePath)
+    if (index === 2) {
+      link.classList.add('nav-link--quick')
+      link.classList.toggle('nav-link--resume', Boolean(activeSessionId))
+      quickAction = link
+    }
+    nav.append(link)
   }
 
-  return nav
+  return { element: nav, quickAction: quickAction! }
+}
+
+async function refreshQuickAction(link: HTMLAnchorElement): Promise<void> {
+  try {
+    const active = (await listSessions()).find(session => !session.finishedAt)
+    setNavigationItem(link, mobileNavigationItems(active?.id)[2])
+    link.classList.toggle('nav-link--resume', Boolean(active))
+  } catch { /* Keep the recovery-aware Quick action when session state is unavailable. */ }
 }
 
 function placeholderRoute(capabilities: Capabilities): HTMLElement {
@@ -141,8 +171,8 @@ async function renderRoute(container: HTMLElement, capabilities: Capabilities): 
   }
 
   if (path === '/quick-workout') {
-    window.history.replaceState({}, '', '/workouts/recovery')
-    await renderWorkoutsPage(container, 'recovery')
+    window.history.replaceState({}, '', '/workouts/recovery#quick-workout')
+    await renderWorkoutsPage(container, 'recovery', { focusQuickWorkout: true })
     return
   }
 
@@ -188,7 +218,7 @@ async function renderRoute(container: HTMLElement, capabilities: Capabilities): 
   container.replaceChildren(placeholderRoute(capabilities))
 }
 
-async function renderShell(root: HTMLElement, capabilities: Capabilities): Promise<void> {
+async function renderShell(root: HTMLElement, capabilities: Capabilities, activeSessionId?: number): Promise<void> {
   const activePath = primaryNavPath(currentPath())
   root.replaceChildren()
 
@@ -228,8 +258,12 @@ async function renderShell(root: HTMLElement, capabilities: Capabilities): Promi
 
   let container = routeContainer()
   main.append(top, container)
-  frame.append(sidebar, main, mobileNavigation(activePath))
+  const mobile = mobileNavigation(activePath, activeSessionId)
+  frame.append(sidebar, main, mobile.element)
   root.append(frame)
+  const refreshMobileQuickAction = (): void => { void refreshQuickAction(mobile.quickAction) }
+  window.addEventListener('setrai:session-change', refreshMobileQuickAction)
+
   installMenuNavigation(root, async () => {
     const next = routeContainer()
     container.replaceWith(next)
@@ -252,7 +286,11 @@ export async function bootSetraiApp(root: HTMLElement): Promise<void> {
   }
 
   try {
-    await renderShell(root, await loadCapabilities())
+    const [capabilities, sessions] = await Promise.all([
+      loadCapabilities(),
+      listSessions().catch(() => [])
+    ])
+    await renderShell(root, capabilities, sessions.find(session => !session.finishedAt)?.id)
   } catch (error) {
     root.innerHTML = errorState(readableApiError(error))
     root.querySelector('[data-retry]')?.addEventListener('click', () => {

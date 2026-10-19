@@ -9,6 +9,7 @@ import {
 import {
   parseCapabilities
 } from '../../src/client/app/capabilities.js'
+import { mobileNavigationItems } from '../../src/client/app/navigation.js'
 
 test('capabilities parsing keeps missing or malformed integrations disabled', () => {
   assert.deepEqual(
@@ -50,4 +51,15 @@ test('home body route stays under Home primary navigation', () => {
   assert.equal(primaryNavPath('/statistics/body'), '/statistics')
   assert.equal(primaryNavPath('/statistics/training'), '/statistics')
   assert.equal(primaryNavPath('/'), '/statistics')
+})
+
+test('mobile navigation exposes recovery-aware Quick and active-session Resume actions', () => {
+  assert.deepEqual(
+    mobileNavigationItems().map(item => [item.label, item.path]),
+    [['Home', '/statistics'], ['Exercises', '/exercises'], ['Quick', '/quick-workout'], ['Workouts', '/workouts']]
+  )
+  assert.deepEqual(
+    mobileNavigationItems(42).map(item => [item.label, item.path]),
+    [['Home', '/statistics'], ['Exercises', '/exercises'], ['Resume', '/sessions/42'], ['Workouts', '/workouts']]
+  )
 })

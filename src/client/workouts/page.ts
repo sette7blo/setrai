@@ -86,7 +86,13 @@ function renderHistoryView(page: HTMLElement, sessions: Session[], exercises: Ex
   page.append(calendar, list)
 }
 
-export async function renderWorkoutsPage(root: HTMLElement, view: 'library' | 'history' | 'recovery' = 'library'): Promise<void> {
+interface WorkoutsPageOptions { focusQuickWorkout?: boolean }
+
+export async function renderWorkoutsPage(
+  root: HTMLElement,
+  view: 'library' | 'history' | 'recovery' = 'library',
+  options: WorkoutsPageOptions = {}
+): Promise<void> {
   const history = view === 'history'
   const recovery = view === 'recovery'
   const page = document.createElement('div')
@@ -104,7 +110,15 @@ export async function renderWorkoutsPage(root: HTMLElement, view: 'library' | 'h
     if (recovery) {
       const [overview, profile] = await Promise.all([getRecovery(), getProfile().catch(() => ({ equipment: [] as string[] }))])
       state.textContent = ''
-      page.append(recoveryContent(overview), createRecoveryWorkoutPanel(profile.equipment))
+      const quickWorkout = createRecoveryWorkoutPanel(profile.equipment)
+      page.append(recoveryContent(overview), quickWorkout)
+      if (options.focusQuickWorkout) {
+        quickWorkout.tabIndex = -1
+        window.requestAnimationFrame(() => {
+          quickWorkout.scrollIntoView({ block: 'start', behavior: 'smooth' })
+          quickWorkout.focus({ preventScroll: true })
+        })
+      }
       return
     }
     if (history) {
@@ -127,7 +141,7 @@ export async function renderWorkoutsPage(root: HTMLElement, view: 'library' | 'h
       message: readableApiError(error),
       className: 'workouts-empty',
     })
-    bindPageRetry(viewError, () => { void renderWorkoutsPage(root, view) })
+    bindPageRetry(viewError, () => { void renderWorkoutsPage(root, view, options) })
     page.append(viewError)
   }
 }

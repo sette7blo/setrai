@@ -175,6 +175,7 @@ function runSession(root: HTMLElement, model: LiveModel): void {
         await persist({ emomPositionSec: clock.position, emomActiveSec: clock.active, emomRunningSince: null, restEndsAt: null })
         const finished = await finishSession(model.session.id, model.session.notes)
         cleanup()
+        window.dispatchEvent(new Event('setrai:session-change'))
         root.replaceChildren(renderSessionSummary(finished, summaryProgram(model.session), model.unit))
       })
     },

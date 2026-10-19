@@ -3,7 +3,9 @@ import {
   createElement,
   Dumbbell,
   House,
+  Play,
   Settings,
+  Zap,
   type IconNode
 } from 'lucide'
 
@@ -34,6 +36,31 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
     description: 'Programs and live sessions'
   }
 ]
+
+export const QUICK_WORKOUT_NAVIGATION_ITEM: NavigationItem = {
+  path: '/quick-workout',
+  label: 'Quick',
+  icon: Zap,
+  description: 'Build from recovery and training preferences'
+}
+
+export function resumeWorkoutNavigationItem(id: number): NavigationItem {
+  return {
+    path: `/sessions/${id}`,
+    label: 'Resume',
+    icon: Play,
+    description: 'Continue the active workout'
+  }
+}
+
+export function mobileNavigationItems(activeSessionId?: number): NavigationItem[] {
+  return [
+    NAVIGATION_ITEMS[0],
+    NAVIGATION_ITEMS[1],
+    activeSessionId ? resumeWorkoutNavigationItem(activeSessionId) : QUICK_WORKOUT_NAVIGATION_ITEM,
+    NAVIGATION_ITEMS[2]
+  ]
+}
 
 export const DESKTOP_NAVIGATION_ITEMS: NavigationItem[] = [
   ...NAVIGATION_ITEMS,
