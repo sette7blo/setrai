@@ -17,11 +17,18 @@ const ROUTES: RouteDefinition[] = [
     primaryAction: 'Review progress'
   },
   {
-    path: '/workouts',
-    title: 'Workouts',
-    eyebrow: 'Workouts',
-    summary: 'Programs, history, recovery, and live training.',
-    primaryAction: 'Open workouts'
+    path: '/library/exercises',
+    title: 'Library',
+    eyebrow: 'Library',
+    summary: 'Exercises and reusable training programs.',
+    primaryAction: 'Browse exercises'
+  },
+  {
+    path: '/library/programs',
+    title: 'Library',
+    eyebrow: 'Library',
+    summary: 'Exercises and reusable training programs.',
+    primaryAction: 'Browse programs'
   },
   {
     path: '/statistics',
@@ -36,6 +43,20 @@ const ROUTES: RouteDefinition[] = [
     eyebrow: 'Home',
     summary: 'Body weight, BMI, and goal tracking.',
     primaryAction: 'Log body weight'
+  },
+  {
+    path: '/statistics/history',
+    title: 'Home',
+    eyebrow: 'Home',
+    summary: 'Completed workout sessions and training timeline.',
+    primaryAction: 'Review history'
+  },
+  {
+    path: '/statistics/recovery',
+    title: 'Home',
+    eyebrow: 'Home',
+    summary: 'Muscle readiness from recent training.',
+    primaryAction: 'Check recovery'
   },
   {
     path: '/statistics/training',
@@ -72,20 +93,12 @@ export function currentPath(): string {
 }
 
 export function primaryNavPath(path: string): string {
-  if (path === '/' || path.startsWith('/statistics')) {
+  if (path === '/' || path.startsWith('/statistics') || path === '/recovery' || path === '/workouts/history' || path === '/workouts/recovery') {
     return '/statistics'
   }
 
-  if (path.startsWith('/exercises')) {
-    return '/exercises'
-  }
-
-  if (path.startsWith('/workouts') || path.startsWith('/programs') || path.startsWith('/sessions') || path.startsWith('/quick-workout')) {
-    return '/workouts'
-  }
-
-  if (path.startsWith('/recovery')) {
-    return '/workouts'
+  if (path.startsWith('/library') || path.startsWith('/exercises') || path.startsWith('/programs') || path === '/workouts') {
+    return '/library/exercises'
   }
 
   return path

@@ -110,8 +110,8 @@ export function renderSessionSummary(session: Session, program: Program | null, 
 
   const back = document.createElement('a')
   back.className = 'button button--primary'
-  back.href = '/workouts'
-  back.textContent = 'Back to Workouts'
+  back.href = '/library/programs'
+  back.textContent = 'Back to Library'
 
   section.append(brand, hero, stats, map, proof, back)
   return section

@@ -14,11 +14,12 @@ const BANNED_UI = [
   'Add equipment in Profile',
 ]
 
-test('user-facing client copy follows Home / Settings / Exercises glossary', () => {
+test('user-facing client copy follows Home / Library / Settings glossary', () => {
   const files = [
     'src/client/app/navigation.ts',
     'src/client/app/application.ts',
     'src/client/app/router.ts',
+    'src/client/app/section-navigation.ts',
     'src/client/exercises/page.ts',
     'src/client/exercises/detail-view.ts',
     'src/client/exercises/detail-page.ts',
@@ -39,8 +40,8 @@ test('user-facing client copy follows Home / Settings / Exercises glossary', () 
 
   const navigation = fs.readFileSync(path.join(root, 'src/client/app/navigation.ts'), 'utf8')
   assert.match(navigation, /label: 'Home'/)
-  assert.match(navigation, /label: 'Exercises'/)
-  assert.match(navigation, /label: 'Workouts'/)
+  assert.match(navigation, /label: 'Library'/)
+  assert.match(navigation, /label: 'Quick'/)
   assert.doesNotMatch(navigation, /label: 'Profile'/)
   assert.doesNotMatch(navigation, /label: 'Statistics'/)
 
@@ -48,6 +49,9 @@ test('user-facing client copy follows Home / Settings / Exercises glossary', () 
   assert.match(exercises, /title: 'Exercises'/)
 
   const home = fs.readFileSync(path.join(root, 'src/client/statistics/page.ts'), 'utf8')
+  const homeNavigation = fs.readFileSync(path.join(root, 'src/client/app/section-navigation.ts'), 'utf8')
   assert.match(home, /Training date range/)
-  assert.match(home, /title: 'Home'/)
+  assert.match(homeNavigation, /title: 'Home'/)
+  assert.match(homeNavigation, /label: 'History'/)
+  assert.match(homeNavigation, /label: 'Recovery'/)
 })

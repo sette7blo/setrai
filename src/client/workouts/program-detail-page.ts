@@ -18,7 +18,7 @@ function errorView(title: string, message: string): HTMLElement {
     eyebrow: 'Program',
     title,
     description: message,
-    action: { label: 'Back to Workouts', href: '/workouts' },
+    action: { label: 'Back to Programs', href: '/library/programs' },
     className: 'workouts-empty',
   })
 }
@@ -76,8 +76,8 @@ function renderProgram(program: Program): HTMLElement {
 
   const back = document.createElement('a')
   back.className = 'detail-back'
-  back.href = '/workouts'
-  back.append(iconElement(ChevronLeft), document.createTextNode('Workouts'))
+  back.href = '/library/programs'
+  back.append(iconElement(ChevronLeft), document.createTextNode('Programs'))
 
   const hero = document.createElement('section')
   hero.className = 'program-detail__hero'

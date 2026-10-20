@@ -31,6 +31,9 @@ export function createRecoveryWorkoutPanel(
   const duration = document.createElement('div')
   duration.className = 'recovery-quick-duration'
   duration.setAttribute('role', 'group'); duration.setAttribute('aria-label', 'Workout length')
+  const durationLabel = document.createElement('p')
+  durationLabel.className = 'recovery-quick-label'
+  durationLabel.textContent = 'Duration'
   let minutes = 30
   let workout: QuickWorkout | null = null
   let busy = false
@@ -49,13 +52,21 @@ export function createRecoveryWorkoutPanel(
   const build = document.createElement('button')
   build.type = 'button'; build.className = 'button button--primary'; build.textContent = 'Build Quick Workout'
   const result = document.createElement('div'); result.className = 'recovery-quick-result'
-  const setBusy = (value: boolean): void => {
+  const updateBuildButton = (): void => {
+    build.textContent = workout ? 'Regenerate workout' : 'Build Quick Workout'
+    build.className = workout ? 'button button--secondary recovery-quick-regenerate' : 'button button--primary'
+  }
+  const setBusy = (value: boolean, action: 'build' | 'start' = 'build'): void => {
     busy = value; build.disabled = value
     panel.setAttribute('aria-busy', String(value))
     for (const button of panel.querySelectorAll<HTMLButtonElement>('button')) button.disabled = value
+    if (value && action === 'build') build.textContent = 'Building workout…'
+    else if (!value) updateBuildButton()
   }
   const render = (): void => {
     result.replaceChildren()
+    result.classList.remove('is-visible')
+    updateBuildButton()
     if (!workout?.exercises.length) return
     const summary = document.createElement('p'); summary.className = 'recovery-quick-summary'
     const groups = [...new Set(workout.exercises.map(item => displayName(item.muscleGroup ?? '')).filter(Boolean))]
@@ -93,10 +104,14 @@ export function createRecoveryWorkoutPanel(
     start.type = 'button'; start.className = 'button button--primary'; start.textContent = 'Start Workout'
     start.addEventListener('click', () => {
       if (busy || !workout?.exercises.length) return
-      setBusy(true); status.textContent = 'Starting workout...'
+      setBusy(true, 'start'); status.textContent = 'Starting workout...'
       void startAndNavigate(workout).catch(error => { status.textContent = readableApiError(error); setBusy(false) })
     })
-    result.append(summary, list, start)
+    const footer = document.createElement('div')
+    footer.className = 'recovery-quick-start'
+    footer.append(start)
+    result.append(summary, list, footer)
+    result.classList.add('is-visible')
   }
   build.addEventListener('click', () => {
     if (busy) return
@@ -106,6 +121,6 @@ export function createRecoveryWorkoutPanel(
     }).catch(error => { status.textContent = readableApiError(error) }).finally(() => { setBusy(false) })
   })
   if (options.showHeading !== false) panel.append(heading)
-  panel.append(duration, build, status, result)
+  panel.append(durationLabel, duration, build, status, result)
   return panel
 }

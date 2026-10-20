@@ -12,7 +12,7 @@ function notFoundView(): HTMLElement {
     eyebrow: 'Exercise',
     title: 'Exercise not found',
     description: 'This exercise may have been removed or the link is incorrect.',
-    action: { label: 'Back to Exercises', href: '/exercises' },
+    action: { label: 'Back to Exercises', href: '/library/exercises' },
     className: 'exercise-empty',
   })
 }
@@ -23,7 +23,7 @@ function errorView(message: string): HTMLElement {
     title: 'Unable to load exercise',
     message,
     className: 'exercise-empty',
-    action: { label: 'Back to Exercises', href: '/exercises', primary: false },
+    action: { label: 'Back to Exercises', href: '/library/exercises', primary: false },
   })
 }
 

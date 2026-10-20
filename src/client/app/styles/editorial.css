@@ -148,6 +148,13 @@ h1,
 .filter-icon--active svg,
 .nav-link--active svg { color: #fff !important; }
 
+.sidebar-nav .sidebar-quick-action,
+.sidebar-nav .sidebar-quick-action.nav-link--active {
+  background: #000 !important;
+  color: #fff !important;
+}
+.sidebar-nav .sidebar-quick-action svg { color: #fff !important; }
+
 .button:hover,
 .filter-icon:hover,
 .exercise-card:hover { transform: translateY(-1px); }

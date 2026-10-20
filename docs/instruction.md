@@ -359,7 +359,7 @@ Users must be able to:
 - start a workout from a program;
 - duplicate or modify programs as product behavior evolves.
 
-Workouts shows the locally saved Library, including the seven bundled seeds.
+Library → Programs shows the locally saved program library, including the seven bundled seeds.
 There are no remote catalogs, publication, import, refresh, or Web/Update status
 controls.
 The list uses a search toolbar, goal/focus/format/level/equipment
@@ -379,9 +379,8 @@ weight/notes, duplicating, deleting, and starting programs. The builder uses loc
 exercises and supports normal sets, supersets, EMOM sections, circuits sharing an
 interval, and mixed strength/EMOM plans. Goals are author-selected; focus, format,
 and equipment filters derive from exercises and blocks. My equipment uses the
-saved local equipment profile. Library keeps an active-workout Resume action. Quick Workout lives in Recovery, with a prominent mobile bottom-navigation shortcut that
-opens the same recovery-aware composer in an accessible bottom sheet without leaving
-the current page; while a session is active, that shortcut becomes Resume. Completed sessions appear in the History tab; Library
+saved local equipment profile. The global Quick action opens the recovery-aware composer in an accessible bottom sheet without leaving
+the current page; while a session is active, that shortcut becomes Resume. Completed sessions appear under Home → History; Library
 does not duplicate them in a Recent sessions section.
 
 ---
@@ -486,6 +485,10 @@ Historical records should remain stable even if a program is later edited.
 
 Setrai includes useful training statistics.
 
+Home groups personal state under Training, History, Body, and Recovery tabs.
+Training remains the default Home view; completed sessions belong to History,
+body-weight progress belongs to Body, and deterministic readiness belongs to Recovery.
+
 Initial statistics may include:
 
 - training frequency;
@@ -505,7 +508,7 @@ They should not require AI.
 
 # 13. Recovery
 
-Recovery is a core Setrai feature.
+Recovery is a core Setrai feature and lives under Home → Recovery.
 
 Setrai should estimate muscle recovery from recent training history.
 
@@ -540,9 +543,10 @@ Quick Workout may consider:
 The deterministic training system should be capable of producing a useful result
 without requiring AI.
 
-Quick Workout is built directly in the Recovery section, with 20/30/45/60-minute
-choices and a preview before starting. The former `/quick-workout` URL redirects
-to `/workouts/recovery`. Generation uses the local exercise library and saved
+Quick Workout opens from the emphasized global Quick action as a bottom sheet,
+with 20/30/45/60-minute choices and a preview before starting. The `/quick-workout`
+URL remains a native/deep-link fallback that opens the sheet over Home → Recovery.
+Generation uses the local exercise library and saved
 equipment. Like Workstr, primary muscle groups must be at least 80% recovered;
 groups without recent logged training are fresh and eligible. Granular aliases
 are grouped into the recovery map regions, using the lowest readiness in a group.

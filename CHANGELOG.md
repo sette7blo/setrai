@@ -16,6 +16,8 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 - Kept iOS screens awake during visible live workout sessions with native Screen Wake Lock support plus an interaction-activated fallback for non-HTTPS and unsupported contexts.
 - Added a prominent mobile Quick action that opens the recovery-aware workout composer and automatically becomes Resume while a workout session is active.
 - Opened the mobile Quick composer in an accessible bottom sheet so starting a generated workout no longer leaves the current page.
+- Reorganized personal state under Home (Training, History, Body, Recovery), combined Exercises and Programs under Library, and retained Quick/Resume as the emphasized training action.
+- Polished Quick Workout with a visible duration label, concise recovery copy, generating/regenerate states, preview motion, and a sticky Start Workout action.
 
 ## [v0.2.0] — 2026-10-17
 

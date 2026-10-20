@@ -1,7 +1,8 @@
 import { BicepsFlexed, CalendarCheck, ChartColumn, Flame, Trophy, Weight } from 'lucide'
 
 import { iconElement } from '../app/navigation.js'
-import { pageHeading, pageSummary } from '../shared/page-chrome.js'
+import { homeHeading } from '../app/section-navigation.js'
+import { pageSummary } from '../shared/page-chrome.js'
 import { bindPageRetry, pageEmpty, pageError, pageLoading } from '../shared/page-states.js'
 import { readableApiError } from '../shared/api/errors.js'
 import { displayName } from '../exercises/format.js'
@@ -31,7 +32,7 @@ function emptyView(): HTMLElement {
     eyebrow: 'Home',
     title: 'No completed workouts yet.',
     description: 'Finish your first workout to start building your timeline.',
-    action: { label: 'Start training', href: '/workouts' },
+    action: { label: 'Build Quick Workout', href: '/quick-workout' },
     className: 'stats-empty statistics-workstr-empty',
   }))
   return page
@@ -204,26 +205,14 @@ function trainingView(stats: StatisticsOverview, unit: WeightUnit): HTMLElement 
   return section
 }
 
-export type HomeSection = 'training' | 'body'
-
-function homeHeading(section: HomeSection): HTMLElement {
-  return pageHeading({
-    title: 'Home',
-    className: 'statistics-page-head',
-    tabsLabel: 'Home sections',
-    tabs: [
-      { id: 'training', label: 'Training', href: '/statistics', active: section === 'training' },
-      { id: 'body', label: 'Body', href: '/statistics/body', active: section === 'body' },
-    ],
-  })
-}
+type StatisticsSection = 'training' | 'body'
 
 function renderLoaded(
   root: HTMLElement,
   stats: StatisticsOverview,
   profile: Profile,
   entries: BodyWeightEntry[],
-  section: HomeSection,
+  section: StatisticsSection,
 ): HTMLElement {
   if (section === 'training' && !hasTrainingHistory(stats)) return emptyView()
 
@@ -240,7 +229,7 @@ function renderLoaded(
   return page
 }
 
-export async function renderStatisticsPage(root: HTMLElement, section: HomeSection = 'training'): Promise<void> {
+export async function renderStatisticsPage(root: HTMLElement, section: StatisticsSection = 'training'): Promise<void> {
   root.replaceChildren(loadingView())
   try {
     const [stats, profile, entries] = await Promise.all([getStatistics(), getProfile(), listBodyWeight()])

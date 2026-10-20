@@ -5,20 +5,7 @@ import { PROGRAM_GOALS, PROGRAM_FOCUS, PROGRAM_FORMATS, emptyProgramFilters } fr
 import type { ProgramFilters } from './program-taxonomy.js'
 import type { Program } from './types.js'
 import { createFilterChips, createFilterSheet, type FilterGroup } from '../shared/filter-sheet.js'
-import { pageHeading, pageSummary } from '../shared/page-chrome.js'
-
-export function workoutHeading(active: 'library' | 'history' | 'recovery'): HTMLElement {
-  return pageHeading({
-    title: 'Workouts',
-    className: 'workout-heading',
-    tabsLabel: 'Workout sections',
-    tabs: [
-      { id: 'library', label: 'Library', href: '/workouts', active: active === 'library' },
-      { id: 'history', label: 'History', href: '/workouts/history', active: active === 'history' },
-      { id: 'recovery', label: 'Recovery', href: '/workouts/recovery', active: active === 'recovery' },
-    ],
-  })
-}
+import { pageSummary } from '../shared/page-chrome.js'
 
 export function programHero(programs: Program[]): HTMLElement {
   const exerciseCount = new Set(programs.flatMap(program => program.exercises.map(entry => entry.exerciseSlug))).size

@@ -177,7 +177,7 @@ export function createExerciseEditorForm(
   save.append(iconElement(Save), document.createTextNode(mode === 'create' ? 'Create exercise' : 'Save changes'))
   const cancel = document.createElement('a')
   cancel.className = 'button button--secondary'
-  cancel.href = mode === 'edit' && initial.id ? `/exercises/${initial.id}` : '/exercises'
+  cancel.href = mode === 'edit' && initial.id ? `/exercises/${initial.id}` : '/library/exercises'
   cancel.textContent = 'Cancel'
   actions.append(save, cancel)
 
@@ -201,7 +201,7 @@ export function createExerciseEditorForm(
       status.textContent = 'Deleting…'
       void deleteExercise(initial.id)
         .then(() => {
-          window.history.pushState({}, '', '/exercises')
+          window.history.pushState({}, '', '/library/exercises')
           window.dispatchEvent(new PopStateEvent('popstate'))
         })
         .catch((error) => {
@@ -293,7 +293,7 @@ export async function renderExerciseEditor(root: HTMLElement, id: number | null)
     })
     const back = document.createElement('a')
     back.className = 'detail-back'
-    back.href = id == null ? '/exercises' : `/exercises/${id}`
+    back.href = id == null ? '/library/exercises' : `/exercises/${id}`
     back.append(iconElement(ChevronLeft), document.createTextNode(id == null ? 'Exercises' : 'Back to exercise'))
     page.append(
       back,
@@ -309,7 +309,7 @@ export async function renderExerciseEditor(root: HTMLElement, id: number | null)
       eyebrow: 'Exercise',
       title: mode === 'create' ? 'Unable to open editor' : 'Unable to load exercise',
       message: readableApiError(error),
-      action: { label: 'Back to Exercises', href: '/exercises', primary: false }
+      action: { label: 'Back to Exercises', href: '/library/exercises', primary: false }
     }))
   }
 }

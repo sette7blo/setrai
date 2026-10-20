@@ -36,7 +36,7 @@ export async function renderProgramLibrary(page: HTMLElement, sessionLinks: (ses
   const syncUrl = (): void => {
     const query = new URLSearchParams()
     for (const [key, value] of Object.entries(filters)) if (value) query.set(key, value)
-    const next = `/workouts${query.size ? `?${query}` : ''}`
+    const next = `/library/programs${query.size ? `?${query}` : ''}`
     if (next !== `${window.location.pathname}${window.location.search}`) window.history.replaceState({}, '', next)
   }
   const updateHero = (): void => {

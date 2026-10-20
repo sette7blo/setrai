@@ -61,7 +61,7 @@ export function createExerciseDetailView(exercise: Exercise, onFavourite: () => 
   page.className = 'exercise-detail'
   const back = document.createElement('a')
   back.className = 'detail-back'
-  back.href = '/exercises'
+  back.href = '/library/exercises'
   back.append(iconElement(ChevronLeft), document.createTextNode('Exercises'))
 
   const card = document.createElement('div')

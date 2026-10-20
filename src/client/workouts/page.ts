@@ -1,16 +1,16 @@
 import { Play } from 'lucide'
 import { iconElement } from '../app/navigation.js'
+import { homeHeading, libraryHeading } from '../app/section-navigation.js'
 import { readableApiError } from '../shared/api/errors.js'
 import { bindPageRetry, pageEmpty, pageError } from '../shared/page-states.js'
 import { listExercises } from '../exercises/api.js'
 import { getProfile } from '../profile/api.js'
 import { getRecovery } from '../recovery/api.js'
-import { createRecoveryWorkoutPanel } from '../quick-workout/recovery-panel.js'
 import { recoveryContent } from '../recovery/page.js'
 import type { WeightUnit } from '../profile/types.js'
 import type { Exercise } from '../exercises/types.js'
 import { getSession, listSessions } from './api.js'
-import { workoutHeading } from './program-browser.js'
+
 import { renderProgramLibrary } from './program-library.js'
 import { createHistoryCalendar } from './history-calendar.js'
 import { formatSessionDate, historyHero, sessionDateKey, sessionHistoryCard } from './history-session-card.js'
@@ -74,7 +74,7 @@ function renderHistoryView(page: HTMLElement, sessions: Session[], exercises: Ex
       list.append(pageEmpty({
         title: selectedDate ? 'No sessions on this day.' : 'No workout history yet.',
         description: selectedDate ? undefined : 'Start a Quick Workout or run a program to build your timeline.',
-        action: selectedDate ? undefined : { label: 'Open Recovery', href: '/workouts/recovery' },
+        action: selectedDate ? undefined : { label: 'Open Recovery', href: '/statistics/recovery' },
         compact: true,
         className: 'workout-browser-empty',
       }))
@@ -86,18 +86,15 @@ function renderHistoryView(page: HTMLElement, sessions: Session[], exercises: Ex
   page.append(calendar, list)
 }
 
-interface WorkoutsPageOptions { focusQuickWorkout?: boolean }
-
 export async function renderWorkoutsPage(
   root: HTMLElement,
-  view: 'library' | 'history' | 'recovery' = 'library',
-  options: WorkoutsPageOptions = {}
+  view: 'library' | 'history' | 'recovery' = 'library'
 ): Promise<void> {
   const history = view === 'history'
   const recovery = view === 'recovery'
   const page = document.createElement('div')
   page.className = `workouts-page workout-browser workout-browser--${view}`
-  const heading = workoutHeading(view)
+  const heading = history ? homeHeading('history') : recovery ? homeHeading('recovery') : libraryHeading('programs')
   const state = document.createElement('p')
   state.className = 'workout-browser-status'
   state.setAttribute('role', 'status')
@@ -108,17 +105,9 @@ export async function renderWorkoutsPage(
   root.replaceChildren(page)
   try {
     if (recovery) {
-      const [overview, profile] = await Promise.all([getRecovery(), getProfile().catch(() => ({ equipment: [] as string[] }))])
+      const overview = await getRecovery()
       state.textContent = ''
-      const quickWorkout = createRecoveryWorkoutPanel(profile.equipment)
-      page.append(recoveryContent(overview), quickWorkout)
-      if (options.focusQuickWorkout) {
-        quickWorkout.tabIndex = -1
-        window.requestAnimationFrame(() => {
-          quickWorkout.scrollIntoView({ block: 'start', behavior: 'smooth' })
-          quickWorkout.focus({ preventScroll: true })
-        })
-      }
+      page.append(recoveryContent(overview))
       return
     }
     if (history) {
@@ -141,7 +130,7 @@ export async function renderWorkoutsPage(
       message: readableApiError(error),
       className: 'workouts-empty',
     })
-    bindPageRetry(viewError, () => { void renderWorkoutsPage(root, view, options) })
+    bindPageRetry(viewError, () => { void renderWorkoutsPage(root, view) })
     page.append(viewError)
   }
 }

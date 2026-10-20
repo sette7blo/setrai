@@ -34,8 +34,7 @@ import {
 import { renderSessionSummary, summaryFacts } from '../../src/client/workouts/session-summary.js'
 import { createHistoryCalendar } from '../../src/client/workouts/history-calendar.js'
 import { sessionLinks, workoutLoadingSkeleton } from '../../src/client/workouts/page.js'
-
-import { workoutHeading } from '../../src/client/workouts/program-browser.js'
+import { homeHeading, libraryHeading } from '../../src/client/app/section-navigation.js'
 import type { Program, Session } from '../../src/client/workouts/types.js'
 
 test('normalizes and orders Program exercises', () => {
@@ -250,7 +249,7 @@ function elementText(root: TestElement): string {
   return [root.textContent, ...root.children.map(elementText)].join(' ')
 }
 
-test('Workout heading includes Recovery as a workouts tab', () => {
+test('Home owns History and Recovery while Library owns Exercises and Programs', () => {
   const originalDocument = globalThis.document
   try {
     globalThis.document = {
@@ -258,11 +257,18 @@ test('Workout heading includes Recovery as a workouts tab', () => {
       createElementNS: () => new TestElement(),
       createTextNode: (text: string) => Object.assign(new TestElement(), { textContent: text })
     } as unknown as Document
-    const heading = workoutHeading('recovery') as unknown as TestElement
-    const nodes = walkElements(heading)
-    assert.equal(nodes.some((node) => node.href === '/workouts/recovery'), true)
-    assert.match(elementText(heading), /Recovery/)
-    assert.equal(nodes.some((node) => node.attributes['aria-current'] === 'page'), true)
+    const home = homeHeading('recovery') as unknown as TestElement
+    const homeNodes = walkElements(home)
+    assert.equal(homeNodes.some((node) => node.href === '/statistics/history'), true)
+    assert.equal(homeNodes.some((node) => node.href === '/statistics/recovery'), true)
+    assert.match(elementText(home), /Training.*History.*Body.*Recovery/)
+    assert.equal(homeNodes.some((node) => node.attributes['aria-current'] === 'page'), true)
+
+    const library = libraryHeading('programs') as unknown as TestElement
+    const libraryNodes = walkElements(library)
+    assert.equal(libraryNodes.some((node) => node.href === '/library/exercises'), true)
+    assert.equal(libraryNodes.some((node) => node.href === '/library/programs'), true)
+    assert.match(elementText(library), /Exercises.*Programs/)
   } finally {
     globalThis.document = originalDocument
   }

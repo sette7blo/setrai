@@ -48,21 +48,29 @@ function navLink(item: NavigationItem, activePath: string): HTMLAnchorElement {
   return link
 }
 
-function desktopNavigation(activePath: string): HTMLElement {
+interface AppNavigation {
+  element: HTMLElement
+  quickAction: HTMLAnchorElement
+}
+
+function markQuickAction(link: HTMLAnchorElement, resume: boolean, desktop = false): void {
+  link.classList.add(desktop ? 'sidebar-quick-action' : 'nav-link--quick')
+  link.classList.toggle('nav-link--resume', resume)
+}
+
+function desktopNavigation(activePath: string, activeSessionId?: number): AppNavigation {
   const nav = document.createElement('nav')
   nav.className = 'sidebar-nav'
   nav.setAttribute('aria-label', 'Primary navigation')
-
-  for (const item of DESKTOP_NAVIGATION_ITEMS) {
-    nav.append(navLink(item, activePath))
-  }
-
-  return nav
-}
-
-interface MobileNavigation {
-  element: HTMLElement
-  quickAction: HTMLAnchorElement
+  const quickAction = navLink(mobileNavigationItems(activeSessionId)[1], activePath)
+  markQuickAction(quickAction, Boolean(activeSessionId), true)
+  nav.append(
+    navLink(DESKTOP_NAVIGATION_ITEMS[0], activePath),
+    navLink(DESKTOP_NAVIGATION_ITEMS[1], activePath),
+    quickAction,
+    navLink(DESKTOP_NAVIGATION_ITEMS[2], activePath)
+  )
+  return { element: nav, quickAction }
 }
 
 function setNavigationItem(link: HTMLAnchorElement, item: NavigationItem): void {
@@ -71,9 +79,13 @@ function setNavigationItem(link: HTMLAnchorElement, item: NavigationItem): void 
   const label = document.createElement('span')
   label.textContent = item.label
   link.replaceChildren(iconElement(item.icon), label)
+  const selected = item.path === primaryNavPath(currentPath())
+  link.classList.toggle('nav-link--active', selected)
+  if (selected) link.setAttribute('aria-current', 'page')
+  else link.removeAttribute('aria-current')
 }
 
-function mobileNavigation(activePath: string, activeSessionId?: number): MobileNavigation {
+function mobileNavigation(activePath: string, activeSessionId?: number): AppNavigation {
   const nav = document.createElement('nav')
   nav.className = 'bottom-nav'
   nav.setAttribute('aria-label', 'Primary navigation')
@@ -82,9 +94,8 @@ function mobileNavigation(activePath: string, activeSessionId?: number): MobileN
 
   for (const [index, item] of items.entries()) {
     const link = navLink(item, activePath)
-    if (index === 2) {
-      link.classList.add('nav-link--quick')
-      link.classList.toggle('nav-link--resume', Boolean(activeSessionId))
+    if (index === 1) {
+      markQuickAction(link, Boolean(activeSessionId))
       quickAction = link
     }
     nav.append(link)
@@ -93,12 +104,22 @@ function mobileNavigation(activePath: string, activeSessionId?: number): MobileN
   return { element: nav, quickAction: quickAction! }
 }
 
-async function refreshQuickAction(link: HTMLAnchorElement): Promise<void> {
+async function refreshQuickActions(links: HTMLAnchorElement[]): Promise<void> {
   try {
     const active = (await listSessions()).find(session => !session.finishedAt)
-    setNavigationItem(link, mobileNavigationItems(active?.id)[2])
-    link.classList.toggle('nav-link--resume', Boolean(active))
+    for (const link of links) {
+      setNavigationItem(link, mobileNavigationItems(active?.id)[1])
+      link.classList.toggle('nav-link--resume', Boolean(active))
+    }
   } catch { /* Keep the recovery-aware Quick action when session state is unavailable. */ }
+}
+
+function bindQuickAction(link: HTMLAnchorElement): void {
+  link.addEventListener('click', event => {
+    if (!shouldOpenRecoveryWorkoutSheet(event, link.classList.contains('nav-link--resume'))) return
+    event.preventDefault()
+    openRecoveryWorkoutSheet(link)
+  })
 }
 
 function placeholderRoute(capabilities: Capabilities): HTMLElement {
@@ -111,8 +132,8 @@ function placeholderRoute(capabilities: Capabilities): HTMLElement {
     <h1>${route.title}</h1>
     <p class="hero-summary">${route.summary}</p>
     <div class="hero-actions">
-      <a class="button button--primary" href="/workouts">Start from Workouts</a>
-      <a class="button button--secondary" href="/exercises">Open Exercises</a>
+      <a class="button button--primary" href="/quick-workout">Build Quick Workout</a>
+      <a class="button button--secondary" href="/library/exercises">Open Library</a>
     </div>
     <dl class="capability-strip">
       <div>
@@ -146,39 +167,59 @@ async function renderRoute(container: HTMLElement, capabilities: Capabilities): 
     return
   }
 
+  if (path === '/statistics/history') {
+    await renderWorkoutsPage(container, 'history')
+    return
+  }
+
   if (path === '/statistics/body') {
     await renderStatisticsPage(container, 'body')
     return
   }
 
+  if (path === '/statistics/recovery') {
+    await renderWorkoutsPage(container, 'recovery')
+    return
+  }
+
+  if (path === '/library/exercises') {
+    await renderExerciseLibrary(container)
+    return
+  }
+
+  if (path === '/library/programs') {
+    await renderWorkoutsPage(container)
+    return
+  }
+
   if (path === '/exercises') {
+    window.history.replaceState({}, '', `/library/exercises${window.location.search}`)
     await renderExerciseLibrary(container)
     return
   }
 
   if (path === '/workouts') {
+    window.history.replaceState({}, '', `/library/programs${window.location.search}`)
     await renderWorkoutsPage(container)
     return
   }
 
   if (path === '/workouts/history') {
+    window.history.replaceState({}, '', `/statistics/history${window.location.search}`)
     await renderWorkoutsPage(container, 'history')
     return
   }
 
-  if (path === '/workouts/recovery') {
+  if (path === '/workouts/recovery' || path === '/recovery') {
+    window.history.replaceState({}, '', `/statistics/recovery${window.location.search}`)
     await renderWorkoutsPage(container, 'recovery')
     return
   }
 
   if (path === '/quick-workout') {
-    window.history.replaceState({}, '', '/workouts/recovery#quick-workout')
-    await renderWorkoutsPage(container, 'recovery', { focusQuickWorkout: true })
-    return
-  }
-
-  if (path === '/recovery') {
+    window.history.replaceState({}, '', '/statistics/recovery#quick-workout')
     await renderWorkoutsPage(container, 'recovery')
+    openRecoveryWorkoutSheet()
     return
   }
 
@@ -237,7 +278,8 @@ async function renderShell(root: HTMLElement, capabilities: Capabilities, active
       </span>
     </a>
   `
-  sidebar.append(desktopNavigation(activePath))
+  const desktop = desktopNavigation(activePath, activeSessionId)
+  sidebar.append(desktop.element)
 
   const main = document.createElement('main')
   main.className = 'app-content'
@@ -262,13 +304,10 @@ async function renderShell(root: HTMLElement, capabilities: Capabilities, active
   const mobile = mobileNavigation(activePath, activeSessionId)
   frame.append(sidebar, main, mobile.element)
   root.append(frame)
-  const refreshMobileQuickAction = (): void => { void refreshQuickAction(mobile.quickAction) }
-  window.addEventListener('setrai:session-change', refreshMobileQuickAction)
-  mobile.quickAction.addEventListener('click', event => {
-    if (!shouldOpenRecoveryWorkoutSheet(event, mobile.quickAction.classList.contains('nav-link--resume'))) return
-    event.preventDefault()
-    openRecoveryWorkoutSheet(mobile.quickAction)
-  })
+  const quickActions = [mobile.quickAction, desktop.quickAction]
+  const refreshQuickNavigation = (): void => { void refreshQuickActions(quickActions) }
+  window.addEventListener('setrai:session-change', refreshQuickNavigation)
+  quickActions.forEach(bindQuickAction)
 
   installMenuNavigation(root, async () => {
     const next = routeContainer()

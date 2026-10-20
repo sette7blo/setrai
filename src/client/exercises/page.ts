@@ -2,7 +2,8 @@ import { Dumbbell, Plus, Search, SlidersHorizontal, Star, Target } from 'lucide'
 import { selectionToggle, selectionToolbar } from './selection.js'
 import { readableApiError } from '../shared/api/errors.js'
 import { iconElement } from '../app/navigation.js'
-import { pageHeading, pageSummary } from '../shared/page-chrome.js'
+import { libraryHeading } from '../app/section-navigation.js'
+import { pageSummary } from '../shared/page-chrome.js'
 import { bindPageRetry, pageEmpty, pageError } from '../shared/page-states.js'
 import { exerciseFilterChips, exerciseFilterSheet } from './filter-sheet.js'
 import { createExerciseCard } from './card.js'
@@ -22,7 +23,7 @@ interface PageState {
 
 function updateUrl(filters: ExerciseFilters): void {
   const params = filtersToUrl(filters)
-  const nextUrl = params.toString() ? `/exercises?${params}` : '/exercises'
+  const nextUrl = params.toString() ? `/library/exercises?${params}` : '/library/exercises'
   if (nextUrl !== `${window.location.pathname}${window.location.search}`) window.history.replaceState({}, '', nextUrl)
 }
 
@@ -40,13 +41,14 @@ function loadingView(): HTMLElement {
 }
 
 function errorView(message: string): HTMLElement {
-  return pageError({ eyebrow: 'Exercises', title: 'Exercises unavailable', message, className: 'exercise-page exercise-empty' })
+  return pageError({ eyebrow: 'Library', title: 'Exercises unavailable', message, className: 'exercise-page exercise-empty' })
 }
 
 function header(state: PageState): HTMLElement {
   const favoriteCount = state.exercises.filter(exercise => exercise.favourite).length
   const muscleCount = uniqueMuscles(state.exercises).length
-  const section = pageHeading({ title: 'Exercises', className: 'exercise-heading' })
+  const section = libraryHeading('exercises')
+  section.classList.add('exercise-heading')
   section.append(pageSummary({
     icon: Dumbbell,
     title: 'Exercises',

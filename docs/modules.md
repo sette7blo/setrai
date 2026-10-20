@@ -872,8 +872,10 @@ src/client/app/
 - navigation and browser history in `menu-navigation.ts`;
 - capability loading;
 - top-level layout and compact header/navigation styling;
-- mobile Home / Exercises / Quick / Workouts navigation, including a recovery-aware
-  Quick composer bottom sheet and an active-session Resume state from the public Sessions API;
+- mobile Home / Quick / Library navigation, a separate desktop Quick action, and
+  an active-session Resume state from the public Sessions API;
+- shared Home (Training/History/Body/Recovery) and Library (Exercises/Programs)
+  section navigation in `section-navigation.ts`;
 - shared typography, spacing, and radius tokens in `styles/tokens.css`;
   feature styles consume these tokens while owning their page layout;
 - warm light theme in `styles/editorial.css` and shared header, surface, control,
@@ -972,7 +974,7 @@ src/client/workouts/
 
 - program library;
 - shared client filter sheet presentation contract for program facets and chips;
-- Library/History/Recovery routing in `page.ts`;
+- program-library and Home History/Recovery rendering in `page.ts`;
 - local-only Library orchestration in `program-library.ts`, compact chrome and
   filter sheets in `program-browser.ts`, and styles in `browser.css`;
 - expandable local cards in `program-card.ts` and `program-preview.ts`;
@@ -998,7 +1000,7 @@ src/client/workouts/
 - set logging UI;
 - live rest overlay (not a separate rest-timer module);
 - workout completion;
-- Recovery composition through the public Quick Workout panel;
+- Home History/Recovery presentation composition;
 
 ## Typical files
 
@@ -1044,6 +1046,7 @@ src/client/statistics/
 - records UI;
 - streak presentation;
 - body-weight history presentation.
+- Training and Body views within the shared Home section navigation.
 
 ## May depend on
 
@@ -1071,14 +1074,12 @@ src/client/recovery/
 - muscle recovery/readiness presentation;
 - recovery status labels;
 - recovery card ordering for display;
-- recovery empty/loading/error states;
-- composition of the public Quick Workout panel below readiness.
+- recovery empty/loading/error states within Home → Recovery.
 
 ## May depend on
 
 ```text
 recovery API
-Quick Workout public recovery panel
 client shared formatting
 ```
 
@@ -1129,7 +1130,10 @@ src/client/quick-workout/
 
 - Quick Workout form and preview;
 - public `createRecoveryWorkoutPanel` entry in `recovery-panel.ts`, composed by
-  Workouts/Recovery, with duration choices and ready-muscle preview;
+  the global native-dialog sheet in `recovery-sheet.ts`, with duration choices
+  and ready-muscle preview;
+- Quick/Resume navigation interception, focus restoration, backdrop/Escape
+  dismissal, and responsive sheet presentation;
 - pure same-muscle swap/removal state in `recovery-plan.ts` and panel styling in
   `recovery-panel.css`;
 - target-muscle selection presentation;

@@ -35,7 +35,7 @@ export function openRecoveryWorkoutSheet(opener: HTMLElement | null = document.a
   title.id = 'quick-workout-sheet-title'
   title.textContent = 'Quick Workout'
   const summary = document.createElement('p')
-  summary.textContent = 'Built from your recovery, training goal, and saved equipment.'
+  summary.textContent = 'Uses your recovery, goal, and saved equipment.'
   copy.append(title, summary)
 
   const close = document.createElement('button')

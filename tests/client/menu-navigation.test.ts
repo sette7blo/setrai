@@ -10,12 +10,12 @@ test('desktop Settings uses the profile route while mobile retains its header ge
   assert.ok(settings?.icon)
   assert.equal(primaryNavPath('/profile'), settings?.path)
   assert.equal(menuDestination(settings!.path, 'http://localhost:3191/exercises')?.pathname, '/profile')
-  assert.deepEqual(NAVIGATION_ITEMS.map(item => item.path), ['/statistics', '/exercises', '/workouts'])
+  assert.deepEqual(NAVIGATION_ITEMS.map(item => item.path), ['/statistics', '/library/exercises'])
 })
 
 const current = 'http://localhost:3191/exercises'
 test('same-origin menu destinations support navigation without reloading', () => {
-  assert.equal(menuDestination('/workouts', current)?.pathname, '/workouts')
+  assert.equal(menuDestination('/library/programs', current)?.pathname, '/library/programs')
   assert.equal(menuDestination('/', current)?.pathname, '/')
   assert.equal(menuDestination('/statistics?range=week', current)?.search, '?range=week')
 })
@@ -27,5 +27,5 @@ test('external, hash, download and new-tab links keep native browser behavior', 
 })
 test('live session navigation preserves timer teardown through document navigation', () => {
   assert.equal(menuDestination('/sessions/1', current), null)
-  assert.equal(menuDestination('/workouts', 'http://localhost:3191/sessions/1'), null)
+  assert.equal(menuDestination('/library/programs', 'http://localhost:3191/sessions/1'), null)
 })

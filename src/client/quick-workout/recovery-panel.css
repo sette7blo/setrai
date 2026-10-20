@@ -2,11 +2,13 @@
 .recovery-quick-heading { display: flex; align-items: center; gap: 12px; }
 .recovery-quick-heading h2 { margin: 0 0 4px; font-size: 16px; font-weight: 650; }
 .recovery-quick-heading p { margin: 0; color: var(--color-muted-strong); font-size: 13px; line-height: 1.5; }
+.recovery-quick-label { margin: 0 0 -6px; color: var(--color-muted); font: 800 10px/1 ui-monospace, SFMono-Regular, monospace; letter-spacing: .12em; text-transform: uppercase; }
 .recovery-quick-icon { min-height: var(--chip-control-height); border: var(--chip-border); border-radius: var(--chip-radius); color: var(--color-text); background: var(--color-surface-strong); font: inherit; cursor: pointer; }
 .recovery-quick-duration button { color: var(--color-text); background: var(--color-surface-strong); }
 .recovery-quick-status { margin: 0; color: var(--color-muted-strong); font-size: 13px; }
 .recovery-quick-status:empty, .recovery-quick-result:empty { display: none; }
 .recovery-quick-result, .recovery-quick-list { display: grid; gap: 10px; min-width: 0; }
+.recovery-quick-result.is-visible { animation: quick-preview-in 180ms ease-out; }
 .recovery-quick-summary { margin: 0; color: var(--color-muted-strong); font-size: 13px; line-height: 1.5; }
 .recovery-quick-row { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding-block: 10px; border-top: 1px solid var(--color-border); }
 .recovery-quick-index { color: var(--color-muted-strong); font-size: 12px; font-variant-numeric: tabular-nums; }
@@ -16,6 +18,10 @@
 .recovery-quick-icon { display: grid; place-items: center; width: 44px; padding: 0; background: var(--color-surface); }
 .recovery-quick-icon svg { width: 16px; height: 16px; }
 .recovery-quick-panel button:disabled { opacity: .5; cursor: wait; }
+.recovery-quick-regenerate { width: 100%; }
+.recovery-quick-start { position: sticky; bottom: 0; z-index: 2; margin: 2px -16px -16px; padding: 12px 16px calc(16px + env(safe-area-inset-bottom)); border-top: 1px solid var(--color-border); background: color-mix(in srgb, var(--color-surface) 94%, transparent); backdrop-filter: blur(12px); }
+.recovery-quick-start .button { width: 100%; }
+@keyframes quick-preview-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
 
 .quick-workout-sheet { box-sizing: border-box; position: fixed; inset: auto 0 0; width: min(100%, 620px); max-width: 100%; max-height: calc(100dvh - 16px); margin: 0 auto; padding: 0; border: 1px solid var(--color-border); border-radius: 22px 22px 0 0; color: var(--color-text); background: var(--color-surface); overflow: hidden; }
 .quick-workout-sheet[open] { display: flex; flex-direction: column; }

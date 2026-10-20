@@ -46,20 +46,26 @@ test('route lookup falls back to the Setrai home route', () => {
   assert.equal(findRoute('/statistics/body').primaryAction, 'Log body weight')
 })
 
-test('home body route stays under Home primary navigation', () => {
+test('personal state stays under Home while reusable content stays under Library', () => {
   assert.equal(primaryNavPath('/statistics'), '/statistics')
   assert.equal(primaryNavPath('/statistics/body'), '/statistics')
   assert.equal(primaryNavPath('/statistics/training'), '/statistics')
+  assert.equal(primaryNavPath('/statistics/history'), '/statistics')
+  assert.equal(primaryNavPath('/statistics/recovery'), '/statistics')
+  assert.equal(primaryNavPath('/library/exercises'), '/library/exercises')
+  assert.equal(primaryNavPath('/library/programs'), '/library/exercises')
+  assert.equal(primaryNavPath('/exercises/7'), '/library/exercises')
+  assert.equal(primaryNavPath('/programs/4'), '/library/exercises')
   assert.equal(primaryNavPath('/'), '/statistics')
 })
 
 test('mobile navigation exposes recovery-aware Quick and active-session Resume actions', () => {
   assert.deepEqual(
     mobileNavigationItems().map(item => [item.label, item.path]),
-    [['Home', '/statistics'], ['Exercises', '/exercises'], ['Quick', '/quick-workout'], ['Workouts', '/workouts']]
+    [['Home', '/statistics'], ['Quick', '/quick-workout'], ['Library', '/library/exercises']]
   )
   assert.deepEqual(
     mobileNavigationItems(42).map(item => [item.label, item.path]),
-    [['Home', '/statistics'], ['Exercises', '/exercises'], ['Resume', '/sessions/42'], ['Workouts', '/workouts']]
+    [['Home', '/statistics'], ['Resume', '/sessions/42'], ['Library', '/library/exercises']]
   )
 })

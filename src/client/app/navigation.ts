@@ -1,8 +1,7 @@
 import {
-  ClipboardList,
   createElement,
-  Dumbbell,
   House,
+  LibraryBig,
   Play,
   Settings,
   Zap,
@@ -24,16 +23,10 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
     description: 'Training volume and body progress'
   },
   {
-    path: '/exercises',
-    label: 'Exercises',
-    icon: Dumbbell,
-    description: 'Browse movements and favorites'
-  },
-  {
-    path: '/workouts',
-    label: 'Workouts',
-    icon: ClipboardList,
-    description: 'Programs and live sessions'
+    path: '/library/exercises',
+    label: 'Library',
+    icon: LibraryBig,
+    description: 'Exercises and programs'
   }
 ]
 
@@ -56,9 +49,8 @@ export function resumeWorkoutNavigationItem(id: number): NavigationItem {
 export function mobileNavigationItems(activeSessionId?: number): NavigationItem[] {
   return [
     NAVIGATION_ITEMS[0],
-    NAVIGATION_ITEMS[1],
     activeSessionId ? resumeWorkoutNavigationItem(activeSessionId) : QUICK_WORKOUT_NAVIGATION_ITEM,
-    NAVIGATION_ITEMS[2]
+    NAVIGATION_ITEMS[1]
   ]
 }
 
