@@ -16,3 +16,20 @@
 .recovery-quick-icon { display: grid; place-items: center; width: 44px; padding: 0; background: var(--color-surface); }
 .recovery-quick-icon svg { width: 16px; height: 16px; }
 .recovery-quick-panel button:disabled { opacity: .5; cursor: wait; }
+
+.quick-workout-sheet { box-sizing: border-box; position: fixed; inset: auto 0 0; width: min(100%, 620px); max-width: 100%; max-height: calc(100dvh - 16px); margin: 0 auto; padding: 0; border: 1px solid var(--color-border); border-radius: 22px 22px 0 0; color: var(--color-text); background: var(--color-surface); overflow: hidden; }
+.quick-workout-sheet[open] { display: flex; flex-direction: column; }
+.quick-workout-sheet::backdrop { background: rgba(0, 0, 0, .42); }
+.quick-workout-sheet__heading { display: flex; flex: none; align-items: center; justify-content: space-between; gap: 16px; padding: 16px; border-bottom: 1px solid var(--color-border); background: var(--color-surface); }
+.quick-workout-sheet__heading h2 { margin: 0 0 3px; font-size: 20px; font-weight: 700; letter-spacing: -.025em; text-wrap: balance; }
+.quick-workout-sheet__heading p { margin: 0; color: var(--color-muted-strong); font-size: 12px; line-height: 1.45; text-wrap: pretty; }
+.quick-workout-sheet__close { display: grid; place-items: center; width: 44px; height: 44px; flex: none; padding: 0; border: 1px solid var(--color-border); border-radius: 12px; color: var(--color-text); background: var(--color-surface); cursor: pointer; transition: transform 100ms ease, background-color 160ms ease; }
+.quick-workout-sheet__close:hover { background: var(--color-surface-strong); }
+.quick-workout-sheet__close:active { transform: scale(.97); }
+.quick-workout-sheet__close svg { width: 18px; height: 18px; }
+.quick-workout-sheet__content { min-height: 0; overflow-y: auto; overscroll-behavior: contain; padding-bottom: env(safe-area-inset-bottom); -webkit-overflow-scrolling: touch; }
+.quick-workout-sheet .recovery-quick-panel { padding: 16px; border: 0; border-radius: 0; }
+
+@media (min-width: 720px) {
+  .quick-workout-sheet { inset: 0; max-height: min(88dvh, 820px); margin: auto; border-radius: 22px; }
+}

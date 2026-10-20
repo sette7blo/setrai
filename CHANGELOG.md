@@ -15,6 +15,7 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 - Promoted the 33 operator-curated exercise images to bundled seed artwork so fresh installations receive the updated images without importing an existing database or media directory.
 - Kept iOS screens awake during visible live workout sessions with native Screen Wake Lock support plus an interaction-activated fallback for non-HTTPS and unsupported contexts.
 - Added a prominent mobile Quick action that opens the recovery-aware workout composer and automatically becomes Resume while a workout session is active.
+- Opened the mobile Quick composer in an accessible bottom sheet so starting a generated workout no longer leaves the current page.
 
 ## [v0.2.0] — 2026-10-17
 

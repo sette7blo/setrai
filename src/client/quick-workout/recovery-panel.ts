@@ -8,11 +8,16 @@ import { removeRecoveryExercise, swapRecoveryExercise } from './recovery-plan.js
 import { startAndNavigate } from './start.js'
 import type { QuickWorkout } from './types.js'
 
+interface RecoveryWorkoutPanelOptions { showHeading?: boolean; id?: string }
+
 // Public composition entry point: generation and session creation stay in Quick Workout.
-export function createRecoveryWorkoutPanel(equipment: string[] = []): HTMLElement {
+export function createRecoveryWorkoutPanel(
+  equipment: string[] = [],
+  options: RecoveryWorkoutPanelOptions = {}
+): HTMLElement {
   const panel = document.createElement('section')
   panel.className = 'recovery-quick-panel'
-  panel.id = 'quick-workout'
+  panel.id = options.id ?? 'quick-workout'
   panel.setAttribute('aria-label', 'Quick Workout')
   const heading = document.createElement('div')
   heading.className = 'recovery-quick-heading'
@@ -100,6 +105,7 @@ export function createRecoveryWorkoutPanel(equipment: string[] = []): HTMLElemen
       workout = plan; render(); status.textContent = ''
     }).catch(error => { status.textContent = readableApiError(error) }).finally(() => { setBusy(false) })
   })
-  panel.append(heading, duration, build, status, result)
+  if (options.showHeading !== false) panel.append(heading)
+  panel.append(duration, build, status, result)
   return panel
 }

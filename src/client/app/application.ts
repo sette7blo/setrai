@@ -7,6 +7,7 @@ import { renderProgramDetail } from '../workouts/program-detail-page.js'
 import { renderSessionPage } from '../workouts/session-page.js'
 import { renderWorkoutsPage } from '../workouts/page.js'
 import { listSessions } from '../workouts/api.js'
+import { openRecoveryWorkoutSheet, shouldOpenRecoveryWorkoutSheet } from '../quick-workout/recovery-sheet.js'
 import { renderStatisticsPage } from '../statistics/page.js'
 import { renderProfilePage } from '../profile/page.js'
 import { Settings } from 'lucide'
@@ -263,6 +264,11 @@ async function renderShell(root: HTMLElement, capabilities: Capabilities, active
   root.append(frame)
   const refreshMobileQuickAction = (): void => { void refreshQuickAction(mobile.quickAction) }
   window.addEventListener('setrai:session-change', refreshMobileQuickAction)
+  mobile.quickAction.addEventListener('click', event => {
+    if (!shouldOpenRecoveryWorkoutSheet(event, mobile.quickAction.classList.contains('nav-link--resume'))) return
+    event.preventDefault()
+    openRecoveryWorkoutSheet(mobile.quickAction)
+  })
 
   installMenuNavigation(root, async () => {
     const next = routeContainer()

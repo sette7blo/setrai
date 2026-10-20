@@ -4,6 +4,7 @@ import test from 'node:test'
 import { ApiClient } from '../../src/client/shared/api/client.js'
 import { generateQuickWorkout, startQuickWorkout } from '../../src/client/quick-workout/api.js'
 import { fallbackText, goalLabel, normalizeQuickWorkout, prescriptionText, validateDuration } from '../../src/client/quick-workout/format.js'
+import { shouldOpenRecoveryWorkoutSheet } from '../../src/client/quick-workout/recovery-sheet.js'
 
 const payload = {
   name: 'Quick Workout',
@@ -30,6 +31,14 @@ test('formats duration, goal, and recovery fallback presentation', () => {
   assert.equal(validateDuration(30), null)
   assert.equal(goalLabel('general-fitness'), 'General Fitness')
   assert.match(fallbackText('moderate'), /moderate-recovery/)
+})
+
+test('Quick opens the composer sheet while Resume and modified clicks keep link navigation', () => {
+  const click = { button: 0, metaKey: false, ctrlKey: false, shiftKey: false, altKey: false }
+  assert.equal(shouldOpenRecoveryWorkoutSheet(click, false), true)
+  assert.equal(shouldOpenRecoveryWorkoutSheet(click, true), false)
+  assert.equal(shouldOpenRecoveryWorkoutSheet({ ...click, metaKey: true }, false), false)
+  assert.equal(shouldOpenRecoveryWorkoutSheet({ ...click, button: 1 }, false), false)
 })
 
 test('Generate Quick Workout API sends duration and target muscles', async () => {

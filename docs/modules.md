@@ -872,8 +872,8 @@ src/client/app/
 - navigation and browser history in `menu-navigation.ts`;
 - capability loading;
 - top-level layout and compact header/navigation styling;
-- mobile Home / Exercises / Quick / Workouts navigation, including recovery-aware
-  Quick routing and an active-session Resume state from the public Sessions API;
+- mobile Home / Exercises / Quick / Workouts navigation, including a recovery-aware
+  Quick composer bottom sheet and an active-session Resume state from the public Sessions API;
 - shared typography, spacing, and radius tokens in `styles/tokens.css`;
   feature styles consume these tokens while owning their page layout;
 - warm light theme in `styles/editorial.css` and shared header, surface, control,
