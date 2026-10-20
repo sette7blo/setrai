@@ -28,6 +28,9 @@ test('Exercises and Workouts library toolbars share density tokens and classes',
   assert.match(exercises, /page-toolbar-search exercise-search/)
   assert.match(exercises, /page-toolbar-action filter-icon/)
 
+  const exerciseStyles = fs.readFileSync(path.join(root, 'src/client/exercises/styles.css'), 'utf8')
+  assert.doesNotMatch(exerciseStyles, /\.exercise-controls[^}]*\.exercise-search\s*\{[^}]*grid-column:\s*1\s*\/\s*-1/s)
+
   const workouts = fs.readFileSync(path.join(root, 'src/client/workouts/program-browser.ts'), 'utf8')
   assert.match(workouts, /page-toolbar program-toolbar/)
   assert.match(workouts, /page-toolbar-search program-search/)

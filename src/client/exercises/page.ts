@@ -73,7 +73,7 @@ function controls(state: PageState, onFilter: (filters: ExerciseFilters) => void
   searchLabel.append(iconElement(Search))
   const search = document.createElement('input')
   search.type = 'search'
-  search.placeholder = 'Search exercises...'
+  search.placeholder = 'Search...'
   search.value = state.filters.search
   search.setAttribute('aria-label', 'Search exercises')
   search.addEventListener('input', () => onFilter({ ...state.filters, search: search.value }))

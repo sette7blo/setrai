@@ -89,10 +89,6 @@
 .exercise-card.exercise-card--selected { outline: 2px solid #000; outline-offset: -2px; }
 .exercise-selection-toggle { /* shared page-toolbar-action density */ }
 .exercise-selection-toggle[aria-pressed="true"] { color: #fff; background: #000; border-color: #000; }
-@media (max-width: 540px) {
-  .exercise-controls:has(.exercise-selection-toggle) .page-toolbar-search,
-  .exercise-controls:has(.exercise-selection-toggle) .exercise-search { grid-column: 1 / -1; }
-}
 .exercise-selection-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 0 0 var(--space-3); padding: 10px; border: 1px solid rgba(var(--color-primary-rgb),0.3); border-radius: 15px; background: rgba(var(--color-primary-rgb),0.08); }
 .exercise-selection-bar strong { margin-right: auto; font-size: 0.88rem; }
 .exercise-selection-bar .button { min-height: 38px; padding-inline: 10px; font-size: 0.78rem; }
