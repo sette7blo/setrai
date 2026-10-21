@@ -87,7 +87,7 @@ h1 { max-width: 12ch; margin: 0; font-size: var(--font-page-title); line-height:
   .mobile-brand { min-height: 44px; gap: 8px; }
   .mobile-brand__logo { width: 36px; height: 34px; filter: drop-shadow(0 0 8px rgba(var(--color-primary-rgb), 0.25)); }
   .mobile-brand strong { font-size: 20px; }
-  .mobile-brand small { display: none; }
+  .mobile-brand small { display: block; }
             .bottom-nav { padding: 4px 8px calc(6px + env(safe-area-inset-bottom)); box-shadow: 0 -6px 24px rgba(0,0,0,0.25); }
   .bottom-nav .nav-link { gap: 4px; font-size: 9px; letter-spacing: 0.06em; }
   .nav-link--active::before { width: 32px; }
