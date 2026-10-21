@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
-import { normalizeStatistics, overviewItems, weeklyChartSeries, recordText, hasTrainingHistory } from '../../src/client/statistics/format.js'
+import { hasTrainingHistory, normalizeStatistics, normalizeTrainingRange, overviewItems, recordText, weeklyChartSeries, weeklyVolumeForRange } from '../../src/client/statistics/format.js'
 
 test('normalizes Statistics API payload', () => {
   const stats = normalizeStatistics({ trainingFrequency: { totalSessions: 2, thisWeek: 1 }, totalVolume: 1250 })
@@ -28,4 +28,20 @@ test('maps weekly chart series and PR display with units', () => {
   assert.equal(series[0].text, '2,205 lb')
   assert.equal(recordText(100, 'kg'), '100 kg')
   assert.equal(recordText(100, 'lb'), '220.5 lb')
+})
+
+test('filters weekly volume by the selected calendar range', () => {
+  const points = [
+    { weekStart: '2025-01-06', volume: 100 },
+    { weekStart: '2025-11-03', volume: 200 },
+    { weekStart: '2026-01-05', volume: 300 },
+    { weekStart: '2026-01-26', volume: 400 },
+  ]
+  const now = new Date('2026-01-28T12:00:00.000Z')
+  assert.deepEqual(weeklyVolumeForRange(points, '4w', now).map(point => point.volume), [300, 400])
+  assert.deepEqual(weeklyVolumeForRange(points, '3m', now).map(point => point.volume), [200, 300, 400])
+  assert.deepEqual(weeklyVolumeForRange(points, '1y', now).map(point => point.volume), [200, 300, 400])
+  assert.deepEqual(weeklyVolumeForRange(points, 'all', now).map(point => point.volume), [100, 200, 300, 400])
+  assert.equal(normalizeTrainingRange('4w'), '4w')
+  assert.equal(normalizeTrainingRange('unexpected'), 'all')
 })

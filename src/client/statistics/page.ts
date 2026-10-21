@@ -12,7 +12,7 @@ import type { BodyWeightEntry } from '../profile/body-weight/types.js'
 import type { Profile, WeightUnit } from '../profile/types.js'
 import { formatVolumeKg, formatWeightFromKg } from '../profile/weight-units.js'
 import { getStatistics } from './api.js'
-import { hasTrainingHistory } from './format.js'
+import { hasTrainingHistory, normalizeTrainingRange, weeklyVolumeForRange, type TrainingRange } from './format.js'
 import { bodyView } from './body-tab.js'
 import type { MuscleVolume, PersonalRecord, StatisticsOverview, WeeklyVolumePoint } from './types.js'
 
@@ -79,21 +79,36 @@ function sectionHead(icon: Parameters<typeof iconElement>[0], title: string, not
   return head
 }
 
-function rangeBar(): HTMLElement {
-  const labels = ['4W', '3M', '1Y', 'All']
+const RANGE_OPTIONS: Array<{ value: TrainingRange, label: string }> = [
+  { value: '4w', label: '4W' },
+  { value: '3m', label: '3M' },
+  { value: '1y', label: '1Y' },
+  { value: 'all', label: 'All' },
+]
+
+function rangeBar(active: TrainingRange, onChange: (range: TrainingRange) => void): HTMLElement {
   const bar = document.createElement('div')
   bar.className = 'stats-range'
   bar.setAttribute('role', 'group')
   bar.setAttribute('aria-label', 'Training date range')
-  labels.forEach((label) => {
+  RANGE_OPTIONS.forEach(({ value, label }) => {
     const button = document.createElement('button')
-    button.className = `stats-range-btn${label === 'All' ? ' active' : ''}`
+    button.className = `stats-range-btn${value === active ? ' active' : ''}`
     button.type = 'button'
-    button.setAttribute('aria-pressed', String(label === 'All'))
+    button.setAttribute('aria-pressed', String(value === active))
     button.textContent = label
+    button.addEventListener('click', () => onChange(value))
     bar.append(button)
   })
   return bar
+}
+
+function updateRangeUrl(range: TrainingRange): void {
+  const query = new URLSearchParams(window.location.search)
+  if (range === 'all') query.delete('range')
+  else query.set('range', range)
+  const next = `/statistics${query.size ? `?${query}` : ''}`
+  window.history.replaceState({}, '', next)
 }
 
 function weekLabel(value: string): string {
@@ -192,7 +207,23 @@ function trainingView(stats: StatisticsOverview, unit: WeightUnit): HTMLElement 
     statTile(CalendarCheck, String(stats.trainingFrequency.totalSessions), 'Total sessions'),
     statTile(Weight, formatVolumeKg(stats.totalVolume, unit), 'Total volume')
   )
-  section.append(tiles, rangeBar(), weeklyPanel(stats.weeklyVolume, unit))
+  let activeRange = normalizeTrainingRange(new URLSearchParams(window.location.search).get('range'))
+  let range: HTMLElement = document.createElement('div')
+  let weekly: HTMLElement = document.createElement('div')
+  const selectRange = (next: TrainingRange): void => {
+    if (next === activeRange) return
+    activeRange = next
+    updateRangeUrl(activeRange)
+    const nextRange = rangeBar(activeRange, selectRange)
+    const nextWeekly = weeklyPanel(weeklyVolumeForRange(stats.weeklyVolume, activeRange), unit)
+    range.replaceWith(nextRange)
+    weekly.replaceWith(nextWeekly)
+    range = nextRange
+    weekly = nextWeekly
+  }
+  range = rangeBar(activeRange, selectRange)
+  weekly = weeklyPanel(weeklyVolumeForRange(stats.weeklyVolume, activeRange), unit)
+  section.append(tiles, range, weekly)
   const panel = document.createElement('section')
   panel.className = 'panel stats-panel'
   panel.append(
