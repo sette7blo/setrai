@@ -2,6 +2,8 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 
 import { hasTrainingHistory, normalizeStatistics, normalizeTrainingRange, overviewItems, recordText, weeklyChartSeries, weeklyVolumeForRange } from '../../src/client/statistics/format.js'
+import { bodyShareImageName, filterBodyShareEntries } from '../../src/client/statistics/body-share.js'
+import type { BodyWeightEntry } from '../../src/client/profile/body-weight/types.js'
 
 test('normalizes Statistics API payload', () => {
   const stats = normalizeStatistics({ trainingFrequency: { totalSessions: 2, thisWeek: 1 }, totalVolume: 1250 })
@@ -44,4 +46,21 @@ test('filters weekly volume by the selected calendar range', () => {
   assert.deepEqual(weeklyVolumeForRange(points, 'all', now).map(point => point.volume), [100, 200, 300, 400])
   assert.equal(normalizeTrainingRange('4w'), '4w')
   assert.equal(normalizeTrainingRange('unexpected'), 'all')
+})
+
+test('filters Body progress sharing ranges from the latest check-in', () => {
+  const entry = (id: number, date: string, weightKg: number): BodyWeightEntry => ({
+    id, date, weightKg, notes: '', createdAt: `${date}T12:00:00.000Z`, updatedAt: `${date}T12:00:00.000Z`,
+  })
+  const entries: BodyWeightEntry[] = [
+    entry(1, '2025-01-01', 80),
+    entry(2, '2025-11-01', 79),
+    entry(3, '2026-01-04', 78),
+    entry(4, '2026-01-31', 77),
+  ]
+  assert.deepEqual(filterBodyShareEntries(entries, '4w').map(entry => entry.id), [3, 4])
+  assert.deepEqual(filterBodyShareEntries(entries, '3m').map(entry => entry.id), [2, 3, 4])
+  assert.deepEqual(filterBodyShareEntries(entries, '1y').map(entry => entry.id), [2, 3, 4])
+  assert.deepEqual(filterBodyShareEntries(entries, 'all').map(entry => entry.id), [1, 2, 3, 4])
+  assert.equal(bodyShareImageName(), 'setrai-body-progress.png')
 })

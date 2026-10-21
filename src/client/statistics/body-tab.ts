@@ -10,6 +10,7 @@ import { deleteBodyWeight, saveBodyWeight } from '../profile/body-weight/api.js'
 import { newestFirst, oldestFirst } from '../profile/body-weight/format.js'
 import { displayWeightFromKg, formatBodyWeightFromKg, inputWeightToKg } from '../profile/weight-units.js'
 import type { StatisticsOverview } from './types.js'
+import { createBodyShareExperience } from './body-share.js'
 
 export interface BodyTabContext {
   stats: StatisticsOverview
@@ -236,14 +237,29 @@ export function bodyView(context: BodyTabContext): HTMLElement {
   if (entries.length === 0) {
     panel.innerHTML = `<div id="body-empty" class="empty stats-empty">No entries yet. Log your weight below to start tracking.</div>`
   }
+  const trendHead = entries.length > 1
+    ? sectionHead(LineChart, 'Weight trend', `${Math.min(entries.length, 12)} entries`)
+    : null
+  let shareDialog: HTMLDialogElement | null = null
+  if (trendHead) {
+    const share = createBodyShareExperience(entries, profile)
+    const actions = document.createElement('div')
+    actions.className = 'body-trend-actions'
+    const note = trendHead.querySelector('small')
+    if (note) actions.append(note)
+    actions.append(share.button)
+    trendHead.append(actions)
+    shareDialog = share.dialog
+  }
   panel.append(
     bmiMarkup(entries, profile.heightCm),
-    entries.length > 1 ? sectionHead(LineChart, 'Weight trend', `${Math.min(entries.length, 12)} entr${entries.length === 1 ? 'y' : 'ies'}`) : document.createTextNode(''),
+    trendHead ?? document.createTextNode(''),
     bodyChart(entries, unit),
     goalMarkup(entries, profile.targetWeightKg, unit),
     entries.length ? sectionHead(History, 'Entries', 'newest first') : document.createTextNode(''),
     entriesList(entries, unit, onRefresh)
   )
   section.append(panel, bodyForms(profile, entries, onRefresh))
+  if (shareDialog) section.append(shareDialog)
   return section
 }

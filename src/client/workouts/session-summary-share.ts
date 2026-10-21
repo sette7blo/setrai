@@ -1,4 +1,7 @@
-export type SummaryShareResult = 'shared' | 'downloaded' | 'cancelled'
+import { shareImage } from '../shared/image-share.js'
+
+export { imageOnlyShareData } from '../shared/image-share.js'
+export type { ImageShareResult as SummaryShareResult } from '../shared/image-share.js'
 
 export interface SummaryImageContent {
   title: string
@@ -14,10 +17,6 @@ export interface SummaryImageContent {
 export function summaryImageName(title: string): string {
   const slug = title.trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '')
   return `${slug || 'setrai'}-workout.png`
-}
-
-export function imageOnlyShareData(file: File): ShareData {
-  return { files: [file] }
 }
 
 function roundedRect(context: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number): void {
@@ -143,29 +142,6 @@ export async function createSummaryImage(content: SummaryImageContent): Promise<
   return new File([blob], summaryImageName(content.title), { type: 'image/png' })
 }
 
-function downloadImage(file: File): void {
-  const url = URL.createObjectURL(file)
-  const link = document.createElement('a')
-  link.href = url
-  link.download = file.name
-  link.click()
-  window.setTimeout(() => URL.revokeObjectURL(url), 0)
-}
-
-export async function shareSummaryImage(file: File): Promise<SummaryShareResult> {
-  const payload = imageOnlyShareData(file)
-  const canShareFile = typeof navigator.share === 'function'
-    && (typeof navigator.canShare !== 'function' || navigator.canShare(payload))
-
-  if (canShareFile) {
-    try {
-      await navigator.share(payload)
-      return 'shared'
-    } catch (error) {
-      if (error instanceof DOMException && error.name === 'AbortError') return 'cancelled'
-    }
-  }
-
-  downloadImage(file)
-  return 'downloaded'
+export function shareSummaryImage(file: File) {
+  return shareImage(file)
 }
