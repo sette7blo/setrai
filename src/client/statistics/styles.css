@@ -333,6 +333,26 @@
   height: 16px;
 }
 
+.stats-record-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.stats-record-share {
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border-radius: 12px;
+}
+
+.stats-record-share svg {
+  width: 17px;
+  height: 17px;
+}
+
 .stats-record strong,
 .body-entry strong {
   display: block;

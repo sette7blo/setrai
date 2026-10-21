@@ -86,6 +86,21 @@
 .history-hero h2 { font-size: 15px; line-height: 1.05; }
 .history-hero .program-browse-metrics { margin-top: 5px; }
 .history-hero .program-browse-metrics > span { min-width: 0; padding: 3px 6px; }
+.monthly-recap-mount { max-width: 560px; }
+.monthly-recap-card { display: grid; gap: 12px; padding: 14px; border: 1px solid var(--color-border); border-radius: 18px; background: var(--color-surface); }
+.monthly-recap-card > header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.monthly-recap-title { min-width: 0; display: flex; align-items: center; gap: 10px; }
+.monthly-recap-title > svg { width: 22px; height: 22px; flex: none; color: var(--color-primary); }
+.monthly-recap-title span { min-width: 0; display: grid; gap: 3px; }
+.monthly-recap-title small { color: var(--color-muted); font: 800 9px/1 var(--font-mono); letter-spacing: .1em; }
+.monthly-recap-title strong { overflow: hidden; font: 850 16px/1.1 var(--font-sans); text-overflow: ellipsis; white-space: nowrap; }
+.monthly-recap-share { min-height: 44px; flex: none; padding-inline: 12px; white-space: nowrap; }
+.monthly-recap-share svg { width: 17px; height: 17px; }
+.monthly-recap-metrics { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; }
+.monthly-recap-metrics > div { min-width: 0; padding: 10px; border: 1px solid var(--color-border); border-radius: 13px; background: var(--color-surface-strong); }
+.monthly-recap-metrics strong { display: block; overflow: hidden; font: 850 18px/1 var(--font-sans); text-overflow: ellipsis; white-space: nowrap; }
+.monthly-recap-metrics span { display: block; margin-top: 6px; color: var(--color-muted); font: 800 9px/1 var(--font-mono); letter-spacing: .05em; text-transform: uppercase; }
+.monthly-recap-empty { color: var(--color-muted); font-size: 12px; }
 .history-calendar { max-width: 560px; padding: 13px; border: 1px solid rgba(var(--color-primary-rgb), .16); border-radius: 18px; background: rgba(2, 6, 5, .22); box-shadow: inset 0 1px 0 rgba(255,255,255,.04); }
 .history-cal-head { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
 .history-cal-title { flex: 1; min-width: 0; text-align: center; color: var(--color-text); font: 850 15px/1.2 Inter, ui-sans-serif, sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

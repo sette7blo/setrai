@@ -16,6 +16,7 @@ import { hasTrainingHistory, normalizeTrainingRange, weeklyVolumeForRange, type 
 import { bodyView } from './body-tab.js'
 import type { MuscleVolume, PersonalRecord, StatisticsOverview, WeeklyVolumePoint } from './types.js'
 import { createVolumeShareExperience } from './volume-share.js'
+import { createRecordShareExperience } from './record-share.js'
 
 function loadingView(): HTMLElement {
   return pageLoading({ className: 'statistics-page statistics-page--loading', label: 'Loading home' })
@@ -201,8 +202,12 @@ function recordsList(records: PersonalRecord[], unit: WeightUnit): HTMLElement {
     const badge = document.createElement('span')
     badge.className = 'badge muscle'
     badge.textContent = `${formatWeightFromKg(record.estimated1RM, unit)} 1RM`
-    row.append(copy, badge)
-    list.append(row)
+    const share = createRecordShareExperience(record, unit)
+    const actions = document.createElement('div')
+    actions.className = 'stats-record-actions'
+    actions.append(badge, share.button)
+    row.append(copy, actions)
+    list.append(row, share.dialog)
   })
   return list
 }

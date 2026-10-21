@@ -275,6 +275,12 @@ test('calculates Epley estimated 1RM and personal records', () => {
 
     completeSession(services, {
       exercise: bench,
+      finishedAt: '2026-09-28 10:00:00',
+      sets: [{ reps: 8, weight: 90 }]
+    })
+    completeSession(services, {
+      exercise: bench,
+      finishedAt: '2026-10-05 10:00:00',
       sets: [
         { setNumber: 1, reps: 12, weight: 100 },
         { setNumber: 2, reps: 3, weight: 120 }
@@ -289,6 +295,11 @@ test('calculates Epley estimated 1RM and personal records', () => {
     assert.ok(
       Math.abs(records[0].estimated1RM - 140) < 0.001
     )
+    assert.equal(records[0].recordWeight, 100)
+    assert.equal(records[0].recordReps, 12)
+    assert.equal(records[0].achievedAt, '2026-10-05 10:00:00')
+    assert.equal(records[0].previousEstimated1RM, 114)
+    assert.equal(records[0].improvement, 26)
   } finally {
     cleanupDatabase(db, directory)
   }

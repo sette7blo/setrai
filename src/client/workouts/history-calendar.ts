@@ -157,7 +157,12 @@ function dayButton(key: string, day: number, inMonth: boolean, today: string, se
   return button
 }
 
-export function createHistoryCalendar(sessions: Session[], selected: string | null, onSelect: (date: string | null) => void): HTMLElement {
+export function createHistoryCalendar(
+  sessions: Session[],
+  selected: string | null,
+  onSelect: (date: string | null) => void,
+  onMonthChange?: (month: string) => void,
+): HTMLElement {
   const today = dateKey(new Date())
   const params = new URLSearchParams(window.location.search)
   let month = /^\d{4}-\d{2}$/.test(params.get('month') ?? '') ? params.get('month')! : monthKey(new Date())
@@ -168,6 +173,7 @@ export function createHistoryCalendar(sessions: Session[], selected: string | nu
 
   const render = (): void => {
     root.replaceChildren()
+    onMonthChange?.(month)
     const head = document.createElement('div')
     head.className = 'history-cal-head'
     const prev = makeButton('Previous month', ChevronLeft)

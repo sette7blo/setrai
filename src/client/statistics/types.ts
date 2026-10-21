@@ -2,7 +2,17 @@ export interface TrainingFrequency { totalSessions: number, thisWeek: number }
 export interface WeeklyVolumePoint { weekStart: string, volume: number }
 export interface ExerciseVolume { exerciseSlug: string, exerciseName: string, volume: number }
 export interface MuscleVolume { muscle: string, volume: number }
-export interface PersonalRecord { exerciseSlug: string, exerciseName: string, maxWeight: number, estimated1RM: number }
+export interface PersonalRecord {
+  exerciseSlug: string
+  exerciseName: string
+  maxWeight: number
+  estimated1RM: number
+  recordWeight?: number
+  recordReps?: number
+  achievedAt?: string
+  previousEstimated1RM?: number | null
+  improvement?: number | null
+}
 export interface TrainingStreak {
   currentStreakDays?: number
   longestStreakDays?: number

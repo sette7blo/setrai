@@ -15,6 +15,8 @@ import { renderProgramLibrary } from './program-library.js'
 import { createHistoryCalendar } from './history-calendar.js'
 import { formatSessionDate, historyHero, sessionDateKey, sessionHistoryCard } from './history-session-card.js'
 import type { Session } from './types.js'
+import { monthlyRecap } from './monthly-recap-data.js'
+import { monthlyRecapCard } from './monthly-recap.js'
 
 export function sessionLinks(sessions: Session[]): HTMLElement {
   const section = document.createElement('section')
@@ -46,9 +48,14 @@ export function workoutLoadingSkeleton(view: 'library' | 'history'): HTMLElement
 function renderHistoryView(page: HTMLElement, sessions: Session[], exercises: Exercise[], unit: WeightUnit = 'kg'): void {
   let selectedDate: string | null = null
   page.append(historyHero(sessions))
+  const recap = document.createElement('div')
+  recap.className = 'monthly-recap-mount'
+  page.append(recap)
   const calendar = createHistoryCalendar(sessions, selectedDate, date => {
     selectedDate = date
     renderList()
+  }, month => {
+    recap.replaceChildren(monthlyRecapCard(monthlyRecap(sessions, exercises, month), unit))
   })
   const list = document.createElement('div')
   list.className = 'history-session-list'

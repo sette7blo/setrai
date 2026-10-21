@@ -37,6 +37,8 @@ import { createHistoryCalendar } from '../../src/client/workouts/history-calenda
 import { sessionLinks, workoutLoadingSkeleton } from '../../src/client/workouts/page.js'
 import { homeHeading, libraryHeading } from '../../src/client/app/section-navigation.js'
 import type { Program, Session } from '../../src/client/workouts/types.js'
+import { monthlyRecap, monthlyRecapImageName } from '../../src/client/workouts/monthly-recap-data.js'
+import { recordShareImageName } from '../../src/client/statistics/record-share-image.js'
 
 test('normalizes and orders Program exercises', () => {
   const program = normalizeProgram({
@@ -155,6 +157,28 @@ test('Session summary reports logged set count and simple volume', () => {
   assert.equal(simpleVolume(s), 800)
   assert.deepEqual(summaryFacts(s, program()), ['Upper A', '1 sets logged', '800 kg total volume'])
   assert.deepEqual(summaryFacts(s, program(), 'lb'), ['Upper A', '1 sets logged', '1,764 lb total volume'])
+})
+
+test('monthly recap aggregates the selected month and compares previous volume', () => {
+  const october = session()
+  october.finishedAt = '2026-10-05T15:00:00.000Z'
+  const september = session()
+  september.id = 6
+  september.finishedAt = '2026-09-28T15:00:00.000Z'
+  september.sets = [{ ...september.sets[0], id: 2, sessionId: 6, reps: 4, weight: 100 }]
+  const recap = monthlyRecap([october, september], [], '2026-10')
+  assert.equal(recap.label, 'October 2026')
+  assert.equal(recap.workoutCount, 1)
+  assert.equal(recap.activeDays, 1)
+  assert.equal(recap.totalVolume, 800)
+  assert.equal(recap.previousVolume, 400)
+  assert.equal(recap.volumeChangePercent, 100)
+  assert.equal(recap.topMuscle, 'Other')
+  assert.equal(monthlyRecapImageName('2026-10'), 'setrai-2026-10-training-recap.png')
+})
+
+test('personal record sharing uses a stable exercise filename', () => {
+  assert.equal(recordShareImageName({ exerciseSlug: 'bench-press', exerciseName: 'Bench Press', maxWeight: 100, estimated1RM: 120 }), 'setrai-bench-press-record.png')
 })
 
 test('workout image sharing sends a PNG file without text or URL', () => {
