@@ -84,7 +84,8 @@ export function calculateVolumeByMuscle(volumeSets, exerciseService) {
   const muscles = new Map()
 
   for (const { set, volume } of volumeSets) {
-    const exercise = exerciseService.getExercise(set.exerciseId)
+    const exercise = (set.exerciseId ? exerciseService.getExercise(set.exerciseId) : null)
+      ?? (set.exerciseSlug ? exerciseService.getExerciseBySlug(set.exerciseSlug) : null)
     const muscle = exercise?.muscle_group || 'unknown'
     muscles.set(muscle, (muscles.get(muscle) ?? 0) + volume)
   }

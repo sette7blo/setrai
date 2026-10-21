@@ -238,6 +238,34 @@ test('aggregates muscle volume through the exercise service', () => {
   }
 })
 
+test('resolves historical muscle volume by exercise slug when the stored ID is gone', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    const services = createServices(db)
+    const curl = createExercise(services, {
+      name: 'Hammer Curl',
+      muscleGroup: 'biceps'
+    })
+    completeSession(services, {
+      exercise: curl,
+      sets: [{ reps: 10, weight: 20 }]
+    })
+    services.exercises.deleteExercise(curl.id)
+    createExercise(services, {
+      name: 'Hammer Curl',
+      muscleGroup: 'biceps'
+    })
+
+    assert.deepEqual(
+      services.statistics.getVolumeByMuscle(),
+      [{ muscle: 'biceps', volume: 200 }]
+    )
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})
+
 test('calculates Epley estimated 1RM and personal records', () => {
   const { db, directory } = createTestDatabase()
 
