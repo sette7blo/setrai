@@ -8,7 +8,7 @@ import type { Program, Session } from './types.js'
 import { completedSetCount, simpleVolume } from './session-logic.js'
 import { formatSessionDate, sessionDuration, sessionExercises, sessionMuscles } from './history-session-card.js'
 
-export function summaryFacts(session: Session, program: Program | null): string[] {
+export function summaryFacts(session: Session, program: Program | null, unit: WeightUnit = 'kg'): string[] {
   const facts = [
     `${completedSetCount(session)} sets logged`
   ]
@@ -21,7 +21,7 @@ export function summaryFacts(session: Session, program: Program | null): string[
 
   const volume = simpleVolume(session)
   if (volume > 0) {
-    facts.push(`${volume.toLocaleString()} kg total volume`)
+    facts.push(`${formatVolumeKg(volume, unit)} total volume`)
   }
 
   return facts
@@ -105,7 +105,7 @@ export function renderSessionSummary(session: Session, program: Program | null, 
   const proofTitle = document.createElement('strong')
   proofTitle.textContent = 'Training receipt'
   const proofCopy = document.createElement('span')
-  proofCopy.textContent = summaryFacts(session, program).filter(fact => fact !== session.programName && fact !== program?.name).join(' · ')
+  proofCopy.textContent = summaryFacts(session, program, unit).filter(fact => fact !== session.programName && fact !== program?.name).join(' · ')
   proof.append(proofTitle, proofCopy)
 
   const back = document.createElement('a')

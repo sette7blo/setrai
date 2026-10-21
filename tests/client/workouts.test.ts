@@ -153,6 +153,7 @@ test('Session summary reports logged set count and simple volume', () => {
   const s = session()
   assert.equal(simpleVolume(s), 800)
   assert.deepEqual(summaryFacts(s, program()), ['Upper A', '1 sets logged', '800 kg total volume'])
+  assert.deepEqual(summaryFacts(s, program(), 'lb'), ['Upper A', '1 sets logged', '1,764 lb total volume'])
 })
 
 test('Session summary renders Setrai branded receipt with muscle map and stats', () => {
@@ -182,6 +183,7 @@ test('Session summary renders Setrai branded receipt with muscle map and stats',
     assert.match(text, /Workout complete/)
     assert.match(text, /Upper A/)
     assert.match(text, /1,764 lb/)
+    assert.doesNotMatch(text, /\bkg\b/)
     assert.match(text, /Training receipt/)
   } finally {
     globalThis.document = originalDocument
