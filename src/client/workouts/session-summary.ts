@@ -1,4 +1,4 @@
-import { Award, Clock, Dumbbell, Layers, ListOrdered } from 'lucide'
+import { Award, Clock, Dumbbell, Layers, ListOrdered, Share2 } from 'lucide'
 import { iconElement } from '../app/navigation.js'
 import { muscleMapMarkupForMuscles } from '../exercises/muscle-map.js'
 import type { WeightUnit } from '../profile/types.js'
@@ -7,6 +7,7 @@ import type { Exercise } from '../exercises/types.js'
 import type { Program, Session } from './types.js'
 import { completedSetCount, simpleVolume } from './session-logic.js'
 import { formatSessionDate, sessionDuration, sessionExercises, sessionMuscles } from './history-session-card.js'
+import { createSummaryImage, shareSummaryImage } from './session-summary-share.js'
 
 export function summaryFacts(session: Session, program: Program | null, unit: WeightUnit = 'kg'): string[] {
   const facts = [
@@ -108,11 +109,54 @@ export function renderSessionSummary(session: Session, program: Program | null, 
   proofCopy.textContent = summaryFacts(session, program, unit).filter(fact => fact !== session.programName && fact !== program?.name).join(' · ')
   proof.append(proofTitle, proofCopy)
 
+  const actions = document.createElement('div')
+  actions.className = 'session-summary-actions'
+  actions.dataset.summaryCapture = 'exclude'
+  const share = document.createElement('button')
+  share.type = 'button'
+  share.className = 'button button--primary session-summary-share'
+  const shareLabel = document.createElement('span')
+  shareLabel.textContent = 'Share image'
+  share.append(iconElement(Share2), shareLabel)
+  const shareStatus = document.createElement('span')
+  shareStatus.className = 'session-summary-share-status'
+  shareStatus.setAttribute('role', 'status')
+  let image: Promise<File> | null = null
+  const prepareImage = (): Promise<File> => {
+    image ??= createSummaryImage({
+      title: title.textContent || 'Workout',
+      meta: meta.textContent || '',
+      duration: duration || 'Done',
+      sets: String(doneSets),
+      volume: volume > 0 ? formatVolumeKg(volume, unit) : '—',
+      exercises: String(exercises.length),
+      receipt: proofCopy.textContent || '',
+      muscleMapSvg: map.innerHTML,
+    })
+    return image
+  }
+  share.addEventListener('click', async () => {
+    share.disabled = true
+    shareLabel.textContent = 'Preparing image…'
+    shareStatus.textContent = ''
+    try {
+      const result = await shareSummaryImage(await prepareImage())
+      shareStatus.textContent = result === 'downloaded' ? 'Image saved. Attach it to your post on X.' : ''
+    } catch {
+      image = null
+      shareStatus.textContent = 'Could not create the image. Try again.'
+    } finally {
+      share.disabled = false
+      shareLabel.textContent = 'Share image'
+    }
+  })
+
   const back = document.createElement('a')
-  back.className = 'button button--primary'
+  back.className = 'button button--secondary'
   back.href = '/library/programs'
   back.textContent = 'Back to Library'
+  actions.append(share, back, shareStatus)
 
-  section.append(brand, hero, stats, map, proof, back)
+  section.append(brand, hero, stats, map, proof, actions)
   return section
 }

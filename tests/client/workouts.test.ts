@@ -32,6 +32,7 @@ import {
   totalPlannedSets
 } from '../../src/client/workouts/session-logic.js'
 import { renderSessionSummary, summaryFacts } from '../../src/client/workouts/session-summary.js'
+import { imageOnlyShareData, summaryImageName } from '../../src/client/workouts/session-summary-share.js'
 import { createHistoryCalendar } from '../../src/client/workouts/history-calendar.js'
 import { sessionLinks, workoutLoadingSkeleton } from '../../src/client/workouts/page.js'
 import { homeHeading, libraryHeading } from '../../src/client/app/section-navigation.js'
@@ -156,6 +157,15 @@ test('Session summary reports logged set count and simple volume', () => {
   assert.deepEqual(summaryFacts(s, program(), 'lb'), ['Upper A', '1 sets logged', '1,764 lb total volume'])
 })
 
+test('workout image sharing sends a PNG file without text or URL', () => {
+  const file = new File(['image'], summaryImageName('Quick Workout'), { type: 'image/png' })
+  const payload = imageOnlyShareData(file)
+  assert.deepEqual(Object.keys(payload), ['files'])
+  assert.equal(payload.files?.[0], file)
+  assert.equal(file.name, 'quick-workout-workout.png')
+  assert.equal(file.type, 'image/png')
+})
+
 test('Session summary renders Setrai branded receipt with muscle map and stats', () => {
   const originalDocument = globalThis.document
   try {
@@ -185,6 +195,9 @@ test('Session summary renders Setrai branded receipt with muscle map and stats',
     assert.match(text, /1,764 lb/)
     assert.doesNotMatch(text, /\bkg\b/)
     assert.match(text, /Training receipt/)
+    assert.match(text, /Share image/)
+    const actions = walkElements(summary).find(element => element.className === 'session-summary-actions')
+    assert.equal(actions?.dataset.summaryCapture, 'exclude')
   } finally {
     globalThis.document = originalDocument
   }
