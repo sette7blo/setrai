@@ -4,6 +4,7 @@ import test from 'node:test'
 import { hasTrainingHistory, normalizeStatistics, normalizeTrainingRange, overviewItems, recordText, weeklyChartSeries, weeklyVolumeForRange } from '../../src/client/statistics/format.js'
 import { bodyShareImageName, filterBodyShareEntries } from '../../src/client/statistics/body-share.js'
 import type { BodyWeightEntry } from '../../src/client/profile/body-weight/types.js'
+import { volumeShareImageName, volumeShareReport } from '../../src/client/statistics/volume-share-image.js'
 
 test('normalizes Statistics API payload', () => {
   const stats = normalizeStatistics({ trainingFrequency: { totalSessions: 2, thisWeek: 1 }, totalVolume: 1250 })
@@ -63,4 +64,18 @@ test('filters Body progress sharing ranges from the latest check-in', () => {
   assert.deepEqual(filterBodyShareEntries(entries, '1y').map(entry => entry.id), [2, 3, 4])
   assert.deepEqual(filterBodyShareEntries(entries, 'all').map(entry => entry.id), [1, 2, 3, 4])
   assert.equal(bodyShareImageName(), 'setrai-body-progress.png')
+})
+
+test('summarizes the selected weekly-volume report deterministically', () => {
+  const report = volumeShareReport([
+    { weekStart: '2026-01-19', volume: 300 },
+    { weekStart: '2026-01-05', volume: 100 },
+    { weekStart: '2026-01-12', volume: 200 },
+  ])
+  assert.deepEqual(report?.points.map(point => point.weekStart), ['2026-01-05', '2026-01-12', '2026-01-19'])
+  assert.equal(report?.totalVolume, 600)
+  assert.equal(report?.averageVolume, 200)
+  assert.equal(report?.best.weekStart, '2026-01-19')
+  assert.equal(volumeShareReport([]), null)
+  assert.equal(volumeShareImageName(), 'setrai-weekly-volume.png')
 })

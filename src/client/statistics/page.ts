@@ -15,6 +15,7 @@ import { getStatistics } from './api.js'
 import { hasTrainingHistory, normalizeTrainingRange, weeklyVolumeForRange, type TrainingRange } from './format.js'
 import { bodyView } from './body-tab.js'
 import type { MuscleVolume, PersonalRecord, StatisticsOverview, WeeklyVolumePoint } from './types.js'
+import { createVolumeShareExperience } from './volume-share.js'
 
 function loadingView(): HTMLElement {
   return pageLoading({ className: 'statistics-page statistics-page--loading', label: 'Loading home' })
@@ -116,13 +117,25 @@ function weekLabel(value: string): string {
   return Number.isNaN(parsed.getTime()) ? value : parsed.toLocaleDateString('en', { month: 'short', day: 'numeric' })
 }
 
-function weeklyPanel(points: WeeklyVolumePoint[], unit: WeightUnit): HTMLElement {
+function weeklyPanel(points: WeeklyVolumePoint[], unit: WeightUnit, allPoints: WeeklyVolumePoint[], range: TrainingRange): HTMLElement {
   const panel = document.createElement('section')
   panel.className = 'panel stats-panel'
   const recent = points.slice(-8)
   const peak = recent.reduce<WeeklyVolumePoint | null>((best, point) => (!best || point.volume > best.volume ? point : best), null)
   const peakNote = peak && peak.volume > 0 ? `best week ${formatVolumeKg(peak.volume, unit)}` : ''
-  panel.append(sectionHead(ChartColumn, 'Weekly volume', peakNote))
+  const head = sectionHead(ChartColumn, 'Weekly volume', peakNote)
+  let shareDialog: HTMLDialogElement | null = null
+  if (allPoints.length > 0) {
+    const share = createVolumeShareExperience(allPoints, unit, range)
+    const actions = document.createElement('div')
+    actions.className = 'body-trend-actions volume-share-actions'
+    const note = head.querySelector('small')
+    if (note) actions.append(note)
+    actions.append(share.button)
+    head.append(actions)
+    shareDialog = share.dialog
+  }
+  panel.append(head)
   const chart = document.createElement('div')
   chart.id = 'prog-bars'
   chart.className = 'bars'
@@ -140,6 +153,7 @@ function weeklyPanel(points: WeeklyVolumePoint[], unit: WeightUnit): HTMLElement
     })
   }
   panel.append(chart)
+  if (shareDialog) panel.append(shareDialog)
   return panel
 }
 
@@ -215,14 +229,14 @@ function trainingView(stats: StatisticsOverview, unit: WeightUnit): HTMLElement 
     activeRange = next
     updateRangeUrl(activeRange)
     const nextRange = rangeBar(activeRange, selectRange)
-    const nextWeekly = weeklyPanel(weeklyVolumeForRange(stats.weeklyVolume, activeRange), unit)
+    const nextWeekly = weeklyPanel(weeklyVolumeForRange(stats.weeklyVolume, activeRange), unit, stats.weeklyVolume, activeRange)
     range.replaceWith(nextRange)
     weekly.replaceWith(nextWeekly)
     range = nextRange
     weekly = nextWeekly
   }
   range = rangeBar(activeRange, selectRange)
-  weekly = weeklyPanel(weeklyVolumeForRange(stats.weeklyVolume, activeRange), unit)
+  weekly = weeklyPanel(weeklyVolumeForRange(stats.weeklyVolume, activeRange), unit, stats.weeklyVolume, activeRange)
   section.append(tiles, range, weekly)
   const panel = document.createElement('section')
   panel.className = 'panel stats-panel'
