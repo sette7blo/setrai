@@ -80,13 +80,11 @@
 .workout-browser--history { gap: 16px; }
 .workout-browser--history .workout-heading { gap: 10px; padding-top: 0; }
 .workout-browser--history .workout-heading h1 { font-size: var(--font-page-title); line-height: 1.1; }
-.workout-browser--history .page-summary.history-hero { display: block; padding: 0 2px 2px; border: 0 !important; border-radius: 0; background: transparent !important; box-shadow: none; }
-.history-hero .page-summary-icon { display: none; }
-.history-hero .page-summary-title { font-size: 14px; line-height: 1.1; }
-.history-hero .page-summary-metrics { gap: 0; margin-top: 7px; }
-.history-hero .page-summary-metrics > span { min-width: 0; min-height: 0; padding: 0; border: 0; border-radius: 0; font-size: 11px; }
-.history-hero .page-summary-metrics > span + span::before { content: '·'; margin: 0 8px; color: var(--color-muted); }
-.history-hero .page-summary-metrics svg { display: none; }
+.history-hero { grid-template-columns: 44px minmax(0, 1fr); gap: 10px; padding: 9px 10px; border-radius: 14px; }
+.history-hero .page-summary-icon { width: 44px; height: 44px; border-radius: 12px; }
+.history-hero .page-summary-title { font-size: 15px; line-height: 1.05; }
+.history-hero .page-summary-metrics { gap: 7px; margin-top: 5px; }
+.history-hero .page-summary-metrics > span { min-width: 0; padding: 3px 6px; }
 .monthly-recap-mount { max-width: 560px; }
 .monthly-recap-card { display: grid; gap: 16px; padding: 4px 2px 18px; border-bottom: 1px solid var(--color-border); background: transparent; }
 .monthly-recap-card > header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
