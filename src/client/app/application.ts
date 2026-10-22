@@ -27,6 +27,7 @@ import {
   errorState
 } from './shell-states.js'
 import { installMenuNavigation } from './menu-navigation.js'
+import { createRouteTransition } from './route-transition.js'
 import { loadCapabilities } from './capabilities.js'
 
 function navLink(item: NavigationItem, activePath: string): HTMLAnchorElement {
@@ -309,18 +310,20 @@ async function renderShell(root: HTMLElement, capabilities: Capabilities, active
   window.addEventListener('setrai:session-change', refreshQuickNavigation)
   quickActions.forEach(bindQuickAction)
 
+  const transitionRoute = createRouteTransition()
   installMenuNavigation(root, async () => {
     const next = routeContainer()
-    container.replaceWith(next)
-    container = next
-    try {
-      await renderRoute(next, capabilities)
-    } catch (error) {
-      next.innerHTML = errorState(readableApiError(error))
-      next.querySelector('[data-retry]')?.addEventListener('click', () => {
-        void renderRoute(next, capabilities)
-      })
-    }
+    const committed = await transitionRoute(container, next, async route => {
+      try {
+        await renderRoute(route, capabilities)
+      } catch (error) {
+        route.innerHTML = errorState(readableApiError(error))
+        route.querySelector('[data-retry]')?.addEventListener('click', () => {
+          void renderRoute(route, capabilities)
+        })
+      }
+    })
+    if (committed) container = committed
   })
   await renderRoute(container, capabilities)
 }

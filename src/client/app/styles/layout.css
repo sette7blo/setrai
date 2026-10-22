@@ -6,6 +6,21 @@
   padding-bottom: calc(4.5rem + env(safe-area-inset-bottom));
 }
 .app-content { width: min(100%, 76rem); margin: 0 auto; padding: 0 var(--space-4) var(--space-5); }
+.route-container { position: relative; }
+.route-container--loading { pointer-events: none; }
+.route-container--loading::before {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  top: -3px;
+  left: 0;
+  width: 32%;
+  height: 2px;
+  border-radius: 999px;
+  background: var(--color-text);
+  animation: route-loading-progress .7s ease-in-out infinite alternate;
+}
+@keyframes route-loading-progress { to { transform: translateX(212%); } }
 .top-bar {
   position: sticky;
   top: 0;
