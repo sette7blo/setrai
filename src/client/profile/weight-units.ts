@@ -20,7 +20,10 @@ export function displayWeightFromKg(weightKg: number, unit: WeightUnit): number 
 }
 
 export function inputWeightToKg(weight: number, unit: WeightUnit): number {
-  return roundWeight(unit === 'lb' ? lbToKg(weight) : weight)
+  if (unit === 'kg') return roundWeight(weight)
+  // One decimal kilogram is too coarse to round-trip one decimal pound.
+  // Keep gram-level precision at the storage boundary, then round only for display.
+  return Math.round(lbToKg(weight) * 1000) / 1000
 }
 
 export function formatWeightFromKg(weightKg: number, unit: WeightUnit): string {

@@ -9,6 +9,8 @@ import { newestFirst, oldestFirst } from '../../src/client/profile/body-weight/f
 test('converts and rounds kg/lb at presentation boundary', () => {
   assert.equal(displayWeightFromKg(100, 'lb'), 220.5)
   assert.equal(inputWeightToKg(220.462, 'lb'), 100)
+  assert.equal(inputWeightToKg(170.1, 'lb'), 77.156)
+  assert.equal(displayWeightFromKg(inputWeightToKg(170.1, 'lb'), 'lb'), 170.1)
   assert.equal(formatWeightFromKg(80, 'kg'), '80 kg')
   assert.equal(formatBodyWeightFromKg(76.793, 'lb'), '169.3 lb')
   assert.equal(formatBodyWeightFromKg(80, 'kg'), '80.0 kg')
