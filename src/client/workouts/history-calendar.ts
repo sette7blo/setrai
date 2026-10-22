@@ -178,6 +178,8 @@ export function createHistoryCalendar(
     head.className = 'history-cal-head'
     const prev = makeButton('Previous month', ChevronLeft)
     const next = makeButton('Next month', ChevronRight)
+    const titleGroup = document.createElement('div')
+    titleGroup.className = 'history-cal-title-group'
     const title = document.createElement('div')
     title.className = 'history-cal-title'
     title.textContent = monthLabel(month)
@@ -185,10 +187,12 @@ export function createHistoryCalendar(
     goToday.type = 'button'
     goToday.className = 'history-cal-today'
     goToday.textContent = 'Today'
+    goToday.hidden = month === monthKey(new Date())
     prev.addEventListener('click', () => { month = addMonths(month, -1); render() })
     next.addEventListener('click', () => { month = addMonths(month, 1); render() })
     goToday.addEventListener('click', () => { month = monthKey(new Date()); activeDate = null; onSelect(null); render() })
-    head.append(prev, title, next, goToday)
+    titleGroup.append(title, goToday)
+    head.append(prev, titleGroup, next)
 
     const grid = document.createElement('div')
     grid.className = 'history-cal-grid'

@@ -1,4 +1,4 @@
-import { CalendarCheck, CheckCircle2, ChevronDown, Layers, PlayCircle, RotateCcw } from 'lucide'
+import { CheckCircle2, ChevronDown, Layers, PlayCircle, RotateCcw } from 'lucide'
 import { displayName } from '../exercises/format.js'
 import { muscleMapMarkupForMuscles } from '../exercises/muscle-map.js'
 import type { Exercise } from '../exercises/types.js'
@@ -32,10 +32,9 @@ export function historyHero(sessions: Session[]): HTMLElement {
     title: 'Workout history',
     className: 'program-browse-hero history-hero',
     metrics: [
-      { icon: CalendarCheck, text: `${sessions.length} sessions` },
       { icon: CheckCircle2, text: `${completed} completed` },
-      { icon: PlayCircle, text: `${active} active` },
       { icon: Layers, text: `${sets} sets` },
+      ...(active ? [{ icon: PlayCircle, text: `${active} active` }] : []),
     ],
   })
 }

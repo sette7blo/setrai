@@ -11,7 +11,7 @@ function shareExperience(recap: MonthlyRecap, unit: WeightUnit): { button: HTMLB
   const button = document.createElement('button')
   button.type = 'button'
   button.className = 'button quiet monthly-recap-share'
-  button.append(iconElement(Share2), Object.assign(document.createElement('span'), { textContent: 'Share report' }))
+  button.append(iconElement(Share2), Object.assign(document.createElement('span'), { textContent: 'Share' }))
 
   const dialog = document.createElement('dialog')
   dialog.className = 'body-share-sheet monthly-recap-sheet'

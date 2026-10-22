@@ -327,7 +327,6 @@ test('Workout history hero stays compact without explanatory copy', () => {
     const hero = historyHero([s]) as unknown as TestElement
     const text = elementText(hero)
     assert.match(text, /Workout history/)
-    assert.match(text, /1 sessions/)
     assert.match(text, /1 completed/)
     assert.match(text, /1 sets/)
     assert.doesNotMatch(text, /Every live session/)
