@@ -1,8 +1,14 @@
-export function formatDate(value: string): string {
+function localDate(value: string): Date {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(value)
+  if (!match) return new Date(value)
+  return new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]))
+}
+
+export function formatDate(value: string, locale?: string): string {
   if (!value) return 'Not recorded'
-  const date = new Date(value.length === 10 ? `${value}T00:00:00Z` : value)
+  const date = localDate(value)
   if (Number.isNaN(date.getTime())) return value
-  return new Intl.DateTimeFormat(undefined, { month: 'short', day: 'numeric', year: 'numeric' }).format(date)
+  return new Intl.DateTimeFormat(locale, { month: 'short', day: 'numeric', year: 'numeric' }).format(date)
 }
 
 export function formatRelativeDate(value: string): string {
@@ -15,6 +21,9 @@ export function formatRelativeDate(value: string): string {
   return `${days} days ago`
 }
 
-export function todayDate(): string {
-  return new Date().toISOString().slice(0, 10)
+export function todayDate(now = new Date()): string {
+  const year = now.getFullYear()
+  const month = String(now.getMonth() + 1).padStart(2, '0')
+  const day = String(now.getDate()).padStart(2, '0')
+  return `${year}-${month}-${day}`
 }

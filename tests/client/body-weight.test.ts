@@ -5,6 +5,9 @@ import { ApiClient } from '../../src/client/shared/api/client.js'
 import { displayWeightFromKg, inputWeightToKg, formatWeightFromKg, formatBodyWeightFromKg } from '../../src/client/profile/weight-units.js'
 import { normalizeBodyWeight, saveBodyWeight, deleteBodyWeight } from '../../src/client/profile/body-weight/api.js'
 import { newestFirst, oldestFirst } from '../../src/client/profile/body-weight/format.js'
+import { formatDate, todayDate } from '../../src/client/shared/formatting/date-format.js'
+
+declare const process: { env: Record<string, string | undefined> }
 
 test('converts and rounds kg/lb at presentation boundary', () => {
   assert.equal(displayWeightFromKg(100, 'lb'), 220.5)
@@ -14,6 +17,18 @@ test('converts and rounds kg/lb at presentation boundary', () => {
   assert.equal(formatWeightFromKg(80, 'kg'), '80 kg')
   assert.equal(formatBodyWeightFromKg(76.793, 'lb'), '169.3 lb')
   assert.equal(formatBodyWeightFromKg(80, 'kg'), '80.0 kg')
+})
+
+test('date-only body weights stay on the selected local calendar day', () => {
+  const previous = process.env.TZ
+  process.env.TZ = 'America/Toronto'
+  try {
+    assert.equal(formatDate('2026-10-22', 'en-US'), 'Oct 22, 2026')
+    assert.equal(todayDate(new Date('2026-10-22T02:00:00.000Z')), '2026-10-21')
+  } finally {
+    if (previous === undefined) delete process.env.TZ
+    else process.env.TZ = previous
+  }
 })
 
 test('normalizes Body Weight API payload safely', () => {
