@@ -135,7 +135,7 @@ test('recovery increases as time decays training fatigue', () => {
       now: () => new Date('2026-10-05T18:00:00.000Z')
     }).getMuscleRecovery('chest')
     const atDay = createRecoveryService(db, {
-      now: () => new Date('2026-10-06T18:00:00.000Z')
+      now: () => new Date('2026-10-06T06:00:00.000Z')
     }).getMuscleRecovery('chest')
     const atLater = createRecoveryService(db, {
       now: () => new Date('2026-10-08T18:00:00.000Z')
@@ -351,15 +351,141 @@ test('maps recovery statuses at deterministic thresholds', () => {
       now: () => new Date('2026-10-06T00:00:00.000Z')
     }).getMuscleRecovery('chest')
     const moderate = createRecoveryService(db, {
-      now: () => new Date('2026-10-07T06:00:00.000Z')
+      now: () => new Date('2026-10-06T12:00:00.000Z')
     }).getMuscleRecovery('chest')
     const ready = createRecoveryService(db, {
-      now: () => new Date('2026-10-08T06:00:00.000Z')
+      now: () => new Date('2026-10-07T00:00:00.000Z')
     }).getMuscleRecovery('chest')
 
     assert.equal(recovering.status, 'recovering')
     assert.equal(moderate.status, 'moderate')
     assert.equal(ready.status, 'ready')
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})
+
+function recoveryAt(db, iso, muscle = 'chest') {
+  return createRecoveryService(db, {
+    now: () => new Date(iso)
+  }).getMuscleRecovery(muscle)
+}
+
+test('a normal session recovers within two to three days', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    const services = createServices(db)
+    completeSession(services, {
+      setCount: 9,
+      reps: 10,
+      weight: 20,
+      finishedAt: '2026-10-05 18:00:00'
+    })
+
+    assert.equal(recoveryAt(db, '2026-10-06T18:00:00.000Z').status, 'recovering')
+    assert.equal(recoveryAt(db, '2026-10-07T12:00:00.000Z').status, 'moderate')
+    assert.equal(recoveryAt(db, '2026-10-08T12:00:00.000Z').recovery, 1)
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})
+
+test('very high volume recovery is capped at 72 hours for one session', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    const services = createServices(db)
+    completeSession(services, {
+      setCount: 40,
+      finishedAt: '2026-10-05 18:00:00'
+    })
+
+    assert.ok(recoveryAt(db, '2026-10-08T12:00:00.000Z').recovery < 1)
+    assert.equal(recoveryAt(db, '2026-10-08T18:00:00.000Z').recovery, 1)
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})
+
+test('fully recovered older sessions do not slow a later session', () => {
+  const heavyThenLight = createTestDatabase()
+  const lightOnly = createTestDatabase()
+
+  try {
+    const first = createServices(heavyThenLight.db)
+    const bench = createExercise(first)
+    completeSession(first, {
+      exercise: bench,
+      setCount: 12,
+      finishedAt: '2026-10-01 18:00:00'
+    })
+    completeSession(first, {
+      exercise: bench,
+      setCount: 2,
+      finishedAt: '2026-10-05 18:00:00'
+    })
+    completeSession(createServices(lightOnly.db), {
+      setCount: 2,
+      finishedAt: '2026-10-05 18:00:00'
+    })
+
+    assert.equal(
+      recoveryAt(heavyThenLight.db, '2026-10-06T12:00:00.000Z').recovery,
+      recoveryAt(lightOnly.db, '2026-10-06T12:00:00.000Z').recovery
+    )
+  } finally {
+    cleanupDatabase(heavyThenLight.db, heavyThenLight.directory)
+    cleanupDatabase(lightOnly.db, lightOnly.directory)
+  }
+})
+
+test('recovery never drops back to ready at the lookback edge', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    const services = createServices(db)
+    const bench = createExercise(services)
+    for (const day of ['01', '02', '03', '04', '05']) {
+      completeSession(services, {
+        exercise: bench,
+        setCount: 12,
+        finishedAt: `2026-10-${day} 18:00:00`
+      })
+    }
+
+    const chest = recoveryAt(db, '2026-10-06T18:00:00.000Z')
+    assert.ok(chest.recovery > 0)
+    assert.ok(chest.recovery < 0.4)
+    assert.equal(recoveryAt(db, '2026-10-09T18:00:00.000Z').recovery, 1)
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})
+
+test('stretching does not fatigue and cardio fatigues less than strength', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    const services = createServices(db)
+    // Legacy imported categories that the editor no longer offers.
+    const stretch = createExercise(services, { name: 'Ankle Circles', muscleGroup: 'calves' })
+    const cardio = createExercise(services, { name: 'Rowing', muscleGroup: 'back' })
+    db.prepare('UPDATE exercises SET category = ? WHERE id = ?').run('stretching', stretch.id)
+    db.prepare('UPDATE exercises SET category = ? WHERE id = ?').run('cardio', cardio.id)
+    const row = createExercise(services, {
+      name: 'Cable Row',
+      muscleGroup: 'chest'
+    })
+    completeSession(services, { exercise: stretch, setCount: 3, finishedAt: '2026-10-05 18:00:00' })
+    completeSession(services, { exercise: cardio, setCount: 3, finishedAt: '2026-10-05 18:00:00' })
+    completeSession(services, { exercise: row, setCount: 3, finishedAt: '2026-10-05 18:00:00' })
+
+    const result = createRecoveryService(db, {
+      now: () => new Date('2026-10-06T12:00:00.000Z')
+    }).getRecovery()
+    assert.equal(getMuscle(result, 'calves'), undefined)
+    assert.ok(getMuscle(result, 'back').recovery > getMuscle(result, 'chest').recovery)
   } finally {
     cleanupDatabase(db, directory)
   }
