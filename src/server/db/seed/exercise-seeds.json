@@ -1,22 +1,14 @@
 [
   {
     "seedKey": "setrai.exercise.air-bike",
-    "revision": 1,
+    "revision": 2,
     "slug": "air-bike",
     "name": "Air Bike",
     "description": "",
     "category": "strength",
     "muscle_group": "core",
     "muscles": [
-      "shoulders",
-      "chest",
-      "back",
-      "biceps",
-      "triceps",
-      "quadriceps",
-      "hamstrings",
-      "glutes",
-      "calves"
+      "obliques"
     ],
     "equipment": [
       "bodyweight"

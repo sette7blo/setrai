@@ -19,6 +19,7 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 - Reorganized personal state under Home (Training, History, Body, Recovery), combined Exercises and Programs under Library, and retained Quick/Resume as the emphasized training action.
 - Polished Quick Workout with a visible duration label, concise recovery copy, generating/regenerate states, preview motion, and a sticky Start Workout action.
 - Fixed muscle recovery running far too slow: each session now sets its own 24-72 hour recovery window with diminishing returns on volume, older fully-recovered sessions no longer delay newer ones, values no longer jump to ready at the 7-day lookback edge, and stretching/cardio exercises fatigue muscles less.
+- Corrected Air Bike (a bicycle crunch) to train core with obliques as its only secondary muscle instead of nine unrelated muscle groups; existing installs pick this up on restart unless its muscles were edited locally.
 
 ## [v0.2.0] — 2026-10-17
 

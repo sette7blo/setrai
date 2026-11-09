@@ -48,7 +48,7 @@ test('bundled seed manifest is complete, local, and internally consistent', () =
   assert.equal(new Set(BUILTIN_PROGRAMS.map(seed => seed.seedKey)).size, 7)
   const exerciseKeys = new Set(BUILTIN_EXERCISES.map(seed => seed.seedKey))
   for (const seed of BUILTIN_EXERCISES) {
-    assert.equal(seed.revision, 1)
+    assert.ok(Number.isInteger(seed.revision) && seed.revision >= 1)
     assert.match(seed.seedKey, /^setrai\.exercise\./)
     assert.equal(seed.source_type, 'builtin')
     assert.match(seed.image_url, /^\/images\/exercises\/seed\/.+\.webp$/)
@@ -65,7 +65,10 @@ test('fresh database seeds 56 exercises, 7 workouts, and 32 resolved references'
   const { db, directory } = createTestDatabase({ seed: true })
   try {
     assert.deepEqual(counts(db), { exercises: 56, programs: 7 })
-    assert.equal(Number(db.prepare('SELECT COUNT(*) AS count FROM exercises WHERE seed_key IS NOT NULL AND seed_revision = 1').get().count), 56)
+    const revisions = new Map(BUILTIN_EXERCISES.map(seed => [seed.seedKey, seed.revision]))
+    const seeded = db.prepare('SELECT seed_key, seed_revision FROM exercises WHERE seed_key IS NOT NULL').all()
+    assert.equal(seeded.length, 56)
+    assert.equal(seeded.every(row => row.seed_revision === revisions.get(row.seed_key)), true)
     assert.equal(Number(db.prepare('SELECT COUNT(*) AS count FROM programs WHERE seed_key IS NOT NULL AND seed_revision = 1').get().count), 7)
     const refs = db.prepare('SELECT exercise_id FROM program_exercises').all()
     assert.equal(refs.length, 32)
@@ -134,6 +137,21 @@ test('new seed revisions update untouched fields and preserve local exercise edi
     assert.equal(updated.seed_revision, 2)
     initializeDatabaseSeeds(db)
     assert.equal(service.getExercise(exercise.id).description, 'Revision two description.')
+  } finally { cleanupDatabase(db, directory) }
+})
+
+test('Air Bike revision 2 replaces stale full-body secondary muscles on untouched installs', () => {
+  const { db, directory } = createTestDatabase({ seed: false })
+  try {
+    const exercises = clone(BUILTIN_EXERCISES)
+    const airBike = exercises.find(item => item.slug === 'air-bike')
+    airBike.revision = 1
+    airBike.muscles = ['shoulders', 'chest', 'back', 'biceps', 'triceps', 'quadriceps', 'hamstrings', 'glutes', 'calves']
+    initializeDatabaseSeeds(db, { exercises, programs: BUILTIN_PROGRAMS })
+    initializeDatabaseSeeds(db)
+    const upgraded = createExerciseService(db).getExerciseBySlug('air-bike')
+    assert.deepEqual(upgraded.muscles, ['obliques'])
+    assert.equal(upgraded.seed_revision, 2)
   } finally { cleanupDatabase(db, directory) }
 })
 
