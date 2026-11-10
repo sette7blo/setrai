@@ -1242,6 +1242,10 @@ Only genuinely shared UI/infrastructure such as:
 - the stat strip in `stat-strip.ts` and `stat-strip.css`: one bordered row of
   figures (numeral over label), consumed by Today, Progress Training and Body,
   and the workout summary; callers own the values and labels;
+- the appearance preference in `theme.ts`: System, Light or Dark, stored on the
+  device and applied to the root element and the browser chrome colour; the
+  inline script in `index.html` applies the same key before first paint, and
+  the palettes live in `app/styles/tokens.css`; Settings owns the control;
 - buttons;
 - icons;
 - formatting;
