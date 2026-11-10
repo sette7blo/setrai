@@ -1,12 +1,12 @@
-import { CalendarCheck, CheckCircle2, ChevronDown, Layers, PlayCircle, RotateCcw } from 'lucide'
+import { ChevronDown } from 'lucide'
 import { displayName } from '../exercises/format.js'
 import { muscleMapMarkupForMuscles } from '../exercises/muscle-map.js'
 import type { Exercise } from '../exercises/types.js'
 import { iconElement } from '../app/navigation.js'
-import { pageSummary } from '../shared/page-chrome.js'
 import { pageEmpty } from '../shared/page-states.js'
 import { formatVolumeKg, formatWeightFromKg } from '../profile/weight-units.js'
 import type { WeightUnit } from '../profile/types.js'
+import { durationCorrection } from './history-duration.js'
 import type { Session } from './types.js'
 
 export function formatSessionDate(value: string): string {
@@ -21,23 +21,6 @@ export function sessionDateKey(session: Session): string | null {
   const date = new Date(stamp.endsWith('Z') ? stamp : `${stamp}Z`)
   if (Number.isNaN(date.getTime())) return null
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-}
-
-export function historyHero(sessions: Session[]): HTMLElement {
-  const completed = sessions.filter(session => session.finishedAt).length
-  const active = sessions.length - completed
-  const sets = sessions.reduce((total, session) => total + session.sets.filter(set => set.done).length, 0)
-  return pageSummary({
-    icon: RotateCcw,
-    title: 'Workout history',
-    className: 'program-browse-hero history-hero',
-    metrics: [
-      { icon: CalendarCheck, text: `${sessions.length} sessions` },
-      { icon: CheckCircle2, text: `${completed} completed` },
-      { icon: PlayCircle, text: `${active} active` },
-      { icon: Layers, text: `${sets} sets` },
-    ],
-  })
 }
 
 export function sessionDuration(session: Session): string {
@@ -206,13 +189,20 @@ export function sessionHistoryCard(session: Session, exercises: Exercise[], unit
   if (hasUnusualSessionDuration(session)) {
     const quality = document.createElement('span')
     quality.className = 'history-data-quality'
-    quality.textContent = 'Check logged duration'
+    quality.textContent = 'Duration looks off'
     info.append(quality)
   }
   if (focus.textContent) info.append(focus)
   summary.append(map, info, iconElement(ChevronDown))
   const body = document.createElement('div')
   body.className = 'workout-card-body'
+  if (hasUnusualSessionDuration(session)) {
+    body.append(durationCorrection(session, updated => {
+      const next = sessionHistoryCard(updated, exercises, unit) as HTMLDetailsElement
+      next.open = true
+      card.replaceWith(next)
+    }))
+  }
   body.append(sessionDetail(session, unit))
   card.append(summary, body)
   card.addEventListener('toggle', () => { summary.setAttribute('aria-label', `${card.open ? 'Collapse' : 'Expand'} ${session.programName}`) })

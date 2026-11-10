@@ -92,6 +92,14 @@ export async function finishSession(sessionId: number, notes: string, client: Ap
   return normalizeSession(response.session)
 }
 
+export async function correctSessionDuration(sessionId: number, finishedAt: string, client: ApiClient = apiClient): Promise<Session> {
+  const response = await client.request<SessionResponse>(`/api/sessions/${sessionId}/finish`, {
+    method: 'POST',
+    body: { finishedAt }
+  })
+  return normalizeSession(response.session)
+}
+
 export async function saveLiveState(id: number, state: import('./types.js').LiveRuntime): Promise<Session> {
   const response = await apiClient.request<SessionResponse>(`/api/sessions/${id}`, { method: 'PATCH', body: state })
   return normalizeSession(response.session)

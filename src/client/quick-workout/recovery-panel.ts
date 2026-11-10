@@ -8,7 +8,12 @@ import { removeRecoveryExercise, swapRecoveryExercise } from './recovery-plan.js
 import { startAndNavigate } from './start.js'
 import type { QuickWorkout } from './types.js'
 
-interface RecoveryWorkoutPanelOptions { showHeading?: boolean; id?: string }
+interface RecoveryWorkoutPanelOptions {
+  showHeading?: boolean
+  id?: string
+  /** Build a plan immediately and again whenever the duration changes. */
+  autoBuild?: boolean
+}
 
 // Public composition entry point: generation and session creation stay in Quick Workout.
 export function createRecoveryWorkoutPanel(
@@ -37,13 +42,16 @@ export function createRecoveryWorkoutPanel(
   let minutes = 30
   let workout: QuickWorkout | null = null
   let busy = false
+  let failed = false
   for (const value of [20, 30, 45, 60]) {
     const button = document.createElement('button')
     button.type = 'button'; button.textContent = `${value} min`
     button.setAttribute('aria-pressed', String(value === minutes))
     button.addEventListener('click', () => {
+      if (busy) return
       minutes = value
       for (const child of duration.querySelectorAll('button')) child.setAttribute('aria-pressed', String(child === button))
+      if (options.autoBuild) buildWorkout()
     })
     duration.append(button)
   }
@@ -53,14 +61,15 @@ export function createRecoveryWorkoutPanel(
   build.type = 'button'; build.className = 'button button--primary'; build.textContent = 'Build Quick Workout'
   const result = document.createElement('div'); result.className = 'recovery-quick-result'
   const updateBuildButton = (): void => {
-    build.textContent = workout ? 'Regenerate workout' : 'Build Quick Workout'
+    build.textContent = workout ? 'Build a different workout' : 'Build workout'
     build.className = workout ? 'button button--secondary recovery-quick-regenerate' : 'button button--primary'
+    build.hidden = Boolean(options.autoBuild) && !workout && !failed
   }
   const setBusy = (value: boolean, action: 'build' | 'start' = 'build'): void => {
     busy = value; build.disabled = value
     panel.setAttribute('aria-busy', String(value))
     for (const button of panel.querySelectorAll<HTMLButtonElement>('button')) button.disabled = value
-    if (value && action === 'build') build.textContent = 'Building workout…'
+    if (value && action === 'build') build.textContent = 'Building workout...'
     else if (!value) updateBuildButton()
   }
   const render = (): void => {
@@ -101,7 +110,7 @@ export function createRecoveryWorkoutPanel(
       actions.append(remove); row.append(number, info, actions); list.append(row)
     })
     const start = document.createElement('button')
-    start.type = 'button'; start.className = 'button button--primary'; start.textContent = 'Start Workout'
+    start.type = 'button'; start.className = 'button button--accent'; start.textContent = 'Start workout'
     start.addEventListener('click', () => {
       if (busy || !workout?.exercises.length) return
       setBusy(true, 'start'); status.textContent = 'Starting workout...'
@@ -113,14 +122,19 @@ export function createRecoveryWorkoutPanel(
     result.append(summary, list, footer)
     result.classList.add('is-visible')
   }
-  build.addEventListener('click', () => {
+  function buildWorkout(): void {
     if (busy) return
+    failed = false
     setBusy(true); status.textContent = 'Building from ready muscles...'
     void generateQuickWorkout({ durationMinutes: minutes }).then(plan => {
-      workout = plan; render(); status.textContent = ''
-    }).catch(error => { status.textContent = readableApiError(error) }).finally(() => { setBusy(false) })
-  })
+      workout = plan; failed = !plan.exercises.length; render()
+      status.textContent = plan.exercises.length ? '' : 'No ready muscles match your equipment right now.'
+    }).catch(error => { failed = true; status.textContent = readableApiError(error) }).finally(() => { setBusy(false) })
+  }
+  build.addEventListener('click', buildWorkout)
   if (options.showHeading !== false) panel.append(heading)
-  panel.append(durationLabel, duration, build, status, result)
+  panel.append(durationLabel, duration, status, result, build)
+  updateBuildButton()
+  if (options.autoBuild) buildWorkout()
   return panel
 }

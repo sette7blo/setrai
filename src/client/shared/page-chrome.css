@@ -11,7 +11,7 @@
   max-width: 12ch;
   font-size: var(--font-page-title);
   line-height: 0.96;
-  letter-spacing: -0.07em;
+  letter-spacing: -.015em;
 }
 
 .page-tabs {
@@ -33,9 +33,9 @@
   border: 0;
   background: transparent;
   color: var(--color-muted);
-  font: 850 11px/1 ui-monospace, SFMono-Regular, monospace;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
+  font: 850 11px/1 var(--font-sans);
+  letter-spacing: .01em;
+  text-transform: none;
   cursor: pointer;
   flex: none;
 }
@@ -148,7 +148,7 @@
 }
 
 /* Backward-compatible heading aliases */
-.workout-heading,
+
 .exercise-heading,
 .statistics-page-head,
 .profile-settings-hero.page-heading {
@@ -157,16 +157,8 @@
   padding-top: 4px;
 }
 
-.program-browse-hero,
-.library-summary-card,
-.stats-hero-card,
-.recovery-hero.page-summary {
-  display: grid;
-  grid-template-columns: 40px minmax(0, 1fr);
-  gap: 12px;
-  align-items: center;
-  padding: 12px;
-  border: 1px solid rgba(var(--color-primary-rgb), 0.32);
-  border-radius: 16px;
-  background: linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.12), var(--color-surface));
-}
+
+/* Way back from a page reached through another page. */
+.page-heading--back { display: grid; gap: 4px; padding-top: 4px; }
+.page-back, .detail-back { display: inline-flex; width: fit-content; min-height: 44px; align-items: center; gap: 4px; margin-left: -4px; color: var(--color-muted-strong); font-size: 15px; font-weight: 600; }
+.page-back svg, .detail-back svg { width: 18px; height: 18px; flex: none; }

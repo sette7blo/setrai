@@ -16,7 +16,7 @@ function shareExperience(recap: MonthlyRecap, unit: WeightUnit): { button: HTMLB
   const dialog = document.createElement('dialog')
   dialog.className = 'body-share-sheet monthly-recap-sheet'
   dialog.setAttribute('aria-labelledby', 'monthly-recap-share-title')
-  dialog.innerHTML = `<div class="body-share-sheet__surface"><header><div><small>MONTHLY TRAINING RECAP</small><h2 id="monthly-recap-share-title">Share ${recap.label}</h2></div><button type="button" class="body-share-close" aria-label="Close"></button></header><div class="body-share-preview" aria-live="polite"><span>Preparing preview…</span></div><p class="body-share-status" aria-live="polite"></p><button type="button" class="button button--primary body-share-submit"></button></div>`
+  dialog.innerHTML = `<div class="body-share-sheet__surface"><header><div><small>Monthly training recap</small><h2 id="monthly-recap-share-title">Share ${recap.label}</h2></div><button type="button" class="body-share-close" aria-label="Close"></button></header><div class="body-share-preview" aria-live="polite"><span>Preparing preview…</span></div><p class="body-share-status" aria-live="polite"></p><button type="button" class="button button--primary body-share-submit"></button></div>`
   dialog.querySelector('.body-share-close')?.append(iconElement(X))
   dialog.querySelector('.body-share-submit')?.append(iconElement(Share2), Object.assign(document.createElement('span'), { textContent: 'Share image' }))
   const preview = dialog.querySelector('.body-share-preview') as HTMLElement
@@ -77,7 +77,7 @@ export function monthlyRecapCard(recap: MonthlyRecap, unit: WeightUnit): HTMLEle
   title.append(iconElement(CalendarDays))
   const copy = document.createElement('span')
   copy.append(
-    Object.assign(document.createElement('small'), { textContent: 'MONTHLY RECAP' }),
+    Object.assign(document.createElement('small'), { textContent: 'Monthly recap' }),
     Object.assign(document.createElement('strong'), { textContent: recap.label }),
   )
   title.append(copy)

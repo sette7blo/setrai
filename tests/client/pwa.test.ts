@@ -24,8 +24,8 @@ test('PWA manifest is installability-ready for Setrai', () => {
   assert.equal(manifest.short_name, 'Setrai')
   assert.equal(manifest.start_url, '/statistics')
   assert.equal(manifest.display, 'standalone')
-  assert.equal(manifest.background_color, '#f7f6f1')
-  assert.equal(manifest.theme_color, '#f7f6f1')
+  assert.equal(manifest.background_color, '#f3f3f0')
+  assert.equal(manifest.theme_color, '#f3f3f0')
   assert.ok(Array.isArray(manifest.icons))
   assert.deepEqual(manifest.icons.map((icon: { src: string }) => icon.src), [
     '/icons/setrai-icon-192.png',
@@ -44,6 +44,6 @@ test('HTML advertises manifest, theme color, viewport-fit, and iOS icons', () =>
   assert.match(html, /<link rel="icon" href="\/icons\/setrai-icon-32\.png" sizes="32x32" type="image\/png"/)
   assert.match(html, /<link rel="apple-touch-icon" href="\/icons\/setrai-icon-180\.png" sizes="180x180"/)
   assert.match(html, /name="apple-mobile-web-app-title" content="Setrai"/)
-  assert.match(html, /name="theme-color" content="#f7f6f1"/)
+  assert.match(html, /name="theme-color" content="#f3f3f0"/)
   assert.match(html, /viewport-fit=cover/)
 })

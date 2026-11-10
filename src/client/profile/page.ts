@@ -1,7 +1,7 @@
-import { Activity, ChevronDown, DatabaseBackup, Download, Dumbbell, Settings, Upload } from 'lucide'
+import { Activity, ChevronDown, DatabaseBackup, Download, Dumbbell, Upload } from 'lucide'
 
 import { iconElement } from '../app/navigation.js'
-import { pageHeading, pageSummary } from '../shared/page-chrome.js'
+import { pageHeading } from '../shared/page-chrome.js'
 import { bindPageRetry, pageError, pageLoading } from '../shared/page-states.js'
 import { readableApiError } from '../shared/api/errors.js'
 import { getProfile, updateProfile } from './api.js'
@@ -41,6 +41,7 @@ function category(icon: Parameters<typeof iconElement>[0], title: string, summar
   const pill = document.createElement('span')
   pill.className = 'status-pill profile-settings-status'
   pill.textContent = status
+  pill.hidden = !status
   const chevron = document.createElement('span')
   chevron.className = 'settings-category-chevron'
   chevron.append(iconElement(ChevronDown))
@@ -128,7 +129,7 @@ function trainingGoalPicker(selectedValue: string): HTMLElement {
 }
 
 function trainingSection(state: ProfileState, rerender: () => void): HTMLDetailsElement {
-  const details = category(Activity, 'Training', `${goalLabel(state.profile.trainingGoal)} · ${state.profile.weightUnit.toUpperCase()}`, state.profile.weightUnit.toUpperCase())
+  const details = category(Activity, 'Training', `${goalLabel(state.profile.trainingGoal)}, weights in ${state.profile.weightUnit}`)
   const body = categoryBody(details)
   const form = document.createElement('form')
   form.className = 'profile-settings-form'
@@ -160,7 +161,7 @@ function trainingSection(state: ProfileState, rerender: () => void): HTMLDetails
 
 function equipmentSection(state: ProfileState, rerender: () => void): HTMLDetailsElement {
   const count = state.profile.equipment.length
-  const details = category(Dumbbell, 'Equipment', count === 0 ? 'No restrictions; all equipment allowed.' : `${count} selected`, count ? `${count}` : 'ALL')
+  const details = category(Dumbbell, 'Equipment', count === 0 ? 'No restrictions; all equipment allowed.' : `${count} selected`)
   const body = categoryBody(details)
   body.append(subsection('Available equipment'))
   const help = document.createElement('p')
@@ -190,7 +191,7 @@ function equipmentSection(state: ProfileState, rerender: () => void): HTMLDetail
 }
 
 function backupSection(state: ProfileState, rerender: () => void): HTMLDetailsElement {
-  const details = category(DatabaseBackup, 'Backup', 'Export or restore all Setrai data.', state.backupBusy ? 'WORKING' : 'READY')
+  const details = category(DatabaseBackup, 'Backup', 'Export or restore all Setrai data.', state.backupBusy ? 'Working' : '')
   const body = categoryBody(details)
   body.append(subsection('Full backup'))
   const notice = document.createElement('p')
@@ -261,17 +262,11 @@ function renderLoaded(root: HTMLElement, state: ProfileState): void {
   const page = document.createElement('div')
   page.className = 'profile-page profile-settings-page'
   const heading = pageHeading({ title: 'Settings', className: 'profile-settings-hero page-heading' })
-  const summary = pageSummary({
-    icon: Settings,
-    title: 'Preferences',
-    description: 'Training preferences and equipment.',
-    className: 'page-summary',
-  })
   const list = document.createElement('section')
   list.className = 'profile-settings-list'
   const rerender = () => renderLoaded(root, state)
   list.append(trainingSection(state, rerender), equipmentSection(state, rerender), backupSection(state, rerender))
-  page.append(heading, summary, list)
+  page.append(heading, list)
   root.replaceChildren(page)
 }
 

@@ -1,14 +1,13 @@
-import { Dumbbell, Plus, Search, SlidersHorizontal, Star, Target } from 'lucide'
+import { Plus, Search, SlidersHorizontal, Star } from 'lucide'
 import { selectionToggle, selectionToolbar } from './selection.js'
 import { readableApiError } from '../shared/api/errors.js'
 import { iconElement } from '../app/navigation.js'
 import { libraryHeading } from '../app/section-navigation.js'
-import { pageSummary } from '../shared/page-chrome.js'
 import { bindPageRetry, pageEmpty, pageError } from '../shared/page-states.js'
 import { exerciseFilterChips, exerciseFilterSheet } from './filter-sheet.js'
 import { createExerciseCard } from './card.js'
 import { pluralizeExercise } from './format.js'
-import { activeFilterCount, filterExercises, filtersFromUrl, filtersToUrl, uniqueMuscles } from './filters.js'
+import { activeFilterCount, filterExercises, filtersFromUrl, filtersToUrl } from './filters.js'
 import { deleteExercise, listExercises, setExerciseFavourite } from './api.js'
 import type { Exercise, ExerciseFilters } from './types.js'
 
@@ -44,24 +43,9 @@ function errorView(message: string): HTMLElement {
   return pageError({ eyebrow: 'Library', title: 'Exercises unavailable', message, className: 'exercise-page exercise-empty' })
 }
 
-function header(state: PageState): HTMLElement {
-  const favoriteCount = state.exercises.filter(exercise => exercise.favourite).length
-  const muscleCount = uniqueMuscles(state.exercises).length
+function header(): HTMLElement {
   const section = libraryHeading('exercises')
   section.classList.add('exercise-heading')
-  section.append(pageSummary({
-    icon: Dumbbell,
-    title: 'Exercises',
-    href: '#exercise-results',
-    ariaLabel: 'Jump to exercise results',
-    className: 'library-summary-card',
-    trailing: true,
-    metrics: [
-      { icon: Dumbbell, text: pluralizeExercise(state.exercises.length) },
-      { icon: Star, text: `${favoriteCount} fav`, tone: 'gold' },
-      { icon: Target, text: `${muscleCount} muscles`, tone: 'green' }
-    ]
-  }))
   return section
 }
 
@@ -204,7 +188,7 @@ function renderLoaded(root: HTMLElement, state: PageState): void {
   const page = document.createElement('div')
   page.className = 'exercise-page'
   page.append(
-    header(state),
+    header(),
     controls(state, commit, () => {
       const dialog = exerciseFilterSheet(state.exercises, () => state.filters, commit, () => root.querySelector<HTMLButtonElement>('[aria-label="Filters"]')?.focus())
       document.body.append(dialog)

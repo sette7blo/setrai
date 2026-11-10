@@ -4,8 +4,8 @@
   "description": "Self-hosted training, workouts, home progress, and recovery.",
   "start_url": "/statistics",
   "display": "standalone",
-  "background_color": "#f7f6f1",
-  "theme_color": "#f7f6f1",
+  "background_color": "#f3f3f0",
+  "theme_color": "#f3f3f0",
   "icons": [
     {
       "src": "/icons/setrai-icon-192.png",

@@ -21,7 +21,7 @@
   max-width: 12ch;
   font-size: var(--font-page-title);
   line-height: .96;
-  letter-spacing: -.07em;
+  letter-spacing: -.015em;
 }
 
 
@@ -29,53 +29,6 @@
 
 
 
-.stats-hero-card {
-  display: grid;
-  grid-template-columns: 46px minmax(0, 1fr);
-  align-items: center;
-  gap: 13px;
-  padding: 13px;
-  border: 1px solid rgba(var(--color-primary-rgb), .16);
-  border-radius: 17px;
-  background: linear-gradient(135deg, rgba(var(--color-primary-rgb), .12), rgba(0, 0, 0, .20)), var(--color-surface);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .06);
-}
-
-.stats-hero-icon {
-  width: 46px;
-  height: 46px;
-  display: grid;
-  place-items: center;
-  border: 1px solid rgba(var(--color-primary-rgb), .24);
-  border-radius: 14px;
-  color: var(--color-primary);
-  background: rgba(var(--color-primary-rgb), .12);
-  box-shadow: 0 0 22px rgba(var(--color-primary-rgb), .16);
-}
-
-.stats-hero-icon svg {
-  width: 23px;
-  height: 23px;
-}
-
-.stats-hero-copy {
-  min-width: 0;
-  display: grid;
-  gap: 5px;
-}
-
-.stats-hero-copy > span {
-  color: var(--color-text);
-  font: 850 18px/1.05 var(--font-sans);
-  letter-spacing: -.03em;
-}
-
-.stats-hero-copy p {
-  margin: 0;
-  color: var(--color-muted);
-  font-size: 12.5px;
-  line-height: 1.45;
-}
 
 .stats-hero {
   display: grid;
@@ -84,7 +37,6 @@
 }
 
 .summary-stat,
-.stat-card,
 .body-card {
   --tone: var(--color-primary);
   --tone-rgb: var(--color-primary-rgb);
@@ -132,7 +84,6 @@
 }
 
 .ss-val,
-.stat-card strong,
 .body-card-val {
   display: flex;
   align-items: baseline;
@@ -140,18 +91,17 @@
   gap: 4px;
   color: var(--color-text);
   font: 850 24px/1 var(--font-sans);
-  letter-spacing: -.04em;
+  letter-spacing: -.015em;
   font-variant-numeric: tabular-nums;
 }
 
 .ss-label,
-.stat-card span,
 .body-card-lbl {
   margin-top: 8px;
   color: var(--color-primary);
-  font: 850 10px/1 var(--font-mono);
-  letter-spacing: .12em;
-  text-transform: uppercase;
+  font: 850 10px/1 var(--font-sans);
+  letter-spacing: .01em;
+  text-transform: none;
 }
 
 .stats-range {
@@ -181,8 +131,7 @@
   box-shadow: 0 0 18px rgba(var(--color-primary-rgb), .18);
 }
 
-.stats-panel,
-.profile-panel {
+.stats-panel {
   display: grid;
   gap: 16px;
   border: 1px solid var(--color-border);
@@ -223,45 +172,11 @@
   text-align: right;
 }
 
-.bars {
-  min-height: 154px;
-  display: flex;
-  align-items: end;
-  justify-content: center;
-  gap: 10px;
-  padding-top: 10px;
-}
 
-.bar {
-  min-height: 144px;
-  flex: 1 1 32px;
-  max-width: 54px;
-  display: grid;
-  grid-template-rows: 1fr auto;
-  align-items: end;
-  gap: 7px;
-}
 
-.bar .fill {
-  width: 100%;
-  min-height: 8px;
-  border-radius: 999px 999px 4px 4px;
-  background: linear-gradient(180deg, var(--color-primary), rgba(var(--color-primary-rgb), .25));
-}
 
-.bar.peak .fill {
-  box-shadow: 0 0 18px rgba(var(--color-primary-rgb), .45);
-}
 
-.blabel {
-  color: var(--color-muted);
-  font: 800 10px/1 var(--font-mono);
-  text-align: center;
-}
 
-.bar.peak .blabel {
-  color: var(--color-primary);
-}
 
 .dist,
 .list {
@@ -291,10 +206,10 @@
 
 .dist-row small {
   color: var(--color-muted);
-  font: 800 11px/1.1 var(--font-mono);
+  font: 800 11px/1.1 var(--font-sans);
 }
 
-.stats-record,
+
 .body-entry {
   display: grid;
   grid-template-columns: 30px minmax(0, 1fr) auto;
@@ -306,61 +221,21 @@
   background: rgba(255, 255, 255, .035);
 }
 
-.stats-record-rank {
-  width: 30px;
-  height: 30px;
-  display: grid;
-  place-items: center;
-  border-radius: 10px;
-  color: var(--color-muted);
-  background: rgba(255, 255, 255, .04);
-  font: 850 12px/1 var(--font-mono);
-}
 
-.stats-record.top-1 .stats-record-rank {
-  color: #f7c04a;
-  background: rgba(247, 192, 74, .12);
-}
 
-.stats-record.top-2 .stats-record-rank,
-.stats-record.top-3 .stats-record-rank {
-  color: var(--color-primary);
-  background: rgba(var(--color-primary-rgb), .12);
-}
 
-.stats-record-rank svg {
-  width: 16px;
-  height: 16px;
-}
 
-.stats-record-actions {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
 
-.stats-record-share {
-  width: 44px;
-  height: 44px;
-  display: grid;
-  place-items: center;
-  padding: 0;
-  border-radius: 12px;
-}
 
-.stats-record-share svg {
-  width: 17px;
-  height: 17px;
-}
 
-.stats-record strong,
+
 .body-entry strong {
   display: block;
   color: var(--color-text);
   font-size: 13px;
 }
 
-.stats-record small,
+
 .body-entry small {
   display: block;
   margin-top: 3px;
@@ -375,7 +250,7 @@
   padding: 7px 9px;
   background: rgba(var(--color-primary-rgb), .12);
   color: var(--color-primary);
-  font: 850 10px/1 var(--font-mono);
+  font: 850 10px/1 var(--font-sans);
 }
 
 .body-cards {
@@ -398,9 +273,9 @@
   display: grid;
   gap: 6px;
   color: var(--color-muted);
-  font: 800 11px/1 var(--font-mono);
-  letter-spacing: .08em;
-  text-transform: uppercase;
+  font: 800 11px/1 var(--font-sans);
+  letter-spacing: .01em;
+  text-transform: none;
 }
 
 .form-grid input {
@@ -443,11 +318,10 @@
 
 .body-chart-panel text {
   fill: var(--color-muted);
-  font: 800 10px/1 var(--font-mono);
+  font: 800 10px/1 var(--font-sans);
 }
 
-.empty,
-.muted-line {
+.empty {
   color: var(--color-muted);
 }
 
@@ -470,8 +344,6 @@
 
 @media (min-width: 720px) {
   .statistics-workstr-page {
-    max-width: 760px;
-    margin-inline: auto;
     width: 100%;
   }
 }
@@ -482,16 +354,7 @@
     gap: 12px;
   }
 
-  .stats-hero-card {
-    grid-template-columns: 42px minmax(0, 1fr);
-    gap: 11px;
-    padding: 11px;
-  }
 
-  .stats-hero-icon {
-    width: 42px;
-    height: 42px;
-  }
 
   .stats-hero {
     gap: 8px;
@@ -521,14 +384,7 @@
     gap: 8px;
   }
 
-  .stats-record {
-    grid-template-columns: 30px minmax(0, 1fr);
-  }
 
-  .stats-record .badge {
-    grid-column: 2;
-    justify-self: start;
-  }
 }
 
 
@@ -539,37 +395,11 @@
   padding-bottom: calc(88px + env(safe-area-inset-bottom));
 }
 
-.stats-training-view .stats-hero-card {
-  grid-template-columns: 40px minmax(0, 1fr);
-  gap: 10px;
-  padding: 10px;
-  border-radius: 16px;
-}
 
-.stats-training-view .stats-hero-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-}
 
-.stats-training-view .stats-hero-icon svg {
-  width: 20px;
-  height: 20px;
-}
 
-.stats-training-view .stats-hero-copy {
-  gap: 4px;
-}
 
-.stats-training-view .stats-hero-copy > span {
-  font-size: 15px;
-  line-height: 1.05;
-}
 
-.stats-training-view .stats-hero-copy p {
-  font-size: 11px;
-  line-height: 1.35;
-}
 
 .stats-training-view .stats-hero {
   gap: 8px;
@@ -603,7 +433,7 @@
   margin-top: 7px;
   font-size: 9px;
   line-height: 1.15;
-  letter-spacing: .08em;
+  letter-spacing: .01em;
 }
 
 .stats-training-view .stats-range {
@@ -643,25 +473,9 @@
   line-height: 1.1;
 }
 
-.stats-training-view .bars {
-  min-height: 118px;
-  padding-top: 4px;
-  gap: 8px;
-}
 
-.stats-training-view .bar {
-  min-height: 112px;
-  max-width: 42px;
-  gap: 6px;
-}
 
-.stats-training-view .bar .fill {
-  border-radius: 999px 999px 3px 3px;
-}
 
-.stats-training-view .bar.peak .fill {
-  box-shadow: 0 8px 20px rgba(0, 0, 0, .14);
-}
 
 .stats-training-view .dist,
 .stats-training-view .list {
@@ -690,18 +504,7 @@
   padding-bottom: calc(88px + env(safe-area-inset-bottom));
 }
 
-.stats-body-view .stats-hero-card {
-  grid-template-columns: 40px minmax(0, 1fr);
-  gap: 10px;
-  padding: 10px;
-  border-radius: 16px;
-}
 
-.stats-body-view .stats-hero-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 13px;
-}
 
 .stats-body-view .body-panel {
   gap: 11px;
@@ -742,15 +545,15 @@
   min-width: 0;
   overflow-wrap: anywhere;
   font: 850 20px/1 var(--font-sans);
-  letter-spacing: -.055em;
+  letter-spacing: -.015em;
 }
 
 .stats-body-view .body-card-lbl {
   margin-top: 7px;
   color: var(--color-muted-strong);
-  font: 850 9px/1.05 var(--font-mono);
-  letter-spacing: .08em;
-  text-transform: uppercase;
+  font: 850 9px/1.05 var(--font-sans);
+  letter-spacing: .01em;
+  text-transform: none;
 }
 
 .stats-body-view .body-card.up .body-card-icon,
@@ -789,7 +592,7 @@
 
 .stats-body-view .body-chart text {
   fill: var(--color-muted);
-  font: 800 9px/1 var(--font-mono);
+  font: 800 9px/1 var(--font-sans);
 }
 
 .stats-body-view .body-chart .body-chart-date {
@@ -797,17 +600,17 @@
 }
 
 .stats-body-view .body-chart-area {
-  fill: #111111;
+  fill: var(--color-text);
   opacity: .08;
 }
 
 .stats-body-view .body-chart polyline {
-  stroke: #111111;
+  stroke: var(--color-text);
 }
 
 .stats-body-view .body-chart circle {
-  fill: #111111;
-  stroke: #f7f6f1;
+  fill: var(--color-text);
+  stroke: var(--color-bg);
   stroke-width: 1.5px;
 }
 
@@ -839,7 +642,7 @@
   border: 0;
   border-radius: 24px;
   background: transparent;
-  color: #050505;
+  color: var(--color-text);
   box-shadow: 0 24px 80px rgba(0, 0, 0, .32);
 }
 
@@ -867,15 +670,15 @@
 .body-share-sheet header small,
 .body-share-range legend {
   color: var(--color-muted-strong);
-  font: 800 10px/1.2 var(--font-mono);
-  letter-spacing: .1em;
-  text-transform: uppercase;
+  font: 800 10px/1.2 var(--font-sans);
+  letter-spacing: .01em;
+  text-transform: none;
 }
 
 .body-share-sheet h2 {
   margin: 4px 0 0;
   font: 850 24px/1 var(--font-sans);
-  letter-spacing: -.04em;
+  letter-spacing: -.015em;
   text-wrap: balance;
 }
 
@@ -888,7 +691,7 @@
   border: 1px solid var(--color-border);
   border-radius: 14px;
   background: #efeae0;
-  color: #050505;
+  color: var(--color-text);
   cursor: pointer;
   transition: transform 100ms ease, background-color 180ms ease;
 }
@@ -943,15 +746,15 @@
   border-radius: 12px;
   background: #f1ede4;
   color: #4d4942;
-  font: 800 12px/1 var(--font-mono);
+  font: 800 12px/1 var(--font-sans);
   cursor: pointer;
   transition: transform 100ms ease, border-color 180ms ease, background-color 180ms ease;
 }
 
 .body-share-range button[aria-pressed="true"] {
-  border-color: #050505;
+  border-color: var(--color-text);
   background: #ded8cd;
-  color: #050505;
+  color: var(--color-text);
 }
 
 .body-share-range button:active { transform: scale(.97); }
@@ -981,7 +784,7 @@
   width: 20px;
   height: 20px;
   flex: none;
-  accent-color: #111111;
+  accent-color: var(--color-text);
 }
 
 .body-share-options label:has(input:disabled) {
@@ -1035,27 +838,22 @@
   min-width: 0;
   display: grid;
   place-items: center;
-  color: #111111;
-  font: 850 8px/1 var(--font-mono);
+  color: var(--color-text);
+  font: 850 8px/1 var(--font-sans);
   letter-spacing: .04em;
-  text-transform: uppercase;
+  text-transform: none;
 }
 
 .stats-body-view .bmi-zone.under { background: #d9d7cf; }
 .stats-body-view .bmi-zone.normal { background: #efeee8; }
 .stats-body-view .bmi-zone.over { background: #c8c5bb; }
-.stats-body-view .bmi-zone.obese { background: #a9a69c; color: #050505; }
+.stats-body-view .bmi-zone.obese { background: #a9a69c; color: var(--color-text); }
 
 .stats-body-view .bmi-marker,
 .stats-body-view .body-goal-fill {
-  background: linear-gradient(90deg, #111111, #6a6a6a) !important;
+  background: linear-gradient(90deg, var(--color-text), #6a6a6a) !important;
 }
 
-.stats-body-view .body-goal-labels {
-  gap: 6px;
-  color: var(--color-muted);
-  font: 800 9px/1.1 var(--font-mono);
-}
 
 .stats-body-view .body-forms {
   gap: 11px;
@@ -1071,7 +869,7 @@
   min-height: 40px;
   border: 1px solid var(--color-border);
   background: #f1f0eb;
-  color: #050505;
+  color: var(--color-text);
 }
 
 .stats-body-view .body-entry {
@@ -1079,7 +877,7 @@
   gap: 9px;
   padding: 9px;
   border-radius: 12px;
-  background: #f7f6f1;
+  background: var(--color-bg);
 }
 
 .stats-body-view .body-entry-icon {
@@ -1088,7 +886,7 @@
   margin: 0;
   border-radius: 9px;
   background: #e4e2db;
-  color: #111111;
+  color: var(--color-text);
 }
 
 .stats-body-view .body-entry strong {
@@ -1137,16 +935,16 @@
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  font: 800 10px/1 var(--font-mono) !important;
-  text-transform: uppercase !important;
-  letter-spacing: .06em !important;
-  color: #111111 !important;
+  font: 800 10px/1 var(--font-sans) !important;
+  text-transform: none !important;
+  letter-spacing: .01em !important;
+  color: var(--color-text) !important;
 }
 
 .stats-body-view .bmi-zone.under { background: #d6d4cc !important; }
 .stats-body-view .bmi-zone.normal { background: #f4f3ee !important; }
 .stats-body-view .bmi-zone.over { background: #c4c1b8 !important; }
-.stats-body-view .bmi-zone.obese { background: #8f8c84 !important; color: #050505 !important; }
+.stats-body-view .bmi-zone.obese { background: #8f8c84 !important; color: var(--color-text) !important; }
 
 .stats-body-view .bmi-marker {
   position: absolute !important;
@@ -1154,8 +952,8 @@
   bottom: -3px !important;
   width: 3px !important;
   border-radius: 3px !important;
-  background: #050505 !important;
-  box-shadow: 0 0 0 2px #f7f6f1 !important;
+  background: var(--color-text) !important;
+  box-shadow: 0 0 0 2px var(--color-bg) !important;
   transform: translateX(-50%) !important;
 }
 
@@ -1164,7 +962,7 @@
   justify-content: space-between !important;
   margin-top: 6px !important;
   color: var(--color-muted) !important;
-  font: 700 10px/1 var(--font-mono) !important;
+  font: 700 10px/1 var(--font-sans) !important;
 }
 
 .stats-body-view .bmi-scale span {
@@ -1175,20 +973,20 @@
 
 /* BMI graph hard locks: Workstr text scale and marker paint. */
 .stats-body-view .bmi-zone {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace !important;
+  font-family: var(--font-sans) !important;
   font-size: 10px !important;
   font-weight: 800 !important;
   line-height: 1 !important;
-  letter-spacing: .06em !important;
+  letter-spacing: .01em !important;
 }
 
 .stats-body-view .bmi-marker {
-  background-color: #050505 !important;
+  background-color: var(--color-text) !important;
   background-image: none !important;
 }
 
 .stats-body-view .bmi-scale {
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace !important;
+  font-family: var(--font-sans) !important;
   font-size: 10px !important;
   font-weight: 700 !important;
   line-height: 1 !important;
@@ -1196,37 +994,12 @@
 
 
 /* Body tab hero/cards: exact Training stats header + three-tile layout. */
-.stats-body-view .stats-hero-card {
-  grid-template-columns: 40px minmax(0, 1fr) !important;
-  gap: 10px !important;
-  padding: 10px !important;
-  border-radius: 16px !important;
-}
 
-.stats-body-view .stats-hero-icon {
-  width: 40px !important;
-  height: 40px !important;
-  border-radius: 12px !important;
-}
 
-.stats-body-view .stats-hero-icon svg {
-  width: 20px !important;
-  height: 20px !important;
-}
 
-.stats-body-view .stats-hero-copy {
-  gap: 4px !important;
-}
 
-.stats-body-view .stats-hero-copy > span {
-  font-size: 15px !important;
-  line-height: 1.05 !important;
-}
 
-.stats-body-view .stats-hero-copy p {
-  font-size: 11px !important;
-  line-height: 1.35 !important;
-}
+
 
 .stats-body-view .body-cards {
   display: grid !important;
@@ -1252,7 +1025,7 @@
   align-items: center !important;
   justify-content: center !important;
   margin: 0 0 8px !important;
-  border: 2px solid #111 !important;
+  border: 1px solid var(--color-border-strong) !important;
   border-radius: 10px !important;
 }
 
@@ -1268,7 +1041,7 @@
   font-size: 20px !important;
   line-height: 1 !important;
   font-weight: 850 !important;
-  letter-spacing: -.055em !important;
+  letter-spacing: -.015em !important;
 }
 
 .stats-body-view .body-card-lbl {
@@ -1277,8 +1050,8 @@
   font-size: 9px !important;
   line-height: 1.15 !important;
   font-weight: 850 !important;
-  letter-spacing: .08em !important;
-  text-transform: uppercase !important;
+  letter-spacing: .01em !important;
+  text-transform: none !important;
 }
 
 @media (max-width: 719px) {
@@ -1345,7 +1118,7 @@
   gap: 8px !important;
   font-size: 10px !important;
   line-height: 1.15 !important;
-  letter-spacing: .10em !important;
+  letter-spacing: .01em !important;
 }
 
 .stats-body-view .body-forms .form-grid label > span {
@@ -1359,10 +1132,10 @@
   min-width: 0 !important;
   min-height: 56px !important;
   padding: 0 16px !important;
-  border: 2px solid #111 !important;
+  border: 1px solid var(--color-border-strong) !important;
   border-radius: 14px !important;
-  background: #fff !important;
-  color: #050505 !important;
+  background: var(--color-surface) !important;
+  color: var(--color-text) !important;
   font: 700 16px/1.15 var(--font-sans) !important;
 }
 
@@ -1447,7 +1220,6 @@
 
 /* Premium stat tiles (Home dashboard) */
 .summary-stat,
-.stat-card,
 .body-card {
   transition: box-shadow 0.2s ease, transform 0.1s ease;
   border-radius: 18px;
@@ -1455,7 +1227,6 @@
 }
 
 .summary-stat:hover,
-.stat-card:hover,
 .body-card:hover {
   box-shadow: 0 8px 20px rgba(0,0,0,0.08);
   transform: translateY(-2px);
@@ -1465,7 +1236,7 @@
   font-size: 28px;
   font-weight: 800;
   line-height: 1.1;
-  letter-spacing: -.03em;
+  letter-spacing: -.015em;
 }
 
 .summary-stat .ss-label {
@@ -1476,8 +1247,7 @@
 }
 
 /* Premium panels consistency */
-.stats-panel,
-.profile-panel {
+.stats-panel {
   transition: box-shadow 0.2s ease, transform 0.1s ease;
   border-radius: 18px;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
@@ -1489,19 +1259,8 @@
 }
 
 /* Fix weekly volume label wrapping */
-.blabel {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
-}
 
-.bars {
-  display: flex;
-  gap: 8px;
-  align-items: flex-end;
-  min-height: 120px;
-}
+
 
 /* Better range button press feedback */
 .stats-range-btn {
@@ -1519,55 +1278,14 @@
 }
 
 /* Improved weekly volume bar labels */
-.bars {
-  display: flex;
-  gap: 6px;
-  align-items: flex-end;
-  min-height: 110px;
-  padding-bottom: 4px;
-}
 
-.bar {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-width: 0;
-}
 
-.blabel {
-  color: var(--color-muted);
-  font: 600 9px/1.1 var(--font-mono);
-  text-align: center;
-  white-space: nowrap;
-  margin-top: 4px;
-  max-width: 100%;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
 
-.bar.peak .blabel {
-  color: var(--color-primary);
-  font-weight: 700;
-}
+
 
 /* Match Workstr-web bar label style */
-.bar {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 8px;
-  height: 100%;
-}
 
-.bar .blabel {
-  color: var(--color-muted);
-  font: 700 10px/1 ui-monospace, monospace;
-  white-space: nowrap;
-  text-align: center;
-}
+
 
 /* === Body Tab Premium Polish === */
 
@@ -1611,8 +1329,8 @@
   justify-content: center;
   font-size: 9px;
   font-weight: 700;
-  color: #fff;
-  text-transform: uppercase;
+  color: var(--color-on-primary);
+  text-transform: none;
   letter-spacing: 0.5px;
 }
 
@@ -1626,9 +1344,9 @@
   top: -2px;
   width: 4px;
   height: 18px;
-  background: #000;
+  background: var(--color-text);
   border-radius: 999px;
-  box-shadow: 0 0 0 3px #fff;
+  box-shadow: 0 0 0 3px var(--color-surface);
   transition: left 0.3s ease;
 }
 
@@ -1660,7 +1378,7 @@
 }
 
 .body-chart circle {
-  fill: #fff;
+  fill: var(--color-surface);
   stroke: var(--color-primary);
   stroke-width: 2;
   transition: r 0.15s ease;
@@ -1745,7 +1463,7 @@
 
 /* Black bold contour on the flame icon for Day Streak */
 .summary-stat.streak .ss-icon svg {
-  stroke: #000 !important;
+  stroke: var(--color-text) !important;
   stroke-width: 2.5 !important;
   stroke-linejoin: round !important;
   stroke-linecap: round !important;
@@ -1754,7 +1472,7 @@
 /* Ultra-specific black bold contour for flame icon */
 .summary-stat.streak .ss-icon svg,
 .summary-stat.streak .ss-icon svg path {
-  stroke: #000 !important;
+  stroke: var(--color-text) !important;
   stroke-width: 3 !important;
   stroke-opacity: 1 !important;
 }

@@ -2,12 +2,12 @@ import { pageEmpty } from '../shared/page-states.js'
 import { getProfile } from '../profile/api.js'
 import { listExercises } from '../exercises/api.js'
 import type { Exercise } from '../exercises/types.js'
-import { listPrograms, listSessions, startProgramSession, duplicateProgram, deleteProgram } from './api.js'
+import { listPrograms, startProgramSession, duplicateProgram, deleteProgram } from './api.js'
 import { createProgramCard, type ProgramCardActions } from './program-card.js'
-import { programHero, programToolbar, programFilterChips, programFilterSheet } from './program-browser.js'
+import { programToolbar, programFilterChips, programFilterSheet } from './program-browser.js'
 import { emptyProgramFilters, matchesProgram, programTaxonomy } from './program-taxonomy.js'
 import { openProgramBuilder } from './program-builder.js'
-import type { Program, Session } from './types.js'
+import type { Program } from './types.js'
 
 function enrich(programs: Program[], exercises: Exercise[]): Program[] {
   return programs.map(program => ({ ...program, exercises: program.exercises.map(entry => ({
@@ -15,7 +15,7 @@ function enrich(programs: Program[], exercises: Exercise[]): Program[] {
   })) }))
 }
 
-export async function renderProgramLibrary(page: HTMLElement, sessionLinks: (sessions: Session[]) => HTMLElement): Promise<void> {
+export async function renderProgramLibrary(page: HTMLElement): Promise<void> {
   const status = document.createElement('p')
   status.className = 'workout-browser-status'
   status.setAttribute('role', 'status')
@@ -24,12 +24,11 @@ export async function renderProgramLibrary(page: HTMLElement, sessionLinks: (ses
   const params = new URLSearchParams(window.location.search)
   const filters = emptyProgramFilters()
   for (const key of Object.keys(filters) as (keyof typeof filters)[]) filters[key] = params.get(key) ?? ''
-  const [saved, initialExercises, sessions, profile] = await Promise.all([
-    listPrograms(), listExercises(), listSessions(), getProfile().catch(() => ({ equipment: [] as string[] }))
+  const [saved, initialExercises, profile] = await Promise.all([
+    listPrograms(), listExercises(), getProfile().catch(() => ({ equipment: [] as string[] }))
   ])
   let exercises = initialExercises
   let programs = enrich(saved, exercises)
-  let hero = programHero(programs)
   const chips = document.createElement('div')
   const results = document.createElement('div')
   results.className = 'program-list'
@@ -39,16 +38,10 @@ export async function renderProgramLibrary(page: HTMLElement, sessionLinks: (ses
     const next = `/library/programs${query.size ? `?${query}` : ''}`
     if (next !== `${window.location.pathname}${window.location.search}`) window.history.replaceState({}, '', next)
   }
-  const updateHero = (): void => {
-    const next = programHero(programs)
-    hero.replaceWith(next)
-    hero = next
-  }
   const reload = async (): Promise<void> => {
     const [nextPrograms, nextExercises] = await Promise.all([listPrograms(), listExercises()])
     exercises = nextExercises
     programs = enrich(nextPrograms, exercises)
-    updateHero()
     renderResults()
   }
   const actions: ProgramCardActions = {
@@ -97,7 +90,7 @@ export async function renderProgramLibrary(page: HTMLElement, sessionLinks: (ses
     document.body.append(dialog)
     dialog.showModal()
   }, () => openProgramBuilder(exercises, undefined, reload))
-  page.append(hero, sessionLinks(sessions), toolbar, chips, results)
+  page.append(toolbar, chips, results)
   status.textContent = ''
   renderResults()
 }

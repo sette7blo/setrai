@@ -36,8 +36,8 @@ export async function renderSessionPage(root: HTMLElement, id: number): Promise<
   } catch (error) {
     root.textContent = readableApiError(error)
     const back = document.createElement('a')
-    back.href = '/library/programs'
-    back.textContent = 'Back to Library'
+    back.href = '/today'
+    back.textContent = 'Back to Today'
     root.append(back)
   }
 }
@@ -186,7 +186,7 @@ function runSession(root: HTMLElement, model: LiveModel): void {
     },
     discard() {
       if (!window.confirm('Discard this session and its logged sets?')) return
-      void mutate(async () => { await writes; await discardSession(model.session.id); cleanup(); window.location.assign('/library/programs') })
+      void mutate(async () => { await writes; await discardSession(model.session.id); cleanup(); window.location.assign('/today') })
     },
     startEmom() {
       const now = Date.now()
