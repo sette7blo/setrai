@@ -1,31 +1,31 @@
 /* Weekly volume bars, personal records and the body goal line. */
 .bars { display: flex; align-items: flex-end; gap: 6px; height: 168px; padding: 4px 2px 0; }
-.bars.empty { display: grid; place-items: center; height: 96px; color: var(--color-muted); font-size: 14px; }
+.bars.empty { display: grid; place-items: center; height: 96px; color: var(--color-muted); font-size: var(--text-body); }
 .bar { display: flex; flex: 1 1 0; flex-direction: column; align-items: center; justify-content: flex-end; gap: 4px; min-width: 0; height: 100%; }
-.bar .fill { width: 100%; max-width: 44px; min-height: 3px; border-radius: 6px 6px 2px 2px; background: color-mix(in srgb, var(--color-text) 20%, var(--color-surface)); transition: height 320ms var(--ease-out); }
+.bar .fill { width: 100%; max-width: 44px; min-height: 3px; border-radius: var(--radius-sm) var(--radius-sm) var(--radius-sm) var(--radius-sm); background: color-mix(in srgb, var(--color-text) 20%, var(--color-surface)); transition: height var(--duration-slow) var(--ease-out); }
 .bar.latest .fill { background: var(--color-text); }
-.bvalue { color: var(--color-muted); font-size: 11px; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.bvalue { color: var(--color-muted); font-size: var(--text-caption); font-weight: var(--weight-medium); line-height: 1; font-variant-numeric: tabular-nums; white-space: nowrap; }
 .bar.latest .bvalue { color: var(--color-text); }
-.blabel { overflow: hidden; max-width: 100%; color: var(--color-muted); font-size: 11px; line-height: 1.2; text-overflow: clip; white-space: nowrap; }
-.bar.latest .blabel { color: var(--color-text); font-weight: 600; }
+.blabel { overflow: hidden; max-width: 100%; color: var(--color-muted); font-size: var(--text-caption); line-height: 1.2; text-overflow: clip; white-space: nowrap; }
+.bar.latest .blabel { color: var(--color-text); font-weight: var(--weight-medium); }
 
 .stats-records { display: grid; }
-.stats-records.empty { padding: 12px 0; color: var(--color-muted); font-size: 14px; }
+.stats-records.empty { padding: 12px 0; color: var(--color-muted); font-size: var(--text-body); }
 .stats-record { display: grid; grid-template-columns: minmax(0, 1fr) auto 44px; gap: 10px; align-items: center; min-height: 60px; padding: 8px 0; }
 .stats-record + dialog + .stats-record, .stats-record + .stats-record { border-top: var(--border-subtle); }
 .stats-record-copy { display: grid; gap: 2px; min-width: 0; }
-.stats-record-copy strong { overflow: hidden; font-size: 15px; font-weight: 650; text-overflow: ellipsis; white-space: nowrap; }
-.stats-record-copy small { color: var(--color-muted); font-size: 12px; }
+.stats-record-copy strong { overflow: hidden; font-size: var(--text-body); font-weight: var(--weight-medium); text-overflow: ellipsis; white-space: nowrap; }
+.stats-record-copy small { color: var(--color-muted); font-size: var(--text-caption); }
 .stats-record-best { display: grid; gap: 1px; justify-items: end; }
-.stats-record-best strong { font-size: 20px; font-weight: 750; font-stretch: var(--font-display-stretch); line-height: 1; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.stats-record-best small { color: var(--color-muted); font-size: 11px; }
+.stats-record-best strong { font-size: var(--text-section); font-weight: var(--weight-bold); font-stretch: var(--font-display-stretch); line-height: 1; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.stats-record-best small { color: var(--color-muted); font-size: var(--text-caption); }
 .stats-record-share.button { width: 44px; min-height: 44px; padding: 0; border-color: transparent; background: transparent; color: var(--color-muted-strong); }
 .stats-record-share.button:hover { background: var(--color-surface-strong); }
 
-.body-goal-labels { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-top: 8px; color: var(--color-muted); font-size: 13px; font-variant-numeric: tabular-nums; }
-.body-goal-labels span:nth-child(2) { color: var(--color-text); font-weight: 650; }
+.body-goal-labels { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; margin-top: 8px; color: var(--color-muted); font-size: var(--text-meta); font-variant-numeric: tabular-nums; }
+.body-goal-labels span:nth-child(2) { color: var(--color-text); font-weight: var(--weight-medium); }
 
-.stats-section-head small { color: var(--color-muted) !important; font: 500 12px/1.2 var(--font-sans) !important; }
+.stats-section-head small { color: var(--color-muted) !important; font: var(--weight-regular) var(--text-caption)/1.2 var(--font-sans) !important; }
 
 /* Desktop: totals and the weekly chart beside distribution and records. */
 @media (min-width: 1000px) {

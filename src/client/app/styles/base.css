@@ -10,6 +10,7 @@ body {
   color: var(--color-text);
   background: var(--color-bg);
   font-family: var(--font-sans);
+  font-size: var(--text-body);
   font-optical-sizing: auto;
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
@@ -29,12 +30,12 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   gap: 8px;
   padding: 0 16px;
   border: 1px solid var(--color-border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   color: var(--color-text);
   background: var(--color-surface);
-  font: 600 14px/1 var(--font-sans);
+  font: var(--weight-medium) var(--text-body)/1 var(--font-sans);
   cursor: pointer;
-  transition: transform 100ms ease, border-color 160ms ease, background-color 160ms ease, opacity 160ms ease;
+  transition: transform var(--duration-fast) var(--ease-out), border-color var(--duration-base) var(--ease-out), background-color var(--duration-base) var(--ease-out), opacity var(--duration-base) var(--ease-out);
 }
 .button svg { width: 17px; height: 17px; flex: none; }
 .button:hover { border-color: var(--color-border-strong); }
@@ -44,10 +45,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .button--primary:hover { border-color: var(--color-text); background: var(--color-muted-strong); }
 .button--secondary { color: var(--color-text); }
 /* Reserved for the one action that starts or continues training. */
-.button--accent { border-color: var(--color-accent); color: var(--color-on-accent); background: var(--color-accent); font-weight: 700; }
+.button--accent { border-color: var(--color-accent); color: var(--color-on-accent); background: var(--color-accent); font-weight: var(--weight-bold); }
 .button--accent:hover { border-color: var(--color-accent); filter: brightness(.95); }
 
 @media (max-width: 719px) {
-  body { font-size: 14px; }
-  input:not([type=checkbox]):not([type=radio]), select, textarea { font-size: 16px; }
+  /* iOS zooms the page when a focused field is under 16px. */
+  :root :is(input:not([type=checkbox]):not([type=radio]), select, textarea) { font-size: 16px; }
 }
