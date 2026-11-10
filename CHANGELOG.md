@@ -11,6 +11,8 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 ## [Unreleased]
 
+## [v0.5.0] — 2026-11-10
+
 - Desktop uses its width better: the content area is wider, the Library shows five exercises per row (six on very wide windows), Today lines up its two columns and lists the last three workouts, and the sidebar highlights the current section the same way the phone navigation does.
 - Slimmer phone top bar: the main tabs show only the logo mark and the settings gear, inner screens (Recovery, an exercise, the editor, Settings) show a single back row instead of a brand bar plus a back link, and the bar shows the page title once you scroll past it.
 - Exercise artwork leads: Library cards show one quiet line ("Core, Beginner") instead of a coloured difficulty bar, and the exercise page opens with a full-width image, a one-line summary, and instructions already expanded above the target muscles.
