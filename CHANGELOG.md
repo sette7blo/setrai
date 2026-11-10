@@ -11,6 +11,8 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 ## [Unreleased]
 
+- Added feedback where it matters: logging a set fills the row's badge with a check before moving on, History, program, Settings and Instructions sections open and close smoothly, the exercise filter sheet slides up and down, the readiness number on Today counts up once when the app opens, and every button responds to a press the same way. All of it is switched off when your device asks for reduced motion.
+
 ## [v0.5.0] — 2026-11-10
 
 - Desktop uses its width better: the content area is wider, the Library shows five exercises per row (six on very wide windows), Today lines up its two columns and lists the last three workouts, and the sidebar highlights the current section the same way the phone navigation does.

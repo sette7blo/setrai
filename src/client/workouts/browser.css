@@ -88,7 +88,6 @@
 .history-cal-title { min-width: 0; text-align: center; color: var(--color-text); font: var(--weight-heavy) var(--text-title)/1.2 var(--font-sans), sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .history-cal-nav { display: grid; place-items: center; width: 44px; min-height: 44px; padding: 0; border: 1px solid color-mix(in srgb, var(--color-text) 20%, transparent); border-radius: 50%; color: var(--color-text); background: transparent; cursor: pointer; transition: transform var(--duration-fast) var(--ease-out), background-color var(--duration-base) var(--ease-out); }
 .history-cal-nav:hover { background: color-mix(in srgb, var(--color-text) 6%, transparent); }
-.history-cal-nav:active { transform: scale(.97); }
 .history-cal-nav svg { width: 18px; height: 18px; }
 .history-cal-today { min-height: 20px; padding: 0; border: 0; color: var(--color-muted-strong); background: transparent; font: var(--weight-heavy) var(--text-caption)/1 var(--font-sans); letter-spacing: .01em; text-transform: none; cursor: pointer; }
 .history-cal-today[hidden] { display: none; }

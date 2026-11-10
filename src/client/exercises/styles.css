@@ -97,7 +97,7 @@
 .detail-instructions { border-top: 1px solid var(--color-border); padding-top: 16px; }
 .detail-instructions summary { min-height: 44px; margin: 0; cursor: pointer; list-style: none; }
 .detail-instructions summary::-webkit-details-marker { display: none; }
-.detail-instructions summary svg:last-child { margin-left: auto; transition: transform var(--duration-fast); }
+.detail-instructions summary svg:last-child { margin-left: auto; transition: transform var(--duration-base) var(--ease-out); }
 .detail-instructions[open] summary svg:last-child { transform: rotate(180deg); }
 .detail-instructions ol { margin-top: 12px; font-size: var(--text-body); }
 .detail-title-row {

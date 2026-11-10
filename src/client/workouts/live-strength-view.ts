@@ -3,6 +3,20 @@ import { action, node, exerciseHero, instructions, numberInput, loadLabel, glyph
 import { nextSet, setCount, strengthSets, supersetNext } from './live-plan.js'
 import type { LiveModel, LiveActions } from './live-model.js'
 
+const ARRIVAL_MS = 200
+
+// Fill the row's number badge with a check and hold it for a beat, so the set is seen to complete
+// before the list moves on. With reduced motion the state changes without the pause.
+function showSetLogged(row: Element | null): Promise<void> {
+  const badge = row?.querySelector('.live-set-number')
+  if (!row || !badge) return Promise.resolve()
+  row.classList.add('is-logging')
+  badge.replaceChildren(glyph('check'))
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return Promise.resolve()
+  const hold = parseFloat(getComputedStyle(row).getPropertyValue('--duration-base')) || 200
+  return new Promise(resolve => window.setTimeout(resolve, hold))
+}
+
 export function renderStrength(model: LiveModel, controls: LiveActions, body: HTMLElement, footer: HTMLElement): void {
   const index = model.session.runtime?.exerciseIndex ?? 0
   const exercise = model.exercises[index]
@@ -45,8 +59,23 @@ export function renderStrength(model: LiveModel, controls: LiveActions, body: HT
   for (let i = 1; i <= count; i++) {
     const saved = sets.find((set) => set.setNumber === i)
     const current = !saved && i === number
-    const row = node('div', `live-set-row ${saved ? 'is-done' : current ? 'is-current' : 'is-upcoming'}`)
-    row.append(node('span', 'live-set-number', String(i)))
+    // While the logged set is being saved, its row already reads as complete.
+    const logging = current && model.busy
+    const row = node('div', `live-set-row ${saved ? 'is-done' : current ? `is-current${logging ? ' is-logging' : ''}` : 'is-upcoming'}`)
+    if (current && !model.busy) {
+      if (model.currentMoved) {
+        model.currentMoved = false
+        model.currentArrivedAt = Date.now()
+      }
+      const elapsed = Date.now() - (model.currentArrivedAt ?? 0)
+      if (elapsed < ARRIVAL_MS) {
+        row.classList.add('is-arriving')
+        row.style.animationDelay = `-${elapsed}ms`
+      }
+    }
+    const badge = node('span', 'live-set-number', logging ? '' : String(i))
+    if (logging) badge.append(glyph('check'))
+    row.append(badge)
     if (current) {
       row.append(numberInput(`${timed ? 'Seconds' : 'Reps'} for set ${i}`, draft.reps, 'reps', (value) => { draft.reps = value }),
         numberInput(`Load in ${model.unit} for set ${i}`, draft.weight, 'weight', (value) => { draft.weight = value }))
@@ -82,7 +111,7 @@ export function renderStrength(model: LiveModel, controls: LiveActions, body: HT
     footer.append(iconAction('chevronLeft', 'Previous exercise', () => controls.jump(index - 1), 'live-prev'))
   }
   if (number <= count) {
-    const button = labeledAction('check', `Log set ${number}`, () => {
+    const button = labeledAction('check', `Log set ${number}`, async () => {
       const reps = Number(draft.reps)
       const weight = draft.weight.trim() ? inputWeightToKg(Number(draft.weight), model.unit) : null
       if (!Number.isInteger(reps) || reps < 1 || (weight !== null && (!Number.isFinite(weight) || weight < 0))) {
@@ -91,6 +120,9 @@ export function renderStrength(model: LiveModel, controls: LiveActions, body: HT
         return
       }
       const transition = supersetNext(model.session, exercise, number)
+      model.currentMoved = true
+      button.disabled = true
+      await showSetLogged(body.querySelector('.live-set-row.is-current'))
       controls.log({ exerciseId: exercise.exerciseId, setNumber: number, reps: timed ? 0 : reps,
         weight, done: true, ...(timed ? { durationSec: reps } : {}),
         ...(transition ? { blockIndex: transition.blockIndex, roundIndex: transition.roundIndex, stepIndex: transition.stepIndex } : {}) }, exercise)

@@ -57,13 +57,34 @@ function resumeCard(session: Session): HTMLElement {
   return link
 }
 
+let readinessCounted = false
+
+// The readiness figure counts up the first time Today is shown after the app loads, and never again.
+function countUpOnce(target: HTMLElement, value: number): void {
+  if (readinessCounted) return
+  readinessCounted = true
+  if (value <= 0 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+  const duration = 600
+  let start = 0
+  target.textContent = '0'
+  const step = (now: number): void => {
+    start ||= now
+    const progress = Math.min(1, (now - start) / duration)
+    target.textContent = String(Math.round(value * (1 - (1 - progress) ** 3)))
+    if (progress < 1) requestAnimationFrame(step)
+  }
+  requestAnimationFrame(step)
+}
+
 function readinessCard(recovery: RecoveryOverview): HTMLElement {
   const card = element('a', 'today-readiness')
   card.href = '/recovery'
   card.setAttribute('aria-label', 'Open muscle recovery')
   const copy = element('div', 'today-readiness-copy')
   const figure = element('p', 'today-figure')
-  figure.append(element('strong', '', String(averageReadiness(recovery))), element('span', '', '% ready'))
+  const value = element('strong', '', String(averageReadiness(recovery)))
+  countUpOnce(value, averageReadiness(recovery))
+  figure.append(value, element('span', '', '% ready'))
   const more = element('span', 'today-more')
   more.append(document.createTextNode('Muscle detail'), iconElement(ChevronRight))
   copy.append(figure, element('p', 'today-readiness-note', readinessSentence(recovery)), more)

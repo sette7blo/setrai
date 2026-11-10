@@ -148,7 +148,6 @@
 }
 
 .body-share-close:hover { background: var(--color-border); }
-.body-share-close:active { transform: scale(.97); }
 
 .body-share-preview {
   width: min(220px, 58vw);
@@ -208,7 +207,6 @@
   color: var(--color-text);
 }
 
-.body-share-range button:active { transform: scale(.97); }
 
 .body-share-options {
   display: grid;
@@ -258,7 +256,6 @@
   transition: transform var(--duration-fast) var(--ease-out), opacity var(--duration-base) var(--ease-out);
 }
 
-.body-share-submit:active:not(:disabled) { transform: scale(.97); }
 .body-share-submit:disabled { cursor: wait; opacity: .58; }
 
 @media (max-width: 719px) {
