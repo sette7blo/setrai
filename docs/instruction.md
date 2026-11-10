@@ -428,9 +428,15 @@ position and active elapsed time are separate, so seeking does not add training
 time and pausing stops the active clock. Session plans, extra sets, rest deadlines
 and EMOM clocks survive reloads. Plans are captured when a session starts.
 Rest and EMOM phase countdowns cue the final five seconds and the transition
+with the countdown number and ring turning red during the final five seconds,
 against the same deadline as the displayed clock. Pausing, seeking, skipping,
 changing a deadline, or leaving the foreground cancels obsolete sound cues;
-returning does not replay missed beeps. Sound remains optional.
+returning retries audio activation without replaying missed beeps. Pointer, touch,
+and keyboard training interactions also retry audio activation. Sound remains optional.
+Audio is created and primed synchronously during click, touchend, or keyboard
+activation, with a silent looping source keeping it active between cues. After
+backgrounding, the next training gesture rebuilds the context. Short 880 Hz cues
+and a longer 1175 Hz final cue use the same audible envelope as Workstr.
 
 While a live session is open and visible, Setrai requests a screen wake lock and
 falls back to the iOS-compatible media technique when the native API is unavailable

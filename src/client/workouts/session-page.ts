@@ -78,11 +78,16 @@ function runSession(root: HTMLElement, model: LiveModel): void {
     window.clearInterval(timer)
     document.removeEventListener('visibilitychange', visible)
     window.removeEventListener('pagehide', cleanup)
-    root.removeEventListener('pointerdown', activateMedia)
+    root.removeEventListener('click', activateMedia, true)
+    root.removeEventListener('touchend', activateMedia, true)
+    root.removeEventListener('keydown', activateMedia, true)
     wakeLock.disable()
     audio.close()
   }
-  function visible() { syncAudio(); if (!document.hidden) { void wakeLock.enable(); tick() } }
+  function visible() {
+    if (document.hidden) audio.background()
+    else { void audio.resume().then(() => syncAudio()); void wakeLock.enable(); tick() }
+  }
   function render() {
     if (disposed) return
     const scroll = root.querySelector('.live-body')?.scrollTop ?? 0
@@ -210,7 +215,9 @@ function runSession(root: HTMLElement, model: LiveModel): void {
   render()
   tick()
   timer = window.setInterval(tick, 100)
-  root.addEventListener('pointerdown', activateMedia)
+  root.addEventListener('click', activateMedia, true)
+  root.addEventListener('touchend', activateMedia, true)
+  root.addEventListener('keydown', activateMedia, true)
   window.addEventListener('pagehide', cleanup)
   document.addEventListener('visibilitychange', visible)
   void wakeLock.enable()
