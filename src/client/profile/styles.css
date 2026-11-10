@@ -96,6 +96,7 @@
 .settings-row-copy { min-width: 0; display: grid; gap: 3px; }
 .settings-row-copy strong { display: block; color: var(--color-text); font: var(--weight-bold) var(--text-body)/1.25 var(--font-sans), sans-serif; }
 .settings-row-copy small { display: block; margin: 0; color: var(--color-muted-strong); font-size: var(--text-caption); line-height: 1.4; }
+.settings-row--action { grid-template-columns: minmax(0, 1fr); }
 .settings-row-control { display: flex; align-items: center; justify-content: flex-end; min-width: 0; }
 .settings-row-button { display: inline-flex; align-items: center; justify-content: center; gap: 7px; min-height: 44px; white-space: nowrap; }
 .settings-row-button svg { width: 16px; height: 16px; flex: none; }

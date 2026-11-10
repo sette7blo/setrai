@@ -96,7 +96,7 @@
 @keyframes exercisePulse { 50% { opacity: 0.62; } }
 @media (max-width: 390px) { .exercise-grid { gap: 0.65rem; } }
 @media (min-width: 720px) { .exercise-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-@media (min-width: 920px) { .exercise-heading { max-width: 42rem; } .exercise-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } .exercise-detail { grid-template-columns: minmax(20rem, 0.9fr) minmax(0, 1.1fr); align-items: start; } .detail-back { grid-column: 1 / -1; } }
+@media (min-width: 920px) { .exercise-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } .exercise-detail { grid-template-columns: minmax(20rem, 0.9fr) minmax(0, 1.1fr); align-items: start; } .detail-back { grid-column: 1 / -1; } }
 
 .exercise-detail h1 { max-width: none; font-size: var(--text-headline); letter-spacing: -.015em; }
 .exercise-detail__content { gap: var(--space-4); }
