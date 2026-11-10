@@ -490,6 +490,111 @@ The exact behavior should remain consistent across optional integrations.
 
 ---
 
+# 9. Omarchy snapshot
+
+Optional outbound integration for the Omarchy desktop bar plugin. When enabled,
+Setrai writes a small JSON snapshot of glanceable training state to disk. See
+`docs/architecture.md` section 12 for the schema.
+
+## `SETRAI_OMARCHY_SNAPSHOT_ENABLED`
+
+Example:
+
+```env
+SETRAI_OMARCHY_SNAPSHOT_ENABLED=false
+```
+
+Controls whether the snapshot file is written.
+
+Default:
+
+```text
+false
+```
+
+When disabled, no file is written and no timer runs.
+
+Secret:
+
+```text
+No
+```
+
+Restart required:
+
+```text
+Yes
+```
+
+## `SETRAI_OMARCHY_SNAPSHOT_PATH`
+
+Example:
+
+```env
+SETRAI_OMARCHY_SNAPSHOT_PATH=/snapshot/snapshot.json
+```
+
+Path of the snapshot file. Leave empty to use:
+
+```text
+$XDG_DATA_HOME/setrai/snapshot.json
+```
+
+falling back to `~/.local/share/setrai/snapshot.json` when `XDG_DATA_HOME` is
+unset. That default suits `npm start` on the desktop itself.
+
+In Docker the default path is inside the read-only container, so set an explicit
+path and bind-mount its *directory* from the host. Mount the directory, not the
+file: the snapshot is replaced by rename, which a single-file bind mount does not
+follow. The host directory must be writable by the container user (uid 1000).
+See `docs/deployment.md`.
+
+Secret:
+
+```text
+No
+```
+
+Restart required:
+
+```text
+Yes
+```
+
+## `SETRAI_OMARCHY_SNAPSHOT_INTERVAL_MS`
+
+Example:
+
+```env
+SETRAI_OMARCHY_SNAPSHOT_INTERVAL_MS=300000
+```
+
+Fallback refresh interval in milliseconds. The snapshot is also refreshed right
+after workouts, body-weight entries, and program edits change it; the timer
+keeps time-driven values such as readiness current.
+
+Default:
+
+```text
+300000
+```
+
+Must be an integer of at least `1000`. An invalid value stops startup.
+
+Secret:
+
+```text
+No
+```
+
+Restart required:
+
+```text
+Yes
+```
+
+---
+
 # 13. Seed format
 
 The final implementation should document exactly which seed representation is supported.

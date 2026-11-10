@@ -44,7 +44,8 @@ import {
   createStatisticsRoutes
 } from './statistics/routes.js'
 import {
-  createRecoveryService
+  createRecoveryService,
+  workoutReadiness
 } from './recovery/service.js'
 import {
   createRecoveryRoutes
@@ -57,6 +58,8 @@ import {
 } from './quick-workout/routes.js'
 import { createBackupService } from './backup/service.js'
 import { createBackupRoutes } from './backup/routes.js'
+import { createOmarchyService } from './omarchy/service.js'
+import { createOmarchyRoutes } from './omarchy/routes.js'
 import { sendJson } from './shared/http.js'
 import {
   handleStaticClientRoute
@@ -86,6 +89,15 @@ const quickWorkoutService =
 const backupService =
   createBackupService(db, { dataDir: config.server.dataDir })
 
+const omarchyService =
+  createOmarchyService(config.omarchy, {
+    sessionService,
+    programService,
+    bodyService,
+    getGroupReadiness: (now) =>
+      workoutReadiness(recoveryService.getRecovery({ now }))
+  })
+
 const exerciseRoutes =
   createExerciseRoutes(exerciseService, {
     dataDir: config.server.dataDir
@@ -106,6 +118,8 @@ const quickWorkoutRoutes =
   createQuickWorkoutRoutes(quickWorkoutService)
 const backupRoutes =
   createBackupRoutes(backupService)
+const omarchyRoutes =
+  createOmarchyRoutes(omarchyService)
 
 const server = http.createServer(
   async (req, res) => {
@@ -114,6 +128,8 @@ const server = http.createServer(
         req.url,
         `http://${req.headers.host || 'localhost'}`
       )
+
+      omarchyRoutes.observe(req, res, url)
 
       if (
         req.method === 'GET' &&
@@ -293,11 +309,20 @@ server.listen(
     console.log(
       `Database: ${config.server.dbPath}`
     )
+
+    if (config.omarchy.snapshotEnabled) {
+      console.log(
+        `Omarchy snapshot: ${config.omarchy.snapshotPath}`
+      )
+    }
+
+    omarchyService.start()
   }
 )
 
 function shutdown() {
   console.log('Shutting down Setrai...')
+  omarchyService.stop()
 
   server.close(() => {
     db.close()

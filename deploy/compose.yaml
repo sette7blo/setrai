@@ -18,6 +18,10 @@ services:
       - "${SETRAI_BIND_ADDRESS:-127.0.0.1}:${SETRAI_HTTP_PORT:-3000}:3000"
     volumes:
       - setrai_data:/data
+      # Omarchy snapshot (optional): uncomment together with
+      # SETRAI_OMARCHY_SNAPSHOT_ENABLED=true and
+      # SETRAI_OMARCHY_SNAPSHOT_PATH=/snapshot/snapshot.json in .env.
+      # - ${XDG_DATA_HOME:-${HOME}/.local/share}/setrai:/snapshot
     read_only: true
     tmpfs:
       - /tmp:rw,noexec,nosuid,size=64m

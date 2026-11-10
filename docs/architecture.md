@@ -465,6 +465,66 @@ AI_ENABLED=false
 
 ---
 
+## 12. Omarchy integration
+
+`src/server/omarchy/` is an optional *outbound* integration, not a core concern.
+It writes a small JSON snapshot of glanceable training state to disk so that
+desktop consumers (the Omarchy bar plugin in `sette7blo/setrai-omarchy`) can
+watch a file instead of calling the server.
+
+Rules:
+
+- it is off by default and enabled only by `SETRAI_OMARCHY_SNAPSHOT_ENABLED`;
+- it exposes no HTTP endpoint and changes nothing in the client;
+- it never owns or mutates training data: it only reads through the session,
+  program, body, and recovery service contracts;
+- it imports no other feature. `src/server/index.js` passes the service
+  contracts in, and reports finished requests to `routes.js`, which decides
+  whether a successful mutation should refresh the snapshot;
+- core features do not know it exists, so removing the directory and its wiring
+  in `index.js` removes the integration completely;
+- a snapshot write failure is logged and never fails a request or startup.
+
+The snapshot is refreshed on startup, after successful requests that can change
+it (debounced), and on a fallback timer so time-driven values such as readiness
+stay current. Writes are atomic: a temp file in the destination directory is
+renamed over the snapshot.
+
+Snapshot schema v1 is a contract consumed by file watchers. Add fields only in
+a backwards-compatible way; anything else requires a new `schemaVersion`.
+
+```json
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-11-09T12:34:56.000Z",
+  "activeProgram": { "id": 3, "name": "Upper Body A", "weekIndex": null },
+  "resumeWorkout": { "sessionId": 41, "url": "/sessions/41" },
+  "today": { "volumeKg": 0, "sessionsCompleted": 0 },
+  "week": { "volumeKg": 0, "sessions": 0, "readiness": 1 },
+  "lastWorkout": { "finishedAt": "2026-11-09T11:02:00.000Z", "name": "Upper Body A", "durationMin": 52 },
+  "body": { "weightKg": 82.4, "measuredAt": "2026-11-09" }
+}
+```
+
+Every section may be `null`, and consumers must render with partial data.
+
+- `activeProgram` is the saved program of the most recently started session.
+  Setrai has no explicit active-program setting, generated Quick Workout
+  programs are skipped, and `weekIndex` is reserved and currently always `null`.
+- `resumeWorkout` is the most recent unfinished session; `url` is a path
+  relative to the Setrai base URL.
+- `today` and `week` count completed sessions by UTC day and Monday-based UTC
+  week, matching Statistics. Volume is weight times reps over completed sets.
+- `week.readiness` is the mean recovery (0 to 1) across all primary muscle
+  groups, where a group not trained recently counts as fully ready. It matches
+  the "% ready" figure on the Recovery page.
+- `lastWorkout.name` is the session's program name and `durationMin` is whole
+  minutes from start to finish.
+- `generatedAt` advances at least once per configured interval while the
+  server runs; a much older value means Setrai is not running.
+
+---
+
 ## 15. Recovery architecture
 
 Recovery is a core training feature.

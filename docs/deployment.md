@@ -111,6 +111,13 @@ changes. `restart` alone does not reload changed container environment values.
 - Wallet configuration remains optional; see [configuration](configuration.md)
   for supported settings and capability limitations.
 
+- To feed the Omarchy bar plugin, set `SETRAI_OMARCHY_SNAPSHOT_ENABLED=true` and
+  `SETRAI_OMARCHY_SNAPSHOT_PATH=/snapshot/snapshot.json`, then uncomment the
+  snapshot bind mount in `compose.yaml`. Create the host directory first
+  (`mkdir -p ~/.local/share/setrai`) so Docker does not create it as root; it
+  must be writable by uid 1000. Running from source with `npm start` needs only
+  the first setting.
+
 Keep `.env` private. Do not share expanded `docker compose config` output because
 it contains runtime environment values; use `docker compose config --quiet` to
 validate configuration without printing them.

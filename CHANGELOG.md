@@ -11,6 +11,8 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 ## [Unreleased]
 
+- Added an optional Omarchy snapshot: with `SETRAI_OMARCHY_SNAPSHOT_ENABLED=true`, Setrai writes a small JSON file of glanceable training state (resume workout, today and week volume, readiness, last workout, body weight) for the Omarchy bar plugin. Off by default; Docker installs also need the snapshot bind mount described in `docs/deployment.md`.
+
 ## [v0.3.0] — 2026-11-09
 
 - Added Settings → Backup with a complete `.setrai` archive containing the SQLite database and uploaded exercise images, confirmed and validated import, automatic schema upgrades, transactional database restore, safe media replacement, legacy `.db` import, and a complete server-side pre-restore safety archive.
