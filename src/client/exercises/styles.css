@@ -616,3 +616,7 @@
 .exercise-detail__hero .exercise-image-frame { aspect-ratio: 4 / 3; }
 .detail-meta { margin: -8px 0 0; color: var(--color-muted); font-size: var(--text-body); line-height: 1.45; }
 .detail-meta[hidden] { display: none; }
+
+/* Wide screens fit more of the library per row. */
+@media (min-width: 1200px) { .exercise-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+@media (min-width: 1600px) { .exercise-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); } }

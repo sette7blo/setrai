@@ -84,12 +84,13 @@ function weekStrip(stats: StatisticsOverview, unit: WeightUnit): HTMLElement {
   ])
 }
 
-function lastWorkout(session: Session): HTMLElement {
+function lastWorkout(session: Session, label = ''): HTMLElement {
   const link = element('a', 'today-last')
   link.href = '/statistics/history'
   const copy = element('span', 'today-last-copy')
   const details = [formatSessionDate(session.finishedAt ?? session.startedAt), sessionDuration(session)].filter(Boolean).join(', ')
-  copy.append(element('small', '', 'Last workout'), element('strong', '', session.programName || 'Workout'), element('span', '', details))
+  if (label) copy.append(element('small', '', label))
+  copy.append(element('strong', '', session.programName || 'Workout'), element('span', '', details))
   link.append(copy, iconElement(ChevronRight))
   return link
 }
@@ -120,8 +121,10 @@ export async function renderTodayPage(root: HTMLElement): Promise<void> {
     page.append(todayHeading())
 
     const active = sessions.find(session => !session.finishedAt)
-    const finished = sessions.find(session => session.finishedAt)
+    // Phones show the latest workout; wide screens have room for the last three.
+    const finished = sessions.filter(session => session.finishedAt).slice(0, 3)
     const main = element('div', 'today-main')
+    main.append(element('h2', 'today-section-title today-section-title--wide', 'Readiness'))
     if (active) main.append(resumeCard(active))
     main.append(readinessCard(recovery))
 
@@ -131,7 +134,7 @@ export async function renderTodayPage(root: HTMLElement): Promise<void> {
 
     const side = element('div', 'today-side')
     side.append(sectionTitle('This week'), weekStrip(stats, profile.weightUnit))
-    if (finished) side.append(lastWorkout(finished))
+    side.append(...finished.map((session, index) => lastWorkout(session, index === 0 ? 'Last workout' : '')))
 
     page.append(main, workout, side)
     root.replaceChildren(page)

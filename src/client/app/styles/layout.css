@@ -8,7 +8,7 @@
   padding-bottom: calc(var(--nav-height) + env(safe-area-inset-bottom));
 }
 .app-frame:has(.now-training:not([hidden])) { padding-bottom: calc(var(--nav-height) + 68px + env(safe-area-inset-bottom)); }
-.app-content { width: min(100%, 1040px); margin: 0 auto; padding: 0 16px 20px; }
+.app-content { width: min(100%, 1200px); margin: 0 auto; padding: 0 16px 20px; }
 .app-content:focus { outline: none; }
 
 .route-container { position: relative; }
@@ -126,7 +126,8 @@ html[data-section="/today"] .app-frame:has(.now-training:not([hidden])) { paddin
   .sidebar-nav .nav-link { min-height: 44px; padding: 0 8px; border-radius: var(--radius-md); font-size: var(--text-body); transition: background-color var(--duration-base) var(--ease-out); }
   .sidebar-nav .nav-link:hover { background: color-mix(in srgb, var(--color-text) 5%, transparent); }
   .sidebar-nav .nav-link-icon { width: 36px; }
-  .sidebar-nav .nav-link--active { background: var(--color-surface); box-shadow: inset 0 0 0 1px var(--color-border); }
+  /* Same active treatment as the bottom navigation: a tint and a heavier icon, no border. */
+  .sidebar-nav .nav-link--active { background: color-mix(in srgb, var(--color-text) 10%, transparent); font-weight: var(--weight-bold); }
   .sidebar-nav .nav-link--active .nav-link-icon { background: none; }
   .now-training { left: 16px; right: auto; bottom: 16px; width: 200px; flex-direction: column; align-items: stretch; padding: 12px; }
   .now-training-action { justify-content: center; }
