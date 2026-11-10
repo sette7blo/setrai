@@ -1,6 +1,3 @@
-import { BicepsFlexed, ChartColumn, Trophy } from 'lucide'
-
-import { iconElement } from '../app/navigation.js'
 import { progressHeading } from '../app/section-navigation.js'
 import { statStrip } from '../shared/stat-strip.js'
 import { bindPageRetry, pageEmpty, pageError, pageLoading } from '../shared/page-states.js'
@@ -40,15 +37,15 @@ function emptyView(): HTMLElement {
   return page
 }
 
-function sectionHead(icon: Parameters<typeof iconElement>[0], title: string, note = ''): HTMLElement {
+function card(title: string, note = '', modifier = ''): { card: HTMLElement, head: HTMLElement } {
+  const element = document.createElement('section')
+  element.className = modifier ? `stats-card ${modifier}` : 'stats-card'
   const head = document.createElement('div')
-  head.className = 'subsection-head stats-section-head'
-  const name = document.createElement('span')
-  name.className = 'stats-section-title'
-  name.append(iconElement(icon), Object.assign(document.createElement('span'), { textContent: title }))
-  head.append(name)
+  head.className = 'stats-card-head'
+  head.append(Object.assign(document.createElement('h2'), { textContent: title }))
   if (note) head.append(Object.assign(document.createElement('small'), { textContent: note }))
-  return head
+  element.append(head)
+  return { card: element, head }
 }
 
 const RANGE_OPTIONS: Array<{ value: TrainingRange, label: string }> = [
@@ -60,12 +57,12 @@ const RANGE_OPTIONS: Array<{ value: TrainingRange, label: string }> = [
 
 function rangeBar(active: TrainingRange, onChange: (range: TrainingRange) => void): HTMLElement {
   const bar = document.createElement('div')
-  bar.className = 'stats-range'
+  bar.className = 'stats-segments'
   bar.setAttribute('role', 'group')
   bar.setAttribute('aria-label', 'Training date range')
   RANGE_OPTIONS.forEach(({ value, label }) => {
     const button = document.createElement('button')
-    button.className = `stats-range-btn${value === active ? ' active' : ''}`
+    button.className = 'stats-segment'
     button.type = 'button'
     button.setAttribute('aria-pressed', String(value === active))
     button.textContent = label
@@ -96,24 +93,23 @@ function compactVolume(volumeKg: number, unit: WeightUnit): string {
 }
 
 function weeklyPanel(points: WeeklyVolumePoint[], unit: WeightUnit, allPoints: WeeklyVolumePoint[], range: TrainingRange): HTMLElement {
-  const panel = document.createElement('section')
-  panel.className = 'panel stats-panel'
   const recent = points.slice(-8)
   const peak = recent.reduce<WeeklyVolumePoint | null>((best, point) => (!best || point.volume > best.volume ? point : best), null)
-  const peakNote = peak && peak.volume > 0 ? `Best week ${formatVolumeKg(peak.volume, unit)}` : ''
-  const head = sectionHead(ChartColumn, 'Weekly volume', peakNote)
+  const { card: panel, head } = card('Weekly volume')
+  if (peak && peak.volume > 0) {
+    const title = document.createElement('div')
+    title.className = 'stats-card-title'
+    title.append(head.firstElementChild!, Object.assign(document.createElement('small'), { textContent: `Best week ${formatVolumeKg(peak.volume, unit)}` }))
+    head.append(title)
+  }
   let shareDialog: HTMLDialogElement | null = null
   if (allPoints.length > 0) {
     const share = createVolumeShareExperience(allPoints, unit, range)
-    const actions = document.createElement('div')
-    actions.className = 'body-trend-actions volume-share-actions'
-    const note = head.querySelector('small')
-    if (note) actions.append(note)
-    actions.append(share.button)
-    head.append(actions)
+    share.button.className = 'button stats-share-icon'
+    share.button.setAttribute('aria-label', 'Share weekly volume report')
+    head.append(share.button)
     shareDialog = share.dialog
   }
-  panel.append(head)
   const chart = document.createElement('div')
   chart.id = 'prog-bars'
   chart.className = 'bars'
@@ -136,33 +132,35 @@ function weeklyPanel(points: WeeklyVolumePoint[], unit: WeightUnit, allPoints: W
 }
 
 function muscleDistribution(rows: MuscleVolume[], unit: WeightUnit): HTMLElement {
+  if (rows.length === 0) return Object.assign(document.createElement('p'), { id: 'prog-dist', className: 'stats-card-empty', textContent: 'No logged volume yet.' })
   const dist = document.createElement('div')
   dist.id = 'prog-dist'
-  dist.className = 'dist'
-  if (rows.length === 0) {
-    dist.classList.add('empty')
-    dist.textContent = 'No logged volume yet.'
-    return dist
-  }
+  dist.className = 'stats-dist'
   const max = Math.max(1, ...rows.map((row) => row.volume))
   rows.slice(0, 8).forEach((row) => {
     const item = document.createElement('div')
-    item.className = 'dist-row'
-    item.innerHTML = `<small>${displayName(row.muscle)}</small><div class="track"><div class="fill" style="width:${Math.round((row.volume / max) * 100)}%"></div></div><small>${formatVolumeKg(row.volume, unit)}</small>`
+    item.className = 'stats-dist-row'
+    const track = document.createElement('div')
+    track.className = 'stats-dist-track'
+    const fill = document.createElement('div')
+    fill.className = 'stats-dist-fill'
+    fill.style.width = `${Math.round((row.volume / max) * 100)}%`
+    track.append(fill)
+    item.append(
+      Object.assign(document.createElement('span'), { textContent: displayName(row.muscle) }),
+      track,
+      Object.assign(document.createElement('span'), { textContent: formatVolumeKg(row.volume, unit) })
+    )
     dist.append(item)
   })
   return dist
 }
 
 function recordsList(records: PersonalRecord[], unit: WeightUnit): HTMLElement {
+  if (records.length === 0) return Object.assign(document.createElement('p'), { id: 'prog-prs', className: 'stats-card-empty', textContent: 'No records yet.' })
   const list = document.createElement('div')
   list.id = 'prog-prs'
-  list.className = 'list stats-records'
-  if (records.length === 0) {
-    list.classList.add('empty')
-    list.textContent = 'No records yet.'
-    return list
-  }
+  list.className = 'stats-records'
   // Heaviest first, so the order itself is the ranking.
   const ranked = [...records].sort((a, b) => b.estimated1RM - a.estimated1RM).slice(0, 6)
   for (const record of ranked) {
@@ -174,12 +172,7 @@ function recordsList(records: PersonalRecord[], unit: WeightUnit): HTMLElement {
       Object.assign(document.createElement('strong'), { textContent: record.exerciseName }),
       Object.assign(document.createElement('small'), { textContent: `Top set ${formatWeightFromKg(record.maxWeight, unit)}` })
     )
-    const best = document.createElement('div')
-    best.className = 'stats-record-best'
-    best.append(
-      Object.assign(document.createElement('strong'), { textContent: formatWeightFromKg(record.estimated1RM, unit) }),
-      Object.assign(document.createElement('small'), { textContent: 'est. 1RM' })
-    )
+    const best = Object.assign(document.createElement('strong'), { className: 'stats-record-best', textContent: formatWeightFromKg(record.estimated1RM, unit) })
     const share = createRecordShareExperience(record, unit)
     row.append(copy, best, share.button)
     list.append(row, share.dialog)
@@ -214,16 +207,11 @@ function trainingView(stats: StatisticsOverview, unit: WeightUnit): HTMLElement 
   }
   range = rangeBar(activeRange, selectRange)
   weekly = weeklyPanel(weeklyVolumeForRange(stats.weeklyVolume, activeRange), unit, stats.weeklyVolume, activeRange)
-  section.append(tiles, range, weekly)
-  const panel = document.createElement('section')
-  panel.className = 'panel stats-panel'
-  panel.append(
-    sectionHead(BicepsFlexed, 'Muscle distribution', 'by volume'),
-    muscleDistribution([...stats.volumeByMuscle].sort((a, b) => b.volume - a.volume), unit),
-    sectionHead(Trophy, 'Personal records', 'heaviest first'),
-    recordsList(stats.personalRecords, unit)
-  )
-  section.append(panel)
+  const muscles = card('Muscle distribution', 'By volume')
+  muscles.card.append(muscleDistribution([...stats.volumeByMuscle].sort((a, b) => b.volume - a.volume), unit))
+  const records = card('Personal records', 'Est. 1RM, heaviest first', 'stats-card--records')
+  records.card.append(recordsList(stats.personalRecords, unit))
+  section.append(tiles, range, weekly, muscles.card, records.card)
   return section
 }
 

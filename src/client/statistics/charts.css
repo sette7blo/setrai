@@ -9,16 +9,13 @@
 .blabel { overflow: hidden; max-width: 100%; color: var(--color-muted); font-size: var(--text-caption); line-height: 1.2; text-overflow: clip; white-space: nowrap; }
 .bar.latest .blabel { color: var(--color-text); font-weight: var(--weight-medium); }
 
-.stats-records { display: grid; }
-.stats-records.empty { padding: 12px 0; color: var(--color-muted); font-size: var(--text-body); }
-.stats-record { display: grid; grid-template-columns: minmax(0, 1fr) auto 44px; gap: 10px; align-items: center; min-height: 60px; padding: 8px 0; }
+.stats-records { display: grid; margin-block: -8px; }
+.stats-record { display: grid; grid-template-columns: minmax(0, 1fr) auto 44px; gap: 10px; align-items: center; height: 64px; }
 .stats-record + dialog + .stats-record, .stats-record + .stats-record { border-top: var(--border-subtle); }
 .stats-record-copy { display: grid; gap: 2px; min-width: 0; }
 .stats-record-copy strong { overflow: hidden; font-size: var(--text-body); font-weight: var(--weight-medium); text-overflow: ellipsis; white-space: nowrap; }
-.stats-record-copy small { color: var(--color-muted); font-size: var(--text-caption); }
-.stats-record-best { display: grid; gap: 1px; justify-items: end; }
-.stats-record-best strong { font-size: var(--text-section); font-weight: var(--weight-bold); font-stretch: var(--font-display-stretch); line-height: 1; font-variant-numeric: tabular-nums; white-space: nowrap; }
-.stats-record-best small { color: var(--color-muted); font-size: var(--text-caption); }
+.stats-record-copy small { color: var(--color-muted); font-size: var(--text-meta); }
+.stats-record-best { font-size: var(--text-section); font-weight: var(--weight-bold); font-stretch: var(--font-display-stretch); line-height: 1; font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
 .stats-record-share.button { width: 44px; min-height: 44px; padding: 0; border-color: transparent; background: transparent; color: var(--color-muted-strong); }
 .stats-record-share.button:hover { background: var(--color-surface-strong); }
 
@@ -27,10 +24,6 @@
 
 .stats-section-head small { color: var(--color-muted) !important; font: var(--weight-regular) var(--text-caption)/1.2 var(--font-sans) !important; }
 
-/* Desktop: totals and the weekly chart beside distribution and records. */
 @media (min-width: 1000px) {
-  .stats-training-view { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); grid-template-rows: auto auto 1fr; column-gap: 24px; align-items: start; }
-  .stats-training-view > * { grid-column: 1; }
-  .stats-training-view > .stats-panel:last-child { grid-column: 2; grid-row: 1 / -1; }
   .stats-body-view { max-width: 720px; }
 }

@@ -1,13 +1,10 @@
 /* Shared visual contracts. Layout and interactions remain feature-owned. */
 
-
 :is(.exercise-heading, .statistics-page-head) {
   margin: 0;
   padding: 8px 0 4px;
   gap: 16px;
 }
-
-
 
 :is(.workout-card, .history-card, .session-detail-ex, .workout-exercise) {
   background: var(--color-surface) !important;
@@ -24,7 +21,6 @@
   box-shadow: none !important;
 }
 
-
 :is(.exercise-page .exercise-card,
   .exercise-page .exercise-search, .exercise-page .filter-icon, .exercise-page .exercise-selection-bar,
   .exercise-detail .exercise-detail__content, .workout-card,
@@ -36,9 +32,6 @@
   box-shadow: none !important;
 }
 
-
-
-
 :is( .exercise-page .exercise-card, .settings-category) {
   border-radius: var(--radius-lg) !important;
 }
@@ -46,7 +39,6 @@
 .exercise-page .exercise-card__body,
 .workout-card-body { border-top: var(--border-subtle) !important; }
 .exercise-page .exercise-image-frame { border-bottom: 0 !important; }
-
 
 .settings-category[open] .settings-category-icon {
   color: var(--color-on-primary) !important;
@@ -68,13 +60,6 @@
 :is(
   .detail-pills > span, .badge) { border: var(--border-subtle) !important; }
 
-
-
-
-
-
-
-
 :is(button, a, input, select, textarea, summary):focus-visible {
   outline: 2px solid var(--color-text) !important;
   outline-offset: 3px;
@@ -84,7 +69,6 @@
   *, *::before, *::after { scroll-behavior: auto !important; }
    .filter-icon:hover, .exercise-card:hover { transform: none; }
 }
-
 
 /* Exercise cards: preserve real 4:3 art ratio in Library. */
 .exercise-page .exercise-grid {

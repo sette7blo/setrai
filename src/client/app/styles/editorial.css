@@ -1,6 +1,5 @@
 /* Light theme surface rules. Tokens live in tokens.css. */
 
-
 html,
 body {
   color: var(--color-text);
@@ -10,7 +9,6 @@ body {
 
 body::before { display: none; }
 
-
 .mobile-brand__logo,
 .brand-mark__logo {
   border-radius: 0;
@@ -18,7 +16,6 @@ body::before { display: none; }
   filter: none;
   mix-blend-mode: normal;
 }
-
 
 .exercise-heading h1,
 .exercise-detail h1,
@@ -31,7 +28,6 @@ body::before { display: none; }
   letter-spacing: -.015em;
   text-wrap: balance;
 }
-
 
 .filter-icon,
 .exercise-search,
@@ -51,7 +47,6 @@ body::before { display: none; }
   backdrop-filter: none !important;
 }
 
-
 .filter-icon,
 .exercise-search,
 .exercise-card,
@@ -62,26 +57,20 @@ body::before { display: none; }
   border-radius: var(--radius-lg) !important;
 }
 
-
-.filter-icon,
-.stats-range-btn {
+.filter-icon {
   color: var(--color-text) !important;
   font-weight: var(--weight-medium) !important;
   text-shadow: none !important;
   text-transform: none;
 }
 
-
-.filter-icon--active,
-.stats-range-btn.active {
+.filter-icon--active {
   background: var(--color-text) !important;
   color: var(--color-on-primary) !important;
   border-color: var(--color-text) !important;
 }
 
-
 .filter-icon--active svg { color: var(--color-on-primary) !important; }
-
 
 .filter-icon:hover,
 .exercise-card:hover { transform: translateY(-1px); }
@@ -129,7 +118,6 @@ body::before { display: none; }
   height: 2px !important;
 }
 
-
 .body-entry-icon,
 .program-browse-icon {
   border: 1px solid var(--color-border) !important;
@@ -137,7 +125,6 @@ body::before { display: none; }
   color: var(--color-text) !important;
   box-shadow: none !important;
 }
-
 
 .exercise-card h2,
 .program-card h2,
@@ -155,7 +142,6 @@ body::before { display: none; }
   backdrop-filter: none !important;
 }
 
-
 .exercise-card p,
 .exercise-card small,
 .exercise-card__muscle,
@@ -164,7 +150,6 @@ body::before { display: none; }
 .detail-description {
   color: var(--color-muted-strong) !important;
 }
-
 
 .detail-pills > span,
 .badge {
@@ -210,7 +195,6 @@ body::before { display: none; }
 .page-toolbar-action svg,
 .filter-icon svg,
 .program-toolbar-action svg { width: var(--toolbar-action-icon) !important; height: var(--toolbar-action-icon) !important; }
-
 
 .exercise-grid { gap: 10px; }
 .exercise-card { overflow: hidden; }
@@ -273,7 +257,6 @@ body::before { display: none; }
 .exercise-select-button--active { background: var(--color-text) !important; color: var(--color-on-primary) !important; border-radius: var(--radius-pill) !important; }
 .exercise-select-button--active svg { stroke: var(--color-on-primary); }
 
-
 input,
 select,
 textarea {
@@ -282,8 +265,6 @@ textarea {
   color: var(--color-text) !important;
 }
 
-
-.dist-row .fill,
 .body-goal-fill,
 .bmi-marker { background: var(--color-text) !important; }
 
@@ -293,13 +274,11 @@ textarea {
 
 @media (max-width: 719px) {
 
-
   .mobile-brand__logo { width: 54px; height: 42px; }
 
           .exercise-heading h1,
   .statistics-page-head h1 { font-size: var(--font-page-title) !important; font-weight: var(--weight-medium) !important; letter-spacing: -.015em !important; line-height: 1 !important; }
   .exercise-heading { gap: 12px; }
-
 
   .page-toolbar, .exercise-controls, .program-toolbar { gap: var(--toolbar-gap) !important; }
   .exercise-card { border-radius: var(--radius-lg) !important; }
@@ -310,27 +289,6 @@ textarea {
   .exercise-card .exercise-image-frame { aspect-ratio: 16 / 10 !important; }
   .favorite-button { width: 44px !important; height: 44px !important; }
 
-
-}
-
-
-.stats-range {
-  border: 1px solid var(--color-border) !important;
-  background: var(--color-surface) !important;
-  box-shadow: none !important;
-  padding: 3px !important;
-}
-
-.stats-range-btn {
-  border: 0 !important;
-  background: var(--color-surface) !important;
-  color: var(--color-text) !important;
-  box-shadow: none !important;
-}
-
-.stats-range-btn.active {
-  background: var(--color-text) !important;
-  color: var(--color-on-primary) !important;
 }
 
 /* Statistics gets restrained grayscale data contrast without colorful accents. */
@@ -347,16 +305,13 @@ textarea {
   --stats-panel: var(--color-bg);
 }
 
-
 .statistics-page .stats-panel {
   background:
     var(--color-text),
     var(--color-surface) !important;
 }
 
-
 .statistics-page .track,
-.statistics-page .dist-row .track,
 .statistics-page .body-goal-bar,
 .statistics-page .bmi-bar {
   background: var(--color-surface-strong) !important;
@@ -366,5 +321,4 @@ textarea {
   background: var(--color-text) !important;
   background-image: none !important;
 }
-
 

@@ -11,6 +11,8 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 ## [Unreleased]
 
+- Progress, Training tab: weekly volume, muscle distribution and personal records are now three separate cards, the range selector is a full-height control, and record rows are one fixed height with the estimated 1RM aligned on the right.
+
 ## [v0.4.0] — 2026-11-10
 
 - Tightened the visual foundations: text now uses one scale of eight sizes and four weights with nothing smaller than 12px, corners use five shared radii, every interface colour comes from the design tokens, and transitions share three durations and one easing. Secondary text is slightly darker for contrast, and page changes no longer fade.
