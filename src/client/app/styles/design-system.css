@@ -41,7 +41,7 @@
 
 
 :is( .exercise-page .exercise-card, .settings-category) {
-  border-radius: 16px !important;
+  border-radius: var(--radius-lg) !important;
 }
 
 .exercise-page .exercise-card__body,

@@ -135,7 +135,7 @@ body::before { display: none; }
 .page-tab--active::after {
   background: var(--color-text) !important;
   box-shadow: none !important;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   height: 2px !important;
 }
 
@@ -286,7 +286,7 @@ body::before { display: none; }
 .favorite-button--active svg,
 .exercise-select-button--active svg { fill: var(--color-text); }
 .exercise-card--selected { outline: 4px solid var(--color-text); outline-offset: -6px; }
-.exercise-select-button--active { background: var(--color-text) !important; color: var(--color-on-primary) !important; border-radius: 999px !important; }
+.exercise-select-button--active { background: var(--color-text) !important; color: var(--color-on-primary) !important; border-radius: var(--radius-pill) !important; }
 .exercise-select-button--active svg { stroke: var(--color-on-primary); }
 
 
@@ -332,7 +332,7 @@ textarea {
 
 
   .page-toolbar, .exercise-controls, .program-toolbar { gap: var(--toolbar-gap) !important; }
-  .exercise-card { border-radius: 16px !important; }
+  .exercise-card { border-radius: var(--radius-lg) !important; }
   .exercise-card h2 { font-size: var(--text-meta) !important; line-height: 1.16 !important; font-weight: var(--weight-medium) !important; letter-spacing: -.025em !important; }
   .exercise-card__muscle,
   .exercise-card__muscle small { font-size: var(--text-caption) !important; line-height: 1 !important; }

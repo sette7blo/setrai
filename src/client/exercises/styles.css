@@ -37,7 +37,7 @@
 
 .exercise-count { margin: 0 0 12px; color: var(--color-muted-strong); font-size: var(--text-caption); line-height: 1.5; font-weight: var(--weight-regular); }
 .exercise-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
-.exercise-card { position: relative; overflow: hidden; border: 1px solid var(--color-border); border-radius: 16px; background: linear-gradient(150deg, rgba(var(--color-primary-rgb), .04), transparent 60%), var(--color-surface); box-shadow: none; }
+.exercise-card { position: relative; overflow: hidden; border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: linear-gradient(150deg, rgba(var(--color-primary-rgb), .04), transparent 60%), var(--color-surface); box-shadow: none; }
 .exercise-card__link { display: grid; color: inherit; }
 .exercise-image-frame { position: relative; overflow: hidden; aspect-ratio: 4 / 3; background: radial-gradient(circle at 50% 58%, rgba(var(--color-primary-rgb),0.20), transparent 52%), linear-gradient(135deg, rgba(15,41,39,0.72), rgba(4,13,15,0.88)); }
 .exercise-image-frame img { display: block; width: 100%; height: 100%; object-fit: cover; }
@@ -50,13 +50,13 @@
 .exercise-card__muscle { display: inline-flex; align-items: center; gap: 5px; color: var(--color-muted); font: var(--weight-bold) var(--text-caption)/1.4 var(--font-sans); }
 
 .exercise-card small { color: var(--color-muted); }
-.favorite-button { position: absolute; top: 0.55rem; right: 0.55rem; display: inline-grid; width: 2.1rem; height: 2.1rem; place-items: center; border: 1px solid rgba(229,239,255,0.42); border-radius: 999px; color: #4d4b47; background: var(--color-surface); border-color: var(--color-border); backdrop-filter: blur(12px); cursor: pointer; }
+.favorite-button { position: absolute; top: 0.55rem; right: 0.55rem; display: inline-grid; width: 2.1rem; height: 2.1rem; place-items: center; border: 1px solid rgba(229,239,255,0.42); border-radius: var(--radius-pill); color: #4d4b47; background: var(--color-surface); border-color: var(--color-border); backdrop-filter: blur(12px); cursor: pointer; }
 .favorite-button svg { width: 1.15rem; height: 1.15rem; }
 .favorite-button--active { color: var(--color-warning); border-color: rgba(248,222,90,0.62); background: rgba(20,18,6,0.7); }
 .favorite-button--active svg { fill: currentColor; }
 .exercise-card--selected { border-color: rgba(var(--color-primary-rgb),0.78); box-shadow: 0 0 0 1px rgba(var(--color-primary-rgb),0.22), 0 18px 48px rgba(0,0,0,0.34), 0 0 26px rgba(var(--color-primary-rgb),0.16); }
 .exercise-card[data-selectable=true] .exercise-card__link { cursor: pointer; }
-.exercise-select-button { position: absolute; top: 0.55rem; left: 0.55rem; z-index: 2; display: inline-grid; width: 2.1rem; height: 2.1rem; place-items: center; border: 1px solid rgba(229,239,255,0.42); border-radius: 999px; color: #dfe8f7; background: rgba(4,8,10,0.72); backdrop-filter: blur(12px); cursor: pointer; }
+.exercise-select-button { position: absolute; top: 0.55rem; left: 0.55rem; z-index: 2; display: inline-grid; width: 2.1rem; height: 2.1rem; place-items: center; border: 1px solid rgba(229,239,255,0.42); border-radius: var(--radius-pill); color: #dfe8f7; background: rgba(4,8,10,0.72); backdrop-filter: blur(12px); cursor: pointer; }
 .exercise-select-button svg { width: 1.05rem; height: 1.05rem; }
 .exercise-select-button--active { color: #031010; border-color: var(--color-primary); background: var(--color-primary); box-shadow: 0 0 16px rgba(var(--color-primary-rgb),0.42); }
 .exercise-card__selection { padding: 8px; background: var(--color-surface); }
@@ -67,7 +67,7 @@
 .exercise-card.exercise-card--selected { outline: 2px solid var(--color-text); outline-offset: -2px; }
 .exercise-selection-toggle { /* shared page-toolbar-action density */ }
 .exercise-selection-toggle[aria-pressed="true"] { color: var(--color-on-primary); background: var(--color-text); border-color: var(--color-text); }
-.exercise-selection-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 0 0 var(--space-3); padding: 10px; border: 1px solid rgba(var(--color-primary-rgb),0.3); border-radius: 15px; background: rgba(var(--color-primary-rgb),0.08); }
+.exercise-selection-bar { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin: 0 0 var(--space-3); padding: 10px; border: 1px solid rgba(var(--color-primary-rgb),0.3); border-radius: var(--radius-md); background: rgba(var(--color-primary-rgb),0.08); }
 .exercise-selection-bar strong { margin-right: auto; font-size: var(--text-body); }
 .exercise-selection-bar .button { min-height: 38px; padding-inline: 10px; font-size: var(--text-caption); }
 .button--danger { color: #ffe8e8; border-color: rgba(255,107,107,0.42); background: rgba(120,20,20,0.22); }
@@ -78,7 +78,7 @@
 .exercise-empty { border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: clamp(1.25rem, 5vw, 2rem); background: var(--color-surface); border: 1px solid var(--color-border); }
 .exercise-empty h2, .detail-section h2 { margin-top: 0; letter-spacing: -.015em; }
 .exercise-card--loading, .exercise-detail--loading { min-height: 16rem; animation: exercisePulse 1.4s ease-in-out infinite; }
-.exercise-card--loading .exercise-card__body span, .exercise-card--loading .exercise-card__body small, .exercise-detail--loading span, .exercise-heading--skeleton div { display: block; height: 1rem; border-radius: 999px; background: rgba(255,255,255,0.09); }
+.exercise-card--loading .exercise-card__body span, .exercise-card--loading .exercise-card__body small, .exercise-detail--loading span, .exercise-heading--skeleton div { display: block; height: 1rem; border-radius: var(--radius-pill); background: rgba(255,255,255,0.09); }
 .exercise-card--loading .exercise-card__body span { width: 60%; }
 .exercise-card--loading .exercise-card__body small { width: 38%; }
 .detail-back { display: inline-flex; width: fit-content; min-height: 44px; align-items: center; gap: var(--space-2); color: var(--color-muted-strong); font-weight: var(--weight-heavy); }
@@ -130,7 +130,7 @@
 .exercise-detail .detail-section h2, .detail-instructions summary { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; font: var(--weight-heavy) var(--text-caption)/1.3 var(--font-sans); letter-spacing: .01em; text-transform: none; }
 .detail-section h2 svg, .detail-instructions summary svg { width: 16px; height: 16px; color: var(--color-primary); }
 .exercise-detail .muscle-map { padding: 0; border: 0; background: transparent; }
-.muscle-map > div:has(svg) { margin-top: 14px; padding: 12px; border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: rgba(var(--color-primary-rgb), 0.04); }
+.muscle-map > div:has(svg) { margin-top: 14px; padding: 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: rgba(var(--color-primary-rgb), 0.04); }
 .detail-instructions { border-top: 1px solid var(--color-border); padding-top: 16px; }
 .detail-instructions summary { min-height: 44px; margin: 0; cursor: pointer; list-style: none; }
 .detail-instructions summary::-webkit-details-marker { display: none; }
@@ -163,7 +163,7 @@
   min-height: 44px;
   padding: 0;
   border: 1px solid var(--color-border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   color: var(--color-muted-strong);
   background: var(--color-surface);
   cursor: pointer;
@@ -218,7 +218,7 @@
   .exercise-controls { /* shared toolbar density */ }
   .exercise-count { margin-bottom: 10px; font-size: var(--text-caption); font-weight: var(--weight-regular); }
   .exercise-grid { gap: 10px; }
-  .exercise-card { border-radius: 16px; border-color: var(--color-border); box-shadow: none; }
+  .exercise-card { border-radius: var(--radius-lg); border-color: var(--color-border); box-shadow: none; }
   .exercise-card .exercise-image-frame { aspect-ratio: 4 / 3; }
   .exercise-card__body { min-height: 64px; padding: 12px; gap: 5px; }
   .exercise-card h2 { font-size: var(--text-body); line-height: 1.25; letter-spacing: -0.025em; padding-right: 25px; }
@@ -234,7 +234,7 @@
   .exercise-image-placeholder svg { width: 26px; height: 26px; }
   .exercise-image-placeholder span { font-size: var(--text-caption); letter-spacing: .01em; }
 
-  .exercise-detail__content { padding: 16px; gap: 14px; border-radius: 18px; }
+  .exercise-detail__content { padding: 16px; gap: 14px; border-radius: var(--radius-lg); }
   .exercise-detail h1 { font-size: var(--text-headline); }
 
   .muscle-map svg { max-width: 250px; }
@@ -244,7 +244,7 @@
 /* Premium exercise card polish */
 .exercise-card {
   transition: box-shadow 0.2s ease, transform 0.1s ease;
-  border-radius: 18px;
+  border-radius: var(--radius-lg);
   box-shadow: 0 1px 3px rgba(0,0,0,0.04);
 }
 .exercise-card:hover {
@@ -256,7 +256,7 @@
   display: inline-flex;
   align-items: center;
   padding: 2px 9px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   font: var(--weight-bold) var(--text-caption)/1.2 var(--font-sans), sans-serif;
   letter-spacing: 0.02em;
   text-transform: none;
@@ -291,7 +291,7 @@
 /* Search focus ring */
 .exercise-search input:focus {
   box-shadow: 0 0 0 3px rgba(0,0,0,0.08);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
 }
 
 /* Library summary card depth */
@@ -346,7 +346,7 @@
   max-width: 920px;
   padding: 16px;
   border: 1px solid var(--color-border);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: var(--color-surface);
 }
 
@@ -372,7 +372,7 @@
   box-sizing: border-box;
   padding: 10px 12px;
   border: 1px solid var(--color-border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: var(--color-surface);
   color: var(--color-text);
   font: inherit;
@@ -394,7 +394,7 @@
   gap: 16px;
   padding: 14px;
   border: 1px solid var(--color-border);
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   background: color-mix(in srgb, var(--color-surface) 92%, var(--color-border));
 }
 
@@ -442,7 +442,7 @@
   gap: 7px;
   padding: 7px 10px;
   border: 1px solid var(--color-border);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--color-surface);
   color: var(--color-muted-strong);
   font-size: var(--text-meta);
@@ -472,7 +472,7 @@
   width: 16px;
   height: 16px;
   border: 1px solid var(--color-border);
-  border-radius: 5px;
+  border-radius: var(--radius-sm);
 }
 
 .exercise-editor__chip-mark svg {
@@ -496,7 +496,7 @@
   margin: 0;
   padding: 12px;
   border: 1px solid var(--color-border);
-  border-radius: 14px;
+  border-radius: var(--radius-md);
   background: var(--color-surface);
 }
 
@@ -581,7 +581,7 @@
   gap: 14px;
   padding: 18px;
   border: 1px solid var(--color-border);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: var(--color-surface);
 }
 .exercise-editor__section > h2 {
@@ -615,7 +615,7 @@
   gap: 6px;
   padding: 6px 9px;
   border: 1px solid var(--color-primary);
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--color-surface);
   color: var(--color-text);
   font-family: inherit;
@@ -627,7 +627,7 @@
 .exercise-editor__selected-chip svg { width: 14px; height: 14px; }
 .exercise-editor__picker {
   border: 1px solid var(--color-border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   background: var(--color-surface);
 }
 .exercise-editor__picker > summary {
@@ -655,7 +655,7 @@
   gap: 16px;
   padding: 16px 18px;
   border: 1px solid rgba(139, 30, 45, .24);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   background: var(--color-surface);
 }
 .exercise-editor__danger > div { display: grid; gap: 4px; }
@@ -675,7 +675,7 @@
     padding: 10px;
     margin: 0 -4px;
     border: 1px solid var(--color-border);
-    border-radius: 14px;
+    border-radius: var(--radius-lg);
     box-shadow: 0 -6px 20px rgba(28, 25, 22, .08);
   }
   .exercise-editor__actions .button--primary { flex: 1 1 auto; min-width: 0; }

@@ -51,7 +51,7 @@
   right: 0;
   bottom: -1px;
   height: 3px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--color-primary);
 }
 
@@ -62,7 +62,7 @@
   align-items: center;
   padding: 12px;
   border: 1px solid rgba(var(--color-primary-rgb), 0.32);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   color: inherit;
   text-decoration: none;
   background: linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.12), var(--color-surface));
@@ -78,7 +78,7 @@
   width: 40px;
   height: 40px;
   border: 1px solid rgba(var(--color-primary-rgb), 0.26);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   color: var(--color-primary);
   background: rgba(var(--color-primary-rgb), 0.1);
 }

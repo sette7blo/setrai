@@ -70,10 +70,12 @@
   --space-5: 1.25rem;
   --space-6: 1.5rem;
   --space-8: 2rem;
+  /* sm: parts inside a card. md: controls. lg: cards. xl: sheets and dialogs. */
   --radius-sm: 10px;
   --radius-md: 14px;
   --radius-lg: 18px;
   --radius-xl: 22px;
+  --radius-pill: 999px;
   --border-subtle: 1px solid var(--color-border);
   --shadow-soft: none;
   --shadow-accent: none;
@@ -81,7 +83,7 @@
   --glass-fill: #ffffff;
 
   /* Shared chip tokens: metric (display) vs control (interactive) */
-  --chip-radius: 999px;
+  --chip-radius: var(--radius-pill);
   --chip-gap: 6px;
   --chip-border: 1px solid var(--color-border);
   --chip-metric-height: 28px;
@@ -96,7 +98,7 @@
   /* Shared search/filter toolbar density */
   --toolbar-size: 44px;
   --toolbar-gap: 8px;
-  --toolbar-radius: 12px;
+  --toolbar-radius: var(--radius-md);
   --toolbar-search-pad-x: 12px;
   --toolbar-icon: 18px;
   --toolbar-action-icon: 18px;

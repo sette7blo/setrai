@@ -1,4 +1,4 @@
-.recovery-quick-panel { display: grid; gap: 14px; min-width: 0; padding: 16px; border: 1px solid var(--color-border); border-radius: 16px; background: var(--color-surface); }
+.recovery-quick-panel { display: grid; gap: 14px; min-width: 0; padding: 16px; border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); }
 .recovery-quick-heading { display: flex; align-items: center; gap: 12px; }
 .recovery-quick-heading h2 { margin: 0 0 4px; font-size: var(--text-title); font-weight: var(--weight-medium); }
 .recovery-quick-heading p { margin: 0; color: var(--color-muted-strong); font-size: var(--text-meta); line-height: 1.5; }

@@ -9,7 +9,7 @@
 .today-resume-copy { display: grid; gap: 3px; min-width: 0; }
 .today-resume-copy small { font-size: var(--text-caption); font-weight: var(--weight-medium); opacity: .85; }
 .today-resume-copy strong { overflow: hidden; font-size: var(--text-headline); font-weight: var(--weight-bold); font-stretch: var(--font-display-stretch); line-height: 1.1; text-overflow: ellipsis; white-space: nowrap; }
-.today-resume-action { display: inline-flex; align-items: center; gap: 6px; flex: none; min-height: 44px; padding: 0 18px; border-radius: 999px; color: var(--color-accent); background: var(--color-on-accent); font-size: var(--text-body); font-weight: var(--weight-bold); }
+.today-resume-action { display: inline-flex; align-items: center; gap: 6px; flex: none; min-height: 44px; padding: 0 18px; border-radius: var(--radius-pill); color: var(--color-accent); background: var(--color-on-accent); font-size: var(--text-body); font-weight: var(--weight-bold); }
 .today-resume-action svg { width: 15px; height: 15px; fill: currentColor; }
 .today-resume:active { transform: scale(.99); }
 

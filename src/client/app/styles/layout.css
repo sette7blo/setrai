@@ -21,7 +21,7 @@
   left: 0;
   width: 32%;
   height: 2px;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   background: var(--color-text);
   animation: route-loading-progress .7s ease-in-out infinite alternate;
 }
@@ -48,7 +48,7 @@ h1 { max-width: none; margin: 0; font-size: var(--font-page-title); font-weight:
 .mobile-brand, .brand-mark { display: inline-flex; min-height: 44px; align-items: center; gap: 8px; }
 .mobile-brand__logo, .brand-mark__logo { display: block; width: 30px; height: 27px; object-fit: contain; }
 .mobile-brand strong, .brand-mark strong { font-size: var(--text-section); font-weight: var(--weight-heavy); font-stretch: var(--font-display-stretch); letter-spacing: -.01em; line-height: 1; }
-.settings-gear { display: grid; place-items: center; width: 44px; height: 44px; flex: none; border-radius: 999px; color: var(--color-text); transition: background-color 160ms ease; }
+.settings-gear { display: grid; place-items: center; width: 44px; height: 44px; flex: none; border-radius: var(--radius-pill); color: var(--color-text); transition: background-color 160ms ease; }
 .settings-gear svg { width: 22px; height: 22px; stroke-width: 1.9; }
 .settings-gear:active { background: var(--color-surface-strong); }
 html[data-section="/profile"] .settings-gear { background: var(--color-surface-strong); }
@@ -73,7 +73,7 @@ html[data-section^="/sessions/"] .top-bar { display: none; }
   -webkit-backdrop-filter: blur(14px);
 }
 .nav-link { display: flex; align-items: center; gap: 10px; color: var(--color-muted); font-weight: var(--weight-medium); -webkit-tap-highlight-color: transparent; }
-.nav-link-icon { display: grid; place-items: center; width: 56px; height: 30px; border-radius: 999px; transition: background-color 200ms var(--ease-out), transform 120ms ease; }
+.nav-link-icon { display: grid; place-items: center; width: 56px; height: 30px; border-radius: var(--radius-pill); transition: background-color 200ms var(--ease-out), transform 120ms ease; }
 .nav-link-icon svg { width: 22px; height: 22px; stroke-width: 1.9; }
 .nav-link:active .nav-link-icon { transform: scale(.94); }
 .nav-link--active { color: var(--color-text); }
@@ -94,7 +94,7 @@ html[data-section^="/sessions/"] .top-bar { display: none; }
   gap: 12px;
   min-height: 52px;
   padding: 8px 8px 8px 16px;
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   color: var(--color-on-accent);
   background: var(--color-accent);
   box-shadow: 0 8px 24px color-mix(in srgb, var(--color-accent) 28%, transparent);
@@ -104,7 +104,7 @@ html[data-section^="/sessions/"] .top-bar { display: none; }
 .now-training-copy { display: grid; gap: 2px; min-width: 0; }
 .now-training-copy small { font-size: var(--text-caption); font-weight: var(--weight-medium); opacity: .85; }
 .now-training-copy strong { overflow: hidden; font-size: var(--text-body); font-weight: var(--weight-bold); line-height: 1.15; text-overflow: ellipsis; white-space: nowrap; }
-.now-training-action { display: inline-flex; align-items: center; gap: 6px; flex: none; min-height: 36px; padding: 0 14px; border-radius: 999px; color: var(--color-accent); background: var(--color-on-accent); font-size: var(--text-meta); font-weight: var(--weight-bold); }
+.now-training-action { display: inline-flex; align-items: center; gap: 6px; flex: none; min-height: 36px; padding: 0 14px; border-radius: var(--radius-pill); color: var(--color-accent); background: var(--color-on-accent); font-size: var(--text-meta); font-weight: var(--weight-bold); }
 .now-training-action svg { width: 14px; height: 14px; fill: currentColor; }
 .now-training:active { transform: scale(.99); }
 /* Today already shows the same workout as its first card. */
@@ -128,7 +128,7 @@ html[data-section="/today"] .app-frame:has(.now-training:not([hidden])) { paddin
   .app-sidebar { position: sticky; top: 0; display: flex; flex-direction: column; gap: 28px; height: 100vh; height: 100dvh; padding: 24px 16px; border-right: 1px solid var(--color-border); }
   .brand-mark { padding: 0 8px; }
   .sidebar-nav { display: grid; gap: 2px; }
-  .sidebar-nav .nav-link { min-height: 44px; padding: 0 8px; border-radius: 12px; font-size: var(--text-body); transition: background-color 160ms ease; }
+  .sidebar-nav .nav-link { min-height: 44px; padding: 0 8px; border-radius: var(--radius-md); font-size: var(--text-body); transition: background-color 160ms ease; }
   .sidebar-nav .nav-link:hover { background: color-mix(in srgb, var(--color-text) 5%, transparent); }
   .sidebar-nav .nav-link-icon { width: 36px; }
   .sidebar-nav .nav-link--active { background: var(--color-surface); box-shadow: inset 0 0 0 1px var(--color-border); }
