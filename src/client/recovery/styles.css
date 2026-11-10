@@ -10,12 +10,8 @@
 .recovery-layout { display: grid; gap: 16px; align-items: start; }
 .recovery-map { padding: 16px; border: var(--border-subtle); border-radius: var(--radius-lg); background: var(--color-surface); }
 #recovery-body { display: block; width: 100%; max-width: 340px; height: auto; margin: 0 auto; }
-#recovery-body polygon { cursor: pointer; stroke: var(--color-surface); stroke-width: .5; transition: fill var(--duration-base) var(--ease-out); }
+#recovery-body polygon { cursor: pointer; transition: fill var(--duration-base) var(--ease-out); }
 #recovery-body polygon.is-selected { stroke: var(--color-text); stroke-width: 1.2; }
-.recovery-map__decor, .recovery-map__fresh { fill: var(--status-fresh); }
-.recovery-map__ready { fill: var(--status-ready); }
-.recovery-map__moderate { fill: var(--status-moderate); }
-.recovery-map__recovering { fill: var(--status-recovering); }
 .recovery-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 16px; margin-top: 12px; }
 .recovery-legend .rl { display: inline-flex; align-items: center; gap: 6px; color: var(--color-muted-strong); font-size: var(--text-caption); }
 .recovery-legend .rl::before { content: ''; width: 9px; height: 9px; border-radius: var(--radius-sm); }

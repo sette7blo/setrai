@@ -29,7 +29,7 @@ import {
   simpleVolume,
   totalPlannedSets
 } from '../../src/client/workouts/session-logic.js'
-import { renderSessionSummary, summaryFacts } from '../../src/client/workouts/session-summary.js'
+import { renderSessionSummary, summaryFacts, summaryStats } from '../../src/client/workouts/session-summary.js'
 import { imageOnlyShareData, summaryImageName } from '../../src/client/workouts/session-summary-share.js'
 import { createHistoryCalendar } from '../../src/client/workouts/history-calendar.js'
 import { workoutLoadingSkeleton } from '../../src/client/workouts/page.js'
@@ -153,8 +153,27 @@ test('live Session logic selects current set and exercise progression', () => {
 test('Session summary reports logged set count and simple volume', () => {
   const s = session()
   assert.equal(simpleVolume(s), 800)
-  assert.deepEqual(summaryFacts(s, program()), ['Upper A', '1 sets logged', '800 kg total volume'])
-  assert.deepEqual(summaryFacts(s, program(), 'lb'), ['Upper A', '1 sets logged', '1,764 lb total volume'])
+  assert.deepEqual(summaryFacts(s, program()), ['Upper A', '1 set logged', '800 kg total volume'])
+  assert.deepEqual(summaryFacts(s, program(), 'lb'), ['Upper A', '1 set logged', '1,764 lb total volume'])
+  s.sets.push({ ...s.sets[0], id: 2, setNumber: 2 })
+  assert.equal(summaryFacts(s, program())[1], '2 sets logged')
+})
+
+test('Session summary leaves out figures that have no value', () => {
+  const s = session()
+  s.startedAt = '2026-10-05T14:00:00.000Z'
+  s.finishedAt = '2026-10-05T14:45:00.000Z'
+  assert.deepEqual(summaryStats(s, 'lb').map(cell => cell.label), ['Duration', 'Sets', 'Volume', 'Exercises'])
+  assert.deepEqual(summaryStats(s, 'lb').map(cell => cell.value), ['45m', '1', '1,764 lb', '1'])
+
+  s.finishedAt = s.startedAt
+  assert.deepEqual(summaryStats(s).map(cell => cell.label), ['Sets', 'Volume', 'Exercises'])
+
+  s.finishedAt = '2026-10-05T14:45:00.000Z'
+  s.sets = s.sets.map(set => ({ ...set, weight: null }))
+  const bodyweight = summaryStats(s)
+  assert.deepEqual(bodyweight.map(cell => cell.label), ['Duration', 'Sets', 'Exercises'])
+  assert.doesNotMatch(bodyweight.map(cell => cell.value).join(' '), /Done|—/)
 })
 
 test('monthly recap aggregates the selected month and compares previous volume', () => {
@@ -188,7 +207,7 @@ test('workout image sharing sends a PNG file without text or URL', () => {
   assert.equal(file.type, 'image/png')
 })
 
-test('Session summary renders Setrai branded receipt with muscle map and stats', () => {
+test('Session summary renders on shared surfaces with a stat strip, muscle map and both actions', () => {
   const originalDocument = globalThis.document
   try {
     globalThis.document = {
@@ -203,21 +222,19 @@ test('Session summary renders Setrai branded receipt with muscle map and stats',
     const summary = renderSessionSummary(s, program(), 'lb') as unknown as TestElement
     const text = elementText(summary)
     const classes = walkElements(summary).map(element => element.className).join(' ')
-    assert.match(classes, /session-summary-brand/)
-    assert.match(classes, /mobile-brand__logo/)
+    assert.match(classes, /page-heading/)
+    assert.match(classes, /stat-strip/)
     assert.match(classes, /session-summary-map/)
-    assert.match(classes, /session-summary-stat/)
-    const logo = walkElements(summary).find(element => element.className === 'mobile-brand__logo') as (TestElement & { src?: string }) | undefined
-    assert.equal(logo?.src, '/brand/setrai-mark.png')
-    assert.doesNotMatch(String(logo?.src), /editorial-logo/)
-    assert.match(text, /Setrai/)
-    assert.doesNotMatch(text, /AI Training Coach/)
-    assert.match(text, /Workout complete/)
+    assert.doesNotMatch(classes, /session-summary-brand|mobile-brand__logo|session-summary-proof/)
     assert.match(text, /Upper A/)
+    assert.match(text, /45m/)
     assert.match(text, /1,764 lb/)
     assert.doesNotMatch(text, /\bkg\b/)
-    assert.match(text, /Training receipt/)
+    assert.doesNotMatch(text, /Training receipt|Setrai|AI Training Coach/)
     assert.match(text, /Share image/)
+    const done = walkElements(summary).find(element => element.textContent === 'Done')
+    assert.equal(done?.className, 'button button--primary')
+    assert.equal(done?.href, '/today')
     const actions = walkElements(summary).find(element => element.className === 'session-summary-actions')
     assert.equal(actions?.dataset.summaryCapture, 'exclude')
   } finally {

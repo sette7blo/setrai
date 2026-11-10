@@ -11,7 +11,6 @@ body {
 body::before { display: none; }
 
 
-
 .mobile-brand__logo,
 .brand-mark__logo {
   border-radius: 0;
@@ -19,12 +18,6 @@ body::before { display: none; }
   filter: none;
   mix-blend-mode: normal;
 }
-
-
-
-
-
-
 
 
 .exercise-heading h1,
@@ -90,14 +83,11 @@ body::before { display: none; }
 .filter-icon--active svg { color: var(--color-on-primary) !important; }
 
 
-
-
 .filter-icon:hover,
 .exercise-card:hover { transform: translateY(-1px); }
 
 .eyebrow,
 .exercise-count,
-.ss-label,
 .stats-section-head small {
   color: var(--color-text) !important;
   font-family: var(--font-sans), system-ui, sans-serif !important;
@@ -140,7 +130,6 @@ body::before { display: none; }
 }
 
 
-.ss-icon,
 .body-entry-icon,
 .program-browse-icon {
   border: 1px solid var(--color-border) !important;
@@ -152,16 +141,13 @@ body::before { display: none; }
 
 .exercise-card h2,
 .program-card h2,
-.stats-section-title,
-.ss-val {
+.stats-section-title {
   color: var(--color-text) !important;
   font-weight: var(--weight-medium) !important;
   letter-spacing: -.015em !important;
 }
 
-.summary-stat,
-.stats-empty,
-.body-card {
+.stats-empty {
   border: 1px solid var(--color-border) !important;
   background: var(--color-surface) !important;
   color: var(--color-text) !important;
@@ -226,8 +212,6 @@ body::before { display: none; }
 .program-toolbar-action svg { width: var(--toolbar-action-icon) !important; height: var(--toolbar-action-icon) !important; }
 
 
-
-
 .exercise-grid { gap: 10px; }
 .exercise-card { overflow: hidden; }
 .exercise-card__body {
@@ -290,10 +274,6 @@ body::before { display: none; }
 .exercise-select-button--active svg { stroke: var(--color-on-primary); }
 
 
-
-
-
-
 input,
 select,
 textarea {
@@ -310,9 +290,6 @@ textarea {
 .track,
 .body-goal-bar,
 .bmi-bar { border: 1px solid var(--color-text); background: var(--color-surface-strong) !important; }
-.muscle-map__primary { fill: var(--color-text) !important; }
-.muscle-map__secondary { fill: var(--color-warning) !important; }
-.muscle-map__inactive { fill: var(--color-surface) !important; stroke: var(--color-text) !important; }
 
 @media (max-width: 719px) {
 
@@ -322,13 +299,6 @@ textarea {
           .exercise-heading h1,
   .statistics-page-head h1 { font-size: var(--font-page-title) !important; font-weight: var(--weight-medium) !important; letter-spacing: -.015em !important; line-height: 1 !important; }
   .exercise-heading { gap: 12px; }
-
-
-
-
-
-
-
 
 
   .page-toolbar, .exercise-controls, .program-toolbar { gap: var(--toolbar-gap) !important; }
@@ -342,7 +312,6 @@ textarea {
 
 
 }
-
 
 
 .stats-range {
@@ -379,46 +348,11 @@ textarea {
 }
 
 
-.statistics-page .stats-panel,
-.statistics-page .summary-stat,
-.statistics-page .body-card {
+.statistics-page .stats-panel {
   background:
-    linear-gradient(135deg, color-mix(in srgb, var(--color-surface) 88%, transparent), color-mix(in srgb, var(--color-surface) 72%, transparent)),
+    var(--color-text),
     var(--color-surface) !important;
 }
-
-.statistics-page .summary-stat.streak,
-.statistics-page .summary-stat:nth-child(1) {
-  background: linear-gradient(145deg, color-mix(in srgb, var(--color-warning) 22%, transparent), color-mix(in srgb, var(--color-surface) 96%, transparent)) !important;
-}
-
-.statistics-page .summary-stat:nth-child(2) {
-  background: linear-gradient(145deg, color-mix(in srgb, var(--color-text) 18%, transparent), color-mix(in srgb, var(--color-surface) 96%, transparent)) !important;
-}
-
-.statistics-page .summary-stat:nth-child(3) {
-  background: linear-gradient(145deg, color-mix(in srgb, var(--color-success) 20%, transparent), color-mix(in srgb, var(--color-surface) 96%, transparent)) !important;
-}
-
-.statistics-page .summary-stat:nth-child(1) .ss-icon,
-.statistics-page .summary-stat.streak .ss-icon {
-  background: color-mix(in srgb, var(--color-warning) 26%, transparent) !important;
-  color: var(--color-warning) !important;
-}
-
-.statistics-page .summary-stat:nth-child(2) .ss-icon {
-  background: color-mix(in srgb, var(--color-text) 18%, transparent) !important;
-  color: var(--color-muted-strong) !important;
-}
-
-.statistics-page .summary-stat:nth-child(3) .ss-icon {
-  background: color-mix(in srgb, var(--color-success) 22%, transparent) !important;
-  color: var(--color-success) !important;
-}
-
-
-
-
 
 
 .statistics-page .track,
@@ -428,49 +362,9 @@ textarea {
   background: var(--color-surface-strong) !important;
 }
 
-.statistics-page .dist-row .fill {
-  background: linear-gradient(90deg, var(--color-text) 0%, var(--color-muted-strong) 55%, var(--color-border) 100%) !important;
-  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-surface) 30%, transparent);
-}
-
-.statistics-page .body-goal-fill {
-  background: linear-gradient(90deg, var(--color-text), var(--color-border-strong)) !important;
-}
-
 .statistics-page .bmi-marker {
   background: var(--color-text) !important;
   background-image: none !important;
 }
-
-
-/* Body tab: reuse the exact loved Training stat tile colors. */
-.statistics-page .stats-body-view .body-card:nth-child(1) {
-  background: linear-gradient(145deg, color-mix(in srgb, var(--color-warning) 22%, transparent), color-mix(in srgb, var(--color-surface) 96%, transparent)) !important;
-}
-
-.statistics-page .stats-body-view .body-card:nth-child(2) {
-  background: linear-gradient(145deg, color-mix(in srgb, var(--color-text) 18%, transparent), color-mix(in srgb, var(--color-surface) 96%, transparent)) !important;
-}
-
-.statistics-page .stats-body-view .body-card:nth-child(3) {
-  background: linear-gradient(145deg, color-mix(in srgb, var(--color-success) 20%, transparent), color-mix(in srgb, var(--color-surface) 96%, transparent)) !important;
-}
-
-.statistics-page .stats-body-view .body-card:nth-child(1) .body-card-icon {
-  background: color-mix(in srgb, var(--color-warning) 26%, transparent) !important;
-  color: var(--color-warning) !important;
-}
-
-.statistics-page .stats-body-view .body-card:nth-child(2) .body-card-icon {
-  background: color-mix(in srgb, var(--color-text) 18%, transparent) !important;
-  color: var(--color-muted-strong) !important;
-}
-
-.statistics-page .stats-body-view .body-card:nth-child(3) .body-card-icon {
-  background: color-mix(in srgb, var(--color-success) 22%, transparent) !important;
-  color: var(--color-success) !important;
-}
-
-
 
 

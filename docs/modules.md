@@ -1239,6 +1239,9 @@ Only genuinely shared UI/infrastructure such as:
 - filter sheet and removable chip presentation in `filter-sheet.ts` and
   `filter-sheet.css`, consumed by Exercises and Workouts; feature adapters own
   facet values, filtering, persistence, and result counts;
+- the stat strip in `stat-strip.ts` and `stat-strip.css`: one bordered row of
+  figures (numeral over label), consumed by Today, Progress Training and Body,
+  and the workout summary; callers own the values and labels;
 - buttons;
 - icons;
 - formatting;

@@ -51,8 +51,8 @@ h1 { max-width: none; margin: 0; font-size: var(--font-page-title); font-weight:
 .settings-gear svg { width: 22px; height: 22px; stroke-width: 1.9; }
 .settings-gear:active { background: var(--color-surface-strong); }
 html[data-section="/profile"] .settings-gear { background: var(--color-surface-strong); }
-/* A finished workout shows its own branded summary card. */
-html[data-section^="/sessions/"] .top-bar { display: none; }
+/* The live workout takes the whole screen; its summary is an ordinary page and keeps the bar. */
+html[data-section^="/sessions/"]:not(:has(.session-summary)) .top-bar { display: none; }
 
 .app-sidebar { display: none; }
 

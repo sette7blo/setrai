@@ -1,0 +1,6 @@
+.stat-strip { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); margin: 0; border: var(--border-subtle); border-radius: var(--radius-lg); background: var(--color-surface); }
+.stat-strip-cell { display: grid; align-content: start; gap: 4px; min-width: 0; padding: 14px 12px; container-type: inline-size; }
+.stat-strip-cell + .stat-strip-cell { border-left: var(--border-subtle); }
+/* The numeral shrinks with its cell so a long value such as "125,678 lb" stays on one line. */
+.stat-strip dd { margin: 0; overflow: hidden; font-size: min(var(--text-headline), 21cqi); font-weight: var(--weight-bold); font-stretch: var(--font-display-stretch); line-height: 1.1; font-variant-numeric: tabular-nums; text-overflow: ellipsis; white-space: nowrap; }
+.stat-strip dt { color: var(--color-muted); font-size: var(--text-caption); line-height: 1.25; }

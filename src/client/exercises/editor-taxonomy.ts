@@ -1,6 +1,6 @@
 import { Check, Plus, X } from 'lucide'
 import { iconElement } from '../app/navigation.js'
-import { muscleMapMarkupForMuscles } from './muscle-map.js'
+import { MUSCLE_MAP_LEGEND, muscleMapMarkupForMuscles } from './muscle-map.js'
 import {
   canonicalSelection,
   EXERCISE_EQUIPMENT,
@@ -170,7 +170,7 @@ export function muscleEditorControl(initialPrimary: string, initialSecondary: st
   const graphic = document.createElement('div')
   const legend = document.createElement('p')
   legend.className = 'muscle-map__legend'
-  legend.innerHTML = '<span class="muscle-map__key-primary">● Primary</span> <span class="muscle-map__key-secondary">● Secondary</span> · Front / Back'
+  legend.innerHTML = MUSCLE_MAP_LEGEND
 
   let secondary!: ChipGroup
   const render = (): void => {

@@ -41,11 +41,10 @@ function category(icon: Parameters<typeof iconElement>[0], title: string, summar
   const pill = document.createElement('span')
   pill.className = 'status-pill profile-settings-status'
   pill.textContent = status
-  pill.hidden = !status
   const chevron = document.createElement('span')
   chevron.className = 'settings-category-chevron'
   chevron.append(iconElement(ChevronDown))
-  head.append(iconWrap, copy, pill, chevron)
+  head.append(iconWrap, copy, ...(status ? [pill] : []), chevron)
   const body = document.createElement('div')
   body.className = 'settings-category-body'
   details.append(head, body)
@@ -144,8 +143,14 @@ function trainingSection(state: ProfileState, rerender: () => void): HTMLDetails
   const save = document.createElement('button')
   save.type = 'submit'
   save.className = 'button button--primary settings-row-button'
-  save.textContent = 'Save'
-  form.append(row('Apply changes', 'Persist training preferences.', save))
+  save.textContent = 'Save training settings'
+  const saveRow = document.createElement('div')
+  saveRow.className = 'settings-row settings-row--action'
+  const saveSlot = document.createElement('span')
+  saveSlot.className = 'settings-row-control'
+  saveSlot.append(save)
+  saveRow.append(saveSlot)
+  form.append(saveRow)
   form.addEventListener('submit', (event) => {
     event.preventDefault()
     const data = new FormData(form)

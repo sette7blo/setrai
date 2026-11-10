@@ -29,8 +29,7 @@
   .exercise-page .exercise-search, .exercise-page .filter-icon, .exercise-page .exercise-selection-bar,
   .exercise-detail .exercise-detail__content, .workout-card,
   .program-search, .program-toolbar-action,
-  .statistics-page .stats-panel, .statistics-page .summary-stat,
-  .statistics-page .body-card, .settings-category,
+  .statistics-page .stats-panel, .settings-category,
   .history-calendar, .history-card, .history-filter,
   .session-detail-ex, .workout-exercise, .workout-preview) {
   border: var(--border-subtle) !important;

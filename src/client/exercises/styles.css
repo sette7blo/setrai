@@ -96,7 +96,7 @@
 @keyframes exercisePulse { 50% { opacity: 0.62; } }
 @media (max-width: 390px) { .exercise-grid { gap: 0.65rem; } }
 @media (min-width: 720px) { .exercise-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
-@media (min-width: 920px) { .exercise-heading { max-width: 42rem; } .exercise-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } .exercise-detail { grid-template-columns: minmax(20rem, 0.9fr) minmax(0, 1.1fr); align-items: start; } .detail-back { grid-column: 1 / -1; } }
+@media (min-width: 920px) { .exercise-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } .exercise-detail { grid-template-columns: minmax(20rem, 0.9fr) minmax(0, 1.1fr); align-items: start; } .detail-back { grid-column: 1 / -1; } }
 
 .exercise-detail h1 { max-width: none; font-size: var(--text-headline); letter-spacing: -.015em; }
 .exercise-detail__content { gap: var(--space-4); }
@@ -105,17 +105,12 @@
 
 .muscle-map { padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-xl); background: var(--color-surface); }
 .muscle-map svg { display: block; width: 100%; max-width: 300px; margin: auto; }
-.muscle-map__primary { fill: var(--color-primary); }
-.muscle-map__secondary { fill: var(--color-warning); }
-.muscle-map__inactive { fill: var(--color-muted-strong); stroke: var(--color-text); stroke-width: 0.5; }
 .muscle-map__legend { text-align: center; color: var(--color-muted-strong); font-size: var(--text-meta); }
 @media (max-width: 919px) {
   .exercise-detail__content { grid-row: 2; }
 
 }
 
-.muscle-map__key-primary { color: var(--color-primary); }
-.muscle-map__key-secondary { color: var(--color-warning); }
 /* Workstr exercise sheet hierarchy, using Setrai theme tokens. */
 .exercise-detail { width: min(100%, 520px); margin-inline: auto; grid-template-columns: minmax(0, 1fr); gap: var(--space-3); }
 .exercise-detail__content { grid-row: auto; padding: 20px; gap: 16px; }
@@ -130,7 +125,7 @@
 .exercise-detail .detail-section h2, .detail-instructions summary { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; font: var(--weight-heavy) var(--text-caption)/1.3 var(--font-sans); letter-spacing: .01em; text-transform: none; }
 .detail-section h2 svg, .detail-instructions summary svg { width: 16px; height: 16px; color: var(--color-primary); }
 .exercise-detail .muscle-map { padding: 0; border: 0; background: transparent; }
-.muscle-map > div:has(svg) { margin-top: 14px; padding: 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: color-mix(in srgb, var(--color-text) 4%, transparent); }
+.muscle-map > div:has(svg) { margin-top: 14px; padding: 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-surface); }
 .detail-instructions { border-top: 1px solid var(--color-border); padding-top: 16px; }
 .detail-instructions summary { min-height: 44px; margin: 0; cursor: pointer; list-style: none; }
 .detail-instructions summary::-webkit-details-marker { display: none; }
