@@ -51,34 +51,14 @@
   background: color-mix(in srgb, var(--color-surface) 55%, transparent);
 }
 
-.page-state--loading {
-  gap: 10px;
-  padding: 14px;
-  border-style: dashed;
-  background: color-mix(in srgb, var(--color-surface) 40%, transparent);
-}
-
-.page-state-block {
-  height: 56px;
-  border-radius: var(--radius-md);
-  background: linear-gradient(
-    90deg,
-    color-mix(in srgb, var(--color-text) 4%, transparent),
-    color-mix(in srgb, var(--color-text) 8%, transparent),
-    color-mix(in srgb, var(--color-text) 4%, transparent)
-  );
-  background-size: 200% 100%;
-  animation: page-state-pulse var(--duration-pulse) var(--ease-out) infinite;
-}
-
-.page-state-block:nth-child(1) { height: 72px; }
-.page-state-block:nth-child(2) { height: 120px; }
-.page-state-block:nth-child(3) { height: 88px; }
-
-@keyframes page-state-pulse {
-  0% { background-position: 100% 0; }
-  100% { background-position: -100% 0; }
-}
+/* Loading placeholder: one block, composed by each screen into the shape of its real layout. */
+.skeleton { display: block; min-width: 0; border-radius: var(--radius-lg); background: var(--color-surface-strong); animation: skeleton-pulse var(--duration-pulse) ease-in-out infinite alternate; }
+.skeleton--sm { border-radius: var(--radius-sm); }
+.skeleton--md { border-radius: var(--radius-md); }
+.skeleton--pill { border-radius: var(--radius-pill); }
+.skeleton-label { position: absolute; width: 1px; height: 1px; margin: -1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+@keyframes skeleton-pulse { to { opacity: .5; } }
+@media (prefers-reduced-motion: reduce) { .skeleton { animation: none; } }
 
 /* Compatibility aliases — old empty class names pick up shared kit look */
 .exercise-empty,

@@ -1,7 +1,7 @@
 import { ChevronRight, Play } from 'lucide'
 
 import { readableApiError } from '../shared/api/errors.js'
-import { bindPageRetry, pageError, pageLoading } from '../shared/page-states.js'
+import { bindPageRetry, loadingRegion, pageError, showLoadingAfterDelay, skeleton, skeletonGroup } from '../shared/page-states.js'
 import { statStrip } from '../shared/stat-strip.js'
 import { displayName } from '../exercises/format.js'
 import { getProfile } from '../profile/api.js'
@@ -129,8 +129,15 @@ function sectionTitle(text: string): HTMLElement {
   return element('h2', 'today-section-title', text)
 }
 
+function todaySkeleton(): HTMLElement {
+  return loadingRegion('Loading today', 'today-page', todayHeading(),
+    skeletonGroup('today-main', element('h2', 'today-section-title today-section-title--wide', 'Readiness'), skeleton({ height: 150 })),
+    skeletonGroup('today-workout', sectionTitle('Suggested workout'), skeleton({ height: 420 })),
+    skeletonGroup('today-side', sectionTitle('This week'), skeleton({ height: 75 }), skeleton({ height: 74 })))
+}
+
 export async function renderTodayPage(root: HTMLElement): Promise<void> {
-  root.replaceChildren(pageLoading({ className: 'today-page today-page--loading', label: 'Loading today' }))
+  const loaded = showLoadingAfterDelay(root, todaySkeleton)
   try {
     const [recovery, sessions, stats, profile] = await Promise.all([
       getRecovery(),
@@ -138,6 +145,7 @@ export async function renderTodayPage(root: HTMLElement): Promise<void> {
       getStatistics(),
       getProfile().catch(() => ({ weightUnit: 'kg' as const })),
     ])
+    loaded()
     const page = element('div', 'today-page')
     page.append(todayHeading())
 
@@ -161,6 +169,7 @@ export async function renderTodayPage(root: HTMLElement): Promise<void> {
     root.replaceChildren(page)
     if (window.location.hash === '#quick-workout') workout.scrollIntoView({ block: 'start' })
   } catch (error) {
+    loaded()
     const view = pageError({ eyebrow: 'Today', title: 'Today is unavailable', message: readableApiError(error) })
     bindPageRetry(view, () => { void renderTodayPage(root) })
     root.replaceChildren(view)

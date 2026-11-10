@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict'
 import test from 'node:test'
 
-import { bindPageRetry, pageEmpty, pageError, pageLoading } from '../../src/client/shared/page-states.js'
+import { bindPageRetry, loadingRegion, pageEmpty, pageError, showLoadingAfterDelay, skeleton } from '../../src/client/shared/page-states.js'
 
 class TestElement {
   tagName = ''
@@ -9,6 +9,7 @@ class TestElement {
   textContent = ''
   children: TestElement[] = []
   attributes: Record<string, string> = {}
+  style: Record<string, string> = {}
   dataset: Record<string, string> = {}
   listeners: Record<string, Array<() => void>> = {}
   type = ''
@@ -113,13 +114,30 @@ test('pageEmpty supports compact list empties and linked CTAs', () => {
   })
 })
 
-test('pageLoading renders pulse blocks', () => {
+test('skeleton blocks compose into one announced loading region', () => {
   withDom(() => {
-    const loading = pageLoading({ blocks: 2, label: 'Loading home', className: 'statistics-page--loading' }) as unknown as TestElement
-    assert.match(loading.className, /page-state--loading/)
-    assert.equal(loading.attributes['aria-busy'], 'true')
-    assert.equal(loading.attributes['aria-label'], 'Loading home')
-    assert.equal(loading.children.length, 2)
-    assert.equal(loading.children.every((child) => child.className === 'page-state-block'), true)
+    const block = skeleton({ height: 75, radius: 'md', className: 'stats-card--records' }) as unknown as TestElement
+    assert.equal(block.className, 'skeleton skeleton--md stats-card--records')
+    assert.equal(block.attributes['aria-hidden'], 'true')
+    assert.equal(block.style.height, '75px')
+    assert.equal((skeleton({ aspect: '4 / 3' }) as unknown as TestElement).style.aspectRatio, '4 / 3')
+
+    const region = loadingRegion('Loading home', 'today-page', block as unknown as HTMLElement, skeleton() as unknown as HTMLElement) as unknown as TestElement
+    assert.equal(region.className, 'today-page')
+    assert.equal(region.attributes['aria-busy'], 'true')
+    const announced = region.children.filter(child => child.attributes.role === 'status')
+    assert.equal(announced.length, 1)
+    assert.equal(announced[0].textContent, 'Loading home')
+    assert.equal(region.children.length, 3)
   })
+})
+
+test('a placeholder appears only when loading outlasts the delay', async () => {
+  const shown: string[] = []
+  const root = { replaceChildren: (node: { name: string }) => { shown.push(node.name) } } as unknown as HTMLElement
+  const fast = showLoadingAfterDelay(root, () => ({ name: 'fast' }) as unknown as HTMLElement, 20)
+  fast()
+  showLoadingAfterDelay(root, () => ({ name: 'slow' }) as unknown as HTMLElement, 20)
+  await new Promise(resolve => setTimeout(resolve, 60))
+  assert.deepEqual(shown, ['slow'])
 })

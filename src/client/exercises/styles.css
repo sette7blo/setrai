@@ -55,10 +55,6 @@
 .exercise-action-error { margin: 0 0 var(--space-3); color: var(--color-error); font-size: var(--text-meta); font-weight: var(--weight-bold); }
 .exercise-empty { border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: clamp(1.25rem, 5vw, 2rem); background: var(--color-surface); border: 1px solid var(--color-border); }
 .exercise-empty h2, .detail-section h2 { margin-top: 0; letter-spacing: -.015em; }
-.exercise-card--loading, .exercise-detail--loading { min-height: 16rem; animation: exercisePulse var(--duration-pulse) var(--ease-out) infinite; }
-.exercise-card--loading .exercise-card__body span, .exercise-card--loading .exercise-card__body small, .exercise-detail--loading span, .exercise-heading--skeleton div { display: block; height: 1rem; border-radius: var(--radius-pill); background: color-mix(in srgb, var(--color-surface) 9%, transparent); }
-.exercise-card--loading .exercise-card__body span { width: 60%; }
-.exercise-card--loading .exercise-card__body small { width: 38%; }
 .detail-back { display: inline-flex; width: fit-content; min-height: 44px; align-items: center; gap: var(--space-2); color: var(--color-muted-strong); font-weight: var(--weight-heavy); }
 .exercise-detail { grid-template-columns: minmax(0, 1fr); }
  .exercise-detail__content { min-width: 0; }
@@ -67,7 +63,6 @@
 .detail-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
 
 .detail-section ol { display: grid; gap: var(--space-3); max-width: 42rem; margin: 0; padding-left: 1.35rem; color: var(--color-muted-strong); line-height: 1.7; }
-@keyframes exercisePulse { 50% { opacity: 0.62; } }
 @media (max-width: 390px) { .exercise-grid { gap: 0.65rem; } }
 @media (min-width: 720px) { .exercise-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
 @media (min-width: 920px) { .exercise-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } .exercise-detail { grid-template-columns: minmax(20rem, 0.9fr) minmax(0, 1.1fr); align-items: start; } .detail-back { grid-column: 1 / -1; } }

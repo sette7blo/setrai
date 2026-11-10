@@ -26,12 +26,21 @@ export interface PageEmptyOptions {
   compact?: boolean
 }
 
-export interface PageLoadingOptions {
+export interface SkeletonOptions {
+  /** Height in px, unless `aspect` sets it from the width. */
+  height?: number
+  /** CSS width, for blocks narrower than their column. */
+  width?: string
+  /** CSS aspect ratio, for blocks whose height follows their width. */
+  aspect?: string
+  /** Radius token; cards use lg. */
+  radius?: 'sm' | 'md' | 'lg' | 'pill'
+  /** Layout class from the real screen, so the block sits in the same grid cell as the content. */
   className?: string
-  blocks?: number
-  /** Accessible busy label. */
-  label?: string
 }
+
+/** Delay before a placeholder appears; anything faster renders the content directly. */
+export const LOADING_DELAY_MS = 150
 
 function actionNode(action: PageStateAction): HTMLElement {
   const primary = action.primary !== false
@@ -120,20 +129,50 @@ export function pageEmpty(options: PageEmptyOptions): HTMLElement {
   return section
 }
 
-/** Generic pulse-block loading placeholder. */
-export function pageLoading(options: PageLoadingOptions = {}): HTMLElement {
-  const section = document.createElement('section')
-  section.className = ['page-state', 'page-state--loading', options.className].filter(Boolean).join(' ')
-  section.setAttribute('aria-busy', 'true')
-  section.setAttribute('aria-live', 'polite')
-  if (options.label) section.setAttribute('aria-label', options.label)
-  const count = Math.max(1, options.blocks ?? 3)
-  for (let i = 0; i < count; i += 1) {
-    const block = document.createElement('div')
-    block.className = 'page-state-block'
-    section.append(block)
-  }
-  return section
+/** One placeholder block: the single skeleton primitive every loading state is built from. */
+export function skeleton(options: SkeletonOptions = {}): HTMLElement {
+  const block = document.createElement('div')
+  block.className = ['skeleton', `skeleton--${options.radius ?? 'lg'}`, options.className].filter(Boolean).join(' ')
+  block.setAttribute('aria-hidden', 'true')
+  if (options.height) block.style.height = `${options.height}px`
+  if (options.width) block.style.width = options.width
+  if (options.aspect) block.style.aspectRatio = options.aspect
+  return block
+}
+
+/** A screen's placeholder: real headings and skeleton blocks in the screen's own layout, announced once. */
+export function loadingRegion(label: string, className: string, ...children: HTMLElement[]): HTMLElement {
+  const region = document.createElement('div')
+  region.className = className
+  region.setAttribute('aria-busy', 'true')
+  region.append(loadingAnnouncement(label), ...children)
+  return region
+}
+
+/** The one line a screen reader hears for a loading screen; the blocks themselves are hidden from it. */
+export function loadingAnnouncement(label: string): HTMLElement {
+  const status = document.createElement('p')
+  status.className = 'skeleton-label'
+  status.setAttribute('role', 'status')
+  status.textContent = label
+  return status
+}
+
+/** A plain container using one of the real screen's layout classes. */
+export function skeletonGroup(className: string, ...children: HTMLElement[]): HTMLElement {
+  const group = document.createElement('div')
+  group.className = className
+  group.append(...children)
+  return group
+}
+
+/**
+ * Shows the placeholder only if loading outlasts the delay. Call the returned function once the
+ * content (or an error) is ready, before rendering it.
+ */
+export function showLoadingAfterDelay(root: HTMLElement, build: () => HTMLElement, delayMs = LOADING_DELAY_MS): () => void {
+  const timer = setTimeout(() => { root.replaceChildren(build()) }, delayMs)
+  return () => clearTimeout(timer)
 }
 
 /** Wire data-retry buttons created by pageError. */

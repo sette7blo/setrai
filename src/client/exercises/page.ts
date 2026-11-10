@@ -3,7 +3,7 @@ import { selectionToggle, selectionToolbar } from './selection.js'
 import { readableApiError } from '../shared/api/errors.js'
 import { iconElement } from '../app/navigation.js'
 import { libraryHeading } from '../app/section-navigation.js'
-import { bindPageRetry, pageEmpty, pageError } from '../shared/page-states.js'
+import { bindPageRetry, loadingRegion, pageEmpty, pageError, showLoadingAfterDelay, skeleton, skeletonGroup } from '../shared/page-states.js'
 import { exerciseFilterChips, exerciseFilterSheet } from './filter-sheet.js'
 import { createExerciseCard } from './card.js'
 import { pluralizeExercise } from './format.js'
@@ -27,16 +27,8 @@ function updateUrl(filters: ExerciseFilters): void {
 }
 
 function loadingView(): HTMLElement {
-  const wrapper = document.createElement('section')
-  wrapper.className = 'exercise-page'
-  wrapper.setAttribute('aria-busy', 'true')
-  wrapper.innerHTML = `
-    <div class="exercise-heading exercise-heading--skeleton"><div></div><div></div><div></div></div>
-    <div class="exercise-grid">${Array.from({ length: 6 }).map(() => `
-      <div class="exercise-card exercise-card--loading"><div class="exercise-image-frame"></div><div class="exercise-card__body"><span></span><small></small></div></div>
-    `).join('')}</div>
-  `
-  return wrapper
+  return loadingRegion('Loading exercises', 'exercise-page', libraryHeading('exercises'), skeleton({ height: 44, radius: 'md' }),
+    skeletonGroup('exercise-grid', ...Array.from({ length: 10 }, () => skeleton({ aspect: '1 / 1.12' }))))
 }
 
 function errorView(message: string): HTMLElement {
@@ -208,12 +200,14 @@ function renderLoaded(root: HTMLElement, state: PageState): void {
 }
 
 export async function renderExerciseLibrary(root: HTMLElement): Promise<void> {
-  root.replaceChildren(loadingView())
+  const loaded = showLoadingAfterDelay(root, loadingView)
   try {
     const exercises = await listExercises()
+    loaded()
     const filters = filtersFromUrl(new URLSearchParams(window.location.search))
     renderLoaded(root, { exercises, filters, selecting: false, selectedIds: new Set(), busy: false, error: '' })
   } catch (error) {
+    loaded()
     const view = errorView(readableApiError(error))
     bindPageRetry(view, () => { void renderExerciseLibrary(root) })
     root.replaceChildren(view)

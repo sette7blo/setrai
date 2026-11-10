@@ -52,14 +52,6 @@
   box-shadow: var(--shadow-soft);
 }
 
-.statistics-page--loading div,
-.profile-page--loading div {
-  min-height: 6rem;
-  border-radius: var(--radius-lg);
-  background: color-mix(in srgb, var(--color-surface) 7%, transparent);
-  animation: exercisePulse var(--duration-pulse) var(--ease-out) infinite;
-}
-
 @media (min-width: 720px) {
   .statistics-workstr-page {
     width: 100%;
@@ -206,7 +198,6 @@
   background: var(--color-border);
   color: var(--color-text);
 }
-
 
 .body-share-options {
   display: grid;

@@ -2,7 +2,7 @@ import { ChevronLeft, ImagePlus, Save, Trash2 } from 'lucide'
 import { iconElement } from '../app/navigation.js'
 import { readableApiError } from '../shared/api/errors.js'
 import { pageHeading } from '../shared/page-chrome.js'
-import { pageError, pageLoading } from '../shared/page-states.js'
+import { loadingRegion, pageError, showLoadingAfterDelay, skeleton } from '../shared/page-states.js'
 import {
   createExercise,
   deleteExercise,
@@ -278,13 +278,12 @@ export function createExerciseEditorForm(
 
 export async function renderExerciseEditor(root: HTMLElement, id: number | null): Promise<void> {
   const mode = id == null ? 'create' : 'edit'
-  root.replaceChildren(pageLoading({
-    className: 'exercise-editor-page',
-    label: mode === 'create' ? 'Loading editor' : 'Loading exercise'
-  }))
+  const loaded = showLoadingAfterDelay(root, () => loadingRegion(mode === 'create' ? 'Loading editor' : 'Loading exercise', 'exercise-editor-page',
+    skeleton({ height: 36, width: '60%', radius: 'sm' }), ...[380, 260, 320].map(height => skeleton({ height }))))
 
   try {
     const exercise = id == null ? emptyExercise() : await getExercise(id)
+    loaded()
     const page = document.createElement('div')
     page.className = 'exercise-editor-page'
     const heading = pageHeading({
@@ -305,6 +304,7 @@ export async function renderExerciseEditor(root: HTMLElement, id: number | null)
     )
     root.replaceChildren(page)
   } catch (error) {
+    loaded()
     root.replaceChildren(pageError({
       eyebrow: 'Exercise',
       title: mode === 'create' ? 'Unable to open editor' : 'Unable to load exercise',

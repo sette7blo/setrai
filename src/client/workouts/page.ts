@@ -1,7 +1,7 @@
 import { libraryHeading, progressHeading } from '../app/section-navigation.js'
 import { pageBackHeading } from '../shared/page-chrome.js'
 import { readableApiError } from '../shared/api/errors.js'
-import { bindPageRetry, pageEmpty, pageError } from '../shared/page-states.js'
+import { LOADING_DELAY_MS, bindPageRetry, loadingAnnouncement, pageEmpty, pageError, skeleton, skeletonGroup } from '../shared/page-states.js'
 import { listExercises } from '../exercises/api.js'
 import { getProfile } from '../profile/api.js'
 import { getRecovery } from '../recovery/api.js'
@@ -17,18 +17,14 @@ import type { Session } from './types.js'
 import { monthlyRecap } from './monthly-recap-data.js'
 import { monthlyRecapCard } from './monthly-recap.js'
 
-export function workoutLoadingSkeleton(view: 'library' | 'history'): HTMLElement {
-  const skeleton = document.createElement('div')
-  skeleton.className = `workout-loading workout-loading--${view}`
-  skeleton.setAttribute('aria-hidden', 'true')
-  const count = view === 'history' ? 3 : 2
-  for (let index = 0; index < count; index += 1) {
-    const card = document.createElement('div')
-    card.className = 'workout-loading-card'
-    card.innerHTML = '<span></span><i></i><b></b>'
-    skeleton.append(card)
-  }
-  return skeleton
+// Placeholder blocks in the shape of each view, added to the page beside its real heading.
+export function workoutLoadingBlocks(view: 'library' | 'history' | 'recovery'): HTMLElement[] {
+  if (view === 'recovery') return [skeletonGroup('recovery-panel', skeleton({ height: 110 }), skeleton({ height: 420 }), skeleton({ height: 160 }))]
+  if (view === 'history') return [
+    skeleton({ height: 110 }), skeleton({ height: 400 }),
+    skeletonGroup('history-session-list', ...[85, 85, 85].map(height => skeleton({ height }))),
+  ]
+  return [skeleton({ height: 44, radius: 'md' }), skeletonGroup('program-list', ...[85, 85, 85, 85, 85].map(height => skeleton({ height })))]
 }
 
 function renderHistoryView(page: HTMLElement, sessions: Session[], exercises: Exercise[], unit: WeightUnit = 'kg'): void {
@@ -91,35 +87,34 @@ export async function renderWorkoutsPage(
     : recovery
       ? pageBackHeading({ title: 'Recovery', backHref: '/today', backLabel: 'Today' })
       : libraryHeading('programs')
-  const state = document.createElement('p')
-  state.className = 'workout-browser-status'
-  state.setAttribute('role', 'status')
-  state.textContent = recovery ? 'Loading muscle recovery...' : history ? 'Loading workout history...' : 'Loading your library...'
-  const skeleton = recovery ? null : workoutLoadingSkeleton(history ? 'history' : 'library')
-  page.append(heading, state)
-  if (skeleton) page.append(skeleton)
+  page.append(heading)
   root.replaceChildren(page)
+  // The heading shows at once; the blocks only if loading outlasts the delay.
+  const blocks = [loadingAnnouncement(recovery ? 'Loading muscle recovery' : history ? 'Loading workout history' : 'Loading your library'), ...workoutLoadingBlocks(view)]
+  page.setAttribute('aria-busy', 'true')
+  const timer = setTimeout(() => { page.append(...blocks) }, LOADING_DELAY_MS)
+  const loaded = (): void => {
+    clearTimeout(timer)
+    blocks.forEach(block => block.remove())
+    page.removeAttribute('aria-busy')
+  }
   try {
     if (recovery) {
       const overview = await getRecovery()
-      state.textContent = ''
+      loaded()
       page.append(recoveryContent(overview))
       return
     }
     if (history) {
       const [sessionList, exercises, profile] = await Promise.all([listSessions(), listExercises(), getProfile().catch(() => ({ weightUnit: 'kg' as const }))])
       const sessions = await Promise.all(sessionList.map(async session => session.finishedAt ? getSession(session.id).catch(() => session) : session))
-      skeleton?.remove()
-      state.textContent = ''
+      loaded()
       renderHistoryView(page, sessions, exercises, profile.weightUnit)
       return
     }
-    skeleton?.remove()
-    state.textContent = ''
-    await renderProgramLibrary(page)
+    await renderProgramLibrary(page, loaded)
   } catch (error) {
-    skeleton?.remove()
-    state.remove()
+    loaded()
     const viewError = pageError({
       eyebrow: 'Workouts',
       title: recovery ? 'Recovery unavailable' : history ? 'History unavailable' : 'Library unavailable',

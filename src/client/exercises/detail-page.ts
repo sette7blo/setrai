@@ -1,10 +1,10 @@
-import { pageEmpty, pageError, pageLoading } from '../shared/page-states.js'
+import { loadingRegion, pageEmpty, pageError, showLoadingAfterDelay, skeleton } from '../shared/page-states.js'
 import { ApiError, readableApiError } from '../shared/api/errors.js'
 import { getExercise, setExerciseFavourite } from './api.js'
 import { createExerciseDetailView } from './detail-view.js'
 
 function loadingView(): HTMLElement {
-  return pageLoading({ className: 'exercise-detail exercise-detail--loading', blocks: 2, label: 'Loading exercise' })
+  return loadingRegion('Loading exercise', 'exercise-detail', skeleton({ aspect: '4 / 3' }), skeleton({ height: 420 }))
 }
 
 function notFoundView(): HTMLElement {
@@ -28,10 +28,11 @@ function errorView(message: string): HTMLElement {
 }
 
 export async function renderExerciseDetail(root: HTMLElement, id: number): Promise<void> {
-  root.replaceChildren(loadingView())
+  const loaded = showLoadingAfterDelay(root, loadingView)
 
   try {
     let exercise = await getExercise(id)
+    loaded()
     const render = (): void => {
       const instructionsOpen = root.querySelector<HTMLDetailsElement>('.detail-instructions')?.open ?? true
       root.replaceChildren(createExerciseDetailView(exercise, () => {
@@ -44,6 +45,7 @@ export async function renderExerciseDetail(root: HTMLElement, id: number): Promi
     }
     render()
   } catch (error) {
+    loaded()
     if (error instanceof ApiError && error.status === 404) {
       root.replaceChildren(notFoundView())
       return
