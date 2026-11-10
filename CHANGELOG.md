@@ -11,6 +11,7 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 ## [Unreleased]
 
+- Progress, Body tab: logging a weight is now the first thing on the tab, with a date picker in your local format. Weight trend, goal progress and BMI are separate cards, entries are a compact list with "Show all", deleting an entry takes two taps, and height and target weight moved into a collapsed "Goal and height" section at the bottom.
 - Progress, Training tab: weekly volume, muscle distribution and personal records are now three separate cards, the range selector is a full-height control, and record rows are one fixed height with the estimated 1RM aligned on the right.
 
 ## [v0.4.0] — 2026-11-10

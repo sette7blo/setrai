@@ -25,7 +25,7 @@
   .exercise-page .exercise-search, .exercise-page .filter-icon, .exercise-page .exercise-selection-bar,
   .exercise-detail .exercise-detail__content, .workout-card,
   .program-search, .program-toolbar-action,
-  .statistics-page .stats-panel, .settings-category,
+  .settings-category,
   .history-calendar, .history-card, .history-filter,
   .session-detail-ex, .workout-exercise, .workout-preview) {
   border: var(--border-subtle) !important;
@@ -56,7 +56,7 @@
   text-transform: none !important;
 }
 
-:is(.exercise-card h2, .workout-card-name, .settings-category-copy strong, .stats-section-title) { font-weight: var(--weight-medium) !important; }
+:is(.exercise-card h2, .workout-card-name, .settings-category-copy strong) { font-weight: var(--weight-medium) !important; }
 :is(
   .detail-pills > span, .badge) { border: var(--border-subtle) !important; }
 

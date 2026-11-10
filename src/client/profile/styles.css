@@ -151,12 +151,6 @@
 .training-goal-option:has(input:focus-visible) { outline: 3px solid color-mix(in srgb, var(--color-text) 16%, transparent); outline-offset: -2px; }
 .training-goal-option:hover { background: color-mix(in srgb, var(--color-surface) 52%, transparent); }
 
-
-
-
-
-
-
 .profile-settings-form input:not([type='radio']),
 .profile-settings-form select {
   min-width: 0;

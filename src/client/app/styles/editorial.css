@@ -33,12 +33,10 @@ body::before { display: none; }
 .exercise-search,
 .exercise-card,
 .panel,
-.stats-panel,
 .program-card,
 .state-panel,
 .exercise-detail__content,
 .exercise-selection-bar,
-.body-entry,
 .row {
   border: 1px solid var(--color-border) !important;
   background: var(--color-surface) !important;
@@ -51,7 +49,6 @@ body::before { display: none; }
 .exercise-search,
 .exercise-card,
 .panel,
-.stats-panel,
 .program-card,
 .state-panel {
   border-radius: var(--radius-lg) !important;
@@ -76,8 +73,7 @@ body::before { display: none; }
 .exercise-card:hover { transform: translateY(-1px); }
 
 .eyebrow,
-.exercise-count,
-.stats-section-head small {
+.exercise-count {
   color: var(--color-text) !important;
   font-family: var(--font-sans), system-ui, sans-serif !important;
   letter-spacing: .015em !important;
@@ -118,7 +114,6 @@ body::before { display: none; }
   height: 2px !important;
 }
 
-.body-entry-icon,
 .program-browse-icon {
   border: 1px solid var(--color-border) !important;
   background: var(--color-bg) !important;
@@ -127,8 +122,7 @@ body::before { display: none; }
 }
 
 .exercise-card h2,
-.program-card h2,
-.stats-section-title {
+.program-card h2 {
   color: var(--color-text) !important;
   font-weight: var(--weight-medium) !important;
   letter-spacing: -.015em !important;
@@ -237,8 +231,7 @@ body::before { display: none; }
   letter-spacing: -.02em !important;
 }
 
-.favorite-button,
-.body-entry-delete {
+.favorite-button {
   border: 0 !important;
   background: transparent !important;
   color: var(--color-text) !important;
@@ -265,12 +258,7 @@ textarea {
   color: var(--color-text) !important;
 }
 
-.body-goal-fill,
-.bmi-marker { background: var(--color-text) !important; }
-
-.track,
-.body-goal-bar,
-.bmi-bar { border: 1px solid var(--color-text); background: var(--color-surface-strong) !important; }
+.track { border: 1px solid var(--color-text); background: var(--color-surface-strong) !important; }
 
 @media (max-width: 719px) {
 
@@ -305,20 +293,7 @@ textarea {
   --stats-panel: var(--color-bg);
 }
 
-.statistics-page .stats-panel {
-  background:
-    var(--color-text),
-    var(--color-surface) !important;
-}
-
-.statistics-page .track,
-.statistics-page .body-goal-bar,
-.statistics-page .bmi-bar {
+.statistics-page .track {
   background: var(--color-surface-strong) !important;
-}
-
-.statistics-page .bmi-marker {
-  background: var(--color-text) !important;
-  background-image: none !important;
 }
 

@@ -11,6 +11,7 @@ import { displayWeightFromKg, formatVolumeKg, formatWeightFromKg } from '../prof
 import { getStatistics } from './api.js'
 import { hasTrainingHistory, normalizeTrainingRange, weeklyVolumeForRange, type TrainingRange } from './format.js'
 import { bodyView } from './body-tab.js'
+import { stackCardNote, statsCard } from './card.js'
 import type { MuscleVolume, PersonalRecord, StatisticsOverview, WeeklyVolumePoint } from './types.js'
 import { createVolumeShareExperience } from './volume-share.js'
 import { createRecordShareExperience } from './record-share.js'
@@ -35,17 +36,6 @@ function emptyView(): HTMLElement {
     className: 'stats-empty statistics-workstr-empty',
   }))
   return page
-}
-
-function card(title: string, note = '', modifier = ''): { card: HTMLElement, head: HTMLElement } {
-  const element = document.createElement('section')
-  element.className = modifier ? `stats-card ${modifier}` : 'stats-card'
-  const head = document.createElement('div')
-  head.className = 'stats-card-head'
-  head.append(Object.assign(document.createElement('h2'), { textContent: title }))
-  if (note) head.append(Object.assign(document.createElement('small'), { textContent: note }))
-  element.append(head)
-  return { card: element, head }
 }
 
 const RANGE_OPTIONS: Array<{ value: TrainingRange, label: string }> = [
@@ -95,18 +85,11 @@ function compactVolume(volumeKg: number, unit: WeightUnit): string {
 function weeklyPanel(points: WeeklyVolumePoint[], unit: WeightUnit, allPoints: WeeklyVolumePoint[], range: TrainingRange): HTMLElement {
   const recent = points.slice(-8)
   const peak = recent.reduce<WeeklyVolumePoint | null>((best, point) => (!best || point.volume > best.volume ? point : best), null)
-  const { card: panel, head } = card('Weekly volume')
-  if (peak && peak.volume > 0) {
-    const title = document.createElement('div')
-    title.className = 'stats-card-title'
-    title.append(head.firstElementChild!, Object.assign(document.createElement('small'), { textContent: `Best week ${formatVolumeKg(peak.volume, unit)}` }))
-    head.append(title)
-  }
+  const { card: panel, head } = statsCard('Weekly volume', peak && peak.volume > 0 ? `Best week ${formatVolumeKg(peak.volume, unit)}` : '')
+  stackCardNote(head)
   let shareDialog: HTMLDialogElement | null = null
   if (allPoints.length > 0) {
     const share = createVolumeShareExperience(allPoints, unit, range)
-    share.button.className = 'button stats-share-icon'
-    share.button.setAttribute('aria-label', 'Share weekly volume report')
     head.append(share.button)
     shareDialog = share.dialog
   }
@@ -207,9 +190,9 @@ function trainingView(stats: StatisticsOverview, unit: WeightUnit): HTMLElement 
   }
   range = rangeBar(activeRange, selectRange)
   weekly = weeklyPanel(weeklyVolumeForRange(stats.weeklyVolume, activeRange), unit, stats.weeklyVolume, activeRange)
-  const muscles = card('Muscle distribution', 'By volume')
+  const muscles = statsCard('Muscle distribution', 'By volume')
   muscles.card.append(muscleDistribution([...stats.volumeByMuscle].sort((a, b) => b.volume - a.volume), unit))
-  const records = card('Personal records', 'Est. 1RM, heaviest first', 'stats-card--records')
+  const records = statsCard('Personal records', 'Est. 1RM, heaviest first', 'stats-card--records')
   records.card.append(recordsList(stats.personalRecords, unit))
   section.append(tiles, range, weekly, muscles.card, records.card)
   return section
