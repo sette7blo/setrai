@@ -3,8 +3,8 @@
 .live-clock svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
 .live-clock circle { fill: none; stroke-width: 3; stroke-linecap: round; }
 .live-ring-bg { stroke: var(--color-surface-strong); }
-.live-ring-fill { stroke: var(--color-text); transition: stroke-dashoffset var(--duration-base) linear; }
-.live-clock strong { color: var(--live-ink); font-size: var(--text-display); line-height: 1; font-weight: var(--weight-regular); letter-spacing: -.015em; font-variant-numeric: tabular-nums; }
+.live-ring-fill { stroke: var(--color-text); transition: stroke-dashoffset var(--duration-base) linear, stroke var(--duration-base) var(--ease-out); }
+.live-clock strong { color: var(--live-ink); font-size: var(--text-display); font-weight: var(--weight-heavy); font-stretch: 68%; line-height: .9; letter-spacing: -.02em; font-variant-numeric: tabular-nums; transition: color var(--duration-base) var(--ease-out); }
 .live-ring-fill[data-warning="true"] { stroke: var(--color-accent); }
 .live-clock strong[data-warning="true"] { color: var(--color-accent); }
 .live-clock-copy { display: grid; justify-items: center; gap: 8px; }
@@ -23,21 +23,20 @@
   background: var(--color-bg);
   color: var(--live-ink);
 }
-.live-rest-heading { display: grid; justify-items: center; gap: 10px; }
-.live-rest-heading > svg { width: 22px; height: 22px; color: var(--color-muted); }
-.live-rest-heading h2 { margin: 0; font-size: var(--text-headline); font-weight: var(--weight-regular); letter-spacing: -.015em; }
-.live-rest-heading p { margin: 0; color: var(--live-muted); font-size: var(--text-meta); }
-.live-rest .live-next-up { display: grid; justify-items: center; gap: 6px; max-width: 320px; margin: 0; text-align: center; }
+/* 6px ring: the stroke is set in the ring's 120-unit box, which is drawn at 224px. */
+.live-rest .live-clock circle { stroke-width: 3.2; }
+.live-rest .live-clock strong { font-size: var(--text-countdown); }
+.live-rest .live-next-up { display: grid; justify-items: center; gap: 4px; max-width: 320px; margin: 0; text-align: center; }
 .live-rest .live-next-up small { color: var(--live-muted); font-size: var(--text-caption); }
-.live-rest .live-next-up strong { color: var(--live-ink); font-size: var(--text-title); font-weight: var(--weight-regular); }
-.live-rest .live-next-up span { font-size: var(--text-caption); }
-.live-rest-actions { display: flex; gap: 8px; width: min(100%, 340px); }
-.live-rest-actions .live-action { flex: 1; min-height: 48px; padding-inline: 12px; white-space: nowrap; }
-.live-rest-actions .live-finish { flex: 1.4; color: var(--color-on-primary); background: var(--color-text); border-color: var(--color-text); }
+.live-rest .live-next-up strong { color: var(--live-ink); font-size: var(--text-section); font-weight: var(--weight-bold); font-stretch: var(--font-display-stretch); line-height: 1.15; }
+.live-rest .live-next-up span { color: var(--color-muted-strong); font-size: var(--text-meta); }
+.live-rest-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; width: min(100%, 340px); }
+.live-rest-actions .live-action { min-height: 52px; padding-inline: 12px; border-radius: var(--radius-md); white-space: nowrap; }
 .live-rest .live-clock { flex-shrink: 0; }
 @media (max-height: 600px) {
   .live-rest { justify-content: flex-start; gap: 16px; }
   .live-rest .live-clock { width: 170px; height: 170px; }
   .live-rest .live-clock strong { font-size: var(--text-display); }
+  .live-rest .live-clock circle { stroke-width: 4.2; }
 }
 @media (prefers-reduced-motion: reduce) { .live-ring-fill { transition: none; } }

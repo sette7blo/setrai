@@ -11,6 +11,7 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 ## [Unreleased]
 
+- Redesigned the rest timer: the countdown is a large heavy number inside a thicker ring, the filler heading is gone, the next exercise and set are shown plainly beneath, and the three buttons (15 seconds less, Skip, 15 seconds more) are the same size. Ring and number still turn orange for the final five seconds.
 - Added feedback where it matters: logging a set fills the row's badge with a check before moving on, History, program, Settings and Instructions sections open and close smoothly, the exercise filter sheet slides up and down, the readiness number on Today counts up once when the app opens, and every button responds to a press the same way. All of it is switched off when your device asks for reduced motion.
 
 ## [v0.5.0] — 2026-11-10
