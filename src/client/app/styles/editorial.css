@@ -33,7 +33,7 @@ body::before { display: none; }
 .profile-page h1,
 .page-heading h1 {
   color: var(--color-text);
-  font-weight: 650;
+  font-weight: var(--weight-medium);
   line-height: 1;
   letter-spacing: -.015em;
   text-wrap: balance;
@@ -73,7 +73,7 @@ body::before { display: none; }
 .filter-icon,
 .stats-range-btn {
   color: var(--color-text) !important;
-  font-weight: 650 !important;
+  font-weight: var(--weight-medium) !important;
   text-shadow: none !important;
   text-transform: none;
 }
@@ -120,9 +120,9 @@ body::before { display: none; }
   min-height: 44px !important;
   height: 44px !important;
   padding: 10px 16px !important;
-  font-size: 12px !important;
+  font-size: var(--text-caption) !important;
   line-height: 1 !important;
-  font-weight: 650 !important;
+  font-weight: var(--weight-medium) !important;
   letter-spacing: .01em !important;
   white-space: nowrap;
 }
@@ -155,7 +155,7 @@ body::before { display: none; }
 .stats-section-title,
 .ss-val {
   color: var(--color-text) !important;
-  font-weight: 650 !important;
+  font-weight: var(--weight-medium) !important;
   letter-spacing: -.015em !important;
 }
 
@@ -196,7 +196,7 @@ body::before { display: none; }
 }
 .page-toolbar-search input,
 .exercise-search input,
-.program-search input { font-size: 16px; color: var(--color-text) !important; }
+.program-search input { font-size: var(--text-body); color: var(--color-text) !important; }
 .page-toolbar-search input::placeholder,
 .exercise-search input::placeholder,
 .program-search input::placeholder { color: #77736b !important; }
@@ -265,7 +265,7 @@ body::before { display: none; }
 
 .exercise-image-placeholder span {
   color: var(--color-text) !important;
-  font-weight: 950 !important;
+  font-weight: var(--weight-heavy) !important;
   letter-spacing: -.02em !important;
 }
 
@@ -315,14 +315,12 @@ textarea {
 .muscle-map__inactive { fill: var(--color-surface) !important; stroke: var(--color-text) !important; }
 
 @media (max-width: 719px) {
-  :root { --font-page-title: 30px; }
-  body { font-size: 16px; }
 
 
   .mobile-brand__logo { width: 54px; height: 42px; }
 
           .exercise-heading h1,
-  .statistics-page-head h1 { font-size: var(--font-page-title) !important; font-weight: 650 !important; letter-spacing: -.015em !important; line-height: 1 !important; }
+  .statistics-page-head h1 { font-size: var(--font-page-title) !important; font-weight: var(--weight-medium) !important; letter-spacing: -.015em !important; line-height: 1 !important; }
   .exercise-heading { gap: 12px; }
 
 
@@ -335,9 +333,9 @@ textarea {
 
   .page-toolbar, .exercise-controls, .program-toolbar { gap: var(--toolbar-gap) !important; }
   .exercise-card { border-radius: 16px !important; }
-  .exercise-card h2 { font-size: 13px !important; line-height: 1.16 !important; font-weight: 650 !important; letter-spacing: -.025em !important; }
+  .exercise-card h2 { font-size: var(--text-meta) !important; line-height: 1.16 !important; font-weight: var(--weight-medium) !important; letter-spacing: -.025em !important; }
   .exercise-card__muscle,
-  .exercise-card__muscle small { font-size: 11px !important; line-height: 1 !important; }
+  .exercise-card__muscle small { font-size: var(--text-caption) !important; line-height: 1 !important; }
   .exercise-card__body { min-height: auto !important; padding: 8px 9px 10px !important; gap: 5px !important; }
   .exercise-card .exercise-image-frame { aspect-ratio: 16 / 10 !important; }
   .favorite-button { width: 44px !important; height: 44px !important; }

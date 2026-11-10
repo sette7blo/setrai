@@ -132,8 +132,8 @@
 .session-summary-medal svg { width: 1.7rem; height: 1.7rem; }
 .session-summary-copy { display: grid; gap: .35rem; min-width: 0; }
 .session-summary-copy .eyebrow { margin: 0; color: #54504a; }
-.session-summary-copy h1 { max-width: none; color: var(--color-text); font-size: clamp(2.15rem, 8vw, 4.8rem); line-height: .9; letter-spacing: -.015em; text-wrap: balance; }
-.session-summary-meta { margin: 0; color: #4d4a44; font-size: .86rem; line-height: 1.45; }
+.session-summary-copy h1 { max-width: none; color: var(--color-text); font-size: var(--font-page-title); line-height: .9; letter-spacing: -.015em; text-wrap: balance; }
+.session-summary-meta { margin: 0; color: #4d4a44; font-size: var(--text-meta); line-height: 1.45; }
 
 .session-summary-stats {
   display: grid;
@@ -162,8 +162,8 @@
 }
 
 .session-summary-stat__icon svg { width: 1rem; height: 1rem; }
-.session-summary-stat strong { overflow-wrap: anywhere; color: var(--color-text); font-size: clamp(1rem, 5vw, 1.55rem); line-height: 1; letter-spacing: -.015em; font-variant-numeric: tabular-nums; }
-.session-summary-stat span:last-child { color: #615d55; font-size: .62rem; font-weight: 850; letter-spacing: .01em; text-transform: none; }
+.session-summary-stat strong { overflow-wrap: anywhere; color: var(--color-text); font-size: var(--text-section); line-height: 1; letter-spacing: -.015em; font-variant-numeric: tabular-nums; }
+.session-summary-stat span:last-child { color: #615d55; font-size: var(--text-caption); font-weight: var(--weight-heavy); letter-spacing: .01em; text-transform: none; }
 
 .session-summary-map {
   display: grid;
@@ -187,13 +187,13 @@
   border-top: 1px solid rgba(0,0,0,.12);
 }
 
-.session-summary-proof strong { color: var(--color-text); font-size: .76rem; letter-spacing: .01em; text-transform: none; }
-.session-summary-proof span { color: #4d4a44; font-size: .9rem; line-height: 1.45; }
+.session-summary-proof strong { color: var(--color-text); font-size: var(--text-caption); letter-spacing: .01em; text-transform: none; }
+.session-summary-proof span { color: #4d4a44; font-size: var(--text-body); line-height: 1.45; }
 .session-summary-actions { display: grid; gap: 8px; }
 .session-summary-actions .button { justify-content: center; width: 100%; }
 .session-summary-share { gap: 8px; }
 .session-summary-share svg { width: 18px; height: 18px; }
-.session-summary-share-status { min-height: 1.25rem; color: #4d4a44; font-size: .78rem; line-height: 1.4; text-align: center; }
+.session-summary-share-status { min-height: 1.25rem; color: #4d4a44; font-size: var(--text-caption); line-height: 1.4; text-align: center; }
 
 .workouts-empty {
   padding: var(--space-5);
@@ -214,4 +214,4 @@
 
 .session-summary-brand { position: relative; z-index: 1; display: inline-flex; align-items: center; align-self: flex-start; gap: 8px; }
 .session-summary-brand img { display: block; width: 34px; height: 31px; object-fit: contain; }
-.session-summary-brand strong { font-size: 24px; font-weight: 800; font-stretch: var(--font-display-stretch); line-height: 1; }
+.session-summary-brand strong { font-size: var(--text-headline); font-weight: var(--weight-heavy); font-stretch: var(--font-display-stretch); line-height: 1; }

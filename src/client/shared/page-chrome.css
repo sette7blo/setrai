@@ -33,7 +33,7 @@
   border: 0;
   background: transparent;
   color: var(--color-muted);
-  font: 850 11px/1 var(--font-sans);
+  font: var(--weight-heavy) var(--text-caption)/1 var(--font-sans);
   letter-spacing: .01em;
   text-transform: none;
   cursor: pointer;
@@ -97,15 +97,15 @@
 .page-summary-title {
   margin: 0;
   color: var(--color-text);
-  font-size: 15px;
-  font-weight: 800;
+  font-size: var(--text-body);
+  font-weight: var(--weight-heavy);
   letter-spacing: -0.02em;
 }
 
 .page-summary-description {
   margin: 0;
   color: var(--color-muted-strong);
-  font-size: 12px;
+  font-size: var(--text-caption);
   line-height: 1.5;
 }
 
@@ -160,5 +160,5 @@
 
 /* Way back from a page reached through another page. */
 .page-heading--back { display: grid; gap: 4px; padding-top: 4px; }
-.page-back, .detail-back { display: inline-flex; width: fit-content; min-height: 44px; align-items: center; gap: 4px; margin-left: -4px; color: var(--color-muted-strong); font-size: 15px; font-weight: 600; }
+.page-back, .detail-back { display: inline-flex; width: fit-content; min-height: 44px; align-items: center; gap: 4px; margin-left: -4px; color: var(--color-muted-strong); font-size: var(--text-body); font-weight: var(--weight-medium); }
 .page-back svg, .detail-back svg { width: 18px; height: 18px; flex: none; }

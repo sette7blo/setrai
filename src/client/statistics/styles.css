@@ -90,7 +90,7 @@
   justify-content: center;
   gap: 4px;
   color: var(--color-text);
-  font: 850 24px/1 var(--font-sans);
+  font: var(--weight-heavy) var(--text-headline)/1 var(--font-sans);
   letter-spacing: -.015em;
   font-variant-numeric: tabular-nums;
 }
@@ -99,7 +99,7 @@
 .body-card-lbl {
   margin-top: 8px;
   color: var(--color-primary);
-  font: 850 10px/1 var(--font-sans);
+  font: var(--weight-heavy) var(--text-caption)/1 var(--font-sans);
   letter-spacing: .01em;
   text-transform: none;
 }
@@ -121,7 +121,7 @@
   padding: 8px 12px;
   background: transparent;
   color: var(--color-muted);
-  font: 800 .82rem/1 var(--font-sans);
+  font: var(--weight-heavy) var(--text-meta)/1 var(--font-sans);
 }
 
 .stats-range-btn.active {
@@ -155,7 +155,7 @@
   align-items: center;
   gap: 8px;
   color: var(--color-text);
-  font-weight: 850;
+  font-weight: var(--weight-heavy);
   letter-spacing: -.02em;
 }
 
@@ -168,7 +168,7 @@
 
 .stats-section-head small {
   color: var(--color-muted);
-  font: 750 11px/1.2 var(--font-sans);
+  font: var(--weight-bold) var(--text-caption)/1.2 var(--font-sans);
   text-align: right;
 }
 
@@ -206,7 +206,7 @@
 
 .dist-row small {
   color: var(--color-muted);
-  font: 800 11px/1.1 var(--font-sans);
+  font: var(--weight-heavy) var(--text-caption)/1.1 var(--font-sans);
 }
 
 
@@ -232,7 +232,7 @@
 .body-entry strong {
   display: block;
   color: var(--color-text);
-  font-size: 13px;
+  font-size: var(--text-meta);
 }
 
 
@@ -240,7 +240,7 @@
   display: block;
   margin-top: 3px;
   color: var(--color-muted);
-  font-size: 11px;
+  font-size: var(--text-caption);
 }
 
 .badge.muscle {
@@ -250,7 +250,7 @@
   padding: 7px 9px;
   background: rgba(var(--color-primary-rgb), .12);
   color: var(--color-primary);
-  font: 850 10px/1 var(--font-sans);
+  font: var(--weight-heavy) var(--text-caption)/1 var(--font-sans);
 }
 
 .body-cards {
@@ -273,7 +273,7 @@
   display: grid;
   gap: 6px;
   color: var(--color-muted);
-  font: 800 11px/1 var(--font-sans);
+  font: var(--weight-heavy) var(--text-caption)/1 var(--font-sans);
   letter-spacing: .01em;
   text-transform: none;
 }
@@ -286,7 +286,7 @@
   padding: 0 12px;
   background: rgba(0, 0, 0, .22);
   color: var(--color-text);
-  font: 700 14px/1 var(--font-sans);
+  font: var(--weight-bold) var(--text-body)/1 var(--font-sans);
 }
 
 .form-grid .span-2,
@@ -318,7 +318,7 @@
 
 .body-chart-panel text {
   fill: var(--color-muted);
-  font: 800 10px/1 var(--font-sans);
+  font: var(--weight-heavy) var(--text-caption)/1 var(--font-sans);
 }
 
 .empty {
@@ -367,7 +367,7 @@
 
   .ss-val,
   .body-card-val {
-    font-size: 21px;
+    font-size: var(--text-section);
   }
 
   .stats-panel {
@@ -425,13 +425,13 @@
 }
 
 .stats-training-view .summary-stat .ss-val {
-  font-size: 20px;
+  font-size: var(--text-section);
   line-height: 1;
 }
 
 .stats-training-view .summary-stat .ss-label {
   margin-top: 7px;
-  font-size: 9px;
+  font-size: var(--text-caption);
   line-height: 1.15;
   letter-spacing: .01em;
 }
@@ -444,7 +444,7 @@
 .stats-training-view .stats-range-btn {
   min-height: 30px;
   padding: 6px 10px;
-  font-size: 12px;
+  font-size: var(--text-caption);
 }
 
 .stats-training-view .stats-panel {
@@ -469,7 +469,7 @@
 
 .stats-training-view .stats-section-title {
   min-width: 0;
-  font-size: 15px;
+  font-size: var(--text-body);
   line-height: 1.1;
 }
 
@@ -492,7 +492,7 @@
 }
 
 .stats-training-view .dist-row small {
-  font-size: 10px;
+  font-size: var(--text-caption);
   line-height: 1.1;
 }
 
@@ -544,14 +544,14 @@
   display: block;
   min-width: 0;
   overflow-wrap: anywhere;
-  font: 850 20px/1 var(--font-sans);
+  font: var(--weight-heavy) var(--text-section)/1 var(--font-sans);
   letter-spacing: -.015em;
 }
 
 .stats-body-view .body-card-lbl {
   margin-top: 7px;
   color: var(--color-muted-strong);
-  font: 850 9px/1.05 var(--font-sans);
+  font: var(--weight-heavy) var(--text-caption)/1.05 var(--font-sans);
   letter-spacing: .01em;
   text-transform: none;
 }
@@ -592,11 +592,11 @@
 
 .stats-body-view .body-chart text {
   fill: var(--color-muted);
-  font: 800 9px/1 var(--font-sans);
+  font: var(--weight-heavy) var(--text-caption)/1 var(--font-sans);
 }
 
 .stats-body-view .body-chart .body-chart-date {
-  font-size: 9px;
+  font-size: var(--text-caption);
 }
 
 .stats-body-view .body-chart-area {
@@ -670,14 +670,14 @@
 .body-share-sheet header small,
 .body-share-range legend {
   color: var(--color-muted-strong);
-  font: 800 10px/1.2 var(--font-sans);
+  font: var(--weight-heavy) var(--text-caption)/1.2 var(--font-sans);
   letter-spacing: .01em;
   text-transform: none;
 }
 
 .body-share-sheet h2 {
   margin: 4px 0 0;
-  font: 850 24px/1 var(--font-sans);
+  font: var(--weight-heavy) var(--text-headline)/1 var(--font-sans);
   letter-spacing: -.015em;
   text-wrap: balance;
 }
@@ -722,7 +722,7 @@
 .body-share-preview span {
   padding: 16px;
   color: var(--color-muted-strong);
-  font: 750 12px/1.4 var(--font-sans);
+  font: var(--weight-bold) var(--text-caption)/1.4 var(--font-sans);
   text-align: center;
 }
 
@@ -746,7 +746,7 @@
   border-radius: 12px;
   background: #f1ede4;
   color: #4d4942;
-  font: 800 12px/1 var(--font-sans);
+  font: var(--weight-heavy) var(--text-caption)/1 var(--font-sans);
   cursor: pointer;
   transition: transform 100ms ease, border-color 180ms ease, background-color 180ms ease;
 }
@@ -774,7 +774,7 @@
   justify-content: space-between;
   gap: 16px;
   padding: 0 14px;
-  font: 750 13px/1.2 var(--font-sans);
+  font: var(--weight-bold) var(--text-meta)/1.2 var(--font-sans);
   cursor: pointer;
 }
 
@@ -796,7 +796,7 @@
   min-height: 18px;
   margin: 0;
   color: var(--color-muted-strong);
-  font: 700 12px/1.4 var(--font-sans);
+  font: var(--weight-bold) var(--text-caption)/1.4 var(--font-sans);
   text-align: center;
 }
 
@@ -839,7 +839,7 @@
   display: grid;
   place-items: center;
   color: var(--color-text);
-  font: 850 8px/1 var(--font-sans);
+  font: var(--weight-heavy) var(--text-caption)/1 var(--font-sans);
   letter-spacing: .04em;
   text-transform: none;
 }
@@ -890,16 +890,16 @@
 }
 
 .stats-body-view .body-entry strong {
-  font-size: 13px;
+  font-size: var(--text-meta);
 }
 
 .stats-body-view .body-entry small {
-  font-size: 11px;
+  font-size: var(--text-caption);
 }
 
 @media (max-width: 719px) {
   .stats-body-view .body-card-val {
-    font-size: 18px;
+    font-size: var(--text-title);
   }
 
   .stats-body-view .body-chart {
@@ -935,7 +935,7 @@
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  font: 800 10px/1 var(--font-sans) !important;
+  font: var(--weight-heavy) var(--text-caption)/1 var(--font-sans) !important;
   text-transform: none !important;
   letter-spacing: .01em !important;
   color: var(--color-text) !important;
@@ -962,7 +962,7 @@
   justify-content: space-between !important;
   margin-top: 6px !important;
   color: var(--color-muted) !important;
-  font: 700 10px/1 var(--font-sans) !important;
+  font: var(--weight-bold) var(--text-caption)/1 var(--font-sans) !important;
 }
 
 .stats-body-view .bmi-scale span {
@@ -974,8 +974,8 @@
 /* BMI graph hard locks: Workstr text scale and marker paint. */
 .stats-body-view .bmi-zone {
   font-family: var(--font-sans) !important;
-  font-size: 10px !important;
-  font-weight: 800 !important;
+  font-size: var(--text-caption) !important;
+  font-weight: var(--weight-heavy) !important;
   line-height: 1 !important;
   letter-spacing: .01em !important;
 }
@@ -987,8 +987,8 @@
 
 .stats-body-view .bmi-scale {
   font-family: var(--font-sans) !important;
-  font-size: 10px !important;
-  font-weight: 700 !important;
+  font-size: var(--text-caption) !important;
+  font-weight: var(--weight-bold) !important;
   line-height: 1 !important;
 }
 
@@ -1038,25 +1038,25 @@
   display: block !important;
   min-width: 0 !important;
   overflow-wrap: anywhere !important;
-  font-size: 20px !important;
+  font-size: var(--text-section) !important;
   line-height: 1 !important;
-  font-weight: 850 !important;
+  font-weight: var(--weight-heavy) !important;
   letter-spacing: -.015em !important;
 }
 
 .stats-body-view .body-card-lbl {
   margin-top: 7px !important;
   color: var(--color-muted-strong) !important;
-  font-size: 9px !important;
+  font-size: var(--text-caption) !important;
   line-height: 1.15 !important;
-  font-weight: 850 !important;
+  font-weight: var(--weight-heavy) !important;
   letter-spacing: .01em !important;
   text-transform: none !important;
 }
 
 @media (max-width: 719px) {
   .stats-body-view .body-card-val {
-    font-size: 20px !important;
+    font-size: var(--text-section) !important;
   }
 }
 
@@ -1116,7 +1116,7 @@
   width: 100% !important;
   display: grid !important;
   gap: 8px !important;
-  font-size: 10px !important;
+  font-size: var(--text-caption) !important;
   line-height: 1.15 !important;
   letter-spacing: .01em !important;
 }
@@ -1136,7 +1136,7 @@
   border-radius: 14px !important;
   background: var(--color-surface) !important;
   color: var(--color-text) !important;
-  font: 700 16px/1.15 var(--font-sans) !important;
+  font: var(--weight-bold) var(--text-title)/1.15 var(--font-sans) !important;
 }
 
 .stats-body-view .body-forms .form-actions {
@@ -1167,7 +1167,7 @@
   .stats-body-view .body-forms .form-grid input {
     min-height: 54px !important;
     padding-inline: 14px !important;
-    font-size: 16px !important;
+    font-size: var(--text-title) !important;
   }
 
   .stats-body-view .body-forms .stats-action {
@@ -1233,15 +1233,15 @@
 }
 
 .summary-stat .ss-val {
-  font-size: 28px;
-  font-weight: 800;
+  font-size: var(--text-headline);
+  font-weight: var(--weight-heavy);
   line-height: 1.1;
   letter-spacing: -.015em;
 }
 
 .summary-stat .ss-label {
-  font-size: 12px;
-  font-weight: 600;
+  font-size: var(--text-caption);
+  font-weight: var(--weight-medium);
   color: var(--color-muted-strong);
   margin-top: 4px;
 }
@@ -1274,7 +1274,7 @@
 }
 
 .stats-range-btn.active {
-  font-weight: 900;
+  font-weight: var(--weight-heavy);
 }
 
 /* Improved weekly volume bar labels */
@@ -1327,8 +1327,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 9px;
-  font-weight: 700;
+  font-size: var(--text-caption);
+  font-weight: var(--weight-bold);
   color: var(--color-on-primary);
   text-transform: none;
   letter-spacing: 0.5px;
@@ -1353,7 +1353,7 @@
 .bmi-scale {
   display: flex;
   justify-content: space-between;
-  font-size: 10px;
+  font-size: var(--text-caption);
   color: var(--color-muted);
   padding: 0 2px;
 }

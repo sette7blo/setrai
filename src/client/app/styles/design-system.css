@@ -60,12 +60,12 @@
   min-height: 44px !important;
   height: 44px !important;
   font-family: inherit !important;
-  font-weight: 600 !important;
+  font-weight: var(--weight-medium) !important;
   letter-spacing: .01em !important;
   text-transform: none !important;
 }
 
-:is(.exercise-card h2, .workout-card-name, .settings-category-copy strong, .stats-section-title) { font-weight: 650 !important; }
+:is(.exercise-card h2, .workout-card-name, .settings-category-copy strong, .stats-section-title) { font-weight: var(--weight-medium) !important; }
 :is(
   .detail-pills > span, .badge) { border: var(--border-subtle) !important; }
 

@@ -18,26 +18,26 @@
 .page-state .eyebrow {
   margin: 0;
   color: var(--color-muted, #6b6964);
-  font: 850 11px/1 var(--font-sans);
+  font: var(--weight-heavy) var(--text-caption)/1 var(--font-sans);
   text-transform: none;
   letter-spacing: .01em;
 }
 
 .page-state-title {
   margin: 0;
-  font: 750 1.35rem/1.15 ui-sans-serif, system-ui, sans-serif;
+  font: var(--weight-bold) var(--text-section)/1.15 var(--font-sans);
   letter-spacing: -0.02em;
 }
 
 .page-state--compact .page-state-title {
-  font: 650 0.95rem/1.35 ui-sans-serif, system-ui, sans-serif;
+  font: var(--weight-medium) var(--text-body)/1.35 var(--font-sans);
   color: var(--color-muted-strong, #4d4b47);
 }
 
 .page-state-copy {
   margin: 0;
   color: var(--color-muted, #6b6964);
-  font: 500 0.95rem/1.45 ui-sans-serif, system-ui, sans-serif;
+  font: var(--weight-regular) var(--text-body)/1.45 var(--font-sans);
 }
 
 .page-state .button {
@@ -107,6 +107,6 @@
   }
 
   .page-state-title {
-    font-size: 1.2rem;
+    font-size: var(--text-section);
   }
 }

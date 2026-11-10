@@ -48,7 +48,20 @@
   --font-sans: Archivo, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-display-stretch: 78%;
   --font-page-title: clamp(30px, 3vw, 38px);
-  --font-section-title: 16px;
+  --font-section-title: var(--text-title);
+
+  /* Type scale. Nothing renders below caption. */
+  --text-caption: 12px;
+  --text-meta: 13px;
+  --text-body: 15px;
+  --text-title: 17px;
+  --text-section: 21px;
+  --text-headline: 26px;
+  --text-display: 64px;
+  --weight-regular: 400;
+  --weight-medium: 600;
+  --weight-bold: 700;
+  --weight-heavy: 800;
 
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -73,11 +86,11 @@
   --chip-border: 1px solid var(--color-border);
   --chip-metric-height: 28px;
   --chip-metric-pad-x: 8px;
-  --chip-metric-font: 600 12px/1.2 var(--font-sans);
+  --chip-metric-font: var(--weight-medium) var(--text-caption)/1.2 var(--font-sans);
   --chip-metric-icon: 12px;
   --chip-control-height: 44px;
   --chip-control-pad-x: 12px;
-  --chip-control-font: 600 13px/1 var(--font-sans);
+  --chip-control-font: var(--weight-medium) var(--text-meta)/1 var(--font-sans);
   --chip-control-icon: 14px;
 
   /* Shared search/filter toolbar density */
@@ -93,7 +106,7 @@
 
 @media (max-width: 719px) {
   :root {
-    --font-page-title: 32px;
+    --font-page-title: 30px;
     --space-5: 1rem;
     --space-6: 1.25rem;
     --space-8: 1.5rem;

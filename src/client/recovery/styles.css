@@ -3,9 +3,9 @@
 .recovery-head { display: grid; gap: 8px; }
 .recovery-summary { display: grid; gap: 4px; }
 .recovery-figure { display: flex; align-items: baseline; gap: 6px; margin: 0; white-space: nowrap; }
-.recovery-figure strong { font-size: 64px; font-weight: 800; font-stretch: 68%; line-height: .9; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
-.recovery-figure span { color: var(--color-muted-strong); font-size: 18px; font-weight: 600; }
-.recovery-counts, .recovery-status { margin: 0; color: var(--color-muted-strong); font-size: 14px; line-height: 1.45; }
+.recovery-figure strong { font-size: var(--text-display); font-weight: var(--weight-heavy); font-stretch: 68%; line-height: .9; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.recovery-figure span { color: var(--color-muted-strong); font-size: var(--text-title); font-weight: var(--weight-medium); }
+.recovery-counts, .recovery-status { margin: 0; color: var(--color-muted-strong); font-size: var(--text-body); line-height: 1.45; }
 
 .recovery-layout { display: grid; gap: 16px; align-items: start; }
 .recovery-map { padding: 16px; border: var(--border-subtle); border-radius: var(--radius-lg); background: var(--color-surface); }
@@ -17,7 +17,7 @@
 .recovery-map__moderate { fill: var(--color-warning); }
 .recovery-map__recovering { fill: var(--color-error); }
 .recovery-legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 16px; margin-top: 12px; }
-.recovery-legend .rl { display: inline-flex; align-items: center; gap: 6px; color: var(--color-muted-strong); font-size: 12px; }
+.recovery-legend .rl { display: inline-flex; align-items: center; gap: 6px; color: var(--color-muted-strong); font-size: var(--text-caption); }
 .recovery-legend .rl::before { content: ''; width: 9px; height: 9px; border-radius: 3px; }
 .recovery-legend .ready::before { background: var(--color-success); }
 .recovery-legend .moderate::before { background: var(--color-warning); }
@@ -29,17 +29,17 @@
 .recovery-row--recovering { --tone: var(--color-error); }
 .recovery-row.is-selected { border-color: var(--color-text); }
 .recovery-row-name, .recovery-row-meta { display: grid; gap: 2px; min-width: 0; }
-.recovery-row-name strong { font-size: 16px; font-weight: 650; }
-.recovery-row-name small, .recovery-row-meta small { color: var(--color-muted); font-size: 12px; }
+.recovery-row-name strong { font-size: var(--text-title); font-weight: var(--weight-medium); }
+.recovery-row-name small, .recovery-row-meta small { color: var(--color-muted); font-size: var(--text-caption); }
 .recovery-row-meta { justify-items: end; }
-.recovery-row-meta strong { color: var(--tone); font-size: 20px; font-weight: 750; font-stretch: var(--font-display-stretch); line-height: 1; font-variant-numeric: tabular-nums; }
+.recovery-row-meta strong { color: var(--tone); font-size: var(--text-section); font-weight: var(--weight-bold); font-stretch: var(--font-display-stretch); line-height: 1; font-variant-numeric: tabular-nums; }
 .recovery-row-track { grid-column: 1 / -1; height: 6px; overflow: hidden; border-radius: 999px; background: var(--color-surface-strong); }
 .recovery-row-track i { display: block; height: 100%; border-radius: inherit; background: var(--tone); }
 
 .recovery-fresh-summary { display: grid; gap: 10px; padding: 14px 16px; border: var(--border-subtle); border-radius: var(--radius-md); background: var(--color-surface); }
-.recovery-fresh-summary > strong { display: inline-flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 650; }
+.recovery-fresh-summary > strong { display: inline-flex; align-items: center; gap: 6px; font-size: var(--text-body); font-weight: var(--weight-medium); }
 .recovery-fresh-summary > strong svg { width: 16px; height: 16px; color: var(--color-muted-strong); }
-.recovery-selection-detail { margin: 0; padding: 0 2px; color: var(--color-muted-strong); font-size: 14px; line-height: 1.45; }
+.recovery-selection-detail { margin: 0; padding: 0 2px; color: var(--color-muted-strong); font-size: var(--text-body); line-height: 1.45; }
 
 @media (min-width: 860px) {
   .recovery-layout { grid-template-columns: minmax(280px, 380px) minmax(0, 1fr); gap: 24px; }

@@ -104,7 +104,7 @@
   :root {
     --chip-metric-height: 26px;
     --chip-metric-pad-x: 7px;
-    --chip-metric-font: 650 10px/1.2 var(--font-sans), system-ui, sans-serif;
+    --chip-metric-font: var(--weight-medium) var(--text-caption)/1.2 var(--font-sans), system-ui, sans-serif;
     --chip-control-pad-x: 12px;
   }
 }
