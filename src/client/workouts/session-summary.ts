@@ -47,10 +47,6 @@ export function renderSessionSummary(session: Session, program: Program | null, 
   section.className = 'session-summary'
   const fullExercises = (program?.exercises ?? session.plannedExercises).map(entry => entry.exercise).filter((exercise): exercise is Exercise => Boolean(exercise))
   const muscles = sessionMuscles(session, fullExercises)
-  const doneSets = completedSetCount(session)
-  const volume = simpleVolume(session)
-  const exercises = sessionExercises(session)
-  const duration = sessionDuration(session)
 
   const heading = document.createElement('header')
   heading.className = 'page-heading session-summary-heading'
@@ -85,10 +81,7 @@ export function renderSessionSummary(session: Session, program: Program | null, 
     image ??= createSummaryImage({
       title: title.textContent || 'Workout',
       meta: meta.textContent || '',
-      duration: duration || 'Done',
-      sets: String(doneSets),
-      volume: volume > 0 ? formatVolumeKg(volume, unit) : '—',
-      exercises: String(exercises.length),
+      stats: summaryStats(session, unit),
       receipt: summaryFacts(session, program, unit).slice(1).join(' · '),
       muscleMapSvg: map.innerHTML,
     })

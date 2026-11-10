@@ -2,6 +2,10 @@ import type { Profile, WeightUnit } from '../profile/types.js'
 import type { BodyWeightEntry } from '../profile/body-weight/types.js'
 import { displayWeightFromKg, formatBodyWeightFromKg } from '../profile/weight-units.js'
 import { oldestFirst } from '../profile/body-weight/format.js'
+import {
+  SHARE_INNER, SHARE_MARGIN, createShareSheet, drawShareCard, drawShareFooter, drawShareHeader, drawShareSectionTitle,
+  drawShareStats, drawText, shareFont, shareSheetFile, type ShareSheet,
+} from '../shared/share-canvas.js'
 
 export type BodyShareRange = '4w' | '3m' | '1y' | 'all'
 
@@ -42,39 +46,6 @@ function shortDate(date: string): string {
   return dateValue(date).toLocaleDateString('en', { month: 'short', day: 'numeric' })
 }
 
-function roundedRect(context: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius: number): void {
-  context.beginPath()
-  context.roundRect(x, y, width, height, radius)
-}
-
-function drawPanel(context: CanvasRenderingContext2D, x: number, y: number, width: number, height: number, radius = 28): void {
-  roundedRect(context, x, y, width, height, radius)
-  context.fillStyle = 'rgba(255,255,255,.7)'
-  context.fill()
-  context.strokeStyle = 'rgba(5,5,5,.12)'
-  context.lineWidth = 2
-  context.stroke()
-}
-
-function drawStat(context: CanvasRenderingContext2D, x: number, y: number, value: string, label: string): void {
-  drawPanel(context, x, y, 225, 132, 24)
-  context.fillStyle = '#050505'
-  context.font = '800 38px system-ui, sans-serif'
-  context.fillText(value, x + 24, y + 58, 180)
-  context.fillStyle = '#615d55'
-  context.font = '800 17px ui-monospace, monospace'
-  context.fillText(label.toUpperCase(), x + 24, y + 101, 180)
-}
-
-function imageFromSource(source: string): Promise<HTMLImageElement> {
-  return new Promise((resolve, reject) => {
-    const image = new Image()
-    image.onload = () => resolve(image)
-    image.onerror = () => reject(new Error('Could not load share image asset'))
-    image.src = source
-  })
-}
-
 function goalProgress(entries: BodyWeightEntry[], targetWeightKg: number): { percent: number, remainingKg: number } {
   const first = entries[0].weightKg
   const latest = entries.at(-1)?.weightKg ?? first
@@ -84,16 +55,17 @@ function goalProgress(entries: BodyWeightEntry[], targetWeightKg: number): { per
 }
 
 function drawChart(
-  context: CanvasRenderingContext2D,
+  sheet: ShareSheet,
   entries: BodyWeightEntry[],
   unit: WeightUnit,
   includeWeights: boolean,
   targetWeightKg: number | null | undefined,
 ): void {
-  const x = 96
-  const y = 564
-  const width = 888
-  const height = 390
+  const { context, palette } = sheet
+  const x = SHARE_MARGIN + 96
+  const y = 610
+  const width = SHARE_INNER - 140
+  const height = 330
   const values = entries.map(entry => displayWeightFromKg(entry.weightKg, unit))
   const target = targetWeightKg ? displayWeightFromKg(targetWeightKg, unit) : null
   const domain = target === null ? values : [...values, target]
@@ -108,28 +80,18 @@ function drawChart(
     y: y + (1 - (value - min) / range) * height,
   }))
 
-  context.font = '700 18px ui-monospace, monospace'
-  context.textAlign = 'right'
   for (let index = 0; index <= 4; index += 1) {
     const lineY = y + (height * index / 4)
-    context.strokeStyle = 'rgba(5,5,5,.12)'
-    context.lineWidth = 2
-    context.beginPath()
-    context.moveTo(x, lineY)
-    context.lineTo(x + width, lineY)
-    context.stroke()
-    if (includeWeights) {
-      const value = max - (range * index / 4)
-      context.fillStyle = '#706b62'
-      context.fillText(value.toFixed(0), x - 16, lineY + 6)
-    }
+    context.fillStyle = palette.border
+    context.fillRect(x, lineY - 1, width, 2)
+    if (includeWeights) drawText(sheet, (max - (range * index / 4)).toFixed(0), x - 16, lineY + 7, { font: shareFont(400, 20), color: palette.muted, align: 'right' })
   }
-  context.textAlign = 'left'
 
+  // The one accent on this image: the goal line.
   if (target !== null) {
     const targetY = y + (1 - (target - min) / range) * height
     context.setLineDash([12, 10])
-    context.strokeStyle = '#9a7131'
+    context.strokeStyle = palette.accent
     context.lineWidth = 3
     context.beginPath()
     context.moveTo(x, targetY)
@@ -138,72 +100,60 @@ function drawChart(
     context.setLineDash([])
   }
 
-  const area = context.createLinearGradient(0, y, 0, y + height)
-  area.addColorStop(0, 'rgba(5,5,5,.18)')
-  area.addColorStop(1, 'rgba(5,5,5,0)')
   context.beginPath()
   context.moveTo(points[0].x, y + height)
-  points.forEach((point, index) => index === 0 ? context.lineTo(point.x, point.y) : context.lineTo(point.x, point.y))
+  points.forEach(point => context.lineTo(point.x, point.y))
   context.lineTo(points.at(-1)?.x ?? x, y + height)
   context.closePath()
-  context.fillStyle = area
+  context.globalAlpha = .07
+  context.fillStyle = palette.text
   context.fill()
+  context.globalAlpha = 1
 
   context.beginPath()
   points.forEach((point, index) => index === 0 ? context.moveTo(point.x, point.y) : context.lineTo(point.x, point.y))
-  context.strokeStyle = '#050505'
-  context.lineWidth = 7
+  context.strokeStyle = palette.text
+  context.lineWidth = 6
   context.lineJoin = 'round'
   context.lineCap = 'round'
   context.stroke()
   points.forEach(point => {
     context.beginPath()
-    context.arc(point.x, point.y, 9, 0, Math.PI * 2)
-    context.fillStyle = '#f3eee2'
+    context.arc(point.x, point.y, 8, 0, Math.PI * 2)
+    context.fillStyle = palette.surface
     context.fill()
-    context.strokeStyle = '#050505'
+    context.strokeStyle = palette.text
     context.lineWidth = 5
     context.stroke()
   })
 
-  context.fillStyle = '#615d55'
-  context.font = '700 20px ui-monospace, monospace'
-  context.fillText(shortDate(entries[0].date), x, y + height + 42)
-  context.textAlign = 'right'
-  context.fillText(shortDate(entries.at(-1)?.date ?? entries[0].date), x + width, y + height + 42)
-  context.textAlign = 'left'
+  drawText(sheet, shortDate(entries[0].date), x, y + height + 44, { font: shareFont(400, 21), color: palette.muted })
+  drawText(sheet, shortDate(entries.at(-1)?.date ?? entries[0].date), x + width, y + height + 44, { font: shareFont(400, 21), color: palette.muted, align: 'right' })
 }
 
-function drawBmi(context: CanvasRenderingContext2D, bmi: number): void {
-  const x = 60
-  const y = 1050
-  const width = 960
-  drawPanel(context, x, y, width, 116, 26)
-  context.fillStyle = '#050505'
-  context.font = '800 22px ui-monospace, monospace'
-  context.fillText('BMI ESTIMATE', x + 28, y + 42)
-  const label = bmi < 18.5 ? 'Underweight' : bmi < 25 ? 'Normal' : bmi < 30 ? 'Overweight' : 'Obese'
-  context.textAlign = 'right'
-  context.font = '800 30px system-ui, sans-serif'
-  context.fillText(`${bmi.toFixed(1)} · ${label}`, x + width - 28, y + 43)
-  context.textAlign = 'left'
-  const barX = x + 28
-  const barY = y + 68
-  const barWidth = width - 56
+function drawBmi(sheet: ShareSheet, bmi: number, y: number): void {
+  const { context, palette } = sheet
+  drawShareCard(sheet, SHARE_MARGIN, y, SHARE_INNER, 120, 26)
+  const label = bmi < 18.5 ? 'underweight' : bmi < 25 ? 'normal' : bmi < 30 ? 'overweight' : 'obese'
+  drawShareSectionTitle(sheet, 'BMI estimate', SHARE_MARGIN + 32, y + 46)
+  drawText(sheet, `${bmi.toFixed(1)}, ${label}`, SHARE_MARGIN + SHARE_INNER - 32, y + 46, { font: shareFont(700, 30, true), color: palette.text, align: 'right' })
+  const barX = SHARE_MARGIN + 32
+  const barY = y + 72
+  const barWidth = SHARE_INNER - 64
   const zones = [
-    { width: .14, color: '#d6d4cc' },
-    { width: .26, color: '#f4f3ee' },
-    { width: .20, color: '#c4c1b8' },
-    { width: .40, color: '#8f8c84' },
+    { width: .14, color: palette.surfaceStrong },
+    { width: .26, color: palette.readySoft },
+    { width: .20, color: palette.moderateSoft },
+    { width: .40, color: palette.recoveringSoft },
   ]
   let offset = barX
   zones.forEach(zone => {
     context.fillStyle = zone.color
-    context.fillRect(offset, barY, barWidth * zone.width, 22)
+    context.fillRect(offset, barY, barWidth * zone.width - 2, 22)
     offset += barWidth * zone.width
   })
   const marker = barX + Math.max(0, Math.min(1, (bmi - 15) / 25)) * barWidth
-  context.fillStyle = '#050505'
+  context.fillStyle = palette.text
   context.fillRect(marker - 3, barY - 6, 6, 34)
 }
 
@@ -222,80 +172,38 @@ export async function createBodyProgressImage(
   const average = last7.reduce((sum, entry) => sum + entry.weightKg, 0) / last7.length
   const change = displayWeightFromKg(latest.weightKg - first.weightKg, unit)
   const bmi = profile.heightCm ? latest.weightKg / ((profile.heightCm / 100) ** 2) : null
+  const withGoal = Boolean(options.includeGoal && profile.targetWeightKg)
 
-  const canvas = document.createElement('canvas')
-  canvas.width = 1080
-  canvas.height = 1350
-  const context = canvas.getContext('2d')
-  if (!context) throw new Error('Could not create body-progress image')
-  const gradient = context.createLinearGradient(0, 0, 1080, 1350)
-  gradient.addColorStop(0, '#fffaf0')
-  gradient.addColorStop(.58, '#f3eee2')
-  gradient.addColorStop(1, '#e9e1d2')
-  context.fillStyle = gradient
-  context.fillRect(0, 0, 1080, 1350)
+  const sheet = await createShareSheet()
+  await drawShareHeader(sheet, 'Body progress', 'Weight trend', `${shortDate(first.date)} – ${shortDate(latest.date)} · ${selected.length} check-ins · ${rangeLabels[options.range]}`)
+  drawShareStats(sheet, 356, [
+    options.includeWeights
+      ? { value: formatBodyWeightFromKg(latest.weightKg, unit), label: 'Current' }
+      : { value: String(selected.length), label: 'Check-ins' },
+    options.includeWeights
+      ? { value: formatBodyWeightFromKg(average, unit), label: '7-entry avg' }
+      : { value: rangeLabels[options.range], label: 'Range' },
+    { value: options.includeWeights ? `${change > 0 ? '+' : ''}${change.toFixed(1)} ${unit}` : change > 0 ? 'Up' : change < 0 ? 'Down' : 'Stable', label: 'Change' },
+    withGoal
+      ? (options.includeWeights
+          ? { value: formatBodyWeightFromKg(profile.targetWeightKg!, unit), label: 'Goal' }
+          : { value: `${goalProgress(allEntries, profile.targetWeightKg!).percent.toFixed(0)}%`, label: 'Goal progress' })
+      : { value: String(selected.length), label: 'Check-ins' },
+  ])
 
-  try {
-    const logo = await imageFromSource('/brand/setrai-logo-mark.jpg')
-    context.drawImage(logo, 60, 54, 80, 74)
-  } catch { /* The wordmark keeps the export branded if the logo asset fails. */ }
-  context.fillStyle = '#050505'
-  context.font = '800 42px system-ui, sans-serif'
-  context.fillText('Setrai', 160, 91)
-  context.font = '800 14px ui-monospace, monospace'
-  context.letterSpacing = '5px'
-  context.fillText('AI TRAINING COACH', 160, 120)
-  context.letterSpacing = '0px'
+  drawShareCard(sheet, SHARE_MARGIN, 520, SHARE_INNER, 500)
+  drawShareSectionTitle(sheet, 'Weight trend', SHARE_MARGIN + 36, 572)
+  drawChart(sheet, selected, unit, options.includeWeights, options.includeGoal ? profile.targetWeightKg : null)
 
-  context.fillStyle = '#5b5750'
-  context.font = '800 20px system-ui, sans-serif'
-  context.fillText('BODY PROGRESS', 60, 186)
-  context.fillStyle = '#050505'
-  context.font = '800 68px system-ui, sans-serif'
-  context.fillText('Weight trend', 60, 258)
-  context.fillStyle = '#4d4a44'
-  context.font = '500 24px system-ui, sans-serif'
-  context.fillText(`${shortDate(first.date)} – ${shortDate(latest.date)} · ${selected.length} check-ins · ${rangeLabels[options.range]}`, 60, 302, 960)
-
-  const current = options.includeWeights ? formatBodyWeightFromKg(latest.weightKg, unit) : `${selected.length}`
-  const currentLabel = options.includeWeights ? 'Current' : 'Check-ins'
-  const averageText = options.includeWeights ? formatBodyWeightFromKg(average, unit) : rangeLabels[options.range]
-  const averageLabel = options.includeWeights ? '7-entry avg' : 'Range'
-  const changeText = options.includeWeights ? `${change > 0 ? '+' : ''}${change.toFixed(1)} ${unit}` : `${change > 0 ? 'Up' : change < 0 ? 'Down' : 'Stable'}`
-  const goal = options.includeGoal && profile.targetWeightKg
-    ? (options.includeWeights ? formatBodyWeightFromKg(profile.targetWeightKg, unit) : `${goalProgress(allEntries, profile.targetWeightKg).percent.toFixed(0)}%`)
-    : `${selected.length}`
-  const goalLabel = options.includeGoal && profile.targetWeightKg ? (options.includeWeights ? 'Goal' : 'Goal progress') : 'Check-ins'
-  drawStat(context, 60, 340, current, currentLabel)
-  drawStat(context, 305, 340, averageText, averageLabel)
-  drawStat(context, 550, 340, changeText, 'Change')
-  drawStat(context, 795, 340, goal, goalLabel)
-
-  drawPanel(context, 60, 506, 960, 500, 34)
-  context.fillStyle = '#050505'
-  context.font = '800 22px ui-monospace, monospace'
-  context.fillText('WEIGHT TREND', 88, 550)
-  drawChart(context, selected, unit, options.includeWeights, options.includeGoal ? profile.targetWeightKg : null)
-
-  if (options.includeBmi && bmi !== null) drawBmi(context, bmi)
-  if (options.includeGoal && profile.targetWeightKg) {
-    const progress = goalProgress(allEntries, profile.targetWeightKg)
-    context.fillStyle = '#050505'
-    context.font = '800 22px ui-monospace, monospace'
-    context.fillText('GOAL PROGRESS', 60, 1214)
-    context.fillStyle = '#4d4a44'
-    context.font = '500 27px system-ui, sans-serif'
+  if (options.includeBmi && bmi !== null) drawBmi(sheet, bmi, 1044)
+  const lines: string[] = []
+  if (withGoal) {
+    const progress = goalProgress(allEntries, profile.targetWeightKg!)
     const remaining = displayWeightFromKg(progress.remainingKg, unit)
-    const detail = options.includeWeights
-      ? `${progress.percent.toFixed(0)}% · ${Math.abs(remaining).toFixed(1)} ${unit} ${remaining >= 0 ? 'to gain' : 'to lose'}`
-      : `${progress.percent.toFixed(0)}% toward goal`
-    context.fillText(detail, 60, 1260)
+    lines.push(options.includeWeights
+      ? `Goal: ${progress.percent.toFixed(0)}% · ${Math.abs(remaining).toFixed(1)} ${unit} ${remaining >= 0 ? 'to gain' : 'to lose'}`
+      : `Goal: ${progress.percent.toFixed(0)}% of the way`)
   }
-  context.fillStyle = '#615d55'
-  context.font = '600 18px system-ui, sans-serif'
-  context.fillText('Progress, not perfection.', 60, 1310)
-
-  const blob = await new Promise<Blob | null>(resolve => canvas.toBlob(resolve, 'image/png'))
-  if (!blob) throw new Error('Could not create body-progress image')
-  return new File([blob], bodyShareImageName(), { type: 'image/png' })
+  drawShareFooter(sheet, 1192, lines, 'Progress, not perfection.')
+  return shareSheetFile(sheet, bodyShareImageName())
 }
