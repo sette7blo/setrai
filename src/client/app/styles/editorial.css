@@ -13,7 +13,7 @@ body::before { display: none; }
 .brand-mark__logo {
   border-radius: 0;
   object-fit: contain;
-  filter: none;
+  filter: var(--brand-mark-filter);
   mix-blend-mode: normal;
 }
 

@@ -11,6 +11,9 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 ## [Unreleased]
 
+- Redesigned the five share images (workout summary, monthly recap, personal record, weekly volume, body progress) to match the app: chalk ground, white cards, the Archivo typeface and large condensed numerals. The "AI Training Coach" tagline is gone, and the workout image no longer shows "Done" or a dash for missing figures. Share images stay light in the dark theme.
+- Added a dark theme. It follows your device by default, and Settings has a new Appearance section to force Light or Dark on that device. The browser and status bar colour follow the theme.
+
 ## [v0.6.0] — 2026-11-10
 
 - Loading placeholders now match each screen's real layout, so content no longer jumps when it arrives, and they only appear when loading takes longer than a moment. The exercise grid placeholder, which was invisible on the light background, is fixed.

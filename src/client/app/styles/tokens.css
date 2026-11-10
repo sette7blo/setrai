@@ -18,7 +18,8 @@
   unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
 }
 
-:root {
+/* Light is the default. `.theme-light` pins a subtree to it, which share images use to stay light. */
+:root, .theme-light {
   color-scheme: light;
 
   /* Chalk, paper and iron; ember is sampled from the exercise artwork. */
@@ -43,7 +44,9 @@
   --color-success-soft: #e8f0e3;
   --color-warning-soft: #f6e8c9;
   --color-error-soft: #f4dfdc;
-  --color-scrim: color-mix(in srgb, var(--color-text) 45%, transparent);
+  --color-scrim: rgba(22, 24, 26, 0.45);
+  /* The brand mark is dark ink on transparent; dark surfaces invert it. */
+  --brand-mark-filter: none;
 
   /* Muscle recovery state; exercise difficulty reuses the same three steps. */
   --status-ready: var(--color-success);
@@ -123,6 +126,69 @@
   --duration-slow: 320ms;
   --duration-pulse: 1.4s;
   --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+/* Dark: follows the device unless Settings forces light, and applies outright when Settings forces dark.
+   The two blocks must stay identical. The accent is the same in both themes. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    color-scheme: dark;
+    --color-bg: #0f1011;
+    --color-bg-elevated: #191b1d;
+    --color-surface: #191b1d;
+    --color-surface-strong: #24272a;
+    --color-border: #2e3236;
+    --color-border-strong: #7d8389;
+    --color-text: #f1f1ee;
+    --color-muted: #9aa0a6;
+    --color-muted-strong: #cfd2d5;
+    --color-primary: #f1f1ee;
+    --color-primary-strong: #f1f1ee;
+    --color-on-primary: #16181a;
+    --color-accent-soft: #3a1a10;
+    --color-success: #74b08d;
+    --color-warning: #d6a55a;
+    --color-error: #e27d7d;
+    --color-success-soft: #1b2a21;
+    --color-warning-soft: #2f2715;
+    --color-error-soft: #351d1d;
+    --color-scrim: rgba(0, 0, 0, 0.6);
+    --brand-mark-filter: invert(1);
+    --status-fresh: #3a3f44;
+    --setrai-utility-surface: #24272a;
+    --setrai-utility-surface-soft: #1e2022;
+    --shadow-sheet: 0 -12px 40px rgba(0, 0, 0, 0.5);
+    --glass-fill: #191b1d;
+  }
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+  --color-bg: #0f1011;
+  --color-bg-elevated: #191b1d;
+  --color-surface: #191b1d;
+  --color-surface-strong: #24272a;
+  --color-border: #2e3236;
+  --color-border-strong: #7d8389;
+  --color-text: #f1f1ee;
+  --color-muted: #9aa0a6;
+  --color-muted-strong: #cfd2d5;
+  --color-primary: #f1f1ee;
+  --color-primary-strong: #f1f1ee;
+  --color-on-primary: #16181a;
+  --color-accent-soft: #3a1a10;
+  --color-success: #74b08d;
+  --color-warning: #d6a55a;
+  --color-error: #e27d7d;
+  --color-success-soft: #1b2a21;
+  --color-warning-soft: #2f2715;
+  --color-error-soft: #351d1d;
+  --color-scrim: rgba(0, 0, 0, 0.6);
+  --brand-mark-filter: invert(1);
+  --status-fresh: #3a3f44;
+  --setrai-utility-surface: #24272a;
+  --setrai-utility-surface-soft: #1e2022;
+  --shadow-sheet: 0 -12px 40px rgba(0, 0, 0, 0.5);
+  --glass-fill: #191b1d;
 }
 
 @media (max-width: 719px) {

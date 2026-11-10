@@ -3,7 +3,20 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-    <meta name="theme-color" content="#f3f3f0" />
+    <meta name="theme-color" content="#f3f3f0" media="(prefers-color-scheme: light)" data-scheme="light" />
+    <meta name="theme-color" content="#0f1011" media="(prefers-color-scheme: dark)" data-scheme="dark" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      // Apply a forced appearance before first paint; see src/client/shared/theme.ts.
+      try {
+        var theme = localStorage.getItem('setrai-theme')
+        if (theme === 'light' || theme === 'dark') {
+          document.documentElement.dataset.theme = theme
+          var color = theme === 'dark' ? '#0f1011' : '#f3f3f0'
+          document.querySelectorAll('meta[name="theme-color"]').forEach(function (meta) { meta.content = color })
+        }
+      } catch (error) { /* Storage unavailable: follow the device. */ }
+    </script>
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-title" content="Setrai" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />

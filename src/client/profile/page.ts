@@ -1,7 +1,8 @@
-import { Activity, ChevronDown, DatabaseBackup, Download, Dumbbell, Upload } from 'lucide'
+import { Activity, ChevronDown, DatabaseBackup, Download, Dumbbell, SunMoon, Upload } from 'lucide'
 
 import { iconElement } from '../app/navigation.js'
 import { pageHeading } from '../shared/page-chrome.js'
+import { saveTheme, storedTheme, type ThemeChoice } from '../shared/theme.js'
 import { bindPageRetry, loadingRegion, pageError, showLoadingAfterDelay, skeleton, skeletonGroup } from '../shared/page-states.js'
 import { readableApiError } from '../shared/api/errors.js'
 import { getProfile, updateProfile } from './api.js'
@@ -18,7 +19,7 @@ interface ProfileState {
 function loadingView(): HTMLElement {
   return loadingRegion('Loading settings', 'profile-page profile-settings-page',
     pageHeading({ title: 'Settings', className: 'profile-settings-hero page-heading' }),
-    skeletonGroup('profile-settings-list', ...[62, 62, 62].map(height => skeleton({ height }))))
+    skeletonGroup('profile-settings-list', ...[62, 62, 62, 62].map(height => skeleton({ height }))))
 }
 
 function errorView(message: string): HTMLElement {
@@ -166,6 +167,43 @@ function trainingSection(state: ProfileState, rerender: () => void): HTMLDetails
   return details
 }
 
+const THEME_CHOICES: Array<{ value: ThemeChoice, label: string }> = [
+  { value: 'system', label: 'System' },
+  { value: 'light', label: 'Light' },
+  { value: 'dark', label: 'Dark' },
+]
+
+// Kept on this device, not in the profile: a phone and a desktop can differ.
+function appearanceSection(rerender: () => void): HTMLDetailsElement {
+  const current = storedTheme()
+  const details = category(SunMoon, 'Appearance', current === 'system' ? 'Follows this device' : `Always ${current}`)
+  const body = categoryBody(details)
+  body.append(subsection('Theme'))
+  const group = document.createElement('div')
+  group.className = 'settings-segments'
+  group.setAttribute('role', 'group')
+  group.setAttribute('aria-label', 'Theme')
+  for (const { value, label } of THEME_CHOICES) {
+    const button = document.createElement('button')
+    button.type = 'button'
+    button.className = 'settings-segment'
+    button.setAttribute('aria-pressed', String(value === current))
+    button.textContent = label
+    button.addEventListener('click', () => {
+      saveTheme(value)
+      rerender()
+      document.querySelector<HTMLDetailsElement>('.settings-category--appearance')?.setAttribute('open', '')
+    })
+    group.append(button)
+  }
+  const help = document.createElement('p')
+  help.className = 'section-help'
+  help.textContent = 'System follows the light or dark setting of this device. The choice is saved on this device only.'
+  body.append(group, help)
+  details.classList.add('settings-category--appearance')
+  return details
+}
+
 function equipmentSection(state: ProfileState, rerender: () => void): HTMLDetailsElement {
   const count = state.profile.equipment.length
   const details = category(Dumbbell, 'Equipment', count === 0 ? 'No restrictions; all equipment allowed.' : `${count} selected`)
@@ -272,7 +310,7 @@ function renderLoaded(root: HTMLElement, state: ProfileState): void {
   const list = document.createElement('section')
   list.className = 'profile-settings-list'
   const rerender = () => renderLoaded(root, state)
-  list.append(trainingSection(state, rerender), equipmentSection(state, rerender), backupSection(state, rerender))
+  list.append(trainingSection(state, rerender), equipmentSection(state, rerender), appearanceSection(rerender), backupSection(state, rerender))
   page.append(heading, list)
   root.replaceChildren(page)
 }

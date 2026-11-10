@@ -1242,6 +1242,15 @@ Only genuinely shared UI/infrastructure such as:
 - the stat strip in `stat-strip.ts` and `stat-strip.css`: one bordered row of
   figures (numeral over label), consumed by Today, Progress Training and Body,
   and the workout summary; callers own the values and labels;
+- the share image kit in `share-canvas.ts`: the 1080x1350 sheet, a palette
+  read once from the light design tokens, Archivo loading, the brand header,
+  cards, the stat strip, footers and the body diagram's target scheme;
+  consumed by the five share images in Workouts and Statistics, which own
+  their data and layout and carry no colours of their own;
+- the appearance preference in `theme.ts`: System, Light or Dark, stored on the
+  device and applied to the root element and the browser chrome colour; the
+  inline script in `index.html` applies the same key before first paint, and
+  the palettes live in `app/styles/tokens.css`; Settings owns the control;
 - buttons;
 - icons;
 - formatting;
