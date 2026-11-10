@@ -31,12 +31,6 @@
 .today-workout .recovery-quick-start .button { min-height: 52px !important; font-size: var(--text-title) !important; }
 .today-workout .recovery-quick-regenerate { border: 0 !important; background: transparent !important; color: var(--color-muted-strong) !important; }
 
-.today-week { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; border: var(--border-subtle); border-radius: var(--radius-lg); background: var(--color-surface); }
-.today-week-cell { display: grid; gap: 4px; padding: 14px 12px; min-width: 0; }
-.today-week-cell + .today-week-cell { border-left: var(--border-subtle); }
-.today-week dd { margin: 0; overflow: hidden; font-size: var(--text-headline); font-weight: var(--weight-bold); font-stretch: var(--font-display-stretch); line-height: 1; font-variant-numeric: tabular-nums; text-overflow: ellipsis; white-space: nowrap; }
-.today-week dt { color: var(--color-muted); font-size: var(--text-caption); line-height: 1.25; }
-
 .today-last { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 12px 14px 16px; border: var(--border-subtle); border-radius: var(--radius-lg); background: var(--color-surface); }
 .today-last-copy { display: grid; gap: 3px; min-width: 0; }
 .today-last-copy small { color: var(--color-muted); font-size: var(--text-caption); }

@@ -1,7 +1,8 @@
-import { Activity, Check, Gauge, History, LineChart, Minus, Plus, Ruler, Target, Trash2, TrendingDown, TrendingUp, Weight } from 'lucide'
+import { Check, Gauge, History, LineChart, Plus, Ruler, Target, Trash2, Weight } from 'lucide'
 
 import { iconElement } from '../app/navigation.js'
 import { formatDate, todayDate } from '../shared/formatting/date-format.js'
+import { statStrip } from '../shared/stat-strip.js'
 import type { Profile, WeightUnit } from '../profile/types.js'
 import { updateProfile } from '../profile/api.js'
 import type { BodyWeightEntry } from '../profile/body-weight/types.js'
@@ -42,23 +43,10 @@ function shortDate(date: string): string {
   return new Date(`${date}T00:00:00`).toLocaleDateString('en', { month: 'short', day: 'numeric' })
 }
 
-function bodyCard(icon: Icon, value: string, label: string, tone = ''): HTMLElement {
-  const tile = document.createElement('article')
-  tile.className = `body-card${tone ? ` ${tone}` : ''}`
-  tile.append(iconWrap('body-card-icon', icon))
-  tile.append(
-    Object.assign(document.createElement('div'), { className: 'body-card-val', textContent: value }),
-    Object.assign(document.createElement('div'), { className: 'body-card-lbl', textContent: label })
-  )
-  return tile
-}
-
 function bodyCards(entries: BodyWeightEntry[], unit: WeightUnit): HTMLElement {
   const mount = document.createElement('div')
   mount.id = 'body-cards'
   if (entries.length === 0) return mount
-  const cards = document.createElement('div')
-  cards.className = 'body-cards'
   const sorted = oldestFirst(entries)
   const first = sorted[0]
   const latest = sorted[sorted.length - 1]
@@ -66,12 +54,11 @@ function bodyCards(entries: BodyWeightEntry[], unit: WeightUnit): HTMLElement {
   const avg7 = last7.reduce((sum, entry) => sum + entry.weightKg, 0) / last7.length
   const changeKg = latest.weightKg - first.weightKg
   const displayChange = displayWeightFromKg(changeKg, unit)
-  cards.append(
-    bodyCard(Weight, displayWeightFromKg(latest.weightKg, unit).toFixed(1), `Current (${unit})`),
-    bodyCard(Activity, displayWeightFromKg(avg7, unit).toFixed(1), '7-day avg'),
-    bodyCard(changeKg > 0 ? TrendingUp : changeKg < 0 ? TrendingDown : Minus, `${displayChange > 0 ? '+' : ''}${displayChange.toFixed(1)}`, 'Total change', changeKg > 0 ? 'up' : changeKg < 0 ? 'down' : '')
-  )
-  mount.append(cards)
+  mount.append(statStrip([
+    { value: displayWeightFromKg(latest.weightKg, unit).toFixed(1), label: `Current (${unit})` },
+    { value: displayWeightFromKg(avg7, unit).toFixed(1), label: '7-day avg' },
+    { value: `${displayChange > 0 ? '+' : ''}${displayChange.toFixed(1)}`, label: 'Total change' },
+  ]))
   return mount
 }
 

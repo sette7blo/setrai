@@ -25,43 +25,6 @@
 }
 
 
-
-
-
-
-
-.stats-hero {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.summary-stat,
-.body-card {
-  --tone: var(--color-primary);
-  min-width: 0;
-  display: grid;
-  justify-items: center;
-  padding: 16px 10px;
-  border: 1px solid color-mix(in srgb, var(--color-text) 14%, transparent);
-  border-radius: var(--radius-lg);
-  background: linear-gradient(135deg, color-mix(in srgb, var(--tone) 8%, transparent), color-mix(in srgb, var(--color-surface) 1.8%, transparent)), color-mix(in srgb, var(--color-text) 20%, transparent);
-  text-align: center;
-}
-
-.summary-stat.streak {
-  --tone: var(--color-warning);
-}
-
-.summary-stat.up {
-  --tone: var(--color-error);
-}
-
-.summary-stat.down {
-  --tone: var(--color-success);
-}
-
-.ss-icon,
 .body-entry-icon {
   width: 30px;
   height: 30px;
@@ -73,32 +36,11 @@
   background: color-mix(in srgb, var(--tone) 12%, transparent);
 }
 
-.ss-icon svg,
 .body-entry-icon svg {
   width: 16px;
   height: 16px;
 }
 
-.ss-val,
-.body-card-val {
-  display: flex;
-  align-items: baseline;
-  justify-content: center;
-  gap: 4px;
-  color: var(--color-text);
-  font: var(--weight-heavy) var(--text-headline)/1 var(--font-sans);
-  letter-spacing: -.015em;
-  font-variant-numeric: tabular-nums;
-}
-
-.ss-label,
-.body-card-lbl {
-  margin-top: 8px;
-  color: var(--color-primary);
-  font: var(--weight-heavy) var(--text-caption)/1 var(--font-sans);
-  letter-spacing: .01em;
-  text-transform: none;
-}
 
 .stats-range {
   display: flex;
@@ -169,11 +111,6 @@
 }
 
 
-
-
-
-
-
 .dist,
 .list {
   display: grid;
@@ -197,7 +134,7 @@
 .dist-row .fill {
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--color-primary), color-mix(in srgb, var(--color-success) 82%, transparent));
+  background: var(--color-text);
 }
 
 .dist-row small {
@@ -216,13 +153,6 @@
   border-radius: var(--radius-md);
   background: color-mix(in srgb, var(--color-surface) 3.5%, transparent);
 }
-
-
-
-
-
-
-
 
 
 .body-entry strong {
@@ -249,11 +179,6 @@
   font: var(--weight-heavy) var(--text-caption)/1 var(--font-sans);
 }
 
-.body-cards {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-}
 
 .body-forms {
   margin-top: 0;
@@ -351,21 +276,6 @@
   }
 
 
-
-  .stats-hero {
-    gap: 8px;
-  }
-
-  .summary-stat,
-  .body-card {
-    padding: 11px 6px;
-  }
-
-  .ss-val,
-  .body-card-val {
-    font-size: var(--text-section);
-  }
-
   .stats-panel {
     gap: 12px;
     padding: 12px;
@@ -374,10 +284,6 @@
   .stats-section-head {
     flex-wrap: wrap;
     row-gap: 4px;
-  }
-
-  .body-cards {
-    gap: 8px;
   }
 
 
@@ -391,46 +297,6 @@
   padding-bottom: calc(88px + env(safe-area-inset-bottom));
 }
 
-
-
-
-
-
-
-.stats-training-view .stats-hero {
-  gap: 8px;
-}
-
-.stats-training-view .summary-stat {
-  align-content: center;
-  min-height: 100px;
-  padding: 10px 6px;
-  border-radius: var(--radius-lg);
-}
-
-.stats-training-view .summary-stat .ss-icon {
-  width: 30px;
-  height: 30px;
-  margin-bottom: 8px;
-  border-radius: var(--radius-sm);
-}
-
-.stats-training-view .summary-stat .ss-icon svg {
-  width: 15px;
-  height: 15px;
-}
-
-.stats-training-view .summary-stat .ss-val {
-  font-size: var(--text-section);
-  line-height: 1;
-}
-
-.stats-training-view .summary-stat .ss-label {
-  margin-top: 7px;
-  font-size: var(--text-caption);
-  line-height: 1.15;
-  letter-spacing: .01em;
-}
 
 .stats-training-view .stats-range {
   min-height: 38px;
@@ -470,9 +336,6 @@
 }
 
 
-
-
-
 .stats-training-view .dist,
 .stats-training-view .list {
   gap: 8px;
@@ -501,61 +364,12 @@
 }
 
 
-
 .stats-body-view .body-panel {
   gap: 11px;
   padding: 11px;
   border-radius: var(--radius-lg);
 }
 
-.stats-body-view .body-cards {
-  gap: 8px;
-}
-
-.stats-body-view .body-card {
-  min-width: 0;
-  padding: 10px 6px;
-  border-radius: var(--radius-md);
-}
-
-.stats-body-view .body-card-icon {
-  display: inline-flex;
-  width: 28px;
-  height: 28px;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 8px;
-  border: 1px solid var(--color-border);
-  border-radius: var(--radius-sm);
-  background: var(--color-bg);
-  color: var(--color-primary);
-}
-
-.stats-body-view .body-card-icon svg {
-  width: 15px;
-  height: 15px;
-}
-
-.stats-body-view .body-card-val {
-  display: block;
-  min-width: 0;
-  overflow-wrap: anywhere;
-  font: var(--weight-heavy) var(--text-section)/1 var(--font-sans);
-  letter-spacing: -.015em;
-}
-
-.stats-body-view .body-card-lbl {
-  margin-top: 7px;
-  color: var(--color-muted-strong);
-  font: var(--weight-heavy) var(--text-caption)/1.05 var(--font-sans);
-  letter-spacing: .01em;
-  text-transform: none;
-}
-
-.stats-body-view .body-card.up .body-card-icon,
-.stats-body-view .body-card.down .body-card-icon {
-  background: var(--color-surface-strong);
-}
 
 .stats-body-view #body-bmi,
 .stats-body-view #body-chart,
@@ -847,7 +661,7 @@
 
 .stats-body-view .bmi-marker,
 .stats-body-view .body-goal-fill {
-  background: linear-gradient(90deg, var(--color-text), var(--color-border-strong)) !important;
+  background: var(--color-text) !important;
 }
 
 
@@ -894,9 +708,7 @@
 }
 
 @media (max-width: 719px) {
-  .stats-body-view .body-card-val {
-    font-size: var(--text-title);
-  }
+
 
   .stats-body-view .body-chart {
     min-height: 128px;
@@ -989,92 +801,24 @@
 }
 
 
-/* Body tab hero/cards: exact Training stats header + three-tile layout. */
-
-
-
-
-
-
-
-.stats-body-view .body-cards {
-  display: grid !important;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
-  gap: 8px !important;
-}
-
-.stats-body-view .body-card {
-  display: grid !important;
-  align-content: center !important;
-  justify-items: center !important;
-  min-width: 0 !important;
-  min-height: 100px !important;
-  padding: 10px 6px !important;
-  border-radius: var(--radius-lg) !important;
-  text-align: center !important;
-}
-
-.stats-body-view .body-card-icon {
-  display: inline-flex !important;
-  width: 30px !important;
-  height: 30px !important;
-  align-items: center !important;
-  justify-content: center !important;
-  margin: 0 0 8px !important;
-  border: 1px solid var(--color-border-strong) !important;
-  border-radius: var(--radius-sm) !important;
-}
-
-.stats-body-view .body-card-icon svg {
-  width: 15px !important;
-  height: 15px !important;
-}
-
-.stats-body-view .body-card-val {
-  display: block !important;
-  min-width: 0 !important;
-  overflow-wrap: anywhere !important;
-  font-size: var(--text-section) !important;
-  line-height: 1 !important;
-  font-weight: var(--weight-heavy) !important;
-  letter-spacing: -.015em !important;
-}
-
-.stats-body-view .body-card-lbl {
-  margin-top: 7px !important;
-  color: var(--color-muted-strong) !important;
-  font-size: var(--text-caption) !important;
-  line-height: 1.15 !important;
-  font-weight: var(--weight-heavy) !important;
-  letter-spacing: .01em !important;
-  text-transform: none !important;
-}
-
-@media (max-width: 719px) {
-  .stats-body-view .body-card-val {
-    font-size: var(--text-section) !important;
-  }
-}
-
-
 /* BMI graph tonal color: same muted premium family as the stat cards. */
 .stats-body-view .bmi-zone.under {
-  background: linear-gradient(145deg, color-mix(in srgb, var(--color-text) 26%, transparent), color-mix(in srgb, var(--color-surface) 96%, transparent)) !important;
+  background: color-mix(in srgb, var(--color-text) 12%, var(--color-surface)) !important;
   color: var(--color-muted-strong) !important;
 }
 
 .stats-body-view .bmi-zone.normal {
-  background: linear-gradient(145deg, color-mix(in srgb, var(--color-success) 28%, transparent), color-mix(in srgb, var(--color-surface) 96%, transparent)) !important;
+  background: color-mix(in srgb, var(--color-success) 18%, var(--color-surface)) !important;
   color: var(--color-success) !important;
 }
 
 .stats-body-view .bmi-zone.over {
-  background: linear-gradient(145deg, color-mix(in srgb, var(--color-warning) 30%, transparent), color-mix(in srgb, var(--color-surface) 96%, transparent)) !important;
+  background: color-mix(in srgb, var(--color-warning) 20%, var(--color-surface)) !important;
   color: var(--color-warning) !important;
 }
 
 .stats-body-view .bmi-zone.obese {
-  background: linear-gradient(145deg, color-mix(in srgb, var(--color-text) 34%, transparent), color-mix(in srgb, var(--color-warning) 18%, transparent)) !important;
+  background: color-mix(in srgb, var(--color-text) 24%, var(--color-surface)) !important;
   color: var(--color-text) !important;
 }
 
@@ -1214,33 +958,6 @@
   font-variant-numeric: tabular-nums !important;
 }
 
-/* Premium stat tiles (Home dashboard) */
-.summary-stat,
-.body-card {
-  transition: box-shadow var(--duration-base) var(--ease-out), transform var(--duration-fast) var(--ease-out);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 1px 3px color-mix(in srgb, var(--color-text) 4%, transparent);
-}
-
-.summary-stat:hover,
-.body-card:hover {
-  box-shadow: 0 8px 20px color-mix(in srgb, var(--color-text) 8%, transparent);
-  transform: translateY(-2px);
-}
-
-.summary-stat .ss-val {
-  font-size: var(--text-headline);
-  font-weight: var(--weight-heavy);
-  line-height: 1.1;
-  letter-spacing: -.015em;
-}
-
-.summary-stat .ss-label {
-  font-size: var(--text-caption);
-  font-weight: var(--weight-medium);
-  color: var(--color-muted-strong);
-  margin-top: 4px;
-}
 
 /* Premium panels consistency */
 .stats-panel {
@@ -1255,7 +972,6 @@
 }
 
 /* Fix weekly volume label wrapping */
-
 
 
 /* Better range button press feedback */
@@ -1273,40 +989,6 @@
   font-weight: var(--weight-heavy);
 }
 
-/* Improved weekly volume bar labels */
-
-
-
-
-
-/* Match Workstr-web bar label style */
-
-
-
-/* === Body Tab Premium Polish === */
-
-/* 1. Body cards - hover lift + depth */
-.body-card {
-  transition: box-shadow var(--duration-base) var(--ease-out), transform var(--duration-fast) var(--ease-out);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 1px 3px color-mix(in srgb, var(--color-text) 4%, transparent);
-}
-
-.body-card:hover {
-  box-shadow: 0 8px 20px color-mix(in srgb, var(--color-text) 8%, transparent);
-  transform: translateY(-2px);
-}
-
-.body-card-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
-  display: grid;
-  place-items: center;
-  background: color-mix(in srgb, var(--color-text) 10%, transparent);
-  color: var(--color-primary);
-  margin-bottom: 8px;
-}
 
 /* 2. BMI bar - better visual treatment */
 .bmi-bar {
@@ -1395,7 +1077,7 @@
 
 .body-goal-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--color-primary), var(--color-success));
+  background: var(--color-text);
   border-radius: var(--radius-pill);
   transition: width var(--duration-slow) var(--ease-out);
 }
@@ -1423,64 +1105,4 @@
   color: var(--color-error);
 }
 
-/* Make Training tab icons match Body tab boldness */
-.ss-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
-  display: grid;
-  place-items: center;
-  background: color-mix(in srgb, var(--color-text) 10%, transparent);
-  color: var(--color-primary);
-  margin-bottom: 8px;
-}
 
-.summary-stat.streak .ss-icon {
-  background: color-mix(in srgb, var(--color-warning) 15%, transparent);
-  color: var(--color-warning);
-}
-
-/* Force bold icon treatment on Training tab stat tiles */
-.summary-stat .ss-icon {
-  width: 32px !important;
-  height: 32px !important;
-  border-radius: var(--radius-sm) !important;
-  display: grid !important;
-  place-items: center !important;
-  background: color-mix(in srgb, var(--color-text) 12%, transparent) !important;
-  color: var(--color-primary) !important;
-  margin-bottom: 8px !important;
-}
-
-.summary-stat.streak .ss-icon {
-  background: color-mix(in srgb, var(--color-warning) 18%, transparent) !important;
-  color: var(--color-warning) !important;
-}
-
-/* Black bold contour on the flame icon for Day Streak */
-.summary-stat.streak .ss-icon svg {
-  stroke: var(--color-text) !important;
-  stroke-width: 2.5 !important;
-  stroke-linejoin: round !important;
-  stroke-linecap: round !important;
-}
-
-/* Ultra-specific black bold contour for flame icon */
-.summary-stat.streak .ss-icon svg,
-.summary-stat.streak .ss-icon svg path {
-  stroke: var(--color-text) !important;
-  stroke-width: 3 !important;
-  stroke-opacity: 1 !important;
-}
-
-/* Make Training tab icons exactly match Body tab */
-.summary-stat .ss-icon {
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
-  display: grid;
-  place-items: center;
-  background: color-mix(in srgb, var(--color-text) 10%, transparent);
-  color: var(--color-primary);
-  margin-bottom: 8px;
-}

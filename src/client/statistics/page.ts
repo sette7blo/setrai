@@ -1,7 +1,8 @@
-import { BicepsFlexed, CalendarCheck, ChartColumn, Flame, Trophy, Weight } from 'lucide'
+import { BicepsFlexed, ChartColumn, Trophy } from 'lucide'
 
 import { iconElement } from '../app/navigation.js'
 import { progressHeading } from '../app/section-navigation.js'
+import { statStrip } from '../shared/stat-strip.js'
 import { bindPageRetry, pageEmpty, pageError, pageLoading } from '../shared/page-states.js'
 import { readableApiError } from '../shared/api/errors.js'
 import { displayName } from '../exercises/format.js'
@@ -37,27 +38,6 @@ function emptyView(): HTMLElement {
     className: 'stats-empty statistics-workstr-empty',
   }))
   return page
-}
-
-function iconWrap(className: string, icon: Parameters<typeof iconElement>[0]): HTMLElement {
-  const span = document.createElement('span')
-  span.className = className
-  span.append(iconElement(icon))
-  return span
-}
-
-function statTile(icon: Parameters<typeof iconElement>[0], value: string, label: string, tone = ''): HTMLElement {
-  const tile = document.createElement('article')
-  tile.className = `summary-stat${tone ? ` ${tone}` : ''}`
-  tile.append(iconWrap('ss-icon', icon))
-  const number = document.createElement('div')
-  number.className = 'ss-val'
-  number.textContent = value
-  const caption = document.createElement('div')
-  caption.className = 'ss-label'
-  caption.textContent = label
-  tile.append(number, caption)
-  return tile
 }
 
 function sectionHead(icon: Parameters<typeof iconElement>[0], title: string, note = ''): HTMLElement {
@@ -212,14 +192,12 @@ function trainingView(stats: StatisticsOverview, unit: WeightUnit): HTMLElement 
   section.className = 'stats-training-view'
   section.dataset.statsSection = 'training'
 
-  const tiles = document.createElement('div')
-  tiles.className = 'stats-hero'
   const streakDays = stats.trainingStreak.currentStreakDays ?? stats.trainingStreak.currentStreakWeeks
-  tiles.append(
-    statTile(Flame, String(streakDays), stats.trainingStreak.currentStreakDays === undefined ? 'Week streak' : 'Day streak', streakDays > 0 ? 'streak' : ''),
-    statTile(CalendarCheck, String(stats.trainingFrequency.totalSessions), 'Total sessions'),
-    statTile(Weight, formatVolumeKg(stats.totalVolume, unit), 'Total volume')
-  )
+  const tiles = statStrip([
+    { value: String(streakDays), label: stats.trainingStreak.currentStreakDays === undefined ? 'Week streak' : 'Day streak' },
+    { value: String(stats.trainingFrequency.totalSessions), label: 'Total sessions' },
+    { value: formatVolumeKg(stats.totalVolume, unit), label: 'Total volume' },
+  ])
   let activeRange = normalizeTrainingRange(new URLSearchParams(window.location.search).get('range'))
   let range: HTMLElement = document.createElement('div')
   let weekly: HTMLElement = document.createElement('div')

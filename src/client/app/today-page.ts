@@ -2,6 +2,7 @@ import { ChevronRight, Play } from 'lucide'
 
 import { readableApiError } from '../shared/api/errors.js'
 import { bindPageRetry, pageError, pageLoading } from '../shared/page-states.js'
+import { statStrip } from '../shared/stat-strip.js'
 import { displayName } from '../exercises/format.js'
 import { getProfile } from '../profile/api.js'
 import type { WeightUnit } from '../profile/types.js'
@@ -73,21 +74,14 @@ function readinessCard(recovery: RecoveryOverview): HTMLElement {
 }
 
 function weekStrip(stats: StatisticsOverview, unit: WeightUnit): HTMLElement {
-  const strip = element('dl', 'today-week')
   const streak = stats.trainingStreak.currentStreakDays
-  const cells: Array<[string, string]> = [
-    [String(stats.trainingFrequency.thisWeek), stats.trainingFrequency.thisWeek === 1 ? 'workout' : 'workouts'],
-    [formatVolumeKg(currentWeekVolume(stats), unit), 'lifted'],
+  return statStrip([
+    { value: String(stats.trainingFrequency.thisWeek), label: stats.trainingFrequency.thisWeek === 1 ? 'workout' : 'workouts' },
+    { value: formatVolumeKg(currentWeekVolume(stats), unit), label: 'lifted' },
     streak === undefined
-      ? [String(stats.trainingStreak.currentStreakWeeks), 'week streak']
-      : [String(streak), 'day streak'],
-  ]
-  for (const [value, label] of cells) {
-    const cell = element('div', 'today-week-cell')
-    cell.append(element('dd', '', value), element('dt', '', label))
-    strip.append(cell)
-  }
-  return strip
+      ? { value: String(stats.trainingStreak.currentStreakWeeks), label: 'week streak' }
+      : { value: String(streak), label: 'day streak' },
+  ])
 }
 
 function lastWorkout(session: Session): HTMLElement {

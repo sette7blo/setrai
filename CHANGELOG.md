@@ -12,6 +12,8 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 ## [Unreleased]
 
 - Tightened the visual foundations: text now uses one scale of eight sizes and four weights with nothing smaller than 12px, corners use five shared radii, every interface colour comes from the design tokens, and transitions share three durations and one easing. Secondary text is slightly darker for contrast, and page changes no longer fade.
+- One visual world: the pastel gradient stat tiles on Progress and Body are replaced by the flat stat strip used on Today, and the muscle distribution, goal and BMI bars are solid instead of gradient.
+- Fixed empty pills beside each Settings section, developer wording on the Settings save row, and the Library tab underline stopping short on desktop.
 - Fixed the program builder dialog, which still used the old dark theme and had unreadable labels.
 - Redesigned navigation around Today, Progress, and Library. Quick is no longer a tab: Today opens with your readiness, a suggested workout that is already built, and the week so far, and an unfinished workout shows as a Resume bar above the navigation on every other screen. Old links, including installed home-screen shortcuts, redirect to the new screens.
 - Unified the interface on one design system: the Archivo typeface is now bundled, the live workout matches the rest of the app, and a single orange accent taken from the exercise artwork marks the action that starts or continues training. Removed the "AI Training Coach" tagline from the app until an AI feature ships.
