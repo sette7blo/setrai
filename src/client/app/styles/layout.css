@@ -31,22 +31,18 @@
 h1 { font-stretch: var(--font-display-stretch); }
 h1 { max-width: none; margin: 0; font-size: var(--font-page-title); font-weight: var(--weight-bold); line-height: 1.05; letter-spacing: -.01em; text-wrap: balance; }
 
-.top-bar {
-  position: sticky;
-  top: 0;
-  z-index: 20;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 0 -16px 4px;
-  padding: calc(4px + env(safe-area-inset-top)) 6px 4px 16px;
-  background: color-mix(in srgb, var(--color-bg) 88%, transparent);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-}
+/* Phone top bar: logo mark or the way back, the page title once it has scrolled away, and the gear. */
+.top-bar { position: sticky; top: 0; z-index: 20; display: grid; grid-template-columns: auto minmax(0, 1fr) 44px; align-items: center; gap: 8px; min-height: calc(44px + env(safe-area-inset-top)); margin: 0 -16px; padding: env(safe-area-inset-top) 6px 0 16px; background: color-mix(in srgb, var(--color-bg) 88%, transparent); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); }
+.top-bar-back { display: inline-flex; align-items: center; gap: 2px; min-height: 44px; margin-left: -6px; padding-right: 8px; color: var(--color-muted-strong); font-size: var(--text-body); font-weight: var(--weight-medium); }
+.top-bar-title { overflow: hidden; font-size: var(--text-body); font-weight: var(--weight-medium); text-align: center; text-overflow: ellipsis; white-space: nowrap; opacity: 0; transition: opacity var(--duration-base) var(--ease-out); }
+.top-bar--scrolled .top-bar-title { opacity: 1; }
+.top-bar--scrolled { border-bottom: var(--border-subtle); }
+.top-bar .settings-gear { grid-column: 3; }
+.top-bar .settings-gear[hidden] { display: none; }
 .mobile-brand, .brand-mark { display: inline-flex; min-height: 44px; align-items: center; gap: 8px; }
 .mobile-brand__logo, .brand-mark__logo { display: block; width: 30px; height: 27px; object-fit: contain; }
-.mobile-brand strong, .brand-mark strong { font-size: var(--text-section); font-weight: var(--weight-heavy); font-stretch: var(--font-display-stretch); letter-spacing: -.01em; line-height: 1; }
+.mobile-brand__logo { width: 32px; height: 28px; }
+.brand-mark strong { font-size: var(--text-section); font-weight: var(--weight-heavy); font-stretch: var(--font-display-stretch); letter-spacing: -.01em; line-height: 1; }
 .settings-gear { display: grid; place-items: center; width: 44px; height: 44px; flex: none; border-radius: var(--radius-pill); color: var(--color-text); transition: background-color var(--duration-base) var(--ease-out); }
 .settings-gear svg { width: 22px; height: 22px; stroke-width: 1.9; }
 .settings-gear:active { background: var(--color-surface-strong); }

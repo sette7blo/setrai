@@ -3,6 +3,7 @@ import test from 'node:test'
 import { menuDestination } from '../../src/client/app/menu-navigation.js'
 import { DESKTOP_NAVIGATION_ITEMS, NAVIGATION_ITEMS } from '../../src/client/app/navigation.js'
 import { primaryNavPath } from '../../src/client/app/router.js'
+import { topBarContext } from '../../src/client/app/shell-navigation.js'
 import { createRouteTransition } from '../../src/client/app/route-transition.js'
 
 test('desktop Settings uses the profile route while mobile retains its header gear', () => {
@@ -57,4 +58,15 @@ test('route transitions retain current content until the latest route is ready',
   finishStale()
   assert.equal(await stale, null)
   assert.equal(replacement, latestRoute)
+})
+
+test('phone top bar shows the way back on inner screens and the gear everywhere but Settings', () => {
+  for (const path of ['/today', '/statistics', '/statistics/history', '/library/exercises', '/library/programs']) {
+    assert.deepEqual(topBarContext(path), { back: null, gear: true })
+  }
+  assert.deepEqual(topBarContext('/recovery'), { back: { href: '/today', label: 'Today' }, gear: true })
+  assert.deepEqual(topBarContext('/exercises/12'), { back: { href: '/library/exercises', label: 'Exercises' }, gear: true })
+  assert.deepEqual(topBarContext('/exercises/new'), { back: { href: '/library/exercises', label: 'Exercises' }, gear: true })
+  assert.deepEqual(topBarContext('/exercises/12/edit'), { back: { href: '/exercises/12', label: 'Exercise' }, gear: true })
+  assert.deepEqual(topBarContext('/profile'), { back: { href: '/today', label: 'Today' }, gear: false })
 })

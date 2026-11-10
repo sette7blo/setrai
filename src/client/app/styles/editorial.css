@@ -260,7 +260,6 @@ textarea {
 
 @media (max-width: 719px) {
 
-  .mobile-brand__logo { width: 54px; height: 42px; }
 
           .exercise-heading h1,
   .statistics-page-head h1 { font-size: var(--font-page-title) !important; font-weight: var(--weight-medium) !important; letter-spacing: -.015em !important; line-height: 1 !important; }

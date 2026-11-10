@@ -11,6 +11,7 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 ## [Unreleased]
 
+- Slimmer phone top bar: the main tabs show only the logo mark and the settings gear, inner screens (Recovery, an exercise, the editor, Settings) show a single back row instead of a brand bar plus a back link, and the bar shows the page title once you scroll past it.
 - Exercise artwork leads: Library cards show one quiet line ("Core, Beginner") instead of a coloured difficulty bar, and the exercise page opens with a full-width image, a one-line summary, and instructions already expanded above the target muscles.
 - History and program cards are easier to read: a smaller diagram, a larger title and at most two quieter lines. The History calendar is a plain white card with readable day numbers and no longer repeats the monthly recap figures. In an expanded program, Start is the orange button at the top and Edit, Duplicate and Delete sit in one quiet row.
 - Progress, Body tab: logging a weight is now the first thing on the tab, with a date picker in your local format. Weight trend, goal progress and BMI are separate cards, entries are a compact list with "Show all", deleting an entry takes two taps, and height and target weight moved into a collapsed "Goal and height" section at the bottom.
