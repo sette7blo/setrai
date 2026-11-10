@@ -462,3 +462,27 @@ test('validates missing exercise and malformed set values', () => {
     cleanupDatabase(db, directory)
   }
 })
+
+test('an explicit finish time corrects duration and must use the stored format', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    const services = createServices(db)
+    const session = services.sessions.startSession({ name: 'Left running' })
+    services.sessions.finishSession(session.id)
+
+    const corrected = services.sessions.finishSession(session.id, {
+      finishedAt: '2026-10-11 10:15:00'
+    })
+    assert.equal(corrected.finishedAt, '2026-10-11 10:15:00')
+
+    for (const finishedAt of ['2026-10-11T10:15:00Z', 'yesterday', 42, '2026-13-45 99:99:99']) {
+      assert.throws(
+        () => services.sessions.finishSession(session.id, { finishedAt }),
+        /Finish time is invalid/
+      )
+    }
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})

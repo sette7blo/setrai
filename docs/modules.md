@@ -924,26 +924,37 @@ src/client/app/
 - routing;
 - navigation and browser history in `menu-navigation.ts`;
 - capability loading;
-- top-level layout and compact header/navigation styling;
-- mobile Home / Quick / Library navigation, a separate desktop Quick action, and
-  an active-session Resume state from the public Sessions API;
-- shared Home (Training/History/Body/Recovery) and Library (Exercises/Programs)
+- top bar, sidebar, bottom navigation, and the now-training Resume bar in
+  `shell-navigation.ts`, styled by `styles/layout.css`;
+- Today / Progress / Library destinations in `navigation.ts`; workout actions are
+  never navigation items;
+- the Today page in `today-page.ts` and `styles/today.css`, which composes the
+  public Recovery, Quick Workout, Statistics, and Sessions client APIs without
+  owning their logic;
+- legacy path redirects in `application.ts`;
+- shared Progress (Training/History/Body) and Library (Exercises/Programs)
   section navigation in `section-navigation.ts`;
-- shared typography, spacing, and radius tokens in `styles/tokens.css`;
-  feature styles consume these tokens while owning their page layout;
-- warm light theme in `styles/editorial.css` and shared header, surface, control,
-  and focus treatments in `styles/design-system.css`;
+- the single design-token source in `styles/tokens.css` (colour, the bundled
+  Archivo typeface, radius, spacing); feature styles consume these tokens and
+  must not redefine them or hardcode theme colours;
+- base element and button styles in `styles/base.css`; remaining shared surface
+  rules in `styles/editorial.css` and `styles/design-system.css`, which should
+  shrink over time rather than gain new overrides;
 - global app state;
 - feature registration.
 
 ## Typical files
 
 ```text
-bootstrap.ts
+main.ts
+application.ts
 router.ts
 navigation.ts
+shell-navigation.ts
+menu-navigation.ts
+section-navigation.ts
+today-page.ts
 capabilities.ts
-shell.ts
 ```
 
 ## May depend on
@@ -1130,7 +1141,7 @@ src/client/recovery/
 - muscle recovery/readiness presentation;
 - recovery status labels;
 - recovery card ordering for display;
-- recovery empty/loading/error states within Home → Recovery.
+- recovery empty/loading/error states on the Recovery page.
 
 ## May depend on
 
@@ -1186,10 +1197,8 @@ src/client/quick-workout/
 
 - Quick Workout form and preview;
 - public `createRecoveryWorkoutPanel` entry in `recovery-panel.ts`, composed by
-  the global native-dialog sheet in `recovery-sheet.ts`, with duration choices
-  and ready-muscle preview;
-- Quick/Resume navigation interception, focus restoration, backdrop/Escape
-  dismissal, and responsive sheet presentation;
+  the Today page, with duration choices, automatic building, and ready-muscle
+  preview;
 - pure same-muscle swap/removal state in `recovery-plan.ts` and panel styling in
   `recovery-panel.css`;
 - target-muscle selection presentation;

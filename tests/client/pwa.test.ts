@@ -6,7 +6,7 @@ import test from 'node:test'
 const root = process.cwd()
 
 test('app header has a neutral settings link without a fabricated identity', () => {
-  const shell = fs.readFileSync(path.join(root, 'src/client/app/application.ts'), 'utf8')
+  const shell = fs.readFileSync(path.join(root, 'src/client/app/shell-navigation.ts'), 'utf8')
   const navigation = fs.readFileSync(path.join(root, 'src/client/app/navigation.ts'), 'utf8')
   assert.match(shell, /Open settings/)
   assert.match(shell, /settings-gear/)
@@ -22,7 +22,7 @@ test('PWA manifest is installability-ready for Setrai', () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(root, 'public/manifest.webmanifest'), 'utf8'))
   assert.equal(manifest.name, 'Setrai')
   assert.equal(manifest.short_name, 'Setrai')
-  assert.equal(manifest.start_url, '/statistics')
+  assert.equal(manifest.start_url, '/today')
   assert.equal(manifest.display, 'standalone')
   assert.equal(manifest.background_color, '#f3f3f0')
   assert.equal(manifest.theme_color, '#f3f3f0')

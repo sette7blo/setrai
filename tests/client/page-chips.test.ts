@@ -18,8 +18,6 @@ test('shared chip tokens unify metric and control chip families', () => {
   }
 
   const chips = fs.readFileSync(path.join(root, 'src/client/shared/page-chips.css'), 'utf8')
-  assert.match(chips, /\.library-metric/)
-  assert.match(chips, /\.filter-chip/)
   assert.match(chips, /\.equipment-chip/)
   assert.match(chips, /\.recovery-fresh-chips button/)
   assert.match(chips, /\.page-summary-metrics > span/)

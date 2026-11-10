@@ -11,6 +11,12 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 ## [Unreleased]
 
+- Redesigned navigation around Today, Progress, and Library. Quick is no longer a tab: Today opens with your readiness, a suggested workout that is already built, and the week so far, and an unfinished workout shows as a Resume bar above the navigation on every other screen. Old links, including installed home-screen shortcuts, redirect to the new screens.
+- Unified the interface on one design system: the Archivo typeface is now bundled, the live workout matches the rest of the app, and a single orange accent taken from the exercise artwork marks the action that starts or continues training. Removed the "AI Training Coach" tagline from the app until an AI feature ships.
+- Recovery now shows full rows only for muscles that still need time and collapses ready and fresh muscles into chips. Personal records are listed heaviest first. Weekly volume bars show their values.
+- Added a duration correction in History for sessions that were left running or closed by accident.
+- Fixed the run-together goal line on Body, the white box inside search fields, and the duplicated header on the workout summary. Removed the unreachable program page and the repeated header cards on each screen.
+
 - Fixed live workout countdown sounds on iOS: audio is now primed during taps and key presses, kept alive between cues, and rebuilt after the app returns from the background. Cues are louder, with a longer final tone, and the countdown number and ring turn red for the final five seconds.
 - Added an optional Omarchy snapshot: with `SETRAI_OMARCHY_SNAPSHOT_ENABLED=true`, Setrai writes a small JSON file of glanceable training state (resume workout, today and week volume, readiness, last workout, body weight) for the Omarchy bar plugin. Off by default; Docker installs also need the snapshot bind mount described in `docs/deployment.md`.
 

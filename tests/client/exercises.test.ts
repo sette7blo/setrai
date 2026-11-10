@@ -287,7 +287,7 @@ test('muscle map highlights primary chest and secondary triceps and granular del
 test('theme preserves distinct primary and secondary muscle map colors', () => {
   const theme = readFileSync('src/client/app/styles/editorial.css', 'utf8')
   const styles = readFileSync('src/client/exercises/styles.css', 'utf8')
-  assert.match(theme, /\.muscle-map__primary\s*\{\s*fill: #000 !important;/)
+  assert.match(theme, /\.muscle-map__primary\s*\{\s*fill: var\(--color-text\) !important;/)
   assert.match(theme, /\.muscle-map__secondary\s*\{\s*fill: var\(--color-warning\) !important;/)
   assert.doesNotMatch(theme, /\.muscle-map__primary\s*,\s*\.muscle-map__secondary\s*\{/)
   assert.match(styles, /\.muscle-map__key-secondary\s*\{\s*color: var\(--color-warning\);/)

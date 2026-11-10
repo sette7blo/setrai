@@ -14,10 +14,12 @@ const BANNED_UI = [
   'Add equipment in Profile',
 ]
 
-test('user-facing client copy follows Home / Library / Settings glossary', () => {
+test('user-facing client copy follows Today / Progress / Library / Settings glossary', () => {
   const files = [
     'src/client/app/navigation.ts',
     'src/client/app/application.ts',
+    'src/client/app/shell-navigation.ts',
+    'src/client/app/today-page.ts',
     'src/client/app/router.ts',
     'src/client/app/section-navigation.ts',
     'src/client/exercises/page.ts',
@@ -39,19 +41,22 @@ test('user-facing client copy follows Home / Library / Settings glossary', () =>
   }
 
   const navigation = fs.readFileSync(path.join(root, 'src/client/app/navigation.ts'), 'utf8')
-  assert.match(navigation, /label: 'Home'/)
+  assert.match(navigation, /label: 'Today'/)
+  assert.match(navigation, /label: 'Progress'/)
   assert.match(navigation, /label: 'Library'/)
-  assert.match(navigation, /label: 'Quick'/)
+  assert.doesNotMatch(navigation, /label: 'Quick'|label: 'Resume'|label: 'Home'/)
   assert.doesNotMatch(navigation, /label: 'Profile'/)
   assert.doesNotMatch(navigation, /label: 'Statistics'/)
-
-  const exercises = fs.readFileSync(path.join(root, 'src/client/exercises/page.ts'), 'utf8')
-  assert.match(exercises, /title: 'Exercises'/)
 
   const home = fs.readFileSync(path.join(root, 'src/client/statistics/page.ts'), 'utf8')
   const homeNavigation = fs.readFileSync(path.join(root, 'src/client/app/section-navigation.ts'), 'utf8')
   assert.match(home, /Training date range/)
-  assert.match(homeNavigation, /title: 'Home'/)
+  assert.match(homeNavigation, /title: 'Progress'/)
   assert.match(homeNavigation, /label: 'History'/)
-  assert.match(homeNavigation, /label: 'Recovery'/)
+  assert.match(homeNavigation, /label: 'Exercises'/)
+  assert.doesNotMatch(homeNavigation, /label: 'Recovery'/)
+
+  // The product makes no AI claim until an AI feature ships.
+  const shell = fs.readFileSync(path.join(root, 'src/client/app/shell-navigation.ts'), 'utf8')
+  assert.doesNotMatch(shell, /AI Training Coach/)
 })

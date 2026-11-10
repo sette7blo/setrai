@@ -2,7 +2,7 @@ import assert from 'node:assert/strict'
 import test from 'node:test'
 
 import { normalizeRecovery, recoveryPercent, sortedRecovery, statusLabel, lastTrainedText } from '../../src/client/recovery/format.js'
-import { recoveryBodyMapMarkup, recoveryContent, recoveryHero, recoveryPartition } from '../../src/client/recovery/page.js'
+import { recoveryBodyMapMarkup, recoveryContent, recoveryCountsText, recoveryPartition, recoverySummary } from '../../src/client/recovery/page.js'
 
 test('normalizes Recovery API payload', () => {
   const recovery = normalizeRecovery({ generatedAt: 'now', lookbackDays: 7, muscles: [{ muscle: 'chest', recovery: 0.82, status: 'ready', lastTrainedAt: '2026-10-03T00:00:00.000Z' }] })
@@ -67,7 +67,7 @@ function text(root: TestElement): string {
   return [root.textContent, ...root.children.map(text)].join(' ')
 }
 
-test('Recovery hero is compact and uses status metrics instead of explanatory copy', () => {
+test('Recovery summary leads with the readiness figure and counts only what needs saying', () => {
   const originalDocument = globalThis.document
   try {
     globalThis.document = {
@@ -75,21 +75,18 @@ test('Recovery hero is compact and uses status metrics instead of explanatory co
       createElementNS: () => new TestElement(),
       createTextNode: (value: string) => Object.assign(new TestElement(), { textContent: value })
     } as unknown as Document
-    const hero = recoveryHero({ generatedAt: '', lookbackDays: 7, muscles: [
-      { muscle: 'chest', recovery: 0.8, status: 'ready', lastTrainedAt: '' },
-      { muscle: 'back', recovery: 0.5, status: 'moderate', lastTrainedAt: '' },
-      { muscle: 'triceps', recovery: 0.2, status: 'recovering', lastTrainedAt: '' }
-    ] }) as unknown as TestElement
-    const rendered = text(hero)
-    assert.match(hero.className, /program-browse-hero/)
-    assert.match(hero.className, /recovery-hero--compact/)
-    assert.match(rendered, /Muscle readiness/)
-    assert.match(rendered, /85% ready/)
-    assert.match(rendered, /1 ready/)
-    assert.match(rendered, /7 fresh/)
-    assert.match(rendered, /1 recovering/)
-    assert.match(rendered, /1 moderate/)
-    assert.doesNotMatch(rendered, /Training-readiness estimates/)
+    const recovery = { generatedAt: '', lookbackDays: 7, muscles: [
+      { muscle: 'chest', recovery: 0.8, status: 'ready' as const, lastTrainedAt: '' },
+      { muscle: 'back', recovery: 0.5, status: 'moderate' as const, lastTrainedAt: '' },
+      { muscle: 'triceps', recovery: 0.2, status: 'recovering' as const, lastTrainedAt: '' }
+    ] }
+    const rendered = text(recoverySummary(recovery) as unknown as TestElement)
+    assert.match(rendered, /85\s+% ready/)
+    assert.equal(recoveryCountsText(recovery), '1 recovering, 1 moderate, 1 ready, 7 fresh')
+    assert.equal(
+      recoveryCountsText({ generatedAt: '', lookbackDays: 7, muscles: [] }),
+      '0 ready, 10 fresh'
+    )
   } finally {
     globalThis.document = originalDocument
   }
