@@ -15,11 +15,10 @@ function enrich(programs: Program[], exercises: Exercise[]): Program[] {
   })) }))
 }
 
-export async function renderProgramLibrary(page: HTMLElement): Promise<void> {
+export async function renderProgramLibrary(page: HTMLElement, onLoaded: () => void = () => {}): Promise<void> {
   const status = document.createElement('p')
   status.className = 'workout-browser-status'
   status.setAttribute('role', 'status')
-  status.textContent = 'Loading your library…'
   page.append(status)
   const params = new URLSearchParams(window.location.search)
   const filters = emptyProgramFilters()
@@ -27,6 +26,7 @@ export async function renderProgramLibrary(page: HTMLElement): Promise<void> {
   const [saved, initialExercises, profile] = await Promise.all([
     listPrograms(), listExercises(), getProfile().catch(() => ({ equipment: [] as string[] }))
   ])
+  onLoaded()
   let exercises = initialExercises
   let programs = enrich(saved, exercises)
   const chips = document.createElement('div')

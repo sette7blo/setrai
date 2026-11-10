@@ -1,6 +1,6 @@
 import { progressHeading } from '../app/section-navigation.js'
 import { statStrip } from '../shared/stat-strip.js'
-import { bindPageRetry, pageEmpty, pageError, pageLoading } from '../shared/page-states.js'
+import { bindPageRetry, loadingRegion, pageEmpty, pageError, showLoadingAfterDelay, skeleton, skeletonGroup } from '../shared/page-states.js'
 import { readableApiError } from '../shared/api/errors.js'
 import { displayName } from '../exercises/format.js'
 import { getProfile } from '../profile/api.js'
@@ -16,8 +16,12 @@ import type { MuscleVolume, PersonalRecord, StatisticsOverview, WeeklyVolumePoin
 import { createVolumeShareExperience } from './volume-share.js'
 import { createRecordShareExperience } from './record-share.js'
 
-function loadingView(): HTMLElement {
-  return pageLoading({ className: 'statistics-page statistics-page--loading', label: 'Loading progress' })
+function loadingView(section: 'training' | 'body'): HTMLElement {
+  const blocks = section === 'body'
+    ? skeletonGroup('stats-body-view', ...[75, 150, 240, 110, 130, 560].map(height => skeleton({ height })))
+    : skeletonGroup('stats-training-view', skeleton({ height: 75 }), skeleton({ height: 50, radius: 'md' }), skeleton({ height: 270 }), skeleton({ height: 240 }),
+      skeleton({ height: 440, className: 'stats-card--records' }))
+  return loadingRegion('Loading progress', 'statistics-page statistics-workstr-page', progressHeading(section), blocks)
 }
 
 function errorView(message: string): HTMLElement {
@@ -223,11 +227,13 @@ function renderLoaded(
 }
 
 export async function renderStatisticsPage(root: HTMLElement, section: StatisticsSection = 'training'): Promise<void> {
-  root.replaceChildren(loadingView())
+  const loaded = showLoadingAfterDelay(root, () => loadingView(section))
   try {
     const [stats, profile, entries] = await Promise.all([getStatistics(), getProfile(), listBodyWeight()])
+    loaded()
     root.replaceChildren(renderLoaded(root, stats, profile, entries, section))
   } catch (error) {
+    loaded()
     const view = errorView(readableApiError(error))
     bindPageRetry(view, () => { void renderStatisticsPage(root, section) })
     root.replaceChildren(view)

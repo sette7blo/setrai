@@ -132,6 +132,12 @@ body:has(.live-overlay) { overflow: hidden; }
 .live-set-number { display: grid; place-items: center; width: 34px; height: 34px; border: 1px solid var(--live-line); border-radius: var(--radius-sm); color: var(--live-muted); font-size: var(--text-meta); font-weight: var(--weight-medium); }
 .live-set-row.is-current { margin-inline: -8px; padding: 10px 8px; border: 1px solid var(--color-text); border-radius: var(--radius-lg); background: var(--color-surface); }
 .live-set-row.is-current .live-set-number { border-color: var(--color-text); background: var(--color-text); color: var(--color-on-primary); }
+/* Logging a set: the badge fills and shows a check, then the next row arrives as current. */
+.live-set-number { transition: background-color var(--duration-base) var(--ease-out), border-color var(--duration-base) var(--ease-out), color var(--duration-base) var(--ease-out); }
+.live-set-row.is-logging .live-set-number { border-color: var(--live-accent); background: var(--live-accent); color: var(--color-on-primary); }
+.live-set-number svg { width: 16px; height: 16px; }
+.live-set-row.is-arriving { animation: live-current-in var(--duration-base) var(--ease-out); }
+@keyframes live-current-in { from { opacity: 0; transform: translateY(-8px); } }
 .live-overlay .live-input {
   min-width: 0;
   width: 100%;

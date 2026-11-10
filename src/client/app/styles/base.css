@@ -39,7 +39,6 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 }
 .button svg { width: 17px; height: 17px; flex: none; }
 .button:hover { border-color: var(--color-border-strong); }
-.button:active { transform: scale(.98); }
 .button:disabled { opacity: .55; cursor: default; }
 .button--primary { border-color: var(--color-text); color: var(--color-on-primary); background: var(--color-text); }
 .button--primary:hover { border-color: var(--color-text); background: var(--color-muted-strong); }
@@ -47,6 +46,19 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 /* Reserved for the one action that starts or continues training. */
 .button--accent { border-color: var(--color-accent); color: var(--color-on-accent); background: var(--color-accent); font-weight: var(--weight-bold); }
 .button--accent:hover { border-color: var(--color-accent); filter: brightness(.95); }
+
+/* Press feedback, identical on every button, chip and icon button. `scale` leaves any `transform` alone. */
+:is(button, .button, .settings-gear, .detail-chrome-btn):active:not(:disabled) { animation: press var(--duration-fast) var(--ease-out) forwards; }
+@keyframes press { to { scale: .97; } }
+
+/* Disclosures open and close by height where the browser can animate to `auto`; elsewhere they open instantly. */
+@media (prefers-reduced-motion: no-preference) {
+  @supports (interpolate-size: allow-keywords) {
+    :is(.workout-card, .settings-category, .detail-instructions) { interpolate-size: allow-keywords; }
+    :is(.workout-card, .settings-category, .detail-instructions)::details-content { height: 0; overflow: clip; transition: height var(--duration-base) var(--ease-out), content-visibility var(--duration-base) allow-discrete; }
+    :is(.workout-card, .settings-category, .detail-instructions)[open]::details-content { height: auto; }
+  }
+}
 
 @media (max-width: 719px) {
   /* iOS zooms the page when a focused field is under 16px. */

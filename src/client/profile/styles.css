@@ -182,8 +182,6 @@
 }
 .settings-backup-footnote { margin: 12px 0 0; color: var(--color-muted-strong); font-size: var(--text-caption); line-height: 1.45; text-wrap: pretty; }
 
-.profile-page--loading div { min-height: 6rem; border-radius: var(--radius-lg); background: color-mix(in srgb, var(--color-text) 8%, transparent); animation: exercisePulse var(--duration-pulse) var(--ease-out) infinite; }
-
 @media (min-width: 820px) {
   .profile-settings-page { max-width: 720px; width: 100%; }
 }

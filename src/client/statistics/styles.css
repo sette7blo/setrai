@@ -52,14 +52,6 @@
   box-shadow: var(--shadow-soft);
 }
 
-.statistics-page--loading div,
-.profile-page--loading div {
-  min-height: 6rem;
-  border-radius: var(--radius-lg);
-  background: color-mix(in srgb, var(--color-surface) 7%, transparent);
-  animation: exercisePulse var(--duration-pulse) var(--ease-out) infinite;
-}
-
 @media (min-width: 720px) {
   .statistics-workstr-page {
     width: 100%;
@@ -148,7 +140,6 @@
 }
 
 .body-share-close:hover { background: var(--color-border); }
-.body-share-close:active { transform: scale(.97); }
 
 .body-share-preview {
   width: min(220px, 58vw);
@@ -208,8 +199,6 @@
   color: var(--color-text);
 }
 
-.body-share-range button:active { transform: scale(.97); }
-
 .body-share-options {
   display: grid;
   overflow: hidden;
@@ -258,7 +247,6 @@
   transition: transform var(--duration-fast) var(--ease-out), opacity var(--duration-base) var(--ease-out);
 }
 
-.body-share-submit:active:not(:disabled) { transform: scale(.97); }
 .body-share-submit:disabled { cursor: wait; opacity: .58; }
 
 @media (max-width: 719px) {

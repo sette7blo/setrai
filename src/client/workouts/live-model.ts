@@ -12,6 +12,10 @@ export interface LiveModel {
   drafts: Map<string, { reps: string; weight: string }>
   intervalPage: number
   error: string
+  /** Set by logging a set; the row that becomes current next animates in once. */
+  currentMoved?: boolean
+  /** When that row first appeared, so a re-render mid-animation continues it instead of restarting. */
+  currentArrivedAt?: number
 }
 
 export interface LiveActions {

@@ -70,6 +70,8 @@
   --text-section: 21px;
   --text-headline: 26px;
   --text-display: 64px;
+  /* The rest countdown only: the one number meant to be read from across a room. */
+  --text-countdown: 96px;
   --weight-regular: 400;
   --weight-medium: 600;
   --weight-bold: 700;

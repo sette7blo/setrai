@@ -105,7 +105,13 @@ export function createFilterSheet(options: {
     const rect = dialog.getBoundingClientRect()
     if (event.clientX < rect.left || event.clientX > rect.right || event.clientY < rect.top || event.clientY > rect.bottom) dialog.close()
   })
-  dialog.addEventListener('close', () => { dialog.remove(); options.onClose() })
+  dialog.addEventListener('close', () => {
+    options.onClose()
+    // Stay in the document until the slide-down has finished; with nothing animating, leave at once.
+    const closing = dialog.getAnimations?.() ?? []
+    if (closing.length) void Promise.allSettled(closing.map(animation => animation.finished)).then(() => dialog.remove())
+    else dialog.remove()
+  })
   update()
   return dialog
 }

@@ -1,7 +1,7 @@
 import { ChevronRight, Play } from 'lucide'
 
 import { readableApiError } from '../shared/api/errors.js'
-import { bindPageRetry, pageError, pageLoading } from '../shared/page-states.js'
+import { bindPageRetry, loadingRegion, pageError, showLoadingAfterDelay, skeleton, skeletonGroup } from '../shared/page-states.js'
 import { statStrip } from '../shared/stat-strip.js'
 import { displayName } from '../exercises/format.js'
 import { getProfile } from '../profile/api.js'
@@ -57,13 +57,34 @@ function resumeCard(session: Session): HTMLElement {
   return link
 }
 
+let readinessCounted = false
+
+// The readiness figure counts up the first time Today is shown after the app loads, and never again.
+function countUpOnce(target: HTMLElement, value: number): void {
+  if (readinessCounted) return
+  readinessCounted = true
+  if (value <= 0 || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+  const duration = 600
+  let start = 0
+  target.textContent = '0'
+  const step = (now: number): void => {
+    start ||= now
+    const progress = Math.min(1, (now - start) / duration)
+    target.textContent = String(Math.round(value * (1 - (1 - progress) ** 3)))
+    if (progress < 1) requestAnimationFrame(step)
+  }
+  requestAnimationFrame(step)
+}
+
 function readinessCard(recovery: RecoveryOverview): HTMLElement {
   const card = element('a', 'today-readiness')
   card.href = '/recovery'
   card.setAttribute('aria-label', 'Open muscle recovery')
   const copy = element('div', 'today-readiness-copy')
   const figure = element('p', 'today-figure')
-  figure.append(element('strong', '', String(averageReadiness(recovery))), element('span', '', '% ready'))
+  const value = element('strong', '', String(averageReadiness(recovery)))
+  countUpOnce(value, averageReadiness(recovery))
+  figure.append(value, element('span', '', '% ready'))
   const more = element('span', 'today-more')
   more.append(document.createTextNode('Muscle detail'), iconElement(ChevronRight))
   copy.append(figure, element('p', 'today-readiness-note', readinessSentence(recovery)), more)
@@ -108,8 +129,15 @@ function sectionTitle(text: string): HTMLElement {
   return element('h2', 'today-section-title', text)
 }
 
+function todaySkeleton(): HTMLElement {
+  return loadingRegion('Loading today', 'today-page', todayHeading(),
+    skeletonGroup('today-main', element('h2', 'today-section-title today-section-title--wide', 'Readiness'), skeleton({ height: 150 })),
+    skeletonGroup('today-workout', sectionTitle('Suggested workout'), skeleton({ height: 420 })),
+    skeletonGroup('today-side', sectionTitle('This week'), skeleton({ height: 75 }), skeleton({ height: 74 })))
+}
+
 export async function renderTodayPage(root: HTMLElement): Promise<void> {
-  root.replaceChildren(pageLoading({ className: 'today-page today-page--loading', label: 'Loading today' }))
+  const loaded = showLoadingAfterDelay(root, todaySkeleton)
   try {
     const [recovery, sessions, stats, profile] = await Promise.all([
       getRecovery(),
@@ -117,6 +145,7 @@ export async function renderTodayPage(root: HTMLElement): Promise<void> {
       getStatistics(),
       getProfile().catch(() => ({ weightUnit: 'kg' as const })),
     ])
+    loaded()
     const page = element('div', 'today-page')
     page.append(todayHeading())
 
@@ -140,6 +169,7 @@ export async function renderTodayPage(root: HTMLElement): Promise<void> {
     root.replaceChildren(page)
     if (window.location.hash === '#quick-workout') workout.scrollIntoView({ block: 'start' })
   } catch (error) {
+    loaded()
     const view = pageError({ eyebrow: 'Today', title: 'Today is unavailable', message: readableApiError(error) })
     bindPageRetry(view, () => { void renderTodayPage(root) })
     root.replaceChildren(view)

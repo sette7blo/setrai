@@ -2,7 +2,7 @@ import { Activity, ChevronDown, DatabaseBackup, Download, Dumbbell, Upload } fro
 
 import { iconElement } from '../app/navigation.js'
 import { pageHeading } from '../shared/page-chrome.js'
-import { bindPageRetry, pageError, pageLoading } from '../shared/page-states.js'
+import { bindPageRetry, loadingRegion, pageError, showLoadingAfterDelay, skeleton, skeletonGroup } from '../shared/page-states.js'
 import { readableApiError } from '../shared/api/errors.js'
 import { getProfile, updateProfile } from './api.js'
 import { DATABASE_BACKUP_URL, restoreDatabase } from './backup-api.js'
@@ -16,7 +16,9 @@ interface ProfileState {
 }
 
 function loadingView(): HTMLElement {
-  return pageLoading({ className: 'profile-page profile-page--loading', label: 'Loading settings' })
+  return loadingRegion('Loading settings', 'profile-page profile-settings-page',
+    pageHeading({ title: 'Settings', className: 'profile-settings-hero page-heading' }),
+    skeletonGroup('profile-settings-list', ...[62, 62, 62].map(height => skeleton({ height }))))
 }
 
 function errorView(message: string): HTMLElement {
@@ -276,11 +278,13 @@ function renderLoaded(root: HTMLElement, state: ProfileState): void {
 }
 
 export async function renderProfilePage(root: HTMLElement): Promise<void> {
-  root.replaceChildren(loadingView())
+  const loaded = showLoadingAfterDelay(root, loadingView)
   try {
     const profile = await getProfile()
+    loaded()
     renderLoaded(root, { profile, message: '', backupBusy: false })
   } catch (error) {
+    loaded()
     const view = errorView(readableApiError(error))
     bindPageRetry(view, () => { void renderProfilePage(root) })
     root.replaceChildren(view)

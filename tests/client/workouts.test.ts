@@ -32,7 +32,7 @@ import {
 import { renderSessionSummary, summaryFacts, summaryStats } from '../../src/client/workouts/session-summary.js'
 import { imageOnlyShareData, summaryImageName } from '../../src/client/workouts/session-summary-share.js'
 import { createHistoryCalendar } from '../../src/client/workouts/history-calendar.js'
-import { workoutLoadingSkeleton } from '../../src/client/workouts/page.js'
+import { workoutLoadingBlocks } from '../../src/client/workouts/page.js'
 import { libraryHeading, progressHeading } from '../../src/client/app/section-navigation.js'
 import type { Program, Session } from '../../src/client/workouts/types.js'
 import { monthlyRecap, monthlyRecapImageName } from '../../src/client/workouts/monthly-recap-data.js'
@@ -282,6 +282,7 @@ class TestElement {
   listeners: Record<string, Array<() => void>> = {}
   type = ''
   attributes: Record<string, string> = {}
+  style: Record<string, string> = {}
 
   append(...children: TestElement[]): void { this.children.push(...children) }
   prepend(...children: TestElement[]): void { this.children.unshift(...children) }
@@ -382,18 +383,20 @@ test('Workout history calendar selects the clicked day instead of the final rend
 })
 
 
-test('Workout loading skeletons render route-specific placeholder cards', () => {
+test('Workout loading placeholders follow each view\'s layout with the shared skeleton block', () => {
   const originalDocument = globalThis.document
   try {
     globalThis.document = {
       createElement: () => new TestElement()
     } as unknown as Document
-    const library = workoutLoadingSkeleton('library') as unknown as TestElement
-    const history = workoutLoadingSkeleton('history') as unknown as TestElement
-    assert.match(library.className, /workout-loading--library/)
-    assert.match(history.className, /workout-loading--history/)
-    assert.equal(library.children.length, 2)
-    assert.equal(history.children.length, 3)
-    assert(library.children.every(child => child.className === 'workout-loading-card'))
+    const library = workoutLoadingBlocks('library') as unknown as TestElement[]
+    const history = workoutLoadingBlocks('history') as unknown as TestElement[]
+    const recovery = workoutLoadingBlocks('recovery') as unknown as TestElement[]
+    assert.equal(library[1].className, 'program-list')
+    assert.equal(library[1].children.length, 5)
+    assert.equal(history[2].className, 'history-session-list')
+    assert.equal(history[2].children.length, 3)
+    assert.equal(recovery[0].className, 'recovery-panel')
+    for (const block of [...library[1].children, ...history[2].children, ...recovery[0].children]) assert.match(block.className, /^skeleton /)
   } finally { globalThis.document = originalDocument }
 })
