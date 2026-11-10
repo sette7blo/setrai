@@ -138,8 +138,6 @@ body::before { display: none; }
 
 .exercise-card p,
 .exercise-card small,
-.exercise-card__muscle,
-.exercise-card__level,
 .program-card p,
 .detail-description {
   color: var(--color-muted-strong) !important;
@@ -271,10 +269,7 @@ textarea {
   .page-toolbar, .exercise-controls, .program-toolbar { gap: var(--toolbar-gap) !important; }
   .exercise-card { border-radius: var(--radius-lg) !important; }
   .exercise-card h2 { font-size: var(--text-meta) !important; line-height: 1.16 !important; font-weight: var(--weight-medium) !important; letter-spacing: -.025em !important; }
-  .exercise-card__muscle,
-  .exercise-card__muscle small { font-size: var(--text-caption) !important; line-height: 1 !important; }
   .exercise-card__body { min-height: auto !important; padding: 8px 9px 10px !important; gap: 5px !important; }
-  .exercise-card .exercise-image-frame { aspect-ratio: 16 / 10 !important; }
   .favorite-button { width: 44px !important; height: 44px !important; }
 
 }

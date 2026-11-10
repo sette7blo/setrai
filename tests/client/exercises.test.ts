@@ -17,6 +17,8 @@ import {
 } from '../../src/client/exercises/format.js'
 import { imageFallbackState, localExerciseImageUrl } from '../../src/client/exercises/image.js'
 import { applyExerciseImage, MAX_EXERCISE_IMAGE_BYTES } from '../../src/client/exercises/image-upload.js'
+import { exerciseCardMeta } from '../../src/client/exercises/card.js'
+import { exerciseMetaLine } from '../../src/client/exercises/detail-view.js'
 import { muscleMapMarkup, muscleMapMarkupForMuscles, muscleRegion } from '../../src/client/exercises/muscle-map.js'
 import type { Exercise } from '../../src/client/exercises/types.js'
 
@@ -327,4 +329,11 @@ test('exercise detail and editor do not present workout prescriptions', () => {
 test('detail normalization preserves all instruction steps', () => {
   const steps = ['Plant your feet.', 'Lower under control.', 'Press upward.']
   assert.deepEqual(normalizeExercise({ id: 1, slug: 'bench-press', name: 'Bench Press', instructions: steps }).instructions, steps)
+})
+
+test('exercise card and detail describe an exercise in one line each', () => {
+  assert.equal(exerciseCardMeta({ muscleGroup: 'core', category: 'strength', difficulty: 'beginner' }), 'Core, Beginner')
+  assert.equal(exerciseCardMeta({ muscleGroup: '', category: '', difficulty: '' }), 'Training movement')
+  assert.equal(exerciseMetaLine({ difficulty: 'beginner', category: 'strength', movementType: 'compound', equipment: ['bodyweight'] }), 'Beginner, strength, compound, bodyweight')
+  assert.equal(exerciseMetaLine({ difficulty: '', category: '', movementType: '', equipment: [] }), '')
 })

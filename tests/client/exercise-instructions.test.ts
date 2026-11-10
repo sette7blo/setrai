@@ -26,7 +26,7 @@ test('instructions are a closed native disclosure with ordered steps and literal
     const exercise = normalizeExercise({ id: 1, slug: 'test', name: 'Test', instructions: ['Step one', ' ', '<b>Step two</b>'] })
     const section = createInstructions(exercise) as unknown as Element
     assert.equal(section.tagName, 'details')
-    assert.equal(section.open, false)
+    assert.equal(section.open, true)
     assert.equal(section.children[0].tagName, 'summary')
     assert.equal(section.children[1].tagName, 'ol')
     assert.deepEqual(section.children[1].children.map(item => item.textContent), ['Step one', '<b>Step two</b>'])

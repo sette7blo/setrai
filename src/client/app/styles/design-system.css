@@ -71,42 +71,4 @@
 }
 
 /* Exercise cards: preserve real 4:3 art ratio in Library. */
-.exercise-page .exercise-grid {
-  align-items: start !important;
-}
 
-.exercise-page .exercise-card {
-  display: grid !important;
-  align-self: start !important;
-}
-
-.exercise-page .exercise-card__link {
-  display: grid !important;
-}
-
-.exercise-page .exercise-card .exercise-image-frame,
-.exercise-page .exercise-card .exercise-image {
-  aspect-ratio: 4 / 3 !important;
-  width: 100% !important;
-  height: auto !important;
-  min-height: 0 !important;
-  max-height: none !important;
-}
-
-.exercise-page .exercise-card .exercise-image-frame img {
-  width: 100% !important;
-  height: 100% !important;
-  object-fit: cover !important;
-}
-
-.exercise-page .exercise-card__body {
-  min-height: auto !important;
-  height: auto !important;
-}
-
-@media (max-width: 719px) {
-  .exercise-page .exercise-card .exercise-image-frame,
-  .exercise-page .exercise-card .exercise-image {
-    aspect-ratio: 4 / 3 !important;
-  }
-}
