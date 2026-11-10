@@ -1,0 +1,53 @@
+/* Today: readiness, the next workout, and the week at a glance. */
+.today-page { display: grid; gap: 20px; }
+.today-heading { display: grid; gap: 2px; padding: 8px 0 0; }
+.today-date { margin: 0; color: var(--color-muted); font-size: 14px; font-weight: 500; }
+.today-main, .today-workout, .today-side { display: grid; gap: 12px; min-width: 0; align-content: start; }
+.today-section-title { margin: 0; font-size: 21px; font-weight: 750; font-stretch: var(--font-display-stretch); line-height: 1.1; }
+
+.today-resume { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 14px 14px 18px; border-radius: var(--radius-lg); color: var(--color-on-accent); background: var(--color-accent); }
+.today-resume-copy { display: grid; gap: 3px; min-width: 0; }
+.today-resume-copy small { font-size: 12px; font-weight: 600; opacity: .85; }
+.today-resume-copy strong { overflow: hidden; font-size: 22px; font-weight: 750; font-stretch: var(--font-display-stretch); line-height: 1.1; text-overflow: ellipsis; white-space: nowrap; }
+.today-resume-action { display: inline-flex; align-items: center; gap: 6px; flex: none; min-height: 44px; padding: 0 18px; border-radius: 999px; color: var(--color-accent); background: var(--color-on-accent); font-size: 15px; font-weight: 700; }
+.today-resume-action svg { width: 15px; height: 15px; fill: currentColor; }
+.today-resume:active { transform: scale(.99); }
+
+.today-readiness { display: grid; grid-template-columns: minmax(0, 1fr) 120px; gap: 12px; align-items: center; padding: 18px; border: var(--border-subtle); border-radius: var(--radius-lg); background: var(--color-surface); transition: border-color 160ms ease; }
+.today-readiness:hover { border-color: var(--color-border-strong); }
+.today-readiness-copy { display: grid; gap: 8px; min-width: 0; }
+.today-figure { display: flex; align-items: baseline; gap: 6px; margin: 0; white-space: nowrap; }
+.today-figure strong { font-size: 72px; font-weight: 800; font-stretch: 68%; line-height: .86; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.today-figure span { color: var(--color-muted-strong); font-size: 18px; font-weight: 600; }
+.today-readiness-note { margin: 0; color: var(--color-muted-strong); font-size: 14px; line-height: 1.4; text-wrap: pretty; }
+.today-more { display: inline-flex; align-items: center; gap: 2px; color: var(--color-muted); font-size: 13px; font-weight: 600; }
+.today-more svg { width: 16px; height: 16px; }
+.today-map { min-width: 0; }
+.today-map-body { display: block; width: 100%; height: auto; }
+.today-map-body polygon { stroke: var(--color-surface); stroke-width: .6; }
+
+.today-workout .recovery-quick-panel { gap: 12px; padding: 16px; border-radius: var(--radius-lg); }
+.today-workout .recovery-quick-start { position: static; margin: 4px 0 0; padding: 0; border: 0; background: none; backdrop-filter: none; }
+.today-workout .recovery-quick-start .button { min-height: 52px !important; font-size: 16px !important; }
+.today-workout .recovery-quick-regenerate { border: 0 !important; background: transparent !important; color: var(--color-muted-strong) !important; }
+
+.today-week { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); margin: 0; border: var(--border-subtle); border-radius: var(--radius-lg); background: var(--color-surface); }
+.today-week-cell { display: grid; gap: 4px; padding: 14px 12px; min-width: 0; }
+.today-week-cell + .today-week-cell { border-left: var(--border-subtle); }
+.today-week dd { margin: 0; overflow: hidden; font-size: 26px; font-weight: 750; font-stretch: var(--font-display-stretch); line-height: 1; font-variant-numeric: tabular-nums; text-overflow: ellipsis; white-space: nowrap; }
+.today-week dt { color: var(--color-muted); font-size: 12px; line-height: 1.25; }
+
+.today-last { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 12px 14px 16px; border: var(--border-subtle); border-radius: var(--radius-lg); background: var(--color-surface); }
+.today-last-copy { display: grid; gap: 3px; min-width: 0; }
+.today-last-copy small { color: var(--color-muted); font-size: 12px; }
+.today-last-copy strong { overflow: hidden; font-size: 16px; font-weight: 700; text-overflow: ellipsis; white-space: nowrap; }
+.today-last-copy span { color: var(--color-muted-strong); font-size: 13px; }
+.today-last > svg { flex: none; color: var(--color-muted); }
+
+@media (min-width: 960px) {
+  .today-page { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); grid-template-rows: auto auto 1fr; column-gap: 24px; align-items: start; }
+  .today-heading { grid-column: 1 / -1; }
+  .today-workout { grid-column: 1; grid-row: 2 / span 2; }
+  .today-main { grid-column: 2; }
+  .today-side { grid-column: 2; }
+}

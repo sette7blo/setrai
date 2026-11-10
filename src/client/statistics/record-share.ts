@@ -16,7 +16,7 @@ export function createRecordShareExperience(record: PersonalRecord, unit: Weight
   const dialog = document.createElement('dialog')
   dialog.className = 'body-share-sheet record-share-sheet'
   dialog.setAttribute('aria-labelledby', 'record-share-title')
-  dialog.innerHTML = `<div class="body-share-sheet__surface"><header><div><small>PERSONAL RECORD</small><h2 id="record-share-title">Share ${record.exerciseName}</h2></div><button type="button" class="body-share-close" aria-label="Close"></button></header><div class="body-share-preview" aria-live="polite"><span>Preparing preview…</span></div><p class="body-share-status" aria-live="polite"></p><button type="button" class="button button--primary body-share-submit"></button></div>`
+  dialog.innerHTML = `<div class="body-share-sheet__surface"><header><div><small>Personal record</small><h2 id="record-share-title">Share ${record.exerciseName}</h2></div><button type="button" class="body-share-close" aria-label="Close"></button></header><div class="body-share-preview" aria-live="polite"><span>Preparing preview…</span></div><p class="body-share-status" aria-live="polite"></p><button type="button" class="button button--primary body-share-submit"></button></div>`
   dialog.querySelector('.body-share-close')?.append(iconElement(X))
   dialog.querySelector('.body-share-submit')?.append(iconElement(Share2), Object.assign(document.createElement('span'), { textContent: 'Share image' }))
 

@@ -1,6 +1,5 @@
-import { Play } from 'lucide'
-import { iconElement } from '../app/navigation.js'
-import { homeHeading, libraryHeading } from '../app/section-navigation.js'
+import { libraryHeading, progressHeading } from '../app/section-navigation.js'
+import { pageBackHeading } from '../shared/page-chrome.js'
 import { readableApiError } from '../shared/api/errors.js'
 import { bindPageRetry, pageEmpty, pageError } from '../shared/page-states.js'
 import { listExercises } from '../exercises/api.js'
@@ -13,23 +12,10 @@ import { getSession, listSessions } from './api.js'
 
 import { renderProgramLibrary } from './program-library.js'
 import { createHistoryCalendar } from './history-calendar.js'
-import { formatSessionDate, historyHero, sessionDateKey, sessionHistoryCard } from './history-session-card.js'
+import { formatSessionDate, sessionDateKey, sessionHistoryCard } from './history-session-card.js'
 import type { Session } from './types.js'
 import { monthlyRecap } from './monthly-recap-data.js'
 import { monthlyRecapCard } from './monthly-recap.js'
-
-export function sessionLinks(sessions: Session[]): HTMLElement {
-  const section = document.createElement('section')
-  section.className = 'workout-session-links'
-  for (const session of sessions.filter(item => !item.finishedAt).slice(0, 1)) {
-    const resume = document.createElement('a')
-    resume.className = 'button button--primary'
-    resume.href = `/sessions/${session.id}`
-    resume.append(iconElement(Play), document.createTextNode(`Resume ${session.programName}`))
-    section.append(resume)
-  }
-  return section
-}
 
 export function workoutLoadingSkeleton(view: 'library' | 'history'): HTMLElement {
   const skeleton = document.createElement('div')
@@ -47,7 +33,6 @@ export function workoutLoadingSkeleton(view: 'library' | 'history'): HTMLElement
 
 function renderHistoryView(page: HTMLElement, sessions: Session[], exercises: Exercise[], unit: WeightUnit = 'kg'): void {
   let selectedDate: string | null = null
-  page.append(historyHero(sessions))
   const recap = document.createElement('div')
   recap.className = 'monthly-recap-mount'
   page.append(recap)
@@ -80,8 +65,8 @@ function renderHistoryView(page: HTMLElement, sessions: Session[], exercises: Ex
     if (!visible.length) {
       list.append(pageEmpty({
         title: selectedDate ? 'No sessions on this day.' : 'No workout history yet.',
-        description: selectedDate ? undefined : 'Start a Quick Workout or run a program to build your timeline.',
-        action: selectedDate ? undefined : { label: 'Open Recovery', href: '/statistics/recovery' },
+        description: selectedDate ? undefined : 'Finish a workout and it will appear here.',
+        action: selectedDate ? undefined : { label: 'Go to Today', href: '/today' },
         compact: true,
         className: 'workout-browser-empty',
       }))
@@ -101,7 +86,11 @@ export async function renderWorkoutsPage(
   const recovery = view === 'recovery'
   const page = document.createElement('div')
   page.className = `workouts-page workout-browser workout-browser--${view}`
-  const heading = history ? homeHeading('history') : recovery ? homeHeading('recovery') : libraryHeading('programs')
+  const heading = history
+    ? progressHeading('history')
+    : recovery
+      ? pageBackHeading({ title: 'Recovery', backHref: '/today', backLabel: 'Today' })
+      : libraryHeading('programs')
   const state = document.createElement('p')
   state.className = 'workout-browser-status'
   state.setAttribute('role', 'status')
@@ -127,7 +116,7 @@ export async function renderWorkoutsPage(
     }
     skeleton?.remove()
     state.textContent = ''
-    await renderProgramLibrary(page, sessionLinks)
+    await renderProgramLibrary(page)
   } catch (error) {
     skeleton?.remove()
     state.remove()

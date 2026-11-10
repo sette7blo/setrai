@@ -1,18 +1,17 @@
 import { pageHeading } from '../shared/page-chrome.js'
 
-export type HomeSection = 'training' | 'history' | 'body' | 'recovery'
+export type ProgressSection = 'training' | 'history' | 'body'
 export type LibrarySection = 'exercises' | 'programs'
 
-export function homeHeading(section: HomeSection): HTMLElement {
+export function progressHeading(section: ProgressSection): HTMLElement {
   return pageHeading({
-    title: 'Home',
+    title: 'Progress',
     className: 'statistics-page-head',
-    tabsLabel: 'Home sections',
+    tabsLabel: 'Progress sections',
     tabs: [
       { id: 'training', label: 'Training', href: '/statistics', active: section === 'training' },
       { id: 'history', label: 'History', href: '/statistics/history', active: section === 'history' },
       { id: 'body', label: 'Body', href: '/statistics/body', active: section === 'body' },
-      { id: 'recovery', label: 'Recovery', href: '/statistics/recovery', active: section === 'recovery' },
     ],
   })
 }

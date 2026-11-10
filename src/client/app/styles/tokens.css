@@ -1,22 +1,55 @@
+/* Single source of truth for colour, type, shape and density. */
+@font-face {
+  font-family: Archivo;
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  src: url('/fonts/archivo-latin-ext.woff2') format('woff2-variations');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: Archivo;
+  font-style: normal;
+  font-display: swap;
+  font-weight: 100 900;
+  font-stretch: 62% 125%;
+  src: url('/fonts/archivo-latin.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
 :root {
-  color-scheme: dark;
-  --color-bg: #020605;
-  --color-bg-elevated: #06100f;
-  --color-surface: rgba(9, 18, 19, 0.88);
-  --color-surface-strong: #0d1a1c;
-  --color-border: rgba(151, 188, 196, 0.22);
-  --color-border-strong: rgba(39, 255, 221, 0.48);
-  --color-text: #f7fffb;
-  --color-muted: #7d8b9e;
-  --color-muted-strong: #b8c1d2;
-  --color-primary: #18f6d1;
-  --color-primary-strong: #70ffea;
-  --color-primary-rgb: 24, 246, 209;
-  --color-success: #72f29a;
-  --color-warning: #f8de5a;
-  --color-error: #ff6b6b;
-  --font-page-title: clamp(1.875rem, 3vw, 2.5rem);
-  --font-section-title: 1.05rem;
+  color-scheme: light;
+
+  /* Chalk, paper and iron; ember is sampled from the exercise artwork. */
+  --color-bg: #f3f3f0;
+  --color-bg-elevated: #ffffff;
+  --color-surface: #ffffff;
+  --color-surface-strong: #eaeae6;
+  --color-border: #dcdcd7;
+  --color-border-strong: #777b80;
+  --color-text: #16181a;
+  --color-muted: #6b7075;
+  --color-muted-strong: #2c3033;
+  --color-primary: #16181a;
+  --color-primary-strong: #16181a;
+  --color-primary-rgb: 22, 24, 26;
+  --color-on-primary: #ffffff;
+  --color-accent: #f03408;
+  --color-accent-soft: #fde5de;
+  --color-on-accent: #ffffff;
+  --color-success: #3f6b52;
+  --color-warning: #8a642e;
+  --color-error: #a13f3f;
+  --setrai-utility-surface: #e4e4df;
+  --setrai-utility-surface-soft: #eeeeea;
+
+  /* One family: condensed width for titles and numerals, normal for text. */
+  --font-sans: Archivo, ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-display-stretch: 78%;
+  --font-page-title: clamp(30px, 3vw, 38px);
+  --font-section-title: 16px;
+
   --space-1: 0.25rem;
   --space-2: 0.5rem;
   --space-3: 0.75rem;
@@ -24,25 +57,27 @@
   --space-5: 1.25rem;
   --space-6: 1.5rem;
   --space-8: 2rem;
-  --radius-sm: 0.65rem;
-  --radius-md: 0.95rem;
-  --radius-lg: 1.15rem;
-  --radius-xl: 1.45rem;
-  --shadow-soft: 0 24px 80px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255,255,255,0.04);
-  --shadow-accent: 0 0 36px rgba(var(--color-primary-rgb), 0.2);
-  --glass-fill: rgba(7, 15, 17, 0.72);
+  --radius-sm: 10px;
+  --radius-md: 14px;
+  --radius-lg: 18px;
+  --radius-xl: 22px;
+  --border-subtle: 1px solid var(--color-border);
+  --shadow-soft: none;
+  --shadow-accent: none;
+  --shadow-sheet: 0 -12px 40px rgba(22, 24, 26, 0.16);
+  --glass-fill: #ffffff;
 
-  /* Shared chip tokens — metric (display) vs control (interactive) */
+  /* Shared chip tokens: metric (display) vs control (interactive) */
   --chip-radius: 999px;
   --chip-gap: 6px;
   --chip-border: 1px solid var(--color-border);
   --chip-metric-height: 28px;
   --chip-metric-pad-x: 8px;
-  --chip-metric-font: 650 11px/1.2 Inter, ui-sans-serif, system-ui, sans-serif;
+  --chip-metric-font: 600 12px/1.2 var(--font-sans);
   --chip-metric-icon: 12px;
   --chip-control-height: 44px;
   --chip-control-pad-x: 12px;
-  --chip-control-font: 650 12px/1 Inter, ui-sans-serif, system-ui, sans-serif;
+  --chip-control-font: 600 13px/1 var(--font-sans);
   --chip-control-icon: 14px;
 
   /* Shared search/filter toolbar density */
@@ -52,16 +87,15 @@
   --toolbar-search-pad-x: 12px;
   --toolbar-icon: 18px;
   --toolbar-action-icon: 18px;
+
+  --ease-out: cubic-bezier(0.2, 0.8, 0.2, 1);
 }
 
 @media (max-width: 719px) {
   :root {
-    --font-page-title: 30px;
+    --font-page-title: 32px;
     --space-5: 1rem;
     --space-6: 1.25rem;
     --space-8: 1.5rem;
-    --radius-lg: 13px;
-    --radius-xl: 16px;
-    --shadow-soft: 0 8px 24px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255,255,255,0.03);
   }
 }

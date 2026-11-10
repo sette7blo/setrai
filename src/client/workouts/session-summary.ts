@@ -56,16 +56,12 @@ export function renderSessionSummary(session: Session, program: Program | null, 
   brand.className = 'session-summary-brand'
   const logo = document.createElement('img')
   logo.className = 'mobile-brand__logo'
-  logo.src = '/brand/setrai-logo-mark.jpg'
+  logo.src = '/brand/setrai-mark.png'
   logo.alt = ''
   logo.setAttribute('aria-hidden', 'true')
-  const wordmark = document.createElement('span')
   const name = document.createElement('strong')
   name.textContent = 'Setrai'
-  const tagline = document.createElement('small')
-  tagline.textContent = 'AI Training Coach'
-  wordmark.append(name, tagline)
-  brand.append(logo, wordmark)
+  brand.append(logo, name)
 
   const medal = document.createElement('span')
   medal.className = 'session-summary-medal'
@@ -153,8 +149,8 @@ export function renderSessionSummary(session: Session, program: Program | null, 
 
   const back = document.createElement('a')
   back.className = 'button button--secondary'
-  back.href = '/library/programs'
-  back.textContent = 'Back to Library'
+  back.href = '/today'
+  back.textContent = 'Done'
   actions.append(share, back, shareStatus)
 
   section.append(brand, hero, stats, map, proof, actions)

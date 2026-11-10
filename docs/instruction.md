@@ -171,12 +171,22 @@ The exact responsive presentation may evolve, but the main application concepts
 are:
 
 ```text
-Home
-Exercises
-Workouts
-Statistics
-Profile
+Today      readiness, the suggested workout, and the week so far
+Progress   Training, History, and Body
+Library    Exercises and Programs
+Settings   reached from the header gear on phones and the sidebar on desktop
 ```
+
+Primary navigation holds destinations only. Starting a workout is the main
+action on Today. While a workout is unfinished, a Resume bar is docked above the
+navigation on every screen except Today, which shows the same workout as its
+first card.
+
+The interface uses one design system from `src/client/app/styles/tokens.css`:
+chalk background, white surfaces, near-black text, and a single ember accent
+sampled from the exercise artwork. Ember is reserved for the action that starts
+or continues training. Green means recovered or done. Text is set in the bundled
+Archivo family, using its condensed width for page titles and large numerals.
 
 AI capabilities may introduce:
 
@@ -379,9 +389,9 @@ weight/notes, duplicating, deleting, and starting programs. The builder uses loc
 exercises and supports normal sets, supersets, EMOM sections, circuits sharing an
 interval, and mixed strength/EMOM plans. Goals are author-selected; focus, format,
 and equipment filters derive from exercises and blocks. My equipment uses the
-saved local equipment profile. The global Quick action opens the recovery-aware composer in an accessible bottom sheet without leaving
-the current page; while a session is active, that shortcut becomes Resume. Completed sessions appear under Home → History; Library
-does not duplicate them in a Recent sessions section.
+saved local equipment profile. Completed sessions appear under Progress → History; Library does not duplicate
+them. A session whose length looks wrong (under 5 minutes or over 4 hours) offers a
+duration correction when expanded in History.
 
 ---
 
@@ -491,9 +501,9 @@ Historical records should remain stable even if a program is later edited.
 
 Setrai includes useful training statistics.
 
-Home groups personal state under Training, History, Body, and Recovery tabs.
-Training remains the default Home view; completed sessions belong to History,
-body-weight progress belongs to Body, and deterministic readiness belongs to Recovery.
+Progress groups personal history under Training, History, and Body tabs.
+Training is the default Progress view; completed sessions belong to History and
+body-weight progress belongs to Body. Personal records are listed heaviest first.
 
 Initial statistics may include:
 
@@ -514,7 +524,10 @@ They should not require AI.
 
 # 13. Recovery
 
-Recovery is a core Setrai feature and lives under Home → Recovery.
+Recovery is a core Setrai feature. Today leads with the overall readiness figure
+and body map, and links to the Recovery page at `/recovery` for per-muscle detail.
+Muscles that are ready or fresh collapse into chips; only muscles that still need
+time get a full row.
 
 Setrai should estimate muscle recovery from recent training history.
 
@@ -549,9 +562,9 @@ Quick Workout may consider:
 The deterministic training system should be capable of producing a useful result
 without requiring AI.
 
-Quick Workout opens from the emphasized global Quick action as a bottom sheet,
-with 20/30/45/60-minute choices and a preview before starting. The `/quick-workout`
-URL remains a native/deep-link fallback that opens the sheet over Home → Recovery.
+Quick Workout is the suggested workout on Today. It is built automatically when
+Today opens and rebuilt when the 20/30/45/60-minute choice changes, with a
+preview before starting. The `/quick-workout` URL redirects to Today.
 Generation uses the local exercise library and saved
 equipment. Like Workstr, primary muscle groups must be at least 80% recovered;
 groups without recent logged training are fresh and eligible. Granular aliases

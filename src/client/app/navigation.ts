@@ -2,9 +2,8 @@ import {
   createElement,
   House,
   LibraryBig,
-  Play,
   Settings,
-  Zap,
+  TrendingUp,
   type IconNode
 } from 'lucide'
 
@@ -15,12 +14,20 @@ export interface NavigationItem {
   description: string
 }
 
+// Destinations only. Starting or resuming a workout is an action on Today
+// and in the now-training bar, never a tab.
 export const NAVIGATION_ITEMS: NavigationItem[] = [
   {
-    path: '/statistics',
-    label: 'Home',
+    path: '/today',
+    label: 'Today',
     icon: House,
-    description: 'Training volume and body progress'
+    description: 'Readiness and the next workout'
+  },
+  {
+    path: '/statistics',
+    label: 'Progress',
+    icon: TrendingUp,
+    description: 'Training volume, history, and body weight'
   },
   {
     path: '/library/exercises',
@@ -30,37 +37,13 @@ export const NAVIGATION_ITEMS: NavigationItem[] = [
   }
 ]
 
-export const QUICK_WORKOUT_NAVIGATION_ITEM: NavigationItem = {
-  path: '/quick-workout',
-  label: 'Quick',
-  icon: Zap,
-  description: 'Build from recovery and training preferences'
-}
-
-export function resumeWorkoutNavigationItem(id: number): NavigationItem {
-  return {
-    path: `/sessions/${id}`,
-    label: 'Resume',
-    icon: Play,
-    description: 'Continue the active workout'
-  }
-}
-
-export function mobileNavigationItems(activeSessionId?: number): NavigationItem[] {
-  return [
-    NAVIGATION_ITEMS[0],
-    activeSessionId ? resumeWorkoutNavigationItem(activeSessionId) : QUICK_WORKOUT_NAVIGATION_ITEM,
-    NAVIGATION_ITEMS[1]
-  ]
-}
-
 export const DESKTOP_NAVIGATION_ITEMS: NavigationItem[] = [
   ...NAVIGATION_ITEMS,
   {
     path: '/profile',
     label: 'Settings',
     icon: Settings,
-    description: 'Identity, equipment, and training preferences'
+    description: 'Equipment, units, and training preferences'
   }
 ]
 

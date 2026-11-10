@@ -6,7 +6,7 @@ import test from 'node:test'
 const root = process.cwd()
 
 test('app header has a neutral settings link without a fabricated identity', () => {
-  const shell = fs.readFileSync(path.join(root, 'src/client/app/application.ts'), 'utf8')
+  const shell = fs.readFileSync(path.join(root, 'src/client/app/shell-navigation.ts'), 'utf8')
   const navigation = fs.readFileSync(path.join(root, 'src/client/app/navigation.ts'), 'utf8')
   assert.match(shell, /Open settings/)
   assert.match(shell, /settings-gear/)
@@ -22,10 +22,10 @@ test('PWA manifest is installability-ready for Setrai', () => {
   const manifest = JSON.parse(fs.readFileSync(path.join(root, 'public/manifest.webmanifest'), 'utf8'))
   assert.equal(manifest.name, 'Setrai')
   assert.equal(manifest.short_name, 'Setrai')
-  assert.equal(manifest.start_url, '/statistics')
+  assert.equal(manifest.start_url, '/today')
   assert.equal(manifest.display, 'standalone')
-  assert.equal(manifest.background_color, '#f7f6f1')
-  assert.equal(manifest.theme_color, '#f7f6f1')
+  assert.equal(manifest.background_color, '#f3f3f0')
+  assert.equal(manifest.theme_color, '#f3f3f0')
   assert.ok(Array.isArray(manifest.icons))
   assert.deepEqual(manifest.icons.map((icon: { src: string }) => icon.src), [
     '/icons/setrai-icon-192.png',
@@ -44,6 +44,6 @@ test('HTML advertises manifest, theme color, viewport-fit, and iOS icons', () =>
   assert.match(html, /<link rel="icon" href="\/icons\/setrai-icon-32\.png" sizes="32x32" type="image\/png"/)
   assert.match(html, /<link rel="apple-touch-icon" href="\/icons\/setrai-icon-180\.png" sizes="180x180"/)
   assert.match(html, /name="apple-mobile-web-app-title" content="Setrai"/)
-  assert.match(html, /name="theme-color" content="#f7f6f1"/)
+  assert.match(html, /name="theme-color" content="#f3f3f0"/)
   assert.match(html, /viewport-fit=cover/)
 })

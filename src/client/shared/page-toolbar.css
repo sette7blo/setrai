@@ -143,7 +143,7 @@
   width: 17px;
   height: 17px;
   border-radius: 999px;
-  font: 800 10px/1 ui-monospace, monospace;
+  font: 800 10px/1 var(--font-sans);
   color: var(--color-bg);
   background: var(--color-primary);
 }
@@ -162,3 +162,8 @@
     --toolbar-gap: 6px;
   }
 }
+
+/* Search inputs sit inside their own field; the global input fill must not show. */
+.page-toolbar-search input,
+.exercise-search input,
+.program-search input { border: 0 !important; background: transparent !important; }

@@ -9,13 +9,11 @@ import {
   updateSessionSet
 } from '../../src/client/workouts/api.js'
 import {
-  normalizeSession,
   normalizeProgram,
   normalizeProgramExercise,
   programSummary
 } from '../../src/client/workouts/format.js'
 import {
-  historyHero,
   hasUnusualSessionDuration,
   sessionDateKey,
   sessionHistoryCard,
@@ -34,8 +32,8 @@ import {
 import { renderSessionSummary, summaryFacts } from '../../src/client/workouts/session-summary.js'
 import { imageOnlyShareData, summaryImageName } from '../../src/client/workouts/session-summary-share.js'
 import { createHistoryCalendar } from '../../src/client/workouts/history-calendar.js'
-import { sessionLinks, workoutLoadingSkeleton } from '../../src/client/workouts/page.js'
-import { homeHeading, libraryHeading } from '../../src/client/app/section-navigation.js'
+import { workoutLoadingSkeleton } from '../../src/client/workouts/page.js'
+import { libraryHeading, progressHeading } from '../../src/client/app/section-navigation.js'
 import type { Program, Session } from '../../src/client/workouts/types.js'
 import { monthlyRecap, monthlyRecapImageName } from '../../src/client/workouts/monthly-recap-data.js'
 import { recordShareImageName } from '../../src/client/statistics/record-share-image.js'
@@ -210,10 +208,10 @@ test('Session summary renders Setrai branded receipt with muscle map and stats',
     assert.match(classes, /session-summary-map/)
     assert.match(classes, /session-summary-stat/)
     const logo = walkElements(summary).find(element => element.className === 'mobile-brand__logo') as (TestElement & { src?: string }) | undefined
-    assert.equal(logo?.src, '/brand/setrai-logo-mark.jpg')
+    assert.equal(logo?.src, '/brand/setrai-mark.png')
     assert.doesNotMatch(String(logo?.src), /editorial-logo/)
     assert.match(text, /Setrai/)
-    assert.match(text, /AI Training Coach/)
+    assert.doesNotMatch(text, /AI Training Coach/)
     assert.match(text, /Workout complete/)
     assert.match(text, /Upper A/)
     assert.match(text, /1,764 lb/)
@@ -296,42 +294,19 @@ test('Home owns History and Recovery while Library owns Exercises and Programs',
       createElementNS: () => new TestElement(),
       createTextNode: (text: string) => Object.assign(new TestElement(), { textContent: text })
     } as unknown as Document
-    const home = homeHeading('recovery') as unknown as TestElement
-    const homeNodes = walkElements(home)
-    assert.equal(homeNodes.some((node) => node.href === '/statistics/history'), true)
-    assert.equal(homeNodes.some((node) => node.href === '/statistics/recovery'), true)
-    assert.match(elementText(home), /Training.*History.*Body.*Recovery/)
-    assert.equal(homeNodes.some((node) => node.attributes['aria-current'] === 'page'), true)
+    const progress = progressHeading('history') as unknown as TestElement
+    const progressNodes = walkElements(progress)
+    assert.equal(progressNodes.some((node) => node.href === '/statistics/history'), true)
+    assert.equal(progressNodes.some((node) => node.href === '/statistics/body'), true)
+    assert.match(elementText(progress), /Training.*History.*Body/)
+    assert.doesNotMatch(elementText(progress), /Recovery/)
+    assert.equal(progressNodes.some((node) => node.attributes['aria-current'] === 'page'), true)
 
     const library = libraryHeading('programs') as unknown as TestElement
     const libraryNodes = walkElements(library)
     assert.equal(libraryNodes.some((node) => node.href === '/library/exercises'), true)
     assert.equal(libraryNodes.some((node) => node.href === '/library/programs'), true)
     assert.match(elementText(library), /Exercises.*Programs/)
-  } finally {
-    globalThis.document = originalDocument
-  }
-})
-
-test('Workout history hero stays compact without explanatory copy', () => {
-  const originalDocument = globalThis.document
-  try {
-    globalThis.document = {
-      createElement: () => new TestElement(),
-      createElementNS: () => new TestElement(),
-      createTextNode: (text: string) => Object.assign(new TestElement(), { textContent: text })
-    } as unknown as Document
-    const s = session()
-    s.startedAt = '2026-10-05T14:00:00.000Z'
-    s.finishedAt = '2026-10-05T14:45:00.000Z'
-    const hero = historyHero([s]) as unknown as TestElement
-    const text = elementText(hero)
-    assert.match(text, /Workout history/)
-    assert.match(text, /1 sessions/)
-    assert.match(text, /1 completed/)
-    assert.match(text, /1 sets/)
-    assert.doesNotMatch(text, /Every live session/)
-    assert.doesNotMatch(text, /sets logged/)
   } finally {
     globalThis.document = originalDocument
   }
@@ -389,28 +364,6 @@ test('Workout history calendar selects the clicked day instead of the final rend
   }
 })
 
-
-test('Library keeps only active Resume without duplicating completed history', () => {
-  const originalDocument = globalThis.document
-  try {
-    globalThis.document = {
-      createElement: () => new TestElement(),
-      createElementNS: () => new TestElement(),
-      createTextNode: (text: string) => Object.assign(new TestElement(), { textContent: text })
-    } as unknown as Document
-    const complete = normalizeSession({ id: 1, programName: 'Completed workout', finishedAt: '2026-10-09T12:00:00Z' })
-    const active = normalizeSession({ id: 2, programName: 'Active workout' })
-    const links = sessionLinks([complete, active]) as unknown as TestElement
-    assert.deepEqual(links.children.map(child => child.href), ['/sessions/2'])
-    assert.match(elementText(links.children[0]), /Resume Active workout/)
-    assert(!elementText(links).includes('Recent sessions'))
-    assert(!elementText(links).includes('Completed workout'))
-    for (const sessions of [[], [complete]]) {
-      const actions = sessionLinks(sessions) as unknown as TestElement
-      assert.deepEqual(actions.children.map(child => child.href), [])
-    }
-  } finally { globalThis.document = originalDocument }
-})
 
 test('Workout loading skeletons render route-specific placeholder cards', () => {
   const originalDocument = globalThis.document

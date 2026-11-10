@@ -1,7 +1,6 @@
 import { Activity, Check, Gauge, History, LineChart, Minus, Plus, Ruler, Target, Trash2, TrendingDown, TrendingUp, Weight } from 'lucide'
 
 import { iconElement } from '../app/navigation.js'
-import { pageSummary } from '../shared/page-chrome.js'
 import { formatDate, todayDate } from '../shared/formatting/date-format.js'
 import type { Profile, WeightUnit } from '../profile/types.js'
 import { updateProfile } from '../profile/api.js'
@@ -38,18 +37,6 @@ function sectionHead(icon: Icon, title: string, note = ''): HTMLElement {
   if (note) head.append(Object.assign(document.createElement('small'), { textContent: note }))
   return head
 }
-
-function statsHero(unit: WeightUnit, entries: BodyWeightEntry[]): HTMLElement {
-  const latest = newestFirst(entries)[0]
-  const line = latest ? `Last logged ${shortDate(latest.date)}. Weights in ${unit}.` : `Track weight over time. Weights in ${unit}.`
-  return pageSummary({
-    icon: Weight,
-    title: 'Body weight',
-    description: line,
-    className: 'stats-hero-card page-summary',
-  })
-}
-
 
 function shortDate(date: string): string {
   return new Date(`${date}T00:00:00`).toLocaleDateString('en', { month: 'short', day: 'numeric' })
@@ -231,7 +218,7 @@ export function bodyView(context: BodyTabContext): HTMLElement {
   const section = document.createElement('section')
   section.className = 'stats-body-view'
   section.dataset.statsSection = 'body'
-  section.append(statsHero(unit, entries), bodyCards(entries, unit))
+  section.append(bodyCards(entries, unit))
   const panel = document.createElement('section')
   panel.className = 'panel stats-panel body-panel'
   if (entries.length === 0) {

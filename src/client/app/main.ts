@@ -18,6 +18,8 @@ import '../shared/page-chips.css'
 import '../shared/page-toolbar.css'
 import '../shared/page-states.css'
 import '../shared/filter-sheet.css'
+import './styles/today.css'
+import '../statistics/charts.css'
 
 import { bootSetraiApp } from './application.js'
 

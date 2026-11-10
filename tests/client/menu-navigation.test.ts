@@ -11,7 +11,7 @@ test('desktop Settings uses the profile route while mobile retains its header ge
   assert.ok(settings?.icon)
   assert.equal(primaryNavPath('/profile'), settings?.path)
   assert.equal(menuDestination(settings!.path, 'http://localhost:3191/exercises')?.pathname, '/profile')
-  assert.deepEqual(NAVIGATION_ITEMS.map(item => item.path), ['/statistics', '/library/exercises'])
+  assert.deepEqual(NAVIGATION_ITEMS.map(item => item.path), ['/today', '/statistics', '/library/exercises'])
 })
 
 const current = 'http://localhost:3191/exercises'

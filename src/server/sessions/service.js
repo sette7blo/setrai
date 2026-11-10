@@ -175,7 +175,21 @@ export function createSessionService(db) {
 
   function finishSession(id, input = {}) {
     requireSession(id)
-    return repository.finish(id, input)
+    return repository.finish(id, {
+      ...input,
+      finishedAt: normalizeFinishedAt(input.finishedAt)
+    })
+  }
+
+  // An explicit finish time is how a session's length gets corrected, so it
+  // must be a real UTC clock value in the stored format.
+  function normalizeFinishedAt(value) {
+    if (value === undefined || value === null) return null
+    const valid = typeof value === 'string' &&
+      /^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(value) &&
+      !Number.isNaN(Date.parse(`${value.replace(' ', 'T')}Z`))
+    if (!valid) throw clientError('Finish time is invalid', 400)
+    return value
   }
 
   function requireSession(id) {

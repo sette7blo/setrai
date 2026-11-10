@@ -1,8 +1,7 @@
 import { BicepsFlexed, CalendarCheck, ChartColumn, Flame, Trophy, Weight } from 'lucide'
 
 import { iconElement } from '../app/navigation.js'
-import { homeHeading } from '../app/section-navigation.js'
-import { pageSummary } from '../shared/page-chrome.js'
+import { progressHeading } from '../app/section-navigation.js'
 import { bindPageRetry, pageEmpty, pageError, pageLoading } from '../shared/page-states.js'
 import { readableApiError } from '../shared/api/errors.js'
 import { displayName } from '../exercises/format.js'
@@ -10,7 +9,7 @@ import { getProfile } from '../profile/api.js'
 import { listBodyWeight } from '../profile/body-weight/api.js'
 import type { BodyWeightEntry } from '../profile/body-weight/types.js'
 import type { Profile, WeightUnit } from '../profile/types.js'
-import { formatVolumeKg, formatWeightFromKg } from '../profile/weight-units.js'
+import { displayWeightFromKg, formatVolumeKg, formatWeightFromKg } from '../profile/weight-units.js'
 import { getStatistics } from './api.js'
 import { hasTrainingHistory, normalizeTrainingRange, weeklyVolumeForRange, type TrainingRange } from './format.js'
 import { bodyView } from './body-tab.js'
@@ -19,22 +18,22 @@ import { createVolumeShareExperience } from './volume-share.js'
 import { createRecordShareExperience } from './record-share.js'
 
 function loadingView(): HTMLElement {
-  return pageLoading({ className: 'statistics-page statistics-page--loading', label: 'Loading home' })
+  return pageLoading({ className: 'statistics-page statistics-page--loading', label: 'Loading progress' })
 }
 
 function errorView(message: string): HTMLElement {
-  return pageError({ eyebrow: 'Home', title: 'Home unavailable', message, className: 'stats-empty' })
+  return pageError({ eyebrow: 'Progress', title: 'Progress is unavailable', message, className: 'stats-empty' })
 }
 
 function emptyView(): HTMLElement {
   const page = document.createElement('div')
   page.className = 'statistics-page statistics-workstr-page'
-  page.append(homeHeading('training'))
+  page.append(progressHeading('training'))
   page.append(pageEmpty({
-    eyebrow: 'Home',
+    eyebrow: 'Progress',
     title: 'No completed workouts yet.',
-    description: 'Finish your first workout to start building your timeline.',
-    action: { label: 'Build Quick Workout', href: '/quick-workout' },
+    description: 'Finish your first workout and your volume and records appear here.',
+    action: { label: 'Go to Today', href: '/today' },
     className: 'stats-empty statistics-workstr-empty',
   }))
   return page
@@ -45,15 +44,6 @@ function iconWrap(className: string, icon: Parameters<typeof iconElement>[0]): H
   span.className = className
   span.append(iconElement(icon))
   return span
-}
-
-function statsHero(icon: Parameters<typeof iconElement>[0], title: string, help: string): HTMLElement {
-  return pageSummary({
-    icon,
-    title,
-    description: help,
-    className: 'stats-hero-card page-summary',
-  })
 }
 
 function statTile(icon: Parameters<typeof iconElement>[0], value: string, label: string, tone = ''): HTMLElement {
@@ -118,12 +108,19 @@ function weekLabel(value: string): string {
   return Number.isNaN(parsed.getTime()) ? value : parsed.toLocaleDateString('en', { month: 'short', day: 'numeric' })
 }
 
+function compactVolume(volumeKg: number, unit: WeightUnit): string {
+  if (volumeKg <= 0) return ''
+  const value = displayWeightFromKg(volumeKg, unit)
+  if (value < 1000) return String(Math.round(value))
+  return new Intl.NumberFormat('en', { notation: 'compact', maximumFractionDigits: 1 }).format(value)
+}
+
 function weeklyPanel(points: WeeklyVolumePoint[], unit: WeightUnit, allPoints: WeeklyVolumePoint[], range: TrainingRange): HTMLElement {
   const panel = document.createElement('section')
   panel.className = 'panel stats-panel'
   const recent = points.slice(-8)
   const peak = recent.reduce<WeeklyVolumePoint | null>((best, point) => (!best || point.volume > best.volume ? point : best), null)
-  const peakNote = peak && peak.volume > 0 ? `best week ${formatVolumeKg(peak.volume, unit)}` : ''
+  const peakNote = peak && peak.volume > 0 ? `Best week ${formatVolumeKg(peak.volume, unit)}` : ''
   const head = sectionHead(ChartColumn, 'Weekly volume', peakNote)
   let shareDialog: HTMLDialogElement | null = null
   if (allPoints.length > 0) {
@@ -147,9 +144,9 @@ function weeklyPanel(points: WeeklyVolumePoint[], unit: WeightUnit, allPoints: W
     const max = Math.max(1, ...recent.map((point) => point.volume))
     recent.forEach((point) => {
       const bar = document.createElement('div')
-      bar.className = `bar${point === peak && point.volume > 0 ? ' peak' : ''}`
+      bar.className = `bar${point === recent[recent.length - 1] ? ' latest' : ''}`
       bar.title = `${weekLabel(point.weekStart)}: ${formatVolumeKg(point.volume, unit)}`
-      bar.innerHTML = `<div class="fill" style="height:${Math.round((point.volume / max) * 100)}%"></div><span class="blabel">${weekLabel(point.weekStart)}</span>`
+      bar.innerHTML = `<span class="bvalue">${compactVolume(point.volume, unit)}</span><div class="fill" style="height:${Math.round((point.volume / max) * 100)}%"></div><span class="blabel">${weekLabel(point.weekStart)}</span>`
       chart.append(bar)
     })
   }
@@ -186,29 +183,27 @@ function recordsList(records: PersonalRecord[], unit: WeightUnit): HTMLElement {
     list.textContent = 'No records yet.'
     return list
   }
-  records.slice(0, 6).forEach((record, index) => {
+  // Heaviest first, so the order itself is the ranking.
+  const ranked = [...records].sort((a, b) => b.estimated1RM - a.estimated1RM).slice(0, 6)
+  for (const record of ranked) {
     const row = document.createElement('article')
-    row.className = `row stats-record${index < 3 ? ` top-${index + 1}` : ''}`
-    const rank = document.createElement('span')
-    rank.className = 'stats-record-rank'
-    if (index === 0) rank.append(iconElement(Trophy))
-    else rank.textContent = String(index + 1)
-    row.append(rank)
+    row.className = 'stats-record'
     const copy = document.createElement('div')
+    copy.className = 'stats-record-copy'
     copy.append(
       Object.assign(document.createElement('strong'), { textContent: record.exerciseName }),
-      Object.assign(document.createElement('small'), { textContent: `top set ${formatWeightFromKg(record.maxWeight, unit)}` })
+      Object.assign(document.createElement('small'), { textContent: `Top set ${formatWeightFromKg(record.maxWeight, unit)}` })
     )
-    const badge = document.createElement('span')
-    badge.className = 'badge muscle'
-    badge.textContent = `${formatWeightFromKg(record.estimated1RM, unit)} 1RM`
+    const best = document.createElement('div')
+    best.className = 'stats-record-best'
+    best.append(
+      Object.assign(document.createElement('strong'), { textContent: formatWeightFromKg(record.estimated1RM, unit) }),
+      Object.assign(document.createElement('small'), { textContent: 'est. 1RM' })
+    )
     const share = createRecordShareExperience(record, unit)
-    const actions = document.createElement('div')
-    actions.className = 'stats-record-actions'
-    actions.append(badge, share.button)
-    row.append(copy, actions)
+    row.append(copy, best, share.button)
     list.append(row, share.dialog)
-  })
+  }
   return list
 }
 
@@ -216,7 +211,6 @@ function trainingView(stats: StatisticsOverview, unit: WeightUnit): HTMLElement 
   const section = document.createElement('section')
   section.className = 'stats-training-view'
   section.dataset.statsSection = 'training'
-  section.append(statsHero(ChartColumn, 'Training', 'Streak, volume and records from finished workouts.'))
 
   const tiles = document.createElement('div')
   tiles.className = 'stats-hero'
@@ -248,7 +242,7 @@ function trainingView(stats: StatisticsOverview, unit: WeightUnit): HTMLElement 
   panel.append(
     sectionHead(BicepsFlexed, 'Muscle distribution', 'by volume'),
     muscleDistribution([...stats.volumeByMuscle].sort((a, b) => b.volume - a.volume), unit),
-    sectionHead(Trophy, 'Personal records', 'best estimated 1RM'),
+    sectionHead(Trophy, 'Personal records', 'heaviest first'),
     recordsList(stats.personalRecords, unit)
   )
   section.append(panel)
@@ -268,7 +262,7 @@ function renderLoaded(
 
   const page = document.createElement('div')
   page.className = 'statistics-page statistics-workstr-page'
-  page.append(homeHeading(section))
+  page.append(progressHeading(section))
 
   const refresh = () => { void renderStatisticsPage(root, section) }
   if (section === 'body') {

@@ -27,7 +27,7 @@ export function createVolumeShareExperience(
   const dialog = document.createElement('dialog')
   dialog.className = 'body-share-sheet volume-share-sheet'
   dialog.setAttribute('aria-labelledby', 'volume-share-title')
-  dialog.innerHTML = `<div class="body-share-sheet__surface"><header><div><small>TRAINING PROGRESS</small><h2 id="volume-share-title">Share weekly volume</h2></div><button type="button" class="body-share-close" aria-label="Close"></button></header><div class="body-share-preview" aria-live="polite"><span>Preparing preview…</span></div><fieldset class="body-share-range"><legend>Date range</legend><div></div></fieldset><p class="body-share-status" aria-live="polite"></p><button type="button" class="button button--primary body-share-submit"></button></div>`
+  dialog.innerHTML = `<div class="body-share-sheet__surface"><header><div><small>Training progress</small><h2 id="volume-share-title">Share weekly volume</h2></div><button type="button" class="body-share-close" aria-label="Close"></button></header><div class="body-share-preview" aria-live="polite"><span>Preparing preview…</span></div><fieldset class="body-share-range"><legend>Date range</legend><div></div></fieldset><p class="body-share-status" aria-live="polite"></p><button type="button" class="button button--primary body-share-submit"></button></div>`
   dialog.querySelector('.body-share-close')?.append(iconElement(X))
   dialog.querySelector('.body-share-submit')?.append(iconElement(Share2), Object.assign(document.createElement('span'), { textContent: 'Share image' }))
 

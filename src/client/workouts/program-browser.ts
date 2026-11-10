@@ -1,25 +1,9 @@
-import { ClipboardList, Dumbbell, Plus, Search, SlidersHorizontal } from 'lucide'
+import { Plus, Search, SlidersHorizontal } from 'lucide'
 import { iconElement } from '../app/navigation.js'
 import { displayName } from '../exercises/format.js'
 import { PROGRAM_GOALS, PROGRAM_FOCUS, PROGRAM_FORMATS, emptyProgramFilters } from './program-taxonomy.js'
 import type { ProgramFilters } from './program-taxonomy.js'
-import type { Program } from './types.js'
 import { createFilterChips, createFilterSheet, type FilterGroup } from '../shared/filter-sheet.js'
-import { pageSummary } from '../shared/page-chrome.js'
-
-export function programHero(programs: Program[]): HTMLElement {
-  const exerciseCount = new Set(programs.flatMap(program => program.exercises.map(entry => entry.exerciseSlug))).size
-  return pageSummary({
-    icon: ClipboardList,
-    title: 'Program library',
-    description: 'Your own programs: run them, edit them, make them yours.',
-    className: 'program-browse-hero',
-    metrics: [
-      { icon: ClipboardList, text: `${programs.length} ${programs.length === 1 ? 'program' : 'programs'}` },
-      { icon: Dumbbell, text: `${exerciseCount} ${exerciseCount === 1 ? 'exercise' : 'exercises'}` },
-    ],
-  })
-}
 
 export function programToolbar(filters: ProgramFilters, onSearch: () => void, onFilters: (opener: HTMLButtonElement) => void, onAction: () => void): HTMLElement {
   const toolbar = document.createElement('div')

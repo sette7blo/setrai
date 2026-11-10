@@ -70,6 +70,21 @@ export function pageHeading(options: PageHeadingOptions): HTMLElement {
   return header
 }
 
+/** Title for a page reached from another page, with the way back above it. */
+export function pageBackHeading(options: { title: string, backHref: string, backLabel: string }): HTMLElement {
+  const header = document.createElement('header')
+  header.className = 'page-heading page-heading--back'
+  const back = document.createElement('a')
+  back.className = 'page-back'
+  back.href = options.backHref
+  back.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>'
+  back.append(document.createTextNode(options.backLabel))
+  const title = document.createElement('h1')
+  title.textContent = options.title
+  header.append(back, title)
+  return header
+}
+
 /** Compact status/metrics card under the page heading. */
 export function pageSummary(options: PageSummaryOptions): HTMLElement {
   const tag = options.href ? 'a' : 'section'

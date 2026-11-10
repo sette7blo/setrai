@@ -6,7 +6,7 @@
   padding: 18px 16px;
   border: 1px solid var(--color-border, rgba(0, 0, 0, 0.1));
   border-radius: 16px;
-  background: #fff;
+  background: var(--color-surface);
   color: inherit;
 }
 
@@ -18,9 +18,9 @@
 .page-state .eyebrow {
   margin: 0;
   color: var(--color-muted, #6b6964);
-  font: 850 11px/1 ui-monospace, SFMono-Regular, monospace;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
+  font: 850 11px/1 var(--font-sans);
+  text-transform: none;
+  letter-spacing: .01em;
 }
 
 .page-state-title {
@@ -90,7 +90,7 @@
   padding: 18px 16px;
   border: 1px solid var(--color-border, rgba(0, 0, 0, 0.1));
   border-radius: 16px;
-  background: #fff;
+  background: var(--color-surface);
 }
 
 .exercise-empty .button,
