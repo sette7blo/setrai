@@ -11,6 +11,7 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 ## [Unreleased]
 
+- History and program cards are easier to read: a smaller diagram, a larger title and at most two quieter lines. The History calendar is a plain white card with readable day numbers and no longer repeats the monthly recap figures. In an expanded program, Start is the orange button at the top and Edit, Duplicate and Delete sit in one quiet row.
 - Progress, Body tab: logging a weight is now the first thing on the tab, with a date picker in your local format. Weight trend, goal progress and BMI are separate cards, entries are a compact list with "Show all", deleting an entry takes two taps, and height and target weight moved into a collapsed "Goal and height" section at the bottom.
 - Progress, Training tab: weekly volume, muscle distribution and personal records are now three separate cards, the range selector is a full-height control, and record rows are one fixed height with the estimated 1RM aligned on the right.
 

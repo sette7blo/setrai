@@ -48,14 +48,6 @@ function sessionDay(session: Session): string | null {
   return Number.isNaN(date.getTime()) ? null : dateKey(date)
 }
 
-function daysBetween(from: string, to: string): number {
-  const start = parseKey(from)
-  const end = parseKey(to)
-  if (!start || !end) return 0
-  const startMs = Date.UTC(start.getFullYear(), start.getMonth(), start.getDate())
-  const endMs = Date.UTC(end.getFullYear(), end.getMonth(), end.getDate())
-  return Math.round((endMs - startMs) / 86400000)
-}
 
 interface HistoryDay {
   key: string
@@ -85,21 +77,7 @@ function intensity(setCount: number): 1 | 2 | 3 {
   return setCount < 16 ? 2 : 3
 }
 
-function latestDay(days: Map<string, HistoryDay>): string | null {
-  return [...days.keys()].sort().at(-1) ?? null
-}
 
-function weekStreak(days: Map<string, HistoryDay>, today: string): number {
-  if (!days.size) return 0
-  const activeWeeks = new Set([...days.keys()].map(startOfWeek))
-  let cursor = activeWeeks.has(startOfWeek(today)) ? startOfWeek(today) : addDays(startOfWeek(today), -7)
-  let streak = 0
-  while (activeWeeks.has(cursor)) {
-    streak += 1
-    cursor = addDays(cursor, -7)
-  }
-  return streak
-}
 
 function monthLabel(month: string): string {
   const date = parseKey(`${month}-01`)
@@ -232,27 +210,8 @@ export function createHistoryCalendar(
         className: 'history-cal-empty',
       }))
     }
-    root.append(summaryCards(days, month, today))
   }
   root.addEventListener('history-clear', () => { activeDate = null; render() })
   render()
   return root
-}
-
-function summaryCards(days: Map<string, HistoryDay>, month: string, today: string): HTMLElement {
-  const cards = document.createElement('div')
-  cards.className = 'history-cards'
-  const latest = latestDay(days)
-  const values = [
-    [String([...days.values()].filter(day => day.key.startsWith(month)).reduce((total, day) => total + day.sessions.length, 0)), `workouts in ${monthLabel(month).split(' ')[0]}`],
-    [String(weekStreak(days, today)), 'active weeks in a row'],
-    [latest === today ? 'Today' : latest ? `${daysBetween(latest, today)} days` : '—', latest === today ? 'last workout' : latest ? 'since last workout' : 'no workout logged yet']
-  ]
-  for (const [value, label] of values) {
-    const card = document.createElement('div')
-    card.className = 'history-card'
-    card.innerHTML = `<div class="history-card-value">${value}</div><div class="history-card-label">${label}</div>`
-    cards.append(card)
-  }
-  return cards
 }
