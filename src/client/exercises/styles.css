@@ -12,28 +12,7 @@
   font-size: var(--font-page-title);
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 /* Toolbar density comes from shared/page-toolbar.css */
-
-
-
-
-
 
 .exercise-count { margin: 0 0 12px; color: var(--color-muted-strong); font-size: var(--text-caption); line-height: 1.5; font-weight: var(--weight-regular); }
 .exercise-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: var(--space-3); }
@@ -47,7 +26,6 @@
 .exercise-card__body { display: grid; gap: 5px; min-height: 64px; padding: 12px; background: transparent; }
 .exercise-card h2 { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2; height: 2lh; overflow: hidden; overflow-wrap: anywhere; margin: 0; padding-right: 1.85rem; font-size: var(--text-body); line-height: 1.25; letter-spacing: -.025em; }
 .exercise-card p, .exercise-card small { margin: 0; color: var(--color-muted); }
-.exercise-card__muscle { display: inline-flex; align-items: center; gap: 5px; color: var(--color-muted); font: var(--weight-bold) var(--text-caption)/1.4 var(--font-sans); }
 
 .exercise-card small { color: var(--color-muted); }
 .favorite-button { position: absolute; top: 0.55rem; right: 0.55rem; display: inline-grid; width: 2.1rem; height: 2.1rem; place-items: center; border: 1px solid color-mix(in srgb, var(--color-surface) 42%, transparent); border-radius: var(--radius-pill); color: var(--color-muted-strong); background: var(--color-surface); border-color: var(--color-border); backdrop-filter: blur(12px); cursor: pointer; }
@@ -88,10 +66,6 @@
 .exercise-detail__content { display: grid; gap: var(--space-5); border: 1px solid var(--color-border); border-radius: var(--radius-xl); padding: clamp(1.25rem, 4vw, 2rem); background: var(--color-surface); }
 .detail-title-row { display: flex; align-items: flex-start; justify-content: space-between; gap: var(--space-4); }
 
-
-
-
-
 .detail-section ol { display: grid; gap: var(--space-3); max-width: 42rem; margin: 0; padding-left: 1.35rem; color: var(--color-muted-strong); line-height: 1.7; }
 @keyframes exercisePulse { 50% { opacity: 0.62; } }
 @media (max-width: 390px) { .exercise-grid { gap: 0.65rem; } }
@@ -100,8 +74,6 @@
 
 .exercise-detail h1 { max-width: none; font-size: var(--text-headline); letter-spacing: -.015em; }
 .exercise-detail__content { gap: var(--space-4); }
-
-
 
 .muscle-map { padding: var(--space-4); border: 1px solid var(--color-border); border-radius: var(--radius-xl); background: var(--color-surface); }
 .muscle-map svg { display: block; width: 100%; max-width: 300px; margin: auto; }
@@ -114,16 +86,12 @@
 /* Workstr exercise sheet hierarchy, using Setrai theme tokens. */
 .exercise-detail { width: min(100%, 520px); margin-inline: auto; grid-template-columns: minmax(0, 1fr); gap: var(--space-3); }
 .exercise-detail__content { grid-row: auto; padding: 20px; gap: 16px; }
-.exercise-detail__content > .exercise-image-frame { aspect-ratio: 16 / 9; border-radius: var(--radius-lg); }
-.exercise-detail__content > .exercise-image-frame img { object-fit: contain; }
 .exercise-detail h1 { margin: 0; font-size: var(--text-headline); line-height: 1.15; }
 .detail-pills { gap: var(--chip-gap); }
-.detail-badges { margin-top: -6px; }
-.detail-badges > span { color: var(--color-primary); text-transform: none; letter-spacing: .01em; font-size: var(--text-caption); }
 .detail-description { margin: 0; color: var(--color-muted-strong); font-size: var(--text-body); line-height: 1.6; }
 
-.exercise-detail .detail-section h2, .detail-instructions summary { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; font: var(--weight-heavy) var(--text-caption)/1.3 var(--font-sans); letter-spacing: .01em; text-transform: none; }
-.detail-section h2 svg, .detail-instructions summary svg { width: 16px; height: 16px; color: var(--color-primary); }
+.exercise-detail .detail-section h2, .detail-instructions summary { display: flex; align-items: center; gap: 8px; margin: 0 0 12px; font: var(--weight-medium) var(--font-section-title)/1.3 var(--font-sans); letter-spacing: -.01em; }
+.detail-instructions summary svg { width: 16px; height: 16px; color: var(--color-primary); }
 .exercise-detail .muscle-map { padding: 0; border: 0; background: transparent; }
 .muscle-map > div:has(svg) { margin-top: 14px; padding: 12px; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: var(--color-surface); }
 .detail-instructions { border-top: 1px solid var(--color-border); padding-top: 16px; }
@@ -180,16 +148,8 @@
   fill: currentColor;
 }
 
-
-
 .exercise-card__body { position: relative; }
 .exercise-card__body .favorite-button { top: 8px; right: 5px; width: 32px; height: 32px; border: 0; background: transparent; }
-.exercise-card__muscle { flex-wrap: wrap; font-size: var(--text-caption); gap: 5px; }
-.exercise-card .exercise-card__level { display: flex; align-items: center; gap: 6px; font-size: var(--text-caption); line-height: 1.4; font-weight: var(--weight-regular); color: var(--color-muted) !important; }
-.exercise-card__level::before { content: ''; flex: none; width: 6px; height: 6px; border-radius: 50%; background: var(--color-border-strong); }
-.exercise-card__level[data-difficulty="beginner"]::before { background: var(--status-ready); }
-.exercise-card__level[data-difficulty="intermediate"]::before { background: var(--status-moderate); }
-.exercise-card__level[data-difficulty="advanced"]::before { background: var(--status-recovering); }
 @media (min-width: 920px) { .exercise-detail { grid-template-columns: minmax(0, 1fr); } }
 /* Compact phone library: match Workstr density while retaining touch targets. */
 @media (max-width: 719px) {
@@ -198,18 +158,6 @@
 
   .exercise-heading h1, .exercise-empty h1 { font-size: var(--font-page-title); }
 
-
-
-
-
-
-
-
-
-
-
-
-
   .exercise-controls { /* shared toolbar density */ }
   .exercise-count { margin-bottom: 10px; font-size: var(--text-caption); font-weight: var(--weight-regular); }
   .exercise-grid { gap: 10px; }
@@ -217,9 +165,6 @@
   .exercise-card .exercise-image-frame { aspect-ratio: 4 / 3; }
   .exercise-card__body { min-height: 64px; padding: 12px; gap: 5px; }
   .exercise-card h2 { font-size: var(--text-body); line-height: 1.25; letter-spacing: -0.025em; padding-right: 25px; }
-  .exercise-card__muscle { font-size: var(--text-caption); gap: 4px; }
-
-  .exercise-card__muscle small { font-size: var(--text-caption); }
   .exercise-card__body .favorite-button { top: 1px; right: 0; width: 44px; height: 44px; }
   .exercise-select-button { top: 6px; left: 6px; width: 34px; height: 34px; }
   .exercise-selection-bar { gap: 6px; padding: 8px; }
@@ -247,19 +192,6 @@
   transform: translateY(-2px);
 }
 
-.exercise-card__level {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 9px;
-  border-radius: var(--radius-pill);
-  font: var(--weight-bold) var(--text-caption)/1.2 var(--font-sans), sans-serif;
-  letter-spacing: 0.02em;
-  text-transform: none;
-}
-.exercise-card__level[data-difficulty="beginner"] { background: var(--status-ready-soft); color: var(--status-ready); }
-.exercise-card__level[data-difficulty="intermediate"] { background: var(--status-moderate-soft); color: var(--status-moderate); }
-.exercise-card__level[data-difficulty="advanced"] { background: var(--status-recovering-soft); color: var(--status-recovering); }
-
 .favorite-button {
   transition: transform var(--duration-fast) var(--ease-out), color var(--duration-fast) var(--ease-out);
 }
@@ -281,8 +213,6 @@
 
 /* Filter chip micro-interaction */
 
-
-
 /* Search focus ring */
 .exercise-search input:focus {
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--color-text) 8%, transparent);
@@ -290,8 +220,6 @@
 }
 
 /* Library summary card depth */
-
-
 
 /* Better selection button UX - outline only when selected, smaller */
 .exercise-card .exercise-select-button {
@@ -328,7 +256,6 @@
   color: var(--color-warning) !important;
   border-color: color-mix(in srgb, var(--color-warning) 50%, transparent) !important;
 }
-
 
 .exercise-editor-page {
   display: grid;
@@ -676,3 +603,20 @@
   .exercise-editor__actions .button--primary { flex: 1 1 auto; min-width: 0; }
   .exercise-editor__danger { align-items: flex-start; flex-direction: column; }
 }
+
+/* Grid card: the artwork leads, then a two-line name slot and one quiet line. */
+.exercise-page .exercise-grid { align-items: start; }
+.exercise-page .exercise-card, .exercise-page .exercise-card__link { display: grid; }
+.exercise-card .exercise-image-frame { width: 100%; aspect-ratio: 4 / 3; }
+.exercise-page .exercise-card__body { min-height: 0; }
+.exercise-card .exercise-card__meta { overflow: hidden; margin: 0; color: var(--color-muted); font-size: var(--text-meta); line-height: 1.35; text-overflow: ellipsis; white-space: nowrap; }
+
+/* Detail: full-width artwork, then name, one meta sentence, instructions and target muscles. */
+.exercise-detail__hero { overflow: hidden; border-radius: var(--radius-lg); }
+.exercise-detail__hero .exercise-image-frame { aspect-ratio: 4 / 3; }
+.detail-meta { margin: -8px 0 0; color: var(--color-muted); font-size: var(--text-body); line-height: 1.45; }
+.detail-meta[hidden] { display: none; }
+
+/* Wide screens fit more of the library per row. */
+@media (min-width: 1200px) { .exercise-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
+@media (min-width: 1600px) { .exercise-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); } }

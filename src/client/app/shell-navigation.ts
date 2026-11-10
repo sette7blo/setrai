@@ -47,21 +47,79 @@ export function sidebar(activePath: string): HTMLElement {
   return aside
 }
 
-export function topBar(): HTMLElement {
+export interface TopBarContext {
+  back: { href: string, label: string } | null
+  gear: boolean
+}
+
+// Top-level tabs show the logo mark; a screen reached from another shows the way back instead.
+export function topBarContext(path: string): TopBarContext {
+  const edit = path.match(/^\/exercises\/(\d+)\/edit$/)
+  if (edit) return { back: { href: `/exercises/${edit[1]}`, label: 'Exercise' }, gear: true }
+  if (path === '/exercises/new' || /^\/exercises\/\d+$/.test(path)) return { back: { href: '/library/exercises', label: 'Exercises' }, gear: true }
+  if (path === '/recovery') return { back: { href: '/today', label: 'Today' }, gear: true }
+  if (path === '/profile') return { back: { href: '/today', label: 'Today' }, gear: false }
+  return { back: null, gear: true }
+}
+
+const BACK_CHEVRON = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg>'
+
+export interface TopBar {
+  element: HTMLElement
+  update: (path: string, route: HTMLElement) => void
+}
+
+export function topBar(): TopBar {
   const top = document.createElement('header')
   top.className = 'top-bar'
-  const brand = document.createElement('a')
-  brand.className = 'mobile-brand'
-  brand.href = '/today'
-  brand.setAttribute('aria-label', 'Setrai, go to Today')
-  brand.innerHTML = '<img class="mobile-brand__logo" src="/brand/setrai-mark.png" alt="" aria-hidden="true"><strong>Setrai</strong>'
+  const lead = document.createElement('a')
+  const title = document.createElement('span')
+  title.className = 'top-bar-title'
+  title.setAttribute('aria-hidden', 'true')
   const settings = document.createElement('a')
   settings.className = 'settings-gear'
   settings.href = '/profile'
   settings.setAttribute('aria-label', 'Open settings')
   settings.append(iconElement(Settings))
-  top.append(brand, settings)
-  return top
+  top.append(lead, title, settings)
+
+  // Once the page title has scrolled under the bar, the bar carries it.
+  let current: HTMLElement | null = null
+  let queued = false
+  const sync = (): void => {
+    queued = false
+    const heading = current?.querySelector('h1')
+    const scrolled = Boolean(heading && heading.getBoundingClientRect().bottom < top.getBoundingClientRect().bottom)
+    title.textContent = scrolled ? heading!.textContent : ''
+    top.classList.toggle('top-bar--scrolled', scrolled)
+  }
+  document.addEventListener('scroll', () => {
+    if (queued) return
+    queued = true
+    requestAnimationFrame(sync)
+  }, { passive: true, capture: true })
+
+  return {
+    element: top,
+    update(path, route) {
+      const { back, gear } = topBarContext(path)
+      current = route
+      if (back) {
+        lead.className = 'top-bar-back'
+        lead.href = back.href
+        lead.setAttribute('aria-label', `Back to ${back.label}`)
+        lead.innerHTML = BACK_CHEVRON
+        lead.append(document.createTextNode(back.label))
+      } else {
+        lead.className = 'mobile-brand'
+        lead.href = '/today'
+        lead.setAttribute('aria-label', 'Setrai, go to Today')
+        lead.innerHTML = '<img class="mobile-brand__logo" src="/brand/setrai-mark.png" alt="" aria-hidden="true">'
+      }
+      settings.hidden = !gear
+      sync()
+    }
+  }
 }
 
 export function bottomNavigation(activePath: string): HTMLElement {

@@ -32,6 +32,7 @@
 
 .today-last { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 12px 14px 16px; border: var(--border-subtle); border-radius: var(--radius-lg); background: var(--color-surface); }
 .today-last-copy { display: grid; gap: 3px; min-width: 0; }
+.today-section-title--wide, .today-last + .today-last { display: none; }
 .today-last-copy small { color: var(--color-muted); font-size: var(--text-caption); }
 .today-last-copy strong { overflow: hidden; font-size: var(--text-title); font-weight: var(--weight-bold); text-overflow: ellipsis; white-space: nowrap; }
 .today-last-copy span { color: var(--color-muted-strong); font-size: var(--text-meta); }
@@ -43,4 +44,6 @@
   .today-workout { grid-column: 1; grid-row: 2 / span 2; }
   .today-main { grid-column: 2; }
   .today-side { grid-column: 2; }
+  .today-section-title--wide { display: block; }
+  .today-last + .today-last { display: flex; }
 }

@@ -1,7 +1,7 @@
-import { ChevronDown, Clock } from 'lucide'
+import { ChevronDown } from 'lucide'
 import { iconElement } from '../app/navigation.js'
 import { displayName } from '../exercises/format.js'
-import { estimateProgramSeconds, programMuscleLabel, programMuscleLabels } from './program-taxonomy.js'
+import { programMuscleLabel } from './program-taxonomy.js'
 import type { Program, ProgramExercise } from './types.js'
 
 function exerciseRow(entry: ProgramExercise, index: number): HTMLElement {
@@ -57,32 +57,20 @@ export function createProgramBody(program: Program): HTMLElement {
     description.textContent = program.description
     body.append(description)
   }
-  const overview = document.createElement('div')
-  overview.className = 'workout-preview'
-  const duration = document.createElement('strong')
-  duration.textContent = `About ${Math.max(1, Math.round(estimateProgramSeconds(program) / 60))} min`
-  const focus = document.createElement('span')
-  focus.textContent = programMuscleLabels(program).join(' · ') || `${program.exercises.length} exercises`
-  overview.append(iconElement(Clock), duration, focus)
-  body.append(overview)
-  for (const [index, block] of (program.blocks ?? []).entries()) {
-    const section = document.createElement('div')
-    section.className = 'workout-block-summary'
-    const title = document.createElement('strong')
-    title.textContent = block.type === 'emom' ? `EMOM section ${index + 1} · ${block.rounds} rounds` : `${(block.steps?.length ?? 0) > 1 ? 'Superset' : 'Straight sets'} · ${block.rounds} rounds`
-    section.append(title)
-    for (const interval of block.intervals ?? []) {
-      const line = document.createElement('span')
-      line.textContent = `${interval.durationSec}s interval · ${interval.steps.map(step => `${step.exerciseName || step.exerciseSlug}${step.targetDurationSec ? ` (${step.targetDurationSec}s work)` : ''}`).join(' + ')}`
-      section.append(line)
-    }
-    if (block.steps?.length) {
-      const line = document.createElement('span')
-      line.textContent = block.steps.map(step => step.exerciseName || step.exerciseSlug).join(' + ')
-      section.append(line)
-    }
-    body.append(section)
+  const sections = document.createElement('ul')
+  sections.className = 'workout-sections'
+  for (const block of program.blocks ?? []) {
+    const kind = block.type === 'emom' ? 'EMOM' : (block.steps?.length ?? 0) > 1 ? 'Superset' : 'Straight sets'
+    const lines = [
+      ...(block.intervals ?? []).map(interval => `${interval.durationSec}s: ${interval.steps.map(step => `${step.exerciseName || step.exerciseSlug}${step.targetDurationSec ? ` (${step.targetDurationSec}s work)` : ''}`).join(' + ')}`),
+      ...(block.steps?.length ? [block.steps.map(step => step.exerciseName || step.exerciseSlug).join(' + ')] : []),
+    ]
+    const item = document.createElement('li')
+    item.append(Object.assign(document.createElement('strong'), { textContent: `${kind} · ${block.rounds} round${block.rounds === 1 ? '' : 's'}` }))
+    for (const line of lines) item.append(Object.assign(document.createElement('span'), { textContent: line }))
+    sections.append(item)
   }
+  if (sections.childElementCount) body.append(sections)
   const list = document.createElement('div')
   list.className = 'workout-exercise-list'
   program.exercises.forEach((entry, index) => list.append(exerciseRow(entry, index)))

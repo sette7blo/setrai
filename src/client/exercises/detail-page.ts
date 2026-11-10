@@ -33,7 +33,7 @@ export async function renderExerciseDetail(root: HTMLElement, id: number): Promi
   try {
     let exercise = await getExercise(id)
     const render = (): void => {
-      const instructionsOpen = root.querySelector<HTMLDetailsElement>('.detail-instructions')?.open ?? false
+      const instructionsOpen = root.querySelector<HTMLDetailsElement>('.detail-instructions')?.open ?? true
       root.replaceChildren(createExerciseDetailView(exercise, () => {
         void setExerciseFavourite(exercise.id, !exercise.favourite).then((updated) => {
           exercise = updated

@@ -1,4 +1,4 @@
-import { ChevronLeft, ChevronDown, Star, Dumbbell, ListOrdered, Pencil } from 'lucide'
+import { ChevronLeft, ChevronDown, Star, Pencil } from 'lucide'
 import { iconElement } from '../app/navigation.js'
 import { displayName } from './format.js'
 import { createExerciseImage } from './image.js'
@@ -16,21 +16,19 @@ function pills(values: string[]): HTMLElement {
   return row
 }
 
-function metadataSection(title: string, values: string[], icon: typeof Dumbbell): HTMLElement {
-  const section = document.createElement('section')
-  section.className = 'detail-section'
-  const heading = document.createElement('h2')
-  heading.append(iconElement(icon), document.createTextNode(title))
-  section.append(heading, pills(values))
-  section.hidden = !values.length
-  return section
+// "Beginner, strength, compound, bodyweight": one sentence in place of rows of pills.
+export function exerciseMetaLine(exercise: Pick<Exercise, 'difficulty' | 'category' | 'movementType' | 'equipment'>): string {
+  const parts = [exercise.difficulty, exercise.category, exercise.movementType, ...exercise.equipment].filter(Boolean).map(value => displayName(value).toLowerCase())
+  const line = [...new Set(parts)].join(', ')
+  return line.charAt(0).toUpperCase() + line.slice(1)
 }
 
 export function createInstructions(exercise: Exercise): HTMLDetailsElement {
   const section = document.createElement('details')
   section.className = 'detail-section detail-instructions'
+  section.open = true
   const summary = document.createElement('summary')
-  summary.append(iconElement(ListOrdered), document.createTextNode('Instructions'), iconElement(ChevronDown))
+  summary.append(document.createTextNode('Instructions'), iconElement(ChevronDown))
   const list = document.createElement('ol')
   exercise.instructions.filter(step => step.trim()).forEach(step => {
     const item = document.createElement('li')
@@ -99,8 +97,10 @@ export function createExerciseDetailView(exercise: Exercise, onFavourite: () => 
     chrome.append(edit)
   }
 
-  const badges = pills([exercise.difficulty, exercise.category, exercise.movementType])
-  badges.classList.add('detail-badges')
+  const meta = document.createElement('p')
+  meta.className = 'detail-meta'
+  meta.textContent = exerciseMetaLine(exercise)
+  meta.hidden = !meta.textContent
   const description = document.createElement('p')
   description.className = 'detail-description'
   description.textContent = exercise.description
@@ -109,16 +109,8 @@ export function createExerciseDetailView(exercise: Exercise, onFavourite: () => 
   const map = createMuscleMap(exercise)
   map.querySelector('h2')!.after(pills([...new Set([exercise.muscleGroup, ...exercise.muscles])]))
 
-  card.append(
-    media,
-    titleRow,
-    badges,
-    description,
-    map,
-    metadataSection('Equipment', exercise.equipment, Dumbbell),
-    createInstructions(exercise)
-  )
+  card.append(titleRow, meta, description, createInstructions(exercise), map)
 
-  page.append(back, card)
+  page.append(back, media, card)
   return page
 }

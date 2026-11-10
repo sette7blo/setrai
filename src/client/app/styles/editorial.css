@@ -1,6 +1,5 @@
 /* Light theme surface rules. Tokens live in tokens.css. */
 
-
 html,
 body {
   color: var(--color-text);
@@ -10,7 +9,6 @@ body {
 
 body::before { display: none; }
 
-
 .mobile-brand__logo,
 .brand-mark__logo {
   border-radius: 0;
@@ -18,7 +16,6 @@ body::before { display: none; }
   filter: none;
   mix-blend-mode: normal;
 }
-
 
 .exercise-heading h1,
 .exercise-detail h1,
@@ -32,17 +29,14 @@ body::before { display: none; }
   text-wrap: balance;
 }
 
-
 .filter-icon,
 .exercise-search,
 .exercise-card,
 .panel,
-.stats-panel,
 .program-card,
 .state-panel,
 .exercise-detail__content,
 .exercise-selection-bar,
-.body-entry,
 .row {
   border: 1px solid var(--color-border) !important;
   background: var(--color-surface) !important;
@@ -51,44 +45,35 @@ body::before { display: none; }
   backdrop-filter: none !important;
 }
 
-
 .filter-icon,
 .exercise-search,
 .exercise-card,
 .panel,
-.stats-panel,
 .program-card,
 .state-panel {
   border-radius: var(--radius-lg) !important;
 }
 
-
-.filter-icon,
-.stats-range-btn {
+.filter-icon {
   color: var(--color-text) !important;
   font-weight: var(--weight-medium) !important;
   text-shadow: none !important;
   text-transform: none;
 }
 
-
-.filter-icon--active,
-.stats-range-btn.active {
+.filter-icon--active {
   background: var(--color-text) !important;
   color: var(--color-on-primary) !important;
   border-color: var(--color-text) !important;
 }
 
-
 .filter-icon--active svg { color: var(--color-on-primary) !important; }
-
 
 .filter-icon:hover,
 .exercise-card:hover { transform: translateY(-1px); }
 
 .eyebrow,
-.exercise-count,
-.stats-section-head small {
+.exercise-count {
   color: var(--color-text) !important;
   font-family: var(--font-sans), system-ui, sans-serif !important;
   letter-spacing: .015em !important;
@@ -129,8 +114,6 @@ body::before { display: none; }
   height: 2px !important;
 }
 
-
-.body-entry-icon,
 .program-browse-icon {
   border: 1px solid var(--color-border) !important;
   background: var(--color-bg) !important;
@@ -138,10 +121,8 @@ body::before { display: none; }
   box-shadow: none !important;
 }
 
-
 .exercise-card h2,
-.program-card h2,
-.stats-section-title {
+.program-card h2 {
   color: var(--color-text) !important;
   font-weight: var(--weight-medium) !important;
   letter-spacing: -.015em !important;
@@ -155,16 +136,12 @@ body::before { display: none; }
   backdrop-filter: none !important;
 }
 
-
 .exercise-card p,
 .exercise-card small,
-.exercise-card__muscle,
-.exercise-card__level,
 .program-card p,
 .detail-description {
   color: var(--color-muted-strong) !important;
 }
-
 
 .detail-pills > span,
 .badge {
@@ -211,7 +188,6 @@ body::before { display: none; }
 .filter-icon svg,
 .program-toolbar-action svg { width: var(--toolbar-action-icon) !important; height: var(--toolbar-action-icon) !important; }
 
-
 .exercise-grid { gap: 10px; }
 .exercise-card { overflow: hidden; }
 .exercise-card__body {
@@ -253,8 +229,7 @@ body::before { display: none; }
   letter-spacing: -.02em !important;
 }
 
-.favorite-button,
-.body-entry-delete {
+.favorite-button {
   border: 0 !important;
   background: transparent !important;
   color: var(--color-text) !important;
@@ -273,7 +248,6 @@ body::before { display: none; }
 .exercise-select-button--active { background: var(--color-text) !important; color: var(--color-on-primary) !important; border-radius: var(--radius-pill) !important; }
 .exercise-select-button--active svg { stroke: var(--color-on-primary); }
 
-
 input,
 select,
 textarea {
@@ -282,55 +256,21 @@ textarea {
   color: var(--color-text) !important;
 }
 
-
-.dist-row .fill,
-.body-goal-fill,
-.bmi-marker { background: var(--color-text) !important; }
-
-.track,
-.body-goal-bar,
-.bmi-bar { border: 1px solid var(--color-text); background: var(--color-surface-strong) !important; }
+.track { border: 1px solid var(--color-text); background: var(--color-surface-strong) !important; }
 
 @media (max-width: 719px) {
 
-
-  .mobile-brand__logo { width: 54px; height: 42px; }
 
           .exercise-heading h1,
   .statistics-page-head h1 { font-size: var(--font-page-title) !important; font-weight: var(--weight-medium) !important; letter-spacing: -.015em !important; line-height: 1 !important; }
   .exercise-heading { gap: 12px; }
 
-
   .page-toolbar, .exercise-controls, .program-toolbar { gap: var(--toolbar-gap) !important; }
   .exercise-card { border-radius: var(--radius-lg) !important; }
   .exercise-card h2 { font-size: var(--text-meta) !important; line-height: 1.16 !important; font-weight: var(--weight-medium) !important; letter-spacing: -.025em !important; }
-  .exercise-card__muscle,
-  .exercise-card__muscle small { font-size: var(--text-caption) !important; line-height: 1 !important; }
   .exercise-card__body { min-height: auto !important; padding: 8px 9px 10px !important; gap: 5px !important; }
-  .exercise-card .exercise-image-frame { aspect-ratio: 16 / 10 !important; }
   .favorite-button { width: 44px !important; height: 44px !important; }
 
-
-}
-
-
-.stats-range {
-  border: 1px solid var(--color-border) !important;
-  background: var(--color-surface) !important;
-  box-shadow: none !important;
-  padding: 3px !important;
-}
-
-.stats-range-btn {
-  border: 0 !important;
-  background: var(--color-surface) !important;
-  color: var(--color-text) !important;
-  box-shadow: none !important;
-}
-
-.stats-range-btn.active {
-  background: var(--color-text) !important;
-  color: var(--color-on-primary) !important;
 }
 
 /* Statistics gets restrained grayscale data contrast without colorful accents. */
@@ -347,24 +287,7 @@ textarea {
   --stats-panel: var(--color-bg);
 }
 
-
-.statistics-page .stats-panel {
-  background:
-    var(--color-text),
-    var(--color-surface) !important;
-}
-
-
-.statistics-page .track,
-.statistics-page .dist-row .track,
-.statistics-page .body-goal-bar,
-.statistics-page .bmi-bar {
+.statistics-page .track {
   background: var(--color-surface-strong) !important;
 }
-
-.statistics-page .bmi-marker {
-  background: var(--color-text) !important;
-  background-image: none !important;
-}
-
 

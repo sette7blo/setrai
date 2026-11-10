@@ -162,3 +162,7 @@
 .page-heading--back { display: grid; gap: 4px; padding-top: 4px; }
 .page-back, .detail-back { display: inline-flex; width: fit-content; min-height: 44px; align-items: center; gap: 4px; margin-left: -4px; color: var(--color-muted-strong); font-size: var(--text-body); font-weight: var(--weight-medium); }
 .page-back svg, .detail-back svg { width: 18px; height: 18px; flex: none; }
+/* On phones the top bar carries the way back. */
+@media (max-width: 719px) {
+  .page-back, .detail-back { display: none; }
+}

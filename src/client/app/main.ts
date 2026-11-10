@@ -22,6 +22,7 @@ import '../shared/stat-strip.css'
 import './styles/today.css'
 import '../exercises/body-map.css'
 import '../statistics/charts.css'
+import '../statistics/cards.css'
 
 import { bootSetraiApp } from './application.js'
 

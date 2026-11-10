@@ -171,28 +171,22 @@ export function sessionHistoryCard(session: Session, exercises: Exercise[], unit
   const meta = document.createElement('span')
   meta.className = 'workout-card-meta'
   meta.textContent = [formatSessionDate(session.finishedAt ?? session.startedAt), sessionDuration(session)].filter(Boolean).join(' · ')
-  const doneSets = session.sets.filter(set => set.done).length
-  const exerciseCount = sessionExercises(session).length
-  const stats = document.createElement('span')
-  stats.className = 'history-stat-row'
-  for (const text of [`${doneSets} set${doneSets === 1 ? '' : 's'}`, `${exerciseCount} exercise${exerciseCount === 1 ? '' : 's'}`, sessionVolume(session) > 0 ? formatVolumeKg(sessionVolume(session), unit) : '']) {
-    if (!text) continue
-    const pill = document.createElement('span')
-    pill.className = 'history-stat-pill'
-    pill.textContent = text
-    stats.append(pill)
-  }
-  const focus = document.createElement('span')
-  focus.className = 'workout-card-muscles'
-  focus.textContent = muscles.names.slice(0, 4).join(' · ')
-  info.append(top, meta, stats)
   if (hasUnusualSessionDuration(session)) {
     const quality = document.createElement('span')
     quality.className = 'history-data-quality'
     quality.textContent = 'Duration looks off'
-    info.append(quality)
+    meta.append(quality)
   }
-  if (focus.textContent) info.append(focus)
+  const doneSets = session.sets.filter(set => set.done).length
+  const exerciseCount = sessionExercises(session).length
+  const figures = document.createElement('span')
+  figures.className = 'workout-card-figures'
+  figures.textContent = [
+    `${doneSets} set${doneSets === 1 ? '' : 's'}`,
+    `${exerciseCount} exercise${exerciseCount === 1 ? '' : 's'}`,
+    sessionVolume(session) > 0 ? formatVolumeKg(sessionVolume(session), unit) : '',
+  ].filter(Boolean).join(' · ')
+  info.append(top, meta, figures)
   summary.append(map, info, iconElement(ChevronDown))
   const body = document.createElement('div')
   body.className = 'workout-card-body'

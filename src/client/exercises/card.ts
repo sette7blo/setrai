@@ -4,6 +4,11 @@ import type { Exercise } from './types.js'
 import { displayName } from './format.js'
 import { createExerciseImage } from './image.js'
 
+// One quiet line under the name: muscle group, then difficulty.
+export function exerciseCardMeta(exercise: Pick<Exercise, 'muscleGroup' | 'category' | 'difficulty'>): string {
+  const muscle = exercise.muscleGroup || exercise.category
+  return [muscle ? displayName(muscle) : 'Training movement', exercise.difficulty ? displayName(exercise.difficulty) : ''].filter(Boolean).join(', ')
+}
 
 export function createExerciseCard(
   exercise: Exercise,
@@ -33,20 +38,11 @@ export function createExerciseCard(
   const heading = document.createElement('h2')
   heading.textContent = exercise.name
 
-  const primary = document.createElement('p')
-  primary.className = 'exercise-card__muscle'
-  primary.textContent = exercise.muscleGroup || exercise.category
-    ? displayName(exercise.muscleGroup || exercise.category) : 'Training movement'
+  const meta = document.createElement('p')
+  meta.className = 'exercise-card__meta'
+  meta.textContent = exerciseCardMeta(exercise)
 
-  body.append(heading, primary)
-
-  if (exercise.difficulty) {
-    const level = document.createElement('small')
-    level.className = 'exercise-card__level'
-    level.dataset.difficulty = exercise.difficulty.trim().toLowerCase()
-    level.textContent = displayName(exercise.difficulty)
-    body.append(level)
-  }
+  body.append(heading, meta)
 
   link.append(body)
 

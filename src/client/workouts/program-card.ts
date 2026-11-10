@@ -6,7 +6,7 @@ import { readableApiError } from '../shared/api/errors.js'
 
 import type { Program } from './types.js'
 import { createProgramBody } from './program-preview.js'
-import { estimateProgramSeconds, programFocusLabel, programMuscles, programTaxonomy } from './program-taxonomy.js'
+import { estimateProgramSeconds, programMuscles, programTaxonomy } from './program-taxonomy.js'
 
 export interface ProgramCardActions {
   start?: (program: Program) => Promise<void>
@@ -28,24 +28,17 @@ export function createProgramCard(program: Program, actions: ProgramCardActions)
   map.querySelector('svg')?.setAttribute('aria-hidden', 'true')
   const copy = document.createElement('span')
   copy.className = 'workout-card-info'
-  const titleRow = document.createElement('span')
-  titleRow.className = 'workout-card-title-row'
   const name = document.createElement('strong')
   name.className = 'workout-card-name'
   name.textContent = program.name
-  titleRow.append(name)
-
-  const byline = document.createElement('span')
-  byline.className = 'workout-card-byline'
-  byline.textContent = displayName(program.difficulty)
   const meta = document.createElement('span')
   meta.className = 'workout-card-meta'
+  meta.textContent = [displayName(program.difficulty), `${Math.max(1, Math.round(estimateProgramSeconds(program) / 60))} min`].filter(Boolean).join(' · ')
   const formats = programTaxonomy(program).format.filter(value => value !== 'normal').map(value => value === 'emom' ? 'EMOM' : displayName(value))
-  meta.textContent = [`${Math.max(1, Math.round(estimateProgramSeconds(program) / 60))} min`, ...formats, `${program.exercises.length} exercises`].join(' · ')
-  const focus = document.createElement('span')
-  focus.className = 'workout-card-focus'
-  focus.textContent = programFocusLabel(program)
-  copy.append(titleRow, byline, meta, focus)
+  const figures = document.createElement('span')
+  figures.className = 'workout-card-figures'
+  figures.textContent = [`${program.exercises.length} exercise${program.exercises.length === 1 ? '' : 's'}`, ...formats].join(' · ')
+  copy.append(name, meta, figures)
   summary.append(map, copy, iconElement(ChevronDown))
   const body = createProgramBody(program)
   const bar = document.createElement('div')
@@ -53,23 +46,24 @@ export function createProgramCard(program: Program, actions: ProgramCardActions)
   const error = document.createElement('p')
   error.className = 'workout-action-error'
   error.setAttribute('role', 'status')
-  const addAction = (key: string, label: string, icon: typeof Play, action: () => void | Promise<void>, primary = false): void => {
+  const action = (key: string, label: string, icon: typeof Play, run: () => void | Promise<void>, style: string): HTMLButtonElement => {
     const button = document.createElement('button')
     button.type = 'button'
-    button.className = `button workout-card-action workout-card-action--${key}${primary ? ' button--primary' : ' button--secondary'}`
+    button.className = `button workout-card-action workout-card-action--${key} ${style}`
     button.setAttribute('aria-label', `${label} ${program.name}`)
     button.append(iconElement(icon), document.createTextNode(label))
     button.addEventListener('click', () => {
       button.disabled = true
       error.textContent = ''
-      void Promise.resolve().then(action).catch(reason => { error.textContent = readableApiError(reason) }).finally(() => { button.disabled = false })
+      void Promise.resolve().then(run).catch(reason => { error.textContent = readableApiError(reason) }).finally(() => { button.disabled = false })
     })
-    bar.append(button)
+    return button
   }
-  if (actions.start) addAction('start', 'Start', Play, () => actions.start!(program), true)
-  if (actions.edit) addAction('edit', 'Edit', Pencil, () => actions.edit!(program))
-  if (actions.duplicate) addAction('duplicate', 'Duplicate', Copy, () => actions.duplicate!(program))
-  if (actions.remove) addAction('delete', 'Delete', Trash2, () => actions.remove!(program))
+  // Starting is the one accent action and comes first; managing the program is a quiet row, Delete last.
+  if (actions.start) body.prepend(action('start', 'Start', Play, () => actions.start!(program), 'button--accent'))
+  if (actions.edit) bar.append(action('edit', 'Edit', Pencil, () => actions.edit!(program), 'button--secondary'))
+  if (actions.duplicate) bar.append(action('duplicate', 'Duplicate', Copy, () => actions.duplicate!(program), 'button--secondary'))
+  if (actions.remove) bar.append(action('delete', 'Delete', Trash2, () => actions.remove!(program), 'button--secondary'))
 
   body.append(bar, error)
   card.append(summary, body)

@@ -1,0 +1,63 @@
+/* Progress sections: one white card each, with the same card and gap as Today. */
+.stats-training-view, .stats-body-view { display: grid; gap: 20px; align-content: start; }
+.stats-card { display: grid; align-content: start; gap: 14px; min-width: 0; padding: 16px; border: var(--border-subtle); border-radius: var(--radius-lg); background: var(--color-surface); }
+.stats-card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-width: 0; }
+.stats-card-head h2 { margin: 0; font-size: var(--font-section-title); font-weight: var(--weight-medium); line-height: 1.2; letter-spacing: -.01em; }
+.stats-card-head small { color: var(--color-muted); font-size: var(--text-caption); line-height: 1.3; text-align: right; }
+.stats-card-title { display: grid; gap: 2px; min-width: 0; }
+.stats-card-title small { text-align: left; }
+.stats-card-empty { margin: 0; padding: 8px 0; color: var(--color-muted); font-size: var(--text-body); }
+
+/* Range selector: one control-height row of equal segments. */
+.stats-segments { display: grid; grid-auto-flow: column; grid-auto-columns: minmax(0, 1fr); gap: 4px; padding: 3px; border: var(--border-subtle); border-radius: var(--radius-md); background: var(--color-surface); }
+.stats-segment { min-height: 44px; border: 0; border-radius: var(--radius-sm); background: transparent; color: var(--color-text); font: var(--weight-medium) var(--text-meta)/1 var(--font-sans); cursor: pointer; transition: background-color var(--duration-fast) var(--ease-out); }
+.stats-segment:hover { background: var(--color-surface-strong); }
+.stats-segment[aria-pressed="true"] { background: var(--color-text); color: var(--color-on-primary); }
+
+.stats-dist { display: grid; gap: 12px; }
+.stats-dist-row { display: grid; grid-template-columns: 6.5rem minmax(0, 1fr) 4.75rem; align-items: center; gap: 10px; font-size: var(--text-meta); line-height: 1.2; }
+.stats-dist-row > span:first-child { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.stats-dist-row > span:last-child { color: var(--color-muted); font-variant-numeric: tabular-nums; text-align: right; white-space: nowrap; }
+.stats-dist-track { height: 8px; overflow: hidden; border-radius: var(--radius-pill); background: var(--color-surface-strong); }
+.stats-dist-fill { height: 100%; border-radius: inherit; background: var(--color-text); }
+
+.stats-share-icon.button { flex: none; width: 44px; min-height: 44px; padding: 0; border-color: transparent; background: transparent; color: var(--color-muted-strong); }
+.stats-share-icon.button:hover { background: var(--color-surface-strong); }
+
+/* Body tab: log a weight first, then the cards, then a compact list of entries. */
+.stats-body-view { font-variant-numeric: tabular-nums; }
+.body-log { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: end; gap: 12px; }
+.body-log label { display: grid; gap: 6px; min-width: 0; color: var(--color-muted); font-size: var(--text-caption); }
+.body-log input { width: 100%; min-width: 0; min-height: 48px; padding: 0 12px; border: var(--border-subtle); border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-text); font: var(--weight-medium) var(--text-title)/1 var(--font-sans); font-variant-numeric: tabular-nums; }
+.body-log input:focus { border-color: var(--color-text); outline: none; }
+.body-log .button { grid-column: 1 / -1; justify-content: center; min-height: 48px; }
+.body-entry-list { display: grid; margin: -8px 0; padding: 0; list-style: none; }
+.body-entry-row { display: grid; grid-template-columns: minmax(0, 1fr) auto auto; align-items: center; gap: 8px; height: 52px; }
+.body-entry-row + .body-entry-row { border-top: var(--border-subtle); }
+.body-entry-row strong { font-size: var(--text-title); font-weight: var(--weight-medium); }
+.body-entry-date { color: var(--color-muted); font-size: var(--text-meta); }
+.body-entry-delete.button { width: 44px; min-height: 44px; padding: 0; border-color: transparent; background: transparent; color: var(--color-muted); }
+.body-entry-delete.button:hover { background: var(--color-surface-strong); color: var(--color-error); }
+.body-entry-delete svg { width: 18px; height: 18px; }
+.body-entry-confirm { display: flex; gap: 8px; grid-column: 2 / -1; }
+.body-entry-confirm .button { min-height: 44px; padding-inline: 14px; font-size: var(--text-meta); }
+.body-entry-confirm-delete.button { border-color: var(--color-error); background: var(--color-error); color: var(--color-on-primary); }
+.body-entry-more.button { justify-content: center; min-height: 44px; }
+.body-settings > summary { display: flex; align-items: center; justify-content: space-between; min-height: 24px; font-size: var(--font-section-title); font-weight: var(--weight-medium); cursor: pointer; list-style: none; }
+.body-settings > summary::-webkit-details-marker { display: none; }
+.body-settings > summary::after { content: ''; width: 8px; height: 8px; margin-right: 4px; border-right: 2px solid var(--color-muted); border-bottom: 2px solid var(--color-muted); transform: rotate(45deg); transition: transform var(--duration-base) var(--ease-out); }
+.body-settings[open] > summary::after { transform: rotate(-135deg); }
+[hidden].body-entry-confirm, .body-entry-row [hidden] { display: none; }
+
+@media (min-width: 720px) {
+  .body-log { grid-template-columns: repeat(2, minmax(0, 1fr)) auto; }
+  .body-log .button { grid-column: auto; }
+}
+
+/* Desktop: figures, chart and distribution on the left, records on the right. */
+@media (min-width: 1000px) {
+  .stats-training-view { grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr); grid-template-rows: auto auto auto 1fr; column-gap: 24px; }
+  .stats-training-view > * { grid-column: 1; }
+  .stats-training-view > .stats-card--records { grid-column: 2; grid-row: 1 / -1; align-self: start; }
+  .stats-body-view { max-width: 720px; }
+}

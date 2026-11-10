@@ -21,8 +21,9 @@ export function createVolumeShareExperience(
 ): { button: HTMLButtonElement, dialog: HTMLDialogElement } {
   const button = document.createElement('button')
   button.type = 'button'
-  button.className = 'button quiet small body-share-open volume-share-open'
-  button.append(iconElement(Share2), Object.assign(document.createElement('span'), { textContent: 'Share report' }))
+  button.className = 'button stats-share-icon'
+  button.setAttribute('aria-label', 'Share weekly volume report')
+  button.append(iconElement(Share2))
 
   const dialog = document.createElement('dialog')
   dialog.className = 'body-share-sheet volume-share-sheet'

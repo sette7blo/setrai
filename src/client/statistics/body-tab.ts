@@ -1,4 +1,4 @@
-import { Check, Gauge, History, LineChart, Plus, Ruler, Target, Trash2, Weight } from 'lucide'
+import { Trash2 } from 'lucide'
 
 import { iconElement } from '../app/navigation.js'
 import { formatDate, todayDate } from '../shared/formatting/date-format.js'
@@ -11,32 +11,13 @@ import { newestFirst, oldestFirst } from '../profile/body-weight/format.js'
 import { displayWeightFromKg, formatBodyWeightFromKg, inputWeightToKg } from '../profile/weight-units.js'
 import type { StatisticsOverview } from './types.js'
 import { createBodyShareExperience } from './body-share.js'
+import { stackCardNote, statsCard } from './card.js'
 
 export interface BodyTabContext {
   stats: StatisticsOverview
   profile: Profile
   entries: BodyWeightEntry[]
   onRefresh: () => void
-}
-
-type Icon = Parameters<typeof iconElement>[0]
-
-function iconWrap(className: string, icon: Icon): HTMLElement {
-  const span = document.createElement('span')
-  span.className = className
-  span.append(iconElement(icon))
-  return span
-}
-
-function sectionHead(icon: Icon, title: string, note = ''): HTMLElement {
-  const head = document.createElement('div')
-  head.className = 'subsection-head stats-section-head'
-  const name = document.createElement('span')
-  name.className = 'stats-section-title'
-  name.append(iconElement(icon), Object.assign(document.createElement('span'), { textContent: title }))
-  head.append(name)
-  if (note) head.append(Object.assign(document.createElement('small'), { textContent: note }))
-  return head
 }
 
 function shortDate(date: string): string {
@@ -62,16 +43,14 @@ function bodyCards(entries: BodyWeightEntry[], unit: WeightUnit): HTMLElement {
   return mount
 }
 
-function bmiMarkup(entries: BodyWeightEntry[], heightCm?: number | null): HTMLElement {
-  const wrap = document.createElement('div')
-  wrap.id = 'body-bmi'
-  if (!entries.length || !heightCm) return wrap
+function bmiCard(entries: BodyWeightEntry[], heightCm?: number | null): HTMLElement | null {
   const latest = oldestFirst(entries).at(-1)
-  if (!latest) return wrap
+  if (!latest || !heightCm) return null
   const meters = heightCm / 100
   const bmi = latest.weightKg / (meters * meters)
   const label = bmi < 18.5 ? 'Underweight' : bmi < 25 ? 'Normal' : bmi < 30 ? 'Overweight' : 'Obese'
-  wrap.append(sectionHead(Gauge, 'BMI', `${bmi.toFixed(1)} · ${label}`))
+  const { card } = statsCard('BMI', `${bmi.toFixed(1)}, ${label.toLowerCase()}`)
+  card.id = 'body-bmi'
   const pct = Math.max(0, Math.min(100, ((bmi - 15) / 25) * 100))
   const zones = [
     { cls: 'under', label: 'Under', min: 15, max: 18.5 },
@@ -79,18 +58,21 @@ function bmiMarkup(entries: BodyWeightEntry[], heightCm?: number | null): HTMLEl
     { cls: 'over', label: 'Over', min: 25, max: 30 },
     { cls: 'obese', label: 'Obese', min: 30, max: 40 }
   ]
-  wrap.insertAdjacentHTML('beforeend', `<div class="bmi-bar">${zones.map((zone) => `<div class="bmi-zone ${zone.cls}" style="flex:0 0 ${(((zone.max - zone.min) / 25) * 100).toFixed(1)}%">${zone.label}</div>`).join('')}<div class="bmi-marker" style="left:${pct.toFixed(1)}%"></div></div><div class="bmi-scale"><span>15</span><span>18.5</span><span>25</span><span>30</span><span>40+</span></div>`)
-  return wrap
+  card.insertAdjacentHTML('beforeend', `<div><div class="bmi-bar">${zones.map((zone) => `<div class="bmi-zone ${zone.cls}" style="flex:0 0 ${(((zone.max - zone.min) / 25) * 100).toFixed(1)}%">${zone.label}</div>`).join('')}<div class="bmi-marker" style="left:${pct.toFixed(1)}%"></div></div><div class="bmi-scale"><span style="left:0">15</span><span style="left:14%">18.5</span><span style="left:40%">25</span><span style="left:60%">30</span><span style="left:100%">40+</span></div></div>`)
+  return card
 }
 
-function bodyChart(entries: BodyWeightEntry[], unit: WeightUnit): HTMLElement {
-  const mount = document.createElement('div')
-  mount.id = 'body-chart'
+function trendCard(entries: BodyWeightEntry[], profile: Profile): { card: HTMLElement, dialog: HTMLDialogElement | null } {
+  const unit = profile.weightUnit
+  const { card, head } = statsCard('Weight trend', entries.length > 1 ? `Last ${Math.min(entries.length, 12)} entries` : '')
+  card.id = 'body-chart'
   if (entries.length < 2) {
-    mount.className = 'body-chart-panel empty'
-    mount.textContent = entries.length === 0 ? 'No body-weight entries yet.' : 'Log one more entry to see a trend.'
-    return mount
+    card.append(Object.assign(document.createElement('p'), { className: 'stats-card-empty', textContent: entries.length === 0 ? 'No entries yet. Log your weight above to start tracking.' : 'Log one more entry to see a trend.' }))
+    return { card, dialog: null }
   }
+  const share = createBodyShareExperience(entries, profile)
+  stackCardNote(head)
+  head.append(share.button)
   const chart = document.createElement('div')
   chart.className = 'body-chart'
   const sorted = oldestFirst(entries).slice(-12)
@@ -117,86 +99,110 @@ function bodyChart(entries: BodyWeightEntry[], unit: WeightUnit): HTMLElement {
     yLabels += `<line x1="${pad}" y1="${y.toFixed(1)}" x2="${width - pad}" y2="${y.toFixed(1)}" />`
   }
   chart.innerHTML = `<svg viewBox="0 0 ${width} ${height + 16}" role="img" aria-label="Body-weight trend">${yLabels}<path class="body-chart-area" d="${areaPath}"/><polyline points="${polyline}" fill="none" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>${points.map(([x, y], index) => `<circle cx="${x}" cy="${y}" r="3"><title>${shortDate(sorted[index].date)}: ${formatBodyWeightFromKg(sorted[index].weightKg, unit)}</title></circle>`).join('')}<text class="body-chart-date" x="${pad}" y="${height + 10}">${shortDate(sorted[0].date)}</text><text class="body-chart-date" x="${width - pad}" y="${height + 10}" text-anchor="end">${shortDate(sorted[sorted.length - 1].date)}</text></svg>`
-  mount.append(chart)
-  return mount
+  card.append(chart)
+  return { card, dialog: share.dialog }
 }
 
-function goalMarkup(entries: BodyWeightEntry[], targetWeightKg: number | null | undefined, unit: WeightUnit): HTMLElement {
-  const wrap = document.createElement('div')
-  wrap.id = 'body-goal'
-  if (!entries.length || !targetWeightKg) return wrap
+function goalCard(entries: BodyWeightEntry[], targetWeightKg: number | null | undefined, unit: WeightUnit): HTMLElement | null {
+  if (!entries.length || !targetWeightKg) return null
   const sorted = oldestFirst(entries)
   const first = sorted[0].weightKg
   const latest = sorted[sorted.length - 1].weightKg
   const totalNeeded = targetWeightKg - first
   const pct = totalNeeded === 0 ? 100 : Math.min(100, Math.max(0, ((latest - first) / totalNeeded) * 100))
-  const remaining = targetWeightKg - latest
-  wrap.append(sectionHead(Target, 'Goal progress', `${pct.toFixed(0)}%`))
-  wrap.insertAdjacentHTML('beforeend', `<div class="body-goal-bar"><div class="body-goal-fill" style="width:${pct.toFixed(0)}%"></div></div><div class="body-goal-labels"><span>${formatBodyWeightFromKg(first, unit)}</span><span>${displayWeightFromKg(remaining, unit) > 0 ? '+' : ''}${displayWeightFromKg(remaining, unit).toFixed(1)} ${unit} to go</span><span>${formatBodyWeightFromKg(targetWeightKg, unit)}</span></div>`)
-  return wrap
+  const remaining = displayWeightFromKg(targetWeightKg - latest, unit)
+  const { card } = statsCard('Goal progress', `${pct.toFixed(0)}%`)
+  card.id = 'body-goal'
+  card.insertAdjacentHTML('beforeend', `<div><div class="body-goal-bar"><div class="body-goal-fill" style="width:${pct.toFixed(0)}%"></div></div><div class="body-goal-labels"><span>${formatBodyWeightFromKg(first, unit)}</span><span>${remaining > 0 ? '+' : ''}${remaining.toFixed(1)} ${unit} to go</span><span>${formatBodyWeightFromKg(targetWeightKg, unit)}</span></div></div>`)
+  return card
 }
 
-function entriesList(entries: BodyWeightEntry[], unit: WeightUnit, onRefresh: () => void): HTMLElement {
-  const list = document.createElement('div')
-  list.id = 'body-list'
-  list.className = 'list body-entries'
-  for (const entry of newestFirst(entries).slice(0, 10)) {
-    const row = document.createElement('article')
-    row.className = 'row body-entry'
-    row.append(iconWrap('body-entry-icon', Weight))
-    const copy = document.createElement('div')
-    copy.append(
-      Object.assign(document.createElement('strong'), { textContent: formatBodyWeightFromKg(entry.weightKg, unit) }),
-      Object.assign(document.createElement('small'), { textContent: `${formatDate(entry.date)}${entry.notes ? ` · ${entry.notes}` : ''}` })
-    )
-    const remove = document.createElement('button')
-    remove.type = 'button'
-    remove.className = 'button quiet danger small body-entry-delete'
-    remove.setAttribute('aria-label', `Delete ${formatBodyWeightFromKg(entry.weightKg, unit)} on ${entry.date}`)
-    remove.append(iconElement(Trash2))
-    remove.addEventListener('click', () => {
-      if (window.confirm(`Delete body-weight entry for ${entry.date}?`)) {
-        void deleteBodyWeight(entry.id).then(onRefresh)
-      }
-    })
-    row.append(copy, remove)
-    list.append(row)
+const ENTRIES_SHOWN = 10
+
+// Deleting takes two taps: the bin swaps the row's controls for Cancel and Delete.
+function entryRow(entry: BodyWeightEntry, unit: WeightUnit, onRefresh: () => void): HTMLElement {
+  const row = document.createElement('li')
+  row.className = 'body-entry-row'
+  const weight = Object.assign(document.createElement('strong'), { textContent: formatBodyWeightFromKg(entry.weightKg, unit) })
+  const date = Object.assign(document.createElement('span'), { className: 'body-entry-date', textContent: `${formatDate(entry.date)}${entry.notes ? ` · ${entry.notes}` : ''}` })
+  const remove = document.createElement('button')
+  remove.type = 'button'
+  remove.className = 'button body-entry-delete'
+  remove.setAttribute('aria-label', `Delete ${formatBodyWeightFromKg(entry.weightKg, unit)} on ${formatDate(entry.date)}`)
+  remove.append(iconElement(Trash2))
+  const confirm = document.createElement('span')
+  confirm.className = 'body-entry-confirm'
+  confirm.hidden = true
+  const cancel = Object.assign(document.createElement('button'), { type: 'button', className: 'button', textContent: 'Cancel' })
+  const yes = Object.assign(document.createElement('button'), { type: 'button', className: 'button body-entry-confirm-delete', textContent: 'Delete' })
+  confirm.append(cancel, yes)
+  const ask = (asking: boolean): void => {
+    confirm.hidden = !asking
+    remove.hidden = asking
+    date.hidden = asking
+    ;(asking ? cancel : remove).focus()
   }
-  return list
+  remove.addEventListener('click', () => ask(true))
+  cancel.addEventListener('click', () => ask(false))
+  yes.addEventListener('click', () => {
+    yes.disabled = true
+    void deleteBodyWeight(entry.id).then(onRefresh)
+  })
+  row.append(weight, date, remove, confirm)
+  return row
 }
 
-function bodyForms(profile: Profile, entries: BodyWeightEntry[], onRefresh: () => void): HTMLElement {
+function entriesCard(entries: BodyWeightEntry[], unit: WeightUnit, onRefresh: () => void): HTMLElement | null {
+  if (!entries.length) return null
+  const sorted = newestFirst(entries)
+  const { card } = statsCard('Entries', 'Newest first')
+  const list = document.createElement('ul')
+  list.id = 'body-list'
+  list.className = 'body-entry-list'
+  const render = (count: number): void => { list.replaceChildren(...sorted.slice(0, count).map(entry => entryRow(entry, unit, onRefresh))) }
+  render(ENTRIES_SHOWN)
+  card.append(list)
+  if (sorted.length > ENTRIES_SHOWN) {
+    const more = Object.assign(document.createElement('button'), { type: 'button', className: 'button body-entry-more', textContent: `Show all ${sorted.length}` })
+    more.addEventListener('click', () => { render(sorted.length); more.remove() })
+    card.append(more)
+  }
+  return card
+}
+
+function logWeightForm(profile: Profile, entries: BodyWeightEntry[], onRefresh: () => void): HTMLElement {
   const unit = profile.weightUnit
-  const panel = document.createElement('section')
-  panel.className = 'panel stats-panel body-forms'
   const latest = newestFirst(entries)[0]
-  panel.append(sectionHead(Plus, 'Log weight'))
   const form = document.createElement('form')
   form.id = 'body-form'
-  form.className = 'form-grid'
-  form.innerHTML = `<label>Date<input class="body-date-input" type="text" name="date" value="${todayDate()}" inputmode="numeric" autocomplete="off" placeholder="YYYY-MM-DD" pattern="\\d{4}-\\d{2}-\\d{2}" required /></label><label><span>Weight (<span class="body-unit-lbl">${unit}</span>)</span><input type="number" name="weight" step="0.1" min="1" inputmode="decimal" placeholder="e.g. 170" value="${latest ? displayWeightFromKg(latest.weightKg, unit) : ''}" required /></label><div class="form-actions span-2"><button class="button button--primary stats-action" type="submit"></button></div>`
-  const save = form.querySelector('button')
-  save?.append(iconElement(Plus), Object.assign(document.createElement('span'), { textContent: 'Log weight' }))
+  form.className = 'stats-card body-log'
+  form.innerHTML = `<label><span>Weight (${unit})</span><input type="number" name="weight" step="0.1" min="1" inputmode="decimal" placeholder="e.g. 170" value="${latest ? displayWeightFromKg(latest.weightKg, unit) : ''}" required /></label><label><span>Date</span><input type="date" name="date" value="${todayDate()}" max="${todayDate()}" required /></label><button class="button button--primary" type="submit">Log weight</button>`
   form.addEventListener('submit', (event) => {
     event.preventDefault()
     const data = new FormData(form)
     void saveBodyWeight({ date: String(data.get('date')), weightKg: inputWeightToKg(Number(data.get('weight')), unit), notes: '' }).then(onRefresh)
   })
-  panel.append(form, sectionHead(Ruler, 'Body metrics', 'for BMI & goal'))
-  const profileForm = document.createElement('form')
-  profileForm.id = 'body-profile-form'
-  profileForm.className = 'form-grid'
-  profileForm.innerHTML = `<label>Height (cm)<input type="number" name="heightCm" step="1" min="100" max="250" inputmode="numeric" placeholder="e.g. 175" value="${profile.heightCm ?? ''}" /></label><label><span>Target weight (<span class="body-unit-lbl">${unit}</span>)</span><input type="number" name="targetWeight" step="0.1" min="0" inputmode="decimal" placeholder="e.g. 165" value="${profile.targetWeightKg ? displayWeightFromKg(profile.targetWeightKg, unit) : ''}" /></label><div class="form-actions span-2"><button class="button stats-action" type="submit"></button></div>`
-  profileForm.querySelector('button')?.append(iconElement(Check), Object.assign(document.createElement('span'), { textContent: 'Save metrics' }))
-  profileForm.addEventListener('submit', (event) => {
+  return form
+}
+
+function goalAndHeight(profile: Profile, onRefresh: () => void): HTMLElement {
+  const unit = profile.weightUnit
+  const details = document.createElement('details')
+  details.className = 'stats-card body-settings'
+  details.append(Object.assign(document.createElement('summary'), { textContent: 'Goal and height' }))
+  const form = document.createElement('form')
+  form.id = 'body-profile-form'
+  form.className = 'body-log'
+  form.innerHTML = `<label><span>Height (cm)</span><input type="number" name="heightCm" step="1" min="100" max="250" inputmode="numeric" placeholder="e.g. 175" value="${profile.heightCm ?? ''}" /></label><label><span>Target weight (${unit})</span><input type="number" name="targetWeight" step="0.1" min="0" inputmode="decimal" placeholder="e.g. 165" value="${profile.targetWeightKg ? displayWeightFromKg(profile.targetWeightKg, unit) : ''}" /></label><button class="button" type="submit">Save</button>`
+  form.addEventListener('submit', (event) => {
     event.preventDefault()
-    const data = new FormData(profileForm)
+    const data = new FormData(form)
     const height = Number(data.get('heightCm'))
     const target = Number(data.get('targetWeight'))
     void updateProfile({ heightCm: height > 0 ? height : null, targetWeightKg: target > 0 ? inputWeightToKg(target, unit) : null }).then(onRefresh)
   })
-  panel.append(profileForm)
-  return panel
+  details.append(form)
+  return details
 }
 
 export function bodyView(context: BodyTabContext): HTMLElement {
@@ -205,35 +211,17 @@ export function bodyView(context: BodyTabContext): HTMLElement {
   const section = document.createElement('section')
   section.className = 'stats-body-view'
   section.dataset.statsSection = 'body'
-  section.append(bodyCards(entries, unit))
-  const panel = document.createElement('section')
-  panel.className = 'panel stats-panel body-panel'
-  if (entries.length === 0) {
-    panel.innerHTML = `<div id="body-empty" class="empty stats-empty">No entries yet. Log your weight below to start tracking.</div>`
-  }
-  const trendHead = entries.length > 1
-    ? sectionHead(LineChart, 'Weight trend', `${Math.min(entries.length, 12)} entries`)
-    : null
-  let shareDialog: HTMLDialogElement | null = null
-  if (trendHead) {
-    const share = createBodyShareExperience(entries, profile)
-    const actions = document.createElement('div')
-    actions.className = 'body-trend-actions'
-    const note = trendHead.querySelector('small')
-    if (note) actions.append(note)
-    actions.append(share.button)
-    trendHead.append(actions)
-    shareDialog = share.dialog
-  }
-  panel.append(
-    bmiMarkup(entries, profile.heightCm),
-    trendHead ?? document.createTextNode(''),
-    bodyChart(entries, unit),
-    goalMarkup(entries, profile.targetWeightKg, unit),
-    entries.length ? sectionHead(History, 'Entries', 'newest first') : document.createTextNode(''),
-    entriesList(entries, unit, onRefresh)
-  )
-  section.append(panel, bodyForms(profile, entries, onRefresh))
-  if (shareDialog) section.append(shareDialog)
+  const trend = trendCard(entries, profile)
+  const cards = [
+    entries.length ? bodyCards(entries, unit) : null,
+    logWeightForm(profile, entries, onRefresh),
+    trend.card,
+    goalCard(entries, profile.targetWeightKg, unit),
+    bmiCard(entries, profile.heightCm),
+    entriesCard(entries, unit, onRefresh),
+    goalAndHeight(profile, onRefresh),
+    trend.dialog,
+  ]
+  section.append(...cards.filter((card): card is HTMLElement => card !== null))
   return section
 }

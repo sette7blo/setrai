@@ -89,7 +89,8 @@ async function renderShell(root: HTMLElement, active?: { id: number, programName
   main.tabIndex = -1
 
   let container = routeContainer()
-  main.append(topBar(), container)
+  const bar = topBar()
+  main.append(bar.element, container)
   const training = nowTrainingBar(active)
   frame.append(sidebar(activePath), main, training.element, bottomNavigation(activePath))
   root.append(frame)
@@ -108,8 +109,12 @@ async function renderShell(root: HTMLElement, active?: { id: number, programName
         })
       }
     })
-    if (committed) container = committed
+    if (committed) {
+      container = committed
+      bar.update(currentPath(), container)
+    }
   })
+  bar.update(currentPath(), container)
   await renderRoute(container)
 }
 
