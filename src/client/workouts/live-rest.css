@@ -3,7 +3,7 @@
 .live-clock svg { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
 .live-clock circle { fill: none; stroke-width: 3; stroke-linecap: round; }
 .live-ring-bg { stroke: var(--color-surface-strong); }
-.live-ring-fill { stroke: var(--color-text); transition: stroke-dashoffset .25s linear; }
+.live-ring-fill { stroke: var(--color-text); transition: stroke-dashoffset var(--duration-base) linear; }
 .live-clock strong { color: var(--live-ink); font-size: var(--text-display); line-height: 1; font-weight: var(--weight-regular); letter-spacing: -.015em; font-variant-numeric: tabular-nums; }
 .live-ring-fill[data-warning="true"] { stroke: var(--color-accent); }
 .live-clock strong[data-warning="true"] { color: var(--color-accent); }

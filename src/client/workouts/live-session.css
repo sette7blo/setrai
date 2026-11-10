@@ -68,7 +68,7 @@ body:has(.live-overlay) { overflow: hidden; }
 .live-action:hover:not(:disabled) { filter: brightness(.96); }
 .live-end { flex: 0 0 44px; width: 44px; padding: 0; background: transparent; }
 .live-progress { height: 2px; flex-shrink: 0; background: var(--live-line); }
-.live-progress-fill { height: 100%; background: var(--live-accent); transition: width .25s ease; }
+.live-progress-fill { height: 100%; background: var(--live-accent); transition: width var(--duration-base) var(--ease-out); }
 .live-rail {
   display: flex;
   flex-shrink: 0;

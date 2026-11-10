@@ -8,7 +8,7 @@
 .recovery-quick-status { margin: 0; color: var(--color-muted-strong); font-size: var(--text-meta); }
 .recovery-quick-status:empty, .recovery-quick-result:empty { display: none; }
 .recovery-quick-result, .recovery-quick-list { display: grid; gap: 10px; min-width: 0; }
-.recovery-quick-result.is-visible { animation: quick-preview-in 180ms ease-out; }
+.recovery-quick-result.is-visible { animation: quick-preview-in var(--duration-slow) var(--ease-out); }
 .recovery-quick-summary { margin: 0; color: var(--color-muted-strong); font-size: var(--text-meta); line-height: 1.5; }
 .recovery-quick-row { display: grid; grid-template-columns: 22px minmax(0, 1fr) auto; gap: 8px; align-items: center; padding-block: 10px; border-top: 1px solid var(--color-border); }
 .recovery-quick-index { color: var(--color-muted-strong); font-size: var(--text-caption); font-variant-numeric: tabular-nums; }

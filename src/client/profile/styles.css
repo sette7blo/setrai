@@ -11,7 +11,7 @@
   background: var(--color-surface);
   color: var(--color-text);
   box-shadow: 0 1px 3px color-mix(in srgb, var(--color-text) 4%, transparent);
-  transition: box-shadow 0.2s ease, transform 0.1s ease;
+  transition: box-shadow var(--duration-base) var(--ease-out), transform var(--duration-fast) var(--ease-out);
 }
 .settings-category:hover {
   box-shadow: 0 4px 12px color-mix(in srgb, var(--color-text) 6%, transparent);
@@ -45,7 +45,7 @@
 
 .settings-category-icon svg,
 .settings-category-chevron svg { width: 18px; height: 18px; }
-.settings-category-chevron { display: grid; place-items: center; color: var(--color-muted-strong); transition: transform .16s ease; }
+.settings-category-chevron { display: grid; place-items: center; color: var(--color-muted-strong); transition: transform var(--duration-base) var(--ease-out); }
 .settings-category-copy { min-width: 0; display: grid; gap: 3px; }
 .settings-category-copy strong { color: var(--color-text); font: var(--weight-heavy) var(--text-body)/1.2 var(--font-sans), sans-serif; letter-spacing: -.01em; }
 .settings-category-copy small { display: -webkit-box; overflow: hidden; color: var(--color-muted-strong); font-size: var(--text-caption); line-height: 1.3; -webkit-box-orient: vertical; -webkit-line-clamp: 2; }
@@ -186,7 +186,7 @@
 }
 .settings-backup-footnote { margin: 12px 0 0; color: var(--color-muted-strong); font-size: var(--text-caption); line-height: 1.45; text-wrap: pretty; }
 
-.profile-page--loading div { min-height: 6rem; border-radius: var(--radius-lg); background: color-mix(in srgb, var(--color-text) 8%, transparent); animation: exercisePulse 1.4s ease-in-out infinite; }
+.profile-page--loading div { min-height: 6rem; border-radius: var(--radius-lg); background: color-mix(in srgb, var(--color-text) 8%, transparent); animation: exercisePulse var(--duration-pulse) var(--ease-out) infinite; }
 
 @media (min-width: 820px) {
   .profile-settings-page { max-width: 720px; width: 100%; }
@@ -213,11 +213,11 @@
 }
 
 .settings-category-chevron {
-  transition: transform .2s cubic-bezier(0.23,1,0.32,1);
+  transition: transform var(--duration-base) var(--ease-out);
 }
 
 .settings-category[open] > summary {
-  transition: background 0.2s ease;
+  transition: background var(--duration-base) var(--ease-out);
 }
 
 /* Improved input focus */

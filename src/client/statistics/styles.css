@@ -335,7 +335,7 @@
   min-height: 6rem;
   border-radius: var(--radius-lg);
   background: color-mix(in srgb, var(--color-surface) 7%, transparent);
-  animation: exercisePulse 1.4s ease-in-out infinite;
+  animation: exercisePulse var(--duration-pulse) var(--ease-out) infinite;
 }
 
 @media (min-width: 720px) {
@@ -689,7 +689,7 @@
   background: var(--color-surface-strong);
   color: var(--color-text);
   cursor: pointer;
-  transition: transform 100ms ease, background-color 180ms ease;
+  transition: transform var(--duration-fast) var(--ease-out), background-color var(--duration-base) var(--ease-out);
 }
 
 .body-share-close:hover { background: var(--color-border); }
@@ -744,7 +744,7 @@
   color: var(--color-muted-strong);
   font: var(--weight-heavy) var(--text-caption)/1 var(--font-sans);
   cursor: pointer;
-  transition: transform 100ms ease, border-color 180ms ease, background-color 180ms ease;
+  transition: transform var(--duration-fast) var(--ease-out), border-color var(--duration-base) var(--ease-out), background-color var(--duration-base) var(--ease-out);
 }
 
 .body-share-range button[aria-pressed="true"] {
@@ -800,7 +800,7 @@
   min-height: 52px;
   width: 100%;
   justify-content: center;
-  transition: transform 100ms ease, opacity 180ms ease;
+  transition: transform var(--duration-fast) var(--ease-out), opacity var(--duration-base) var(--ease-out);
 }
 
 .body-share-submit:active:not(:disabled) { transform: scale(.97); }
@@ -1217,7 +1217,7 @@
 /* Premium stat tiles (Home dashboard) */
 .summary-stat,
 .body-card {
-  transition: box-shadow 0.2s ease, transform 0.1s ease;
+  transition: box-shadow var(--duration-base) var(--ease-out), transform var(--duration-fast) var(--ease-out);
   border-radius: var(--radius-lg);
   box-shadow: 0 1px 3px color-mix(in srgb, var(--color-text) 4%, transparent);
 }
@@ -1244,7 +1244,7 @@
 
 /* Premium panels consistency */
 .stats-panel {
-  transition: box-shadow 0.2s ease, transform 0.1s ease;
+  transition: box-shadow var(--duration-base) var(--ease-out), transform var(--duration-fast) var(--ease-out);
   border-radius: var(--radius-lg);
   box-shadow: 0 2px 8px color-mix(in srgb, var(--color-text) 5%, transparent);
 }
@@ -1261,7 +1261,7 @@
 /* Better range button press feedback */
 .stats-range-btn {
   cursor: pointer;
-  transition: all 0.1s ease;
+  transition: all var(--duration-fast) var(--ease-out);
 }
 
 .stats-range-btn:active {
@@ -1287,7 +1287,7 @@
 
 /* 1. Body cards - hover lift + depth */
 .body-card {
-  transition: box-shadow 0.2s ease, transform 0.1s ease;
+  transition: box-shadow var(--duration-base) var(--ease-out), transform var(--duration-fast) var(--ease-out);
   border-radius: var(--radius-lg);
   box-shadow: 0 1px 3px color-mix(in srgb, var(--color-text) 4%, transparent);
 }
@@ -1343,7 +1343,7 @@
   background: var(--color-text);
   border-radius: var(--radius-pill);
   box-shadow: 0 0 0 3px var(--color-surface);
-  transition: left 0.3s ease;
+  transition: left var(--duration-slow) var(--ease-out);
 }
 
 .bmi-scale {
@@ -1377,7 +1377,7 @@
   fill: var(--color-surface);
   stroke: var(--color-primary);
   stroke-width: 2;
-  transition: r 0.15s ease;
+  transition: r var(--duration-fast) var(--ease-out);
 }
 
 .body-chart circle:hover {
@@ -1397,12 +1397,12 @@
   height: 100%;
   background: linear-gradient(90deg, var(--color-primary), var(--color-success));
   border-radius: var(--radius-pill);
-  transition: width 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  transition: width var(--duration-slow) var(--ease-out);
 }
 
 /* 5. Entries list rows - hover + delete visibility */
 .body-entry {
-  transition: background 0.1s ease;
+  transition: background var(--duration-fast) var(--ease-out);
 }
 
 .body-entry:hover {
@@ -1411,7 +1411,7 @@
 
 .body-entry-delete {
   opacity: 0.4;
-  transition: opacity 0.15s ease;
+  transition: opacity var(--duration-fast) var(--ease-out);
 }
 
 .body-entry:hover .body-entry-delete {

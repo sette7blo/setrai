@@ -23,11 +23,10 @@
   height: 2px;
   border-radius: var(--radius-pill);
   background: var(--color-text);
+  /* Continuous progress, deliberately off the shared durations. */
   animation: route-loading-progress .7s ease-in-out infinite alternate;
 }
 @keyframes route-loading-progress { to { transform: translateX(212%); } }
-.route-container > * { animation: route-in 180ms var(--ease-out); }
-@keyframes route-in { from { opacity: 0; transform: translateY(4px); } }
 
 h1 { font-stretch: var(--font-display-stretch); }
 h1 { max-width: none; margin: 0; font-size: var(--font-page-title); font-weight: var(--weight-bold); line-height: 1.05; letter-spacing: -.01em; text-wrap: balance; }
@@ -48,7 +47,7 @@ h1 { max-width: none; margin: 0; font-size: var(--font-page-title); font-weight:
 .mobile-brand, .brand-mark { display: inline-flex; min-height: 44px; align-items: center; gap: 8px; }
 .mobile-brand__logo, .brand-mark__logo { display: block; width: 30px; height: 27px; object-fit: contain; }
 .mobile-brand strong, .brand-mark strong { font-size: var(--text-section); font-weight: var(--weight-heavy); font-stretch: var(--font-display-stretch); letter-spacing: -.01em; line-height: 1; }
-.settings-gear { display: grid; place-items: center; width: 44px; height: 44px; flex: none; border-radius: var(--radius-pill); color: var(--color-text); transition: background-color 160ms ease; }
+.settings-gear { display: grid; place-items: center; width: 44px; height: 44px; flex: none; border-radius: var(--radius-pill); color: var(--color-text); transition: background-color var(--duration-base) var(--ease-out); }
 .settings-gear svg { width: 22px; height: 22px; stroke-width: 1.9; }
 .settings-gear:active { background: var(--color-surface-strong); }
 html[data-section="/profile"] .settings-gear { background: var(--color-surface-strong); }
@@ -73,7 +72,7 @@ html[data-section^="/sessions/"] .top-bar { display: none; }
   -webkit-backdrop-filter: blur(14px);
 }
 .nav-link { display: flex; align-items: center; gap: 10px; color: var(--color-muted); font-weight: var(--weight-medium); -webkit-tap-highlight-color: transparent; }
-.nav-link-icon { display: grid; place-items: center; width: 56px; height: 30px; border-radius: var(--radius-pill); transition: background-color 200ms var(--ease-out), transform 120ms ease; }
+.nav-link-icon { display: grid; place-items: center; width: 56px; height: 30px; border-radius: var(--radius-pill); transition: background-color var(--duration-base) var(--ease-out), transform var(--duration-fast) var(--ease-out); }
 .nav-link-icon svg { width: 22px; height: 22px; stroke-width: 1.9; }
 .nav-link:active .nav-link-icon { transform: scale(.94); }
 .nav-link--active { color: var(--color-text); }
@@ -98,7 +97,7 @@ html[data-section^="/sessions/"] .top-bar { display: none; }
   color: var(--color-on-accent);
   background: var(--color-accent);
   box-shadow: 0 8px 24px color-mix(in srgb, var(--color-accent) 28%, transparent);
-  animation: now-training-in 260ms var(--ease-out);
+  animation: now-training-in var(--duration-slow) var(--ease-out);
 }
 .now-training[hidden] { display: none; }
 .now-training-copy { display: grid; gap: 2px; min-width: 0; }
@@ -128,7 +127,7 @@ html[data-section="/today"] .app-frame:has(.now-training:not([hidden])) { paddin
   .app-sidebar { position: sticky; top: 0; display: flex; flex-direction: column; gap: 28px; height: 100vh; height: 100dvh; padding: 24px 16px; border-right: 1px solid var(--color-border); }
   .brand-mark { padding: 0 8px; }
   .sidebar-nav { display: grid; gap: 2px; }
-  .sidebar-nav .nav-link { min-height: 44px; padding: 0 8px; border-radius: var(--radius-md); font-size: var(--text-body); transition: background-color 160ms ease; }
+  .sidebar-nav .nav-link { min-height: 44px; padding: 0 8px; border-radius: var(--radius-md); font-size: var(--text-body); transition: background-color var(--duration-base) var(--ease-out); }
   .sidebar-nav .nav-link:hover { background: color-mix(in srgb, var(--color-text) 5%, transparent); }
   .sidebar-nav .nav-link-icon { width: 36px; }
   .sidebar-nav .nav-link--active { background: var(--color-surface); box-shadow: inset 0 0 0 1px var(--color-border); }

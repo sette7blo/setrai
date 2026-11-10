@@ -68,7 +68,7 @@
     color-mix(in srgb, var(--color-text) 4%, transparent)
   );
   background-size: 200% 100%;
-  animation: page-state-pulse 1.2s ease-in-out infinite;
+  animation: page-state-pulse var(--duration-pulse) var(--ease-out) infinite;
 }
 
 .page-state-block:nth-child(1) { height: 72px; }
