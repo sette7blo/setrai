@@ -128,8 +128,15 @@ export function countdown(): HTMLElement {
 }
 
 export function paintCountdown(root: HTMLElement, seconds: number, fraction: number): void {
+  const warning = String(seconds > 0 && seconds <= 5)
   const value = root.querySelector<HTMLElement>('[data-clock-value]')
-  if (value) value.textContent = String(Math.max(0, seconds))
+  if (value) {
+    value.textContent = String(Math.max(0, seconds))
+    value.setAttribute('data-warning', warning)
+  }
   const circle = root.querySelector<SVGCircleElement>('.live-ring-fill')
-  if (circle) circle.style.strokeDashoffset = String(339.3 * (1 - Math.max(0, Math.min(1, fraction))))
+  if (circle) {
+    circle.style.strokeDashoffset = String(339.3 * (1 - Math.max(0, Math.min(1, fraction))))
+    circle.setAttribute('data-warning', warning)
+  }
 }

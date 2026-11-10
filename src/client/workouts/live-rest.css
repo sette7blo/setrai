@@ -5,6 +5,8 @@
 .live-ring-bg { stroke: #e0e5da; }
 .live-ring-fill { stroke: var(--live-accent); transition: stroke-dashoffset .25s linear; }
 .live-clock strong { color: var(--live-ink); font-size: 64px; line-height: 1; font-weight: 500; letter-spacing: -.05em; font-variant-numeric: tabular-nums; }
+.live-ring-fill[data-warning="true"] { stroke: #b43c35; }
+.live-clock strong[data-warning="true"] { color: #b43c35; }
 .live-clock-copy { display: grid; justify-items: center; gap: 8px; }
 .live-clock-label { color: var(--live-muted); font-size: 12px; }
 .live-rest {

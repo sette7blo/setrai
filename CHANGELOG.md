@@ -11,6 +11,7 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 ## [Unreleased]
 
+- Fixed live workout countdown sounds on iOS: audio is now primed during taps and key presses, kept alive between cues, and rebuilt after the app returns from the background. Cues are louder, with a longer final tone, and the countdown number and ring turn red for the final five seconds.
 - Added an optional Omarchy snapshot: with `SETRAI_OMARCHY_SNAPSHOT_ENABLED=true`, Setrai writes a small JSON file of glanceable training state (resume workout, today and week volume, readiness, last workout, body weight) for the Omarchy bar plugin. Off by default; Docker installs also need the snapshot bind mount described in `docs/deployment.md`.
 
 ## [v0.3.0] — 2026-11-09

@@ -1039,7 +1039,10 @@ src/client/workouts/
 - live workout runner;
 - runner lifecycle, saved clocks and training mutations in `session-page.ts`;
 - deadline-based five-second countdown sound scheduling and cancellation in
-  `live-audio.ts`, independent of UI polling and using device output timing;
+  `live-audio.ts`, independent of UI polling and using device output timing
+  and Workstr-compatible tone envelopes;
+- gesture-only WebKit audio priming, silent keep-alive, interruption recovery,
+  and context disposal in `live-audio-context.ts`;
 - live-session screen-awake lifecycle and native/iOS fallback in
   `live-wake-lock.ts`, activated by training interaction and released on cleanup;
 - pure strength/superset planning and EMOM schedule/phase clocks in `live-plan.ts`;
