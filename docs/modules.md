@@ -857,6 +857,59 @@ AI does not own canonical training data.
 
 ---
 
+# 18. Omarchy server feature
+
+## Location
+
+```text
+src/server/omarchy/
+```
+
+## Owns
+
+- the Omarchy snapshot schema and its serialization;
+- atomic snapshot file writes;
+- the snapshot refresh timer and debounce;
+- the list of HTTP mutations that refresh the snapshot.
+
+## Typical files
+
+```text
+snapshot.js   build the snapshot and write it atomically
+service.js    enabled/disabled lifecycle, timer, debounced refresh
+routes.js     response observer; exposes no HTTP endpoint
+```
+
+## May depend on
+
+Service contracts passed in by `src/server/index.js`:
+
+```text
+session service
+program service
+body service
+recovery service (group readiness)
+```
+
+Plus the shared muscle taxonomy in `src/shared/exercise-taxonomy.json`.
+
+## Must not depend on
+
+- any feature directory through a direct import;
+- repositories;
+- AI.
+
+## Important rule
+
+This is an outbound integration that is off by default. Core features must not
+import it or know it exists. The snapshot schema is defined in
+`docs/architecture.md` section 12 and is consumed by the separate
+`sette7blo/setrai-omarchy` plugin, so schema changes must stay
+backwards-compatible or bump `schemaVersion`. When a new route can change a
+snapshot field, add it to the mutation list in `routes.js`.
+
+---
+
 # 19. Client application shell
 
 ## Location
