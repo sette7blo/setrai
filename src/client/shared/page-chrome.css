@@ -61,11 +61,11 @@
   gap: 12px;
   align-items: center;
   padding: 12px;
-  border: 1px solid rgba(var(--color-primary-rgb), 0.32);
+  border: 1px solid color-mix(in srgb, var(--color-text) 32%, transparent);
   border-radius: var(--radius-lg);
   color: inherit;
   text-decoration: none;
-  background: linear-gradient(135deg, rgba(var(--color-primary-rgb), 0.12), var(--color-surface));
+  background: linear-gradient(135deg, color-mix(in srgb, var(--color-text) 12%, transparent), var(--color-surface));
 }
 
 .page-summary:has(.page-summary-trailing) {
@@ -77,10 +77,10 @@
   place-items: center;
   width: 40px;
   height: 40px;
-  border: 1px solid rgba(var(--color-primary-rgb), 0.26);
+  border: 1px solid color-mix(in srgb, var(--color-text) 26%, transparent);
   border-radius: var(--radius-md);
   color: var(--color-primary);
-  background: rgba(var(--color-primary-rgb), 0.1);
+  background: color-mix(in srgb, var(--color-text) 10%, transparent);
 }
 
 .page-summary-icon svg {
@@ -114,11 +114,11 @@
 }
 
 .page-summary-metric--gold {
-  color: #b8860b;
+  color: var(--color-warning);
 }
 
 .page-summary-metric--gold svg {
-  color: #c9a227;
+  color: var(--color-warning);
 }
 
 .page-summary-metric--green {

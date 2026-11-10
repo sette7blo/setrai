@@ -2,7 +2,7 @@
 
 
 
-.program-browse-icon { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid rgba(var(--color-primary-rgb), .26); border-radius: var(--radius-md); color: var(--color-primary); background: rgba(var(--color-primary-rgb), .1); }
+.program-browse-icon { display: grid; place-items: center; width: 40px; height: 40px; border: 1px solid color-mix(in srgb, var(--color-text) 26%, transparent); border-radius: var(--radius-md); color: var(--color-primary); background: color-mix(in srgb, var(--color-text) 10%, transparent); }
 .program-browse-icon svg { width: 20px; height: 20px; }
 
 
@@ -15,12 +15,12 @@
 
 
 .program-list { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
-.workout-card { min-width: 0; overflow: hidden; border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: linear-gradient(150deg, rgba(var(--color-primary-rgb), .04), transparent 60%), var(--color-surface); }
+.workout-card { min-width: 0; overflow: hidden; border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: linear-gradient(150deg, color-mix(in srgb, var(--color-text) 4%, transparent), transparent 60%), var(--color-surface); }
 .workout-card-header { display: grid; grid-template-columns: 80px minmax(0, 1fr) 20px; gap: 10px; align-items: start; min-height: 104px; padding: 12px; cursor: pointer; list-style: none; }
 .workout-card-header::-webkit-details-marker, .workout-exercise > summary::-webkit-details-marker { display: none; }
 .workout-card-header > svg { width: 18px; height: 18px; margin-top: 3px; color: var(--color-muted); }
 .workout-card[open] > summary > svg { transform: rotate(180deg); }
-.workout-card-map { display: grid; place-items: center; width: 80px; height: 80px; padding: 3px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: rgba(0, 0, 0, .18); }
+.workout-card-map { display: grid; place-items: center; width: 80px; height: 80px; padding: 3px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: color-mix(in srgb, var(--color-text) 18%, transparent); }
 .workout-card-map svg { display: block; width: 100%; height: 100%; }
 .workout-card-map .muscle-map__secondary { fill: var(--color-warning); }
 .workout-card-info { display: grid; gap: 5px; min-width: 0; padding-top: 2px; }
@@ -31,15 +31,15 @@
 .workout-card-focus { font: var(--weight-bold) var(--text-caption)/1.4 var(--font-sans); color: var(--color-primary); }
 .workout-card-body { padding: 12px; border-top: 1px solid var(--color-border); }
 .workout-description { margin: 0 0 12px; color: var(--color-muted-strong); font-size: var(--text-meta); line-height: 1.6; white-space: pre-line; overflow-wrap: anywhere; }
-.workout-preview { display: grid; grid-template-columns: 28px minmax(0, 1fr); align-items: center; gap: 4px 8px; margin-bottom: 12px; padding: 10px; border: 1px solid rgba(var(--color-primary-rgb), .2); border-radius: var(--radius-md); background: rgba(var(--color-primary-rgb), .06); }
+.workout-preview { display: grid; grid-template-columns: 28px minmax(0, 1fr); align-items: center; gap: 4px 8px; margin-bottom: 12px; padding: 10px; border: 1px solid color-mix(in srgb, var(--color-text) 20%, transparent); border-radius: var(--radius-md); background: color-mix(in srgb, var(--color-text) 6%, transparent); }
 .workout-preview > svg { grid-row: 1 / 3; width: 22px; height: 22px; color: var(--color-primary); }
 .workout-preview strong { font-size: var(--text-body); }
 .workout-preview span { font-size: var(--text-caption); line-height: 1.4; color: var(--color-muted-strong); }
-.workout-block-summary { display: grid; gap: 4px; margin: 10px 0; padding: 10px; border-radius: var(--radius-sm); background: rgba(var(--color-primary-rgb), .06); }
+.workout-block-summary { display: grid; gap: 4px; margin: 10px 0; padding: 10px; border-radius: var(--radius-sm); background: color-mix(in srgb, var(--color-text) 6%, transparent); }
 .workout-block-summary strong { color: var(--color-primary); font-size: var(--text-caption); }
 .workout-block-summary span { color: var(--color-muted-strong); font-size: var(--text-caption); line-height: 1.5; }
 .workout-exercise-list { display: grid; gap: 6px; }
-.workout-exercise { overflow: hidden; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: rgba(0, 0, 0, .16); }
+.workout-exercise { overflow: hidden; border: 1px solid var(--color-border); border-radius: var(--radius-sm); background: color-mix(in srgb, var(--color-text) 16%, transparent); }
 .workout-exercise > summary { display: grid; grid-template-columns: 20px minmax(0, 1fr) auto 14px; align-items: center; gap: 7px; min-height: 56px; padding: 9px; cursor: pointer; list-style: none; }
 .workout-exercise-index { font: var(--weight-bold) var(--text-caption)/1 var(--font-sans); color: var(--color-primary); }
 .workout-exercise summary strong { display: block; font-size: var(--text-caption); line-height: 1.35; }
@@ -49,7 +49,7 @@
 .workout-muscle-pill { max-width: 75px; border: 1px solid var(--color-border); border-radius: var(--radius-pill); padding: 4px 6px; color: var(--color-muted-strong); font: var(--weight-bold) var(--text-caption)/1.25 var(--font-sans); }
 .workout-muscle-pill:empty { display: none; }
 .workout-exercise-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 6px; padding: 9px; border-top: 1px solid var(--color-border); }
-.workout-exercise-stats > span { display: grid; gap: 5px; text-align: center; padding: 8px 2px; border-radius: var(--radius-sm); background: rgba(var(--color-primary-rgb), .06); }
+.workout-exercise-stats > span { display: grid; gap: 5px; text-align: center; padding: 8px 2px; border-radius: var(--radius-sm); background: color-mix(in srgb, var(--color-text) 6%, transparent); }
 .workout-exercise-stats strong { font-size: var(--text-meta); overflow-wrap: anywhere; }
 .workout-exercise-stats small { color: var(--color-muted); font: var(--weight-bold) var(--text-caption)/1 var(--font-sans); text-transform: none; }
 .workout-exercise > p { margin: 0; padding: 0 10px 10px; color: var(--color-muted-strong); font-size: var(--text-caption); }
@@ -57,7 +57,7 @@
 .workout-card-actions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin-top: 14px; }
 .workout-card-actions .button { justify-content: center; width: 100%; min-width: 0; padding-inline: 8px !important; font-size: var(--text-caption); }
 .workout-card-action--start { grid-column: 1 / -1; }
-.workout-card-action--delete { color: var(--color-error) !important; border-color: rgba(158, 55, 48, .34) !important; background: rgba(158, 55, 48, .06) !important; }
+.workout-card-action--delete { color: var(--color-error) !important; border-color: color-mix(in srgb, var(--color-error) 34%, transparent) !important; background: color-mix(in srgb, var(--color-error) 6%, transparent) !important; }
 .workout-card-action--delete svg { color: currentColor !important; }
 .workout-action-error { margin: 8px 0 0; color: var(--color-error); font-size: var(--text-caption); line-height: 1.5; }
 .workout-action-error:empty { display: none; }
@@ -67,7 +67,7 @@
 
 .workout-loading { display: grid; grid-template-columns: minmax(0, 1fr); gap: 12px; }
 .workout-loading-card { display: grid; gap: 9px; min-height: 116px; padding: 14px; border: 1px solid var(--color-border); border-radius: var(--radius-lg); background: var(--color-surface); }
-.workout-loading-card span, .workout-loading-card i, .workout-loading-card b { display: block; border-radius: var(--radius-pill); background: linear-gradient(90deg, rgba(0,0,0,.06), rgba(0,0,0,.12), rgba(0,0,0,.06)); background-size: 220% 100%; animation: workoutLoadingPulse 1.2s ease-in-out infinite; }
+.workout-loading-card span, .workout-loading-card i, .workout-loading-card b { display: block; border-radius: var(--radius-pill); background: linear-gradient(90deg, color-mix(in srgb, var(--color-text) 6%, transparent), color-mix(in srgb, var(--color-text) 12%, transparent), color-mix(in srgb, var(--color-text) 6%, transparent)); background-size: 220% 100%; animation: workoutLoadingPulse 1.2s ease-in-out infinite; }
 .workout-loading-card span { width: 42%; height: 12px; }
 .workout-loading-card i { width: 68%; height: 10px; }
 .workout-loading-card b { width: 100%; height: 44px; border-radius: var(--radius-md); }
@@ -98,12 +98,12 @@
 .monthly-recap-metrics strong { display: block; overflow: hidden; font: var(--weight-heavy) var(--text-section)/1 var(--font-sans); font-variant-numeric: tabular-nums; text-overflow: ellipsis; white-space: nowrap; }
 .monthly-recap-metrics span { display: block; margin-top: 7px; color: var(--color-muted); font: var(--weight-heavy) var(--text-caption)/1 var(--font-sans); letter-spacing: .01em; text-transform: none; }
 .monthly-recap-empty { color: var(--color-muted); font-size: var(--text-caption); }
-.history-calendar { max-width: 560px; padding: 14px; border: 1px solid rgba(var(--color-primary-rgb), .16); border-radius: var(--radius-lg); background: rgba(2, 6, 5, .14); }
+.history-calendar { max-width: 560px; padding: 14px; border: 1px solid color-mix(in srgb, var(--color-text) 16%, transparent); border-radius: var(--radius-lg); background: color-mix(in srgb, var(--color-text) 14%, transparent); }
 .history-cal-head { display: grid; grid-template-columns: 44px minmax(0, 1fr) 44px; align-items: center; gap: 8px; margin-bottom: 14px; }
 .history-cal-title-group { display: grid; justify-items: center; gap: 4px; min-width: 0; }
 .history-cal-title { min-width: 0; text-align: center; color: var(--color-text); font: var(--weight-heavy) var(--text-title)/1.2 var(--font-sans), sans-serif; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-.history-cal-nav { display: grid; place-items: center; width: 44px; min-height: 44px; padding: 0; border: 1px solid rgba(var(--color-primary-rgb), .2); border-radius: 50%; color: var(--color-text); background: transparent; cursor: pointer; transition: transform 100ms ease, background-color 160ms ease; }
-.history-cal-nav:hover { background: rgba(var(--color-primary-rgb), .06); }
+.history-cal-nav { display: grid; place-items: center; width: 44px; min-height: 44px; padding: 0; border: 1px solid color-mix(in srgb, var(--color-text) 20%, transparent); border-radius: 50%; color: var(--color-text); background: transparent; cursor: pointer; transition: transform 100ms ease, background-color 160ms ease; }
+.history-cal-nav:hover { background: color-mix(in srgb, var(--color-text) 6%, transparent); }
 .history-cal-nav:active { transform: scale(.97); }
 .history-cal-nav svg { width: 18px; height: 18px; }
 .history-cal-today { min-height: 20px; padding: 0; border: 0; color: var(--color-muted-strong); background: transparent; font: var(--weight-heavy) var(--text-caption)/1 var(--font-sans); letter-spacing: .01em; text-transform: none; cursor: pointer; }
@@ -114,9 +114,9 @@
 .history-cal-day { position: relative; aspect-ratio: 1; min-width: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; padding: 0; border: 1px solid transparent; border-radius: 50%; color: var(--color-muted); background: transparent; font: var(--weight-bold) var(--text-caption)/1 var(--font-sans), sans-serif; font-variant-numeric: tabular-nums; }
 .history-cal-day.pad { background: transparent; border-color: transparent; }
 .history-cal-day.future { opacity: .32; }
-.history-cal-day.done { color: var(--color-text); cursor: pointer; border-color: rgba(var(--color-primary-rgb), .24); background: rgba(var(--color-primary-rgb), .08); }
-.history-cal-day.done[data-intensity="2"] { border-color: rgba(var(--color-primary-rgb), .42); background: rgba(var(--color-primary-rgb), .14); }
-.history-cal-day.done[data-intensity="3"] { border-color: rgba(var(--color-primary-rgb), .62); background: rgba(var(--color-primary-rgb), .2); }
+.history-cal-day.done { color: var(--color-text); cursor: pointer; border-color: color-mix(in srgb, var(--color-text) 24%, transparent); background: color-mix(in srgb, var(--color-text) 8%, transparent); }
+.history-cal-day.done[data-intensity="2"] { border-color: color-mix(in srgb, var(--color-text) 42%, transparent); background: color-mix(in srgb, var(--color-text) 14%, transparent); }
+.history-cal-day.done[data-intensity="3"] { border-color: color-mix(in srgb, var(--color-text) 62%, transparent); background: color-mix(in srgb, var(--color-text) 20%, transparent); }
 .history-cal-day.today { box-shadow: inset 0 0 0 1px var(--color-primary); font-weight: var(--weight-heavy); }
 .history-cal-day.selected { border-color: var(--color-text); border-width: 2px; color: var(--color-text); box-shadow: none; }
 .history-cal-day.selected::after { content: ''; position: absolute; left: 50%; bottom: 4px; width: 4px; height: 4px; transform: translateX(-50%); border-radius: 50%; background: var(--color-text); }
@@ -132,26 +132,26 @@
 .workout-browser--history .history-calendar .history-card + .history-card { border-left: 1px solid var(--color-border) !important; }
 .history-card-value { color: var(--color-text); font: var(--weight-heavy) var(--text-title)/1 var(--font-sans), sans-serif; font-variant-numeric: tabular-nums; }
 .history-card-label { margin-top: 6px; color: var(--color-muted); font-size: var(--text-caption); line-height: 1.32; }
-.history-filter { display: flex; align-items: center; gap: 12px; padding: 11px 13px; border: 1px solid rgba(114,242,154,.38); border-radius: var(--radius-md); background: rgba(114,242,154,.07); }
+.history-filter { display: flex; align-items: center; gap: 12px; padding: 11px 13px; border: 1px solid color-mix(in srgb, var(--color-success) 38%, transparent); border-radius: var(--radius-md); background: color-mix(in srgb, var(--color-success) 7%, transparent); }
 .history-filter-text { display: grid; gap: 3px; min-width: 0; flex: 1; }
 .history-filter-text span { color: var(--color-muted); font-size: var(--text-caption); }
 .history-session-list { display: grid; gap: 10px; }
 .history-session-card { padding: 0; }
 .history-session-card > .workout-card-header { min-height: 92px; }
-.history-session-card--active { border-color: rgba(var(--color-primary-rgb), .44); background: linear-gradient(145deg, rgba(var(--color-primary-rgb), .13), transparent 70%), var(--color-surface); }
+.history-session-card--active { border-color: color-mix(in srgb, var(--color-text) 44%, transparent); background: linear-gradient(145deg, color-mix(in srgb, var(--color-text) 13%, transparent), transparent 70%), var(--color-surface); }
 .history-session-card .workout-card-body { padding-top: 10px; }
 .history-session-card[open] > summary > svg { transform: rotate(180deg); }
 .workout-card-muscles { color: var(--color-primary); font: var(--weight-bold) var(--text-caption)/1.4 var(--font-sans); }
 .session-receipt-summary { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 7px; margin-bottom: 12px; }
-.session-receipt-summary > div { display: grid; gap: 4px; min-width: 0; padding: 9px 5px; text-align: center; border: 1px solid rgba(var(--color-primary-rgb), .16); border-radius: var(--radius-sm); background: rgba(var(--color-primary-rgb), .06); }
+.session-receipt-summary > div { display: grid; gap: 4px; min-width: 0; padding: 9px 5px; text-align: center; border: 1px solid color-mix(in srgb, var(--color-text) 16%, transparent); border-radius: var(--radius-sm); background: color-mix(in srgb, var(--color-text) 6%, transparent); }
 .session-receipt-summary strong { color: var(--color-text); font-size: var(--text-meta); overflow-wrap: anywhere; }
 .session-receipt-summary span { color: var(--color-muted); font: var(--weight-heavy) var(--text-caption)/1 var(--font-sans); text-transform: none; }
 .session-detail { display: grid; gap: 8px; }
-.session-detail-ex { display: grid; gap: 8px; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: rgba(0,0,0,.16); }
+.session-detail-ex { display: grid; gap: 8px; padding: 10px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: color-mix(in srgb, var(--color-text) 16%, transparent); }
 .session-detail-ex-name { display: flex; align-items: center; gap: 8px; font-size: var(--text-meta); font-weight: var(--weight-heavy); }
 .session-detail-index { color: var(--color-primary); font: var(--weight-heavy) var(--text-caption)/1 var(--font-sans); }
 .session-detail-sets { display: flex; flex-wrap: wrap; gap: 6px; }
-.set-pill { border: 1px solid rgba(var(--color-primary-rgb), .24); border-radius: var(--radius-pill); padding: 5px 8px; color: var(--color-muted-strong); background: rgba(var(--color-primary-rgb), .06); font: var(--weight-bold) var(--text-caption)/1 var(--font-sans); }
+.set-pill { border: 1px solid color-mix(in srgb, var(--color-text) 24%, transparent); border-radius: var(--radius-pill); padding: 5px 8px; color: var(--color-muted-strong); background: color-mix(in srgb, var(--color-text) 6%, transparent); font: var(--weight-bold) var(--text-caption)/1 var(--font-sans); }
 .history-session-empty { padding: 12px; }
 .history-session-top, .history-stat-row { display: flex; align-items: center; justify-content: space-between; gap: 8px; color: var(--color-muted-strong); font: var(--weight-bold) var(--text-caption)/1.4 var(--font-sans); }
 .history-stat-row { justify-content: flex-start; flex-wrap: wrap; gap: 5px; }
@@ -160,7 +160,7 @@
 .history-stat-row span:last-child { color: var(--color-primary); }
 .history-data-quality { color: var(--color-warning); font: var(--weight-bold) var(--text-caption)/1.3 var(--font-sans); }
 .history-session-status { color: var(--color-primary); text-transform: none; letter-spacing: .01em; }
-.program-builder::backdrop { background: rgba(0, 0, 0, .7); backdrop-filter: blur(4px); }
+.program-builder::backdrop { background: var(--color-scrim); backdrop-filter: blur(4px); }
 .program-dialog-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 14px; }
 .program-dialog-heading h2 { margin: 0; font-size: var(--text-section); }
 @media (max-width: 359px) {

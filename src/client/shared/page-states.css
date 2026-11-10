@@ -4,7 +4,7 @@
   display: grid;
   gap: 12px;
   padding: 18px 16px;
-  border: 1px solid var(--color-border, rgba(0, 0, 0, 0.1));
+  border: 1px solid var(--color-border, color-mix(in srgb, var(--color-text) 10%, transparent));
   border-radius: var(--radius-lg);
   background: var(--color-surface);
   color: inherit;
@@ -17,7 +17,7 @@
 
 .page-state .eyebrow {
   margin: 0;
-  color: var(--color-muted, #6b6964);
+  color: var(--color-muted, var(--color-muted));
   font: var(--weight-heavy) var(--text-caption)/1 var(--font-sans);
   text-transform: none;
   letter-spacing: .01em;
@@ -31,12 +31,12 @@
 
 .page-state--compact .page-state-title {
   font: var(--weight-medium) var(--text-body)/1.35 var(--font-sans);
-  color: var(--color-muted-strong, #4d4b47);
+  color: var(--color-muted-strong, var(--color-muted-strong));
 }
 
 .page-state-copy {
   margin: 0;
-  color: var(--color-muted, #6b6964);
+  color: var(--color-muted, var(--color-muted));
   font: var(--weight-regular) var(--text-body)/1.45 var(--font-sans);
 }
 
@@ -48,14 +48,14 @@
 .page-state--compact {
   padding: 14px;
   border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, 0.55);
+  background: color-mix(in srgb, var(--color-surface) 55%, transparent);
 }
 
 .page-state--loading {
   gap: 10px;
   padding: 14px;
   border-style: dashed;
-  background: rgba(255, 255, 255, 0.4);
+  background: color-mix(in srgb, var(--color-surface) 40%, transparent);
 }
 
 .page-state-block {
@@ -63,9 +63,9 @@
   border-radius: var(--radius-md);
   background: linear-gradient(
     90deg,
-    rgba(0, 0, 0, 0.04),
-    rgba(0, 0, 0, 0.08),
-    rgba(0, 0, 0, 0.04)
+    color-mix(in srgb, var(--color-text) 4%, transparent),
+    color-mix(in srgb, var(--color-text) 8%, transparent),
+    color-mix(in srgb, var(--color-text) 4%, transparent)
   );
   background-size: 200% 100%;
   animation: page-state-pulse 1.2s ease-in-out infinite;
@@ -88,7 +88,7 @@
   display: grid;
   gap: 12px;
   padding: 18px 16px;
-  border: 1px solid var(--color-border, rgba(0, 0, 0, 0.1));
+  border: 1px solid var(--color-border, color-mix(in srgb, var(--color-text) 10%, transparent));
   border-radius: var(--radius-lg);
   background: var(--color-surface);
 }

@@ -39,30 +39,26 @@
 .summary-stat,
 .body-card {
   --tone: var(--color-primary);
-  --tone-rgb: var(--color-primary-rgb);
   min-width: 0;
   display: grid;
   justify-items: center;
   padding: 16px 10px;
-  border: 1px solid rgba(var(--color-primary-rgb), .14);
+  border: 1px solid color-mix(in srgb, var(--color-text) 14%, transparent);
   border-radius: var(--radius-lg);
-  background: linear-gradient(135deg, rgba(var(--tone-rgb), .08), rgba(255, 255, 255, .018)), rgba(0, 0, 0, .20);
+  background: linear-gradient(135deg, color-mix(in srgb, var(--tone) 8%, transparent), color-mix(in srgb, var(--color-surface) 1.8%, transparent)), color-mix(in srgb, var(--color-text) 20%, transparent);
   text-align: center;
 }
 
 .summary-stat.streak {
-  --tone: #f7c04a;
-  --tone-rgb: 247, 192, 74;
+  --tone: var(--color-warning);
 }
 
 .summary-stat.up {
-  --tone: #ff8a70;
-  --tone-rgb: 255, 138, 112;
+  --tone: var(--color-error);
 }
 
 .summary-stat.down {
-  --tone: #70ffbc;
-  --tone-rgb: 112, 255, 188;
+  --tone: var(--color-success);
 }
 
 .ss-icon,
@@ -74,7 +70,7 @@
   margin-bottom: 10px;
   border-radius: var(--radius-sm);
   color: var(--tone);
-  background: rgba(var(--tone-rgb), .12);
+  background: color-mix(in srgb, var(--tone) 12%, transparent);
 }
 
 .ss-icon svg,
@@ -110,7 +106,7 @@
   padding: 4px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-pill);
-  background: rgba(0, 0, 0, .24);
+  background: color-mix(in srgb, var(--color-text) 24%, transparent);
 }
 
 .stats-range-btn {
@@ -125,10 +121,10 @@
 }
 
 .stats-range-btn.active {
-  border-color: rgba(var(--color-primary-rgb), .68);
-  background: rgba(var(--color-primary-rgb), .18);
+  border-color: color-mix(in srgb, var(--color-text) 68%, transparent);
+  background: color-mix(in srgb, var(--color-text) 18%, transparent);
   color: var(--color-primary);
-  box-shadow: 0 0 18px rgba(var(--color-primary-rgb), .18);
+  box-shadow: 0 0 18px color-mix(in srgb, var(--color-text) 18%, transparent);
 }
 
 .stats-panel {
@@ -137,8 +133,8 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   padding: 14px;
-  background: rgba(0, 0, 0, .20);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .03);
+  background: color-mix(in srgb, var(--color-text) 20%, transparent);
+  box-shadow: inset 0 1px 0 color-mix(in srgb, var(--color-surface) 3%, transparent);
 }
 
 .stats-section-head,
@@ -195,13 +191,13 @@
   height: 10px;
   overflow: hidden;
   border-radius: var(--radius-pill);
-  background: rgba(255, 255, 255, .06);
+  background: color-mix(in srgb, var(--color-surface) 6%, transparent);
 }
 
 .dist-row .fill {
   height: 100%;
   border-radius: inherit;
-  background: linear-gradient(90deg, var(--color-primary), rgba(112, 255, 188, .82));
+  background: linear-gradient(90deg, var(--color-primary), color-mix(in srgb, var(--color-success) 82%, transparent));
 }
 
 .dist-row small {
@@ -216,9 +212,9 @@
   align-items: center;
   gap: 11px;
   padding: 11px;
-  border: 1px solid rgba(255, 255, 255, .06);
+  border: 1px solid color-mix(in srgb, var(--color-surface) 6%, transparent);
   border-radius: var(--radius-md);
-  background: rgba(255, 255, 255, .035);
+  background: color-mix(in srgb, var(--color-surface) 3.5%, transparent);
 }
 
 
@@ -248,7 +244,7 @@
   white-space: nowrap;
   border-radius: var(--radius-pill);
   padding: 7px 9px;
-  background: rgba(var(--color-primary-rgb), .12);
+  background: color-mix(in srgb, var(--color-text) 12%, transparent);
   color: var(--color-primary);
   font: var(--weight-heavy) var(--text-caption)/1 var(--font-sans);
 }
@@ -284,7 +280,7 @@
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   padding: 0 12px;
-  background: rgba(0, 0, 0, .22);
+  background: color-mix(in srgb, var(--color-text) 22%, transparent);
   color: var(--color-text);
   font: var(--weight-bold) var(--text-body)/1 var(--font-sans);
 }
@@ -312,7 +308,7 @@
 
 .body-chart-panel circle {
   fill: var(--color-primary);
-  stroke: rgba(0, 0, 0, .64);
+  stroke: color-mix(in srgb, var(--color-text) 64%, transparent);
   stroke-width: 1.5px;
 }
 
@@ -330,7 +326,7 @@
   border: 1px dashed var(--color-border);
   border-radius: var(--radius-lg);
   padding: clamp(1.25rem, 4vw, 2.2rem);
-  background: rgba(0, 0, 0, .18);
+  background: color-mix(in srgb, var(--color-text) 18%, transparent);
   box-shadow: var(--shadow-soft);
 }
 
@@ -338,7 +334,7 @@
 .profile-page--loading div {
   min-height: 6rem;
   border-radius: var(--radius-lg);
-  background: rgba(255, 255, 255, .07);
+  background: color-mix(in srgb, var(--color-surface) 7%, transparent);
   animation: exercisePulse 1.4s ease-in-out infinite;
 }
 
@@ -531,7 +527,7 @@
   margin-bottom: 8px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-sm);
-  background: #f1f0eb;
+  background: var(--color-bg);
   color: var(--color-primary);
 }
 
@@ -558,7 +554,7 @@
 
 .stats-body-view .body-card.up .body-card-icon,
 .stats-body-view .body-card.down .body-card-icon {
-  background: #e4e2db;
+  background: var(--color-surface-strong);
 }
 
 .stats-body-view #body-bmi,
@@ -574,7 +570,7 @@
   place-items: center;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  background: #f2f1ec;
+  background: var(--color-bg);
   padding: 6px 6px 4px;
   overflow: hidden;
 }
@@ -586,7 +582,7 @@
 }
 
 .stats-body-view .body-chart line {
-  stroke: rgba(17, 17, 17, .16);
+  stroke: color-mix(in srgb, var(--color-text) 16%, transparent);
   stroke-width: .75px;
 }
 
@@ -643,11 +639,11 @@
   border-radius: var(--radius-xl);
   background: transparent;
   color: var(--color-text);
-  box-shadow: 0 24px 80px rgba(0, 0, 0, .32);
+  box-shadow: 0 24px 80px color-mix(in srgb, var(--color-text) 32%, transparent);
 }
 
 .body-share-sheet::backdrop {
-  background: rgba(10, 9, 7, .56);
+  background: var(--color-scrim);
   backdrop-filter: blur(5px);
 }
 
@@ -657,7 +653,7 @@
   max-height: min(92dvh, 900px);
   overflow-y: auto;
   padding: 18px;
-  background: #f7f3e9;
+  background: var(--color-bg);
 }
 
 .body-share-sheet header {
@@ -690,13 +686,13 @@
   place-items: center;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  background: #efeae0;
+  background: var(--color-surface-strong);
   color: var(--color-text);
   cursor: pointer;
   transition: transform 100ms ease, background-color 180ms ease;
 }
 
-.body-share-close:hover { background: #e7e0d4; }
+.body-share-close:hover { background: var(--color-border); }
 .body-share-close:active { transform: scale(.97); }
 
 .body-share-preview {
@@ -706,10 +702,10 @@
   place-items: center;
   justify-self: center;
   overflow: hidden;
-  border: 1px solid rgba(5, 5, 5, .14);
+  border: 1px solid color-mix(in srgb, var(--color-text) 14%, transparent);
   border-radius: var(--radius-lg);
-  background: #eee8dc;
-  box-shadow: 0 12px 30px rgba(42, 35, 24, .12);
+  background: var(--color-surface-strong);
+  box-shadow: 0 12px 30px color-mix(in srgb, var(--color-text) 12%, transparent);
 }
 
 .body-share-preview img {
@@ -744,8 +740,8 @@
   min-height: 44px;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
-  background: #f1ede4;
-  color: #4d4942;
+  background: var(--color-surface-strong);
+  color: var(--color-muted-strong);
   font: var(--weight-heavy) var(--text-caption)/1 var(--font-sans);
   cursor: pointer;
   transition: transform 100ms ease, border-color 180ms ease, background-color 180ms ease;
@@ -753,7 +749,7 @@
 
 .body-share-range button[aria-pressed="true"] {
   border-color: var(--color-text);
-  background: #ded8cd;
+  background: var(--color-border);
   color: var(--color-text);
 }
 
@@ -764,7 +760,7 @@
   overflow: hidden;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  background: rgba(255, 255, 255, .52);
+  background: color-mix(in srgb, var(--color-surface) 52%, transparent);
 }
 
 .body-share-options label {
@@ -830,7 +826,7 @@
 .stats-body-view .bmi-bar,
 .stats-body-view .body-goal-bar {
   border: 1px solid var(--color-border);
-  background: #ebe7dc;
+  background: var(--color-surface-strong);
   overflow: hidden;
 }
 
@@ -844,14 +840,14 @@
   text-transform: none;
 }
 
-.stats-body-view .bmi-zone.under { background: #d9d7cf; }
-.stats-body-view .bmi-zone.normal { background: #efeee8; }
-.stats-body-view .bmi-zone.over { background: #c8c5bb; }
-.stats-body-view .bmi-zone.obese { background: #a9a69c; color: var(--color-text); }
+.stats-body-view .bmi-zone.under { background: var(--color-border); }
+.stats-body-view .bmi-zone.normal { background: var(--color-surface-strong); }
+.stats-body-view .bmi-zone.over { background: var(--color-border); }
+.stats-body-view .bmi-zone.obese { background: var(--color-border-strong); color: var(--color-text); }
 
 .stats-body-view .bmi-marker,
 .stats-body-view .body-goal-fill {
-  background: linear-gradient(90deg, var(--color-text), #6a6a6a) !important;
+  background: linear-gradient(90deg, var(--color-text), var(--color-border-strong)) !important;
 }
 
 
@@ -868,7 +864,7 @@
 .stats-body-view .body-forms .form-grid input {
   min-height: 40px;
   border: 1px solid var(--color-border);
-  background: #f1f0eb;
+  background: var(--color-bg);
   color: var(--color-text);
 }
 
@@ -885,7 +881,7 @@
   height: 28px;
   margin: 0;
   border-radius: var(--radius-sm);
-  background: #e4e2db;
+  background: var(--color-surface-strong);
   color: var(--color-text);
 }
 
@@ -927,7 +923,7 @@
   border-radius: var(--radius-sm) !important;
   overflow: hidden !important;
   margin-top: 10px !important;
-  background: #ebe7dc !important;
+  background: var(--color-surface-strong) !important;
 }
 
 .stats-body-view .bmi-zone {
@@ -941,10 +937,10 @@
   color: var(--color-text) !important;
 }
 
-.stats-body-view .bmi-zone.under { background: #d6d4cc !important; }
-.stats-body-view .bmi-zone.normal { background: #f4f3ee !important; }
-.stats-body-view .bmi-zone.over { background: #c4c1b8 !important; }
-.stats-body-view .bmi-zone.obese { background: #8f8c84 !important; color: var(--color-text) !important; }
+.stats-body-view .bmi-zone.under { background: var(--color-border) !important; }
+.stats-body-view .bmi-zone.normal { background: var(--color-bg) !important; }
+.stats-body-view .bmi-zone.over { background: var(--color-border) !important; }
+.stats-body-view .bmi-zone.obese { background: var(--color-border-strong) !important; color: var(--color-text) !important; }
 
 .stats-body-view .bmi-marker {
   position: absolute !important;
@@ -1063,23 +1059,23 @@
 
 /* BMI graph tonal color: same muted premium family as the stat cards. */
 .stats-body-view .bmi-zone.under {
-  background: linear-gradient(145deg, rgba(91,74,99,.26), rgba(250,248,252,.96)) !important;
-  color: #3d3143 !important;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--color-text) 26%, transparent), color-mix(in srgb, var(--color-surface) 96%, transparent)) !important;
+  color: var(--color-muted-strong) !important;
 }
 
 .stats-body-view .bmi-zone.normal {
-  background: linear-gradient(145deg, rgba(102,114,71,.28), rgba(246,248,241,.96)) !important;
-  color: #3f4729 !important;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--color-success) 28%, transparent), color-mix(in srgb, var(--color-surface) 96%, transparent)) !important;
+  color: var(--color-success) !important;
 }
 
 .stats-body-view .bmi-zone.over {
-  background: linear-gradient(145deg, rgba(214,162,58,.30), rgba(255,250,240,.96)) !important;
-  color: #6f4518 !important;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--color-warning) 30%, transparent), color-mix(in srgb, var(--color-surface) 96%, transparent)) !important;
+  color: var(--color-warning) !important;
 }
 
 .stats-body-view .bmi-zone.obese {
-  background: linear-gradient(145deg, rgba(91,74,99,.34), rgba(214,162,58,.18)) !important;
-  color: #241a29 !important;
+  background: linear-gradient(145deg, color-mix(in srgb, var(--color-text) 34%, transparent), color-mix(in srgb, var(--color-warning) 18%, transparent)) !important;
+  color: var(--color-text) !important;
 }
 
 
@@ -1223,12 +1219,12 @@
 .body-card {
   transition: box-shadow 0.2s ease, transform 0.1s ease;
   border-radius: var(--radius-lg);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--color-text) 4%, transparent);
 }
 
 .summary-stat:hover,
 .body-card:hover {
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--color-text) 8%, transparent);
   transform: translateY(-2px);
 }
 
@@ -1250,11 +1246,11 @@
 .stats-panel {
   transition: box-shadow 0.2s ease, transform 0.1s ease;
   border-radius: var(--radius-lg);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px color-mix(in srgb, var(--color-text) 5%, transparent);
 }
 
 .stats-panel:hover {
-  box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--color-text) 8%, transparent);
   transform: translateY(-1px);
 }
 
@@ -1270,7 +1266,7 @@
 
 .stats-range-btn:active {
   transform: scale(0.95);
-  background: rgba(var(--color-primary-rgb), .12);
+  background: color-mix(in srgb, var(--color-text) 12%, transparent);
 }
 
 .stats-range-btn.active {
@@ -1293,11 +1289,11 @@
 .body-card {
   transition: box-shadow 0.2s ease, transform 0.1s ease;
   border-radius: var(--radius-lg);
-  box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+  box-shadow: 0 1px 3px color-mix(in srgb, var(--color-text) 4%, transparent);
 }
 
 .body-card:hover {
-  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  box-shadow: 0 8px 20px color-mix(in srgb, var(--color-text) 8%, transparent);
   transform: translateY(-2px);
 }
 
@@ -1307,7 +1303,7 @@
   border-radius: var(--radius-sm);
   display: grid;
   place-items: center;
-  background: rgba(var(--color-primary-rgb), 0.1);
+  background: color-mix(in srgb, var(--color-text) 10%, transparent);
   color: var(--color-primary);
   margin-bottom: 8px;
 }
@@ -1317,7 +1313,7 @@
   position: relative;
   height: 14px;
   border-radius: var(--radius-pill);
-  background: #f1f0eb;
+  background: var(--color-bg);
   overflow: hidden;
   margin: 12px 0 8px;
 }
@@ -1334,10 +1330,10 @@
   letter-spacing: 0.5px;
 }
 
-.bmi-zone.under { background: #6b9e5e; }
-.bmi-zone.normal { background: #4a9c7d; }
-.bmi-zone.over { background: #d4a017; }
-.bmi-zone.obese { background: #c75050; }
+.bmi-zone.under { background: var(--color-success); }
+.bmi-zone.normal { background: var(--color-success); }
+.bmi-zone.over { background: var(--color-warning); }
+.bmi-zone.obese { background: var(--color-error); }
 
 .bmi-marker {
   position: absolute;
@@ -1373,7 +1369,7 @@
 }
 
 .body-chart .body-chart-area {
-  fill: rgba(var(--color-primary-rgb), 0.12);
+  fill: color-mix(in srgb, var(--color-text) 12%, transparent);
   stroke: none;
 }
 
@@ -1391,7 +1387,7 @@
 /* 4. Goal progress bar - better contrast + animation */
 .body-goal-bar {
   height: 10px;
-  background: #f1f0eb;
+  background: var(--color-bg);
   border-radius: var(--radius-pill);
   overflow: hidden;
   margin: 10px 0;
@@ -1399,7 +1395,7 @@
 
 .body-goal-fill {
   height: 100%;
-  background: linear-gradient(90deg, var(--color-primary), #4a9c7d);
+  background: linear-gradient(90deg, var(--color-primary), var(--color-success));
   border-radius: var(--radius-pill);
   transition: width 0.6s cubic-bezier(0.23, 1, 0.32, 1);
 }
@@ -1410,7 +1406,7 @@
 }
 
 .body-entry:hover {
-  background: rgba(0,0,0,0.03);
+  background: color-mix(in srgb, var(--color-text) 3%, transparent);
 }
 
 .body-entry-delete {
@@ -1424,7 +1420,7 @@
 
 .body-entry-delete:hover {
   opacity: 1;
-  color: #c75050;
+  color: var(--color-error);
 }
 
 /* Make Training tab icons match Body tab boldness */
@@ -1434,14 +1430,14 @@
   border-radius: var(--radius-sm);
   display: grid;
   place-items: center;
-  background: rgba(var(--color-primary-rgb), 0.1);
+  background: color-mix(in srgb, var(--color-text) 10%, transparent);
   color: var(--color-primary);
   margin-bottom: 8px;
 }
 
 .summary-stat.streak .ss-icon {
-  background: rgba(247, 192, 74, 0.15);
-  color: #f7c04a;
+  background: color-mix(in srgb, var(--color-warning) 15%, transparent);
+  color: var(--color-warning);
 }
 
 /* Force bold icon treatment on Training tab stat tiles */
@@ -1451,14 +1447,14 @@
   border-radius: var(--radius-sm) !important;
   display: grid !important;
   place-items: center !important;
-  background: rgba(var(--color-primary-rgb), 0.12) !important;
+  background: color-mix(in srgb, var(--color-text) 12%, transparent) !important;
   color: var(--color-primary) !important;
   margin-bottom: 8px !important;
 }
 
 .summary-stat.streak .ss-icon {
-  background: rgba(247, 192, 74, 0.18) !important;
-  color: #f7c04a !important;
+  background: color-mix(in srgb, var(--color-warning) 18%, transparent) !important;
+  color: var(--color-warning) !important;
 }
 
 /* Black bold contour on the flame icon for Day Streak */
@@ -1484,7 +1480,7 @@
   border-radius: var(--radius-sm);
   display: grid;
   place-items: center;
-  background: rgba(var(--color-primary-rgb), 0.1);
+  background: color-mix(in srgb, var(--color-text) 10%, transparent);
   color: var(--color-primary);
   margin-bottom: 8px;
 }

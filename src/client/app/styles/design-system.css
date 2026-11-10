@@ -51,7 +51,7 @@
 
 .settings-category[open] .settings-category-icon {
   color: var(--color-on-primary) !important;
-  background: #343432 !important;
+  background: var(--color-text) !important;
 }
 .settings-category[open]::before { display: none; }
 .settings-category[open] > summary { background: var(--color-surface-strong); }

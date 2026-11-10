@@ -91,7 +91,7 @@
 /* Soften pressed state for light monochrome surfaces already using white chips */
 .equipment-chip {
   background: var(--color-surface);
-  color: #242424;
+  color: var(--color-text);
 }
 
 .equipment-chip--active {

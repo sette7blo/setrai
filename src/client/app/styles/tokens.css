@@ -29,11 +29,10 @@
   --color-border: #dcdcd7;
   --color-border-strong: #777b80;
   --color-text: #16181a;
-  --color-muted: #6b7075;
+  --color-muted: #5f6469;
   --color-muted-strong: #2c3033;
   --color-primary: #16181a;
   --color-primary-strong: #16181a;
-  --color-primary-rgb: 22, 24, 26;
   --color-on-primary: #ffffff;
   --color-accent: #f03408;
   --color-accent-soft: #fde5de;
@@ -41,6 +40,19 @@
   --color-success: #3f6b52;
   --color-warning: #8a642e;
   --color-error: #a13f3f;
+  --color-success-soft: #e8f0e3;
+  --color-warning-soft: #f6e8c9;
+  --color-error-soft: #f4dfdc;
+  --color-scrim: color-mix(in srgb, var(--color-text) 45%, transparent);
+
+  /* Muscle recovery state; exercise difficulty reuses the same three steps. */
+  --status-ready: var(--color-success);
+  --status-ready-soft: var(--color-success-soft);
+  --status-moderate: var(--color-warning);
+  --status-moderate-soft: var(--color-warning-soft);
+  --status-recovering: var(--color-error);
+  --status-recovering-soft: var(--color-error-soft);
+  --status-fresh: var(--color-border);
   --setrai-utility-surface: #e4e4df;
   --setrai-utility-surface-soft: #eeeeea;
 
