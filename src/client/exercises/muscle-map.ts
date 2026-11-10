@@ -3,6 +3,8 @@ import { displayName } from './format.js'
 import { recoveryMuscleRegion } from './taxonomy.js'
 import type { Exercise } from './types.js'
 
+export const MUSCLE_MAP_LEGEND = '<span class="muscle-map__key muscle-map__key-primary">Primary</span><span class="muscle-map__key muscle-map__key-secondary">Secondary</span><span>Front / Back</span>'
+
 export function muscleRegion(muscle: string): string | undefined {
   return recoveryMuscleRegion(muscle)
 }
@@ -34,7 +36,7 @@ export function createMuscleMap(exercise: Exercise): HTMLElement {
   svg.setAttribute('aria-label', `Front and back muscle map. Primary: ${displayName(exercise.muscleGroup)}. Also works: ${exercise.muscles.map(displayName).join(', ') || 'none specified'}`)
   const legend = document.createElement('p')
   legend.className = 'muscle-map__legend'
-  legend.innerHTML = '<span class="muscle-map__key-primary">● Primary</span> <span class="muscle-map__key-secondary">● Secondary</span> · Front / Back'
+  legend.innerHTML = MUSCLE_MAP_LEGEND
   section.append(heading, graphic, legend)
   return section
 }

@@ -176,9 +176,6 @@
 }
 
 .session-summary-map svg { display: block; width: min(100%, 18rem); height: auto; filter: drop-shadow(0 12px 30px color-mix(in srgb, var(--color-text) 12%, transparent)); }
-.session-summary-map .muscle-map__inactive { fill: var(--color-border); }
-.session-summary-map .muscle-map__primary { fill: var(--color-text); }
-.session-summary-map .muscle-map__secondary { fill: var(--color-warning); }
 
 .session-summary-proof {
   display: grid;

@@ -284,13 +284,15 @@ test('muscle map highlights primary chest and secondary triceps and granular del
   assert.match(markup, /data-muscle="Calves"[^>]*class="muscle-map__inactive"/)
 })
 
-test('theme preserves distinct primary and secondary muscle map colors', () => {
-  const theme = readFileSync('src/client/app/styles/editorial.css', 'utf8')
-  const styles = readFileSync('src/client/exercises/styles.css', 'utf8')
-  assert.match(theme, /\.muscle-map__primary\s*\{\s*fill: var\(--color-text\) !important;/)
-  assert.match(theme, /\.muscle-map__secondary\s*\{\s*fill: var\(--color-warning\) !important;/)
-  assert.doesNotMatch(theme, /\.muscle-map__primary\s*,\s*\.muscle-map__secondary\s*\{/)
-  assert.match(styles, /\.muscle-map__key-secondary\s*\{\s*color: var\(--color-warning\);/)
+test('body diagram colours come from css, with grey secondary muscles and no literal fills', () => {
+  const figure = readFileSync('src/client/exercises/body-map.ts', 'utf8')
+  const styles = readFileSync('src/client/exercises/body-map.css', 'utf8')
+  assert.doesNotMatch(figure, /fill=|stroke=|#[0-9a-f]{3,8}\b/i)
+  assert.match(styles, /\.body-map polygon\s*\{\s*fill: var\(--status-fresh\);/)
+  assert.match(styles, /\.muscle-map__primary\s*\{\s*fill: var\(--color-text\);/)
+  assert.match(styles, /\.muscle-map__secondary\s*\{\s*fill: var\(--color-border-strong\);/)
+  assert.match(styles, /\.muscle-map__key-secondary::before\s*\{\s*background: var\(--color-border-strong\);/)
+  assert.doesNotMatch(styles, /--color-warning|!important/)
 })
 
 test('primary highlighting takes precedence and unknown muscles stay unpainted', () => {

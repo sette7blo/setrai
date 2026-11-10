@@ -20,6 +20,7 @@ import '../shared/page-states.css'
 import '../shared/filter-sheet.css'
 import '../shared/stat-strip.css'
 import './styles/today.css'
+import '../exercises/body-map.css'
 import '../statistics/charts.css'
 
 import { bootSetraiApp } from './application.js'

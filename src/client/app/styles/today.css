@@ -24,7 +24,6 @@
 .today-more svg { width: 16px; height: 16px; }
 .today-map { min-width: 0; }
 .today-map-body { display: block; width: 100%; height: auto; }
-.today-map-body polygon { stroke: var(--color-surface); stroke-width: .6; }
 
 .today-workout .recovery-quick-panel { gap: 12px; padding: 16px; border-radius: var(--radius-lg); }
 .today-workout .recovery-quick-start { position: static; margin: 4px 0 0; padding: 0; border: 0; background: none; backdrop-filter: none; }

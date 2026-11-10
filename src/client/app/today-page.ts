@@ -68,7 +68,7 @@ function readinessCard(recovery: RecoveryOverview): HTMLElement {
   more.append(document.createTextNode('Muscle detail'), iconElement(ChevronRight))
   copy.append(figure, element('p', 'today-readiness-note', readinessSentence(recovery)), more)
   const map = element('div', 'today-map')
-  map.innerHTML = recoveryBodyMapMarkup(recovery).replace('id="recovery-body"', 'class="today-map-body"')
+  map.innerHTML = recoveryBodyMapMarkup(recovery).replace('id="recovery-body" ', '').replace('class="body-map"', 'class="body-map today-map-body"')
   card.append(copy, map)
   return card
 }

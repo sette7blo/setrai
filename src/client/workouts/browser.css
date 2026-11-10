@@ -20,9 +20,8 @@
 .workout-card-header::-webkit-details-marker, .workout-exercise > summary::-webkit-details-marker { display: none; }
 .workout-card-header > svg { width: 18px; height: 18px; margin-top: 3px; color: var(--color-muted); }
 .workout-card[open] > summary > svg { transform: rotate(180deg); }
-.workout-card-map { display: grid; place-items: center; width: 80px; height: 80px; padding: 3px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: color-mix(in srgb, var(--color-text) 18%, transparent); }
+.workout-card-map { display: grid; place-items: center; width: 80px; height: 80px; padding: 3px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); }
 .workout-card-map svg { display: block; width: 100%; height: 100%; }
-.workout-card-map .muscle-map__secondary { fill: var(--color-warning); }
 .workout-card-info { display: grid; gap: 5px; min-width: 0; padding-top: 2px; }
 .workout-card-title-row { display: flex; min-width: 0; align-items: start; justify-content: space-between; gap: 8px; }
 .workout-card-name { font-size: var(--text-body); line-height: 1.25; letter-spacing: -.025em; overflow-wrap: anywhere; }

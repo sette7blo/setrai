@@ -1,0 +1,17 @@
+/* One body figure, two colour schemes. Muscles are separated by a hairline in the colour of the
+   surface behind the figure; a container on another background sets --body-map-gap. */
+.body-map polygon { fill: var(--status-fresh); stroke: var(--body-map-gap, var(--color-surface)); stroke-width: .6; }
+
+/* Target scheme: what an exercise or workout trains. */
+.body-map .muscle-map__primary { fill: var(--color-text); }
+.body-map .muscle-map__secondary { fill: var(--color-border-strong); }
+.muscle-map__legend { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px 16px; }
+.muscle-map__key { display: inline-flex; align-items: center; gap: 6px; }
+.muscle-map__key::before { content: ''; width: 9px; height: 9px; border-radius: var(--radius-sm); }
+.muscle-map__key-primary::before { background: var(--color-text); }
+.muscle-map__key-secondary::before { background: var(--color-border-strong); }
+
+/* Recovery scheme: how rested each muscle is. */
+.body-map .recovery-map__ready { fill: var(--status-ready); }
+.body-map .recovery-map__moderate { fill: var(--status-moderate); }
+.body-map .recovery-map__recovering { fill: var(--status-recovering); }

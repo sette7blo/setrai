@@ -13,6 +13,7 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 - Tightened the visual foundations: text now uses one scale of eight sizes and four weights with nothing smaller than 12px, corners use five shared radii, every interface colour comes from the design tokens, and transitions share three durations and one easing. Secondary text is slightly darker for contrast, and page changes no longer fade.
 - One visual world: the pastel gradient stat tiles on Progress and Body are replaced by the flat stat strip used on Today, and the muscle distribution, goal and BMI bars are solid instead of gradient.
+- The body diagram is the same solid figure everywhere it appears. Recovery and Today colour it by readiness; history cards, program cards, exercise pages and the workout summary show primary muscles in black and secondary muscles in grey instead of brown.
 - Fixed empty pills beside each Settings section, developer wording on the Settings save row, and the Library tab underline stopping short on desktop.
 - Fixed the program builder dialog, which still used the old dark theme and had unreadable labels.
 - Redesigned navigation around Today, Progress, and Library. Quick is no longer a tab: Today opens with your readiness, a suggested workout that is already built, and the week so far, and an unfinished workout shows as a Resume bar above the navigation on every other screen. Old links, including installed home-screen shortcuts, redirect to the new screens.

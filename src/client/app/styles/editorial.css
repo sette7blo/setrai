@@ -290,9 +290,6 @@ textarea {
 .track,
 .body-goal-bar,
 .bmi-bar { border: 1px solid var(--color-text); background: var(--color-surface-strong) !important; }
-.muscle-map__primary { fill: var(--color-text) !important; }
-.muscle-map__secondary { fill: var(--color-warning) !important; }
-.muscle-map__inactive { fill: var(--color-surface) !important; stroke: var(--color-text) !important; }
 
 @media (max-width: 719px) {
 
