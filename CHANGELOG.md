@@ -11,6 +11,8 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 ## [Unreleased]
 
+## [v0.4.0] — 2026-11-10
+
 - Tightened the visual foundations: text now uses one scale of eight sizes and four weights with nothing smaller than 12px, corners use five shared radii, every interface colour comes from the design tokens, and transitions share three durations and one easing. Secondary text is slightly darker for contrast, and page changes no longer fade.
 - One visual world: the pastel gradient stat tiles on Progress and Body are replaced by the flat stat strip used on Today, and the muscle distribution, goal and BMI bars are solid instead of gradient.
 - The body diagram is the same solid figure everywhere it appears. Recovery and Today colour it by readiness; history cards, program cards, exercise pages and the workout summary show primary muscles in black and secondary muscles in grey instead of brown.
