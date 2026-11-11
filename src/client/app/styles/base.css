@@ -44,8 +44,8 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .button--primary:hover { border-color: var(--color-text); background: var(--color-muted-strong); }
 .button--secondary { color: var(--color-text); }
 /* Reserved for the one action that starts or continues training. */
-.button--accent { border-color: var(--color-accent); color: var(--color-on-accent); background: var(--color-accent); font-weight: var(--weight-bold); }
-.button--accent:hover { border-color: var(--color-accent); filter: brightness(.95); }
+.button--accent { border-color: var(--color-accent-fill); color: var(--color-on-accent); background: var(--color-accent-fill); font-weight: var(--weight-bold); }
+.button--accent:hover { border-color: var(--color-accent-fill); filter: brightness(.95); }
 
 /* Press feedback, identical on every button, chip and icon button. `scale` leaves any `transform` alone. */
 :is(button, .button, .settings-gear, .detail-chrome-btn):active:not(:disabled) { animation: press var(--duration-fast) var(--ease-out) forwards; }

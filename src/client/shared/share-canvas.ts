@@ -17,7 +17,7 @@ const TOKENS = {
   muted: '--color-muted',
   mutedStrong: '--color-muted-strong',
   onPrimary: '--color-on-primary',
-  accent: '--color-accent',
+  accent: '--color-brand',
   readySoft: '--status-ready-soft',
   moderateSoft: '--status-moderate-soft',
   recoveringSoft: '--status-recovering-soft',
