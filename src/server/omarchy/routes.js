@@ -1,6 +1,9 @@
-// The Omarchy integration exposes no HTTP endpoint. This module only watches
-// responses from other features and requests a snapshot refresh when a
-// request that can change the snapshot succeeds.
+import { sendJson } from '../shared/http.js'
+
+// The Omarchy integration exposes one read endpoint for plugin hosts that do
+// not share a filesystem with Setrai; it requires an API key. The observer
+// watches responses from other features and requests a snapshot refresh when
+// a request that can change the snapshot succeeds.
 const SNAPSHOT_MUTATIONS = [
   // Session start, finish, and discard.
   { methods: ['POST'], pattern: /^\/api\/sessions$/ },
@@ -30,7 +33,23 @@ export function createOmarchyRoutes(omarchyService) {
     })
   }
 
+  function handle(req, res, url, apiKey) {
+    if (url.pathname !== '/api/omarchy/snapshot') return false
+    if (req.method !== 'GET') {
+      sendJson(res, 405, { error: 'Method not allowed' })
+      return true
+    }
+    if (!apiKey) {
+      sendJson(res, 401, { error: 'An API key is required' })
+      return true
+    }
+    res.setHeader('Cache-Control', 'no-store')
+    sendJson(res, 200, { snapshot: omarchyService.getSnapshot() })
+    return true
+  }
+
   return {
-    observe
+    observe,
+    handle
   }
 }

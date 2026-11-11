@@ -227,3 +227,21 @@
 .settings-segment { min-height: 44px; border: 0; border-radius: var(--radius-sm); background: transparent; color: var(--color-text); font: var(--weight-medium) var(--text-meta)/1 var(--font-sans); cursor: pointer; }
 .settings-segment:hover { background: var(--color-surface-strong); }
 .settings-segment[aria-pressed="true"] { background: var(--color-text); color: var(--color-on-primary); }
+
+.settings-api-key-create { display: flex; gap: 8px; align-items: center; min-width: 0; }
+.settings-api-key-create input { min-width: 0; width: 200px; min-height: 44px; padding: 0 12px; }
+.settings-api-key-reveal {
+  display: grid;
+  gap: 10px;
+  margin: 8px 0 12px;
+  border-left: 3px solid var(--color-accent);
+  padding: 12px;
+  background: var(--setrai-utility-surface-soft, var(--color-bg));
+}
+.settings-api-key-reveal p { margin: 0; color: var(--color-text); font-size: var(--text-caption); line-height: 1.4; }
+.settings-api-key-reveal input { width: 100%; min-height: 44px; padding: 8px 12px; line-height: 1.5; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+.settings-api-key-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+@media (max-width: 640px) {
+  .settings-api-key-create { flex-direction: column; align-items: stretch; width: 100%; }
+  .settings-api-key-create input { width: 100%; }
+}
