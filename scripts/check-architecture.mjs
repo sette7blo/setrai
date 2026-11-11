@@ -74,7 +74,8 @@ const SERVER_FEATURES = new Set([
   'quick-workout',
   'backup',
   'ai',
-  'omarchy'
+  'omarchy',
+  'auth'
 ])
 
 const CLIENT_FEATURES = new Set([
@@ -136,7 +137,9 @@ const ALLOWED_SERVER_FEATURE_IMPORTS = {
 
   // Outbound integration: receives service contracts from the composition
   // root and imports no feature directly.
-  omarchy: new Set([])
+  omarchy: new Set([]),
+
+  auth: new Set([])
 }
 
 const errors = []
@@ -432,7 +435,8 @@ function checkRepositoryAccess(filePath, imports) {
       recovery: new Set([]),
       'quick-workout': new Set([]),
       ai: new Set([]),
-      omarchy: new Set([])
+      omarchy: new Set([]),
+      auth: new Set(['api-keys'])
     }
 
     const allowed =

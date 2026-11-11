@@ -146,6 +146,24 @@ const MIGRATIONS = [
     version: 9,
     name: 'local-training-schema',
     up(db) { retainLocalColumns(db) }
+  },
+  {
+    version: 10,
+    name: 'api-keys',
+    up(db) {
+      db.exec(`
+        CREATE TABLE api_keys (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          name TEXT NOT NULL,
+          prefix TEXT NOT NULL,
+          key_hash TEXT NOT NULL UNIQUE,
+          scope TEXT NOT NULL DEFAULT 'admin',
+          created_at TEXT NOT NULL DEFAULT (datetime('now')),
+          last_used_at TEXT,
+          CHECK (scope IN ('admin'))
+        );
+      `)
+    }
   }
 ]
 

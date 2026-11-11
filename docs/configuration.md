@@ -789,7 +789,8 @@ docker compose up -d --wait
 The image must first be published to Docker Hub. Preserve an existing `.env`
 instead of overwriting it. Optional integrations are disabled in this template.
 A public deployment needs authenticated HTTPS proxy access or a VPN; the
-`SETRAI_AUTH_ENABLED` flag does not implement HTTP authentication yet.
+`SETRAI_AUTH_ENABLED` flag does not implement HTTP authentication yet. API keys
+from Settings authenticate other apps, but the web app itself still has no login.
 
 If Ollama runs as another Compose service:
 
