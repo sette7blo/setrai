@@ -11,6 +11,8 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 ## [Unreleased]
 
+## [v0.7.1] — 2026-11-11
+
 - Improved contrast of the orange accent. Orange buttons and banners use a slightly deeper orange so their white text is easier to read in both themes, and orange text in the light theme uses the same shade. The dark theme keeps the brighter orange for text and icons, and share images keep the original brand orange.
 
 ## [v0.7.0] — 2026-11-10
