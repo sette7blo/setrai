@@ -170,7 +170,7 @@ body:has(.live-overlay) { overflow: hidden; }
 .live-instructions li { padding: 5px 0; font-size: var(--text-meta); line-height: 1.5; }
 .live-footer { display: flex; flex-shrink: 0; align-items: center; gap: 10px; padding: 10px max(18px, calc((100% - 684px) / 2)) calc(10px + env(safe-area-inset-bottom)); border-top: 1px solid var(--live-line); background: var(--color-bg); }
 .live-footer .live-action { min-height: 52px; }
-.live-primary { flex: 1; color: var(--color-on-accent); background: var(--color-accent); border-color: var(--color-accent); }
+.live-primary { flex: 1; color: var(--color-on-accent); background: var(--color-accent-fill); border-color: var(--color-accent-fill); }
 .live-prev { flex: 0 0 44px; width: 44px; padding: 0; }
 .live-early { border: 0; color: var(--live-muted); background: transparent; font-size: var(--text-caption); }
 .live-error { padding: 12px; border: 1px solid var(--color-error-soft); border-radius: var(--radius-md); background: var(--color-error-soft); color: var(--color-error); font-size: var(--text-meta); }

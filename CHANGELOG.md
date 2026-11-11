@@ -11,6 +11,8 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 ## [Unreleased]
 
+- Improved contrast of the orange accent. Orange buttons and banners use a slightly deeper orange so their white text is easier to read in both themes, and orange text in the light theme uses the same shade. The dark theme keeps the brighter orange for text and icons, and share images keep the original brand orange.
+
 ## [v0.7.0] — 2026-11-10
 
 - Redesigned the five share images (workout summary, monthly recap, personal record, weekly volume, body progress) to match the app: chalk ground, white cards, the Archivo typeface and large condensed numerals. The "AI Training Coach" tagline is gone, and the workout image no longer shows "Done" or a dash for missing figures. Share images stay light in the dark theme.
