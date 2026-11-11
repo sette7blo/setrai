@@ -60,6 +60,8 @@ import { createBackupService } from './backup/service.js'
 import { createBackupRoutes } from './backup/routes.js'
 import { createOmarchyService } from './omarchy/service.js'
 import { createOmarchyRoutes } from './omarchy/routes.js'
+import { createAuthService } from './auth/service.js'
+import { createAuthRoutes } from './auth/routes.js'
 import { sendJson } from './shared/http.js'
 import {
   handleStaticClientRoute
@@ -120,6 +122,8 @@ const backupRoutes =
   createBackupRoutes(backupService)
 const omarchyRoutes =
   createOmarchyRoutes(omarchyService)
+const authRoutes =
+  createAuthRoutes(createAuthService(db))
 
 const server = http.createServer(
   async (req, res) => {
@@ -129,7 +133,19 @@ const server = http.createServer(
         `http://${req.headers.host || 'localhost'}`
       )
 
+      const apiKey = url.pathname.startsWith('/api/')
+        ? authRoutes.authenticate(req)
+        : null
+
       omarchyRoutes.observe(req, res, url)
+
+      if (await authRoutes.handle(req, res, url, apiKey)) {
+        return
+      }
+
+      if (omarchyRoutes.handle(req, res, url, apiKey)) {
+        return
+      }
 
       if (
         req.method === 'GET' &&

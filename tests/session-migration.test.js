@@ -34,7 +34,7 @@ test('upgrades an existing version-one session database without changing logged 
     assert.equal(session.sets[0].weight, 25)
     assert.equal(session.plan, null)
     assert.deepEqual(session.runtime, {})
-    assert.equal(db.prepare('SELECT COUNT(*) AS count FROM schema_migrations').get().count, 9)
+    assert.equal(db.prepare('SELECT COUNT(*) AS count FROM schema_migrations').get().count, 10)
     assert.equal(db.prepare("SELECT COUNT(*) AS count FROM sqlite_master WHERE type = 'table' AND name = 'seed_tombstones'").get().count, 1)
     assert.deepEqual(
       db.prepare('SELECT slug, movement_type FROM exercises ORDER BY slug').all()

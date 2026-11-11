@@ -870,14 +870,15 @@ src/server/omarchy/
 - the Omarchy snapshot schema and its serialization;
 - atomic snapshot file writes;
 - the snapshot refresh timer and debounce;
-- the list of HTTP mutations that refresh the snapshot.
+- the list of HTTP mutations that refresh the snapshot;
+- `GET /api/omarchy/snapshot`, which requires an API key.
 
 ## Typical files
 
 ```text
 snapshot.js   build the snapshot and write it atomically
 service.js    enabled/disabled lifecycle, timer, debounced refresh
-routes.js     response observer; exposes no HTTP endpoint
+routes.js     response observer and the key-protected snapshot endpoint
 ```
 
 ## May depend on
@@ -1468,11 +1469,18 @@ The Settings UI that invokes these routes remains owned by `src/client/profile/`
 
 # 34. Authentication ownership
 
-If Setrai adds application authentication, it should live in a dedicated module:
+Authentication lives in a dedicated module:
 
 ```text
 src/server/auth/
 ```
+
+It owns API keys for other apps: the `api_keys` table through
+`src/server/db/repositories/api-keys.js`, key generation and hashing, the
+Bearer check that `src/server/index.js` runs before routing, and the
+`/api/api-keys` routes. It imports no other feature. The Settings section that
+manages keys is `src/client/profile/api-keys.ts`. See `docs/architecture.md`
+section 12.1.
 
 Authentication should remain separate from:
 

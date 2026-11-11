@@ -51,6 +51,10 @@ export function createOmarchyService(config, services, options = {}) {
     intervalTimer.unref()
   }
 
+  function getSnapshot() {
+    return buildSnapshot(services, getNow())
+  }
+
   function stop() {
     clearInterval(intervalTimer)
     clearTimeout(debounceTimer)
@@ -62,6 +66,7 @@ export function createOmarchyService(config, services, options = {}) {
     start,
     stop,
     writeNow,
-    requestWrite
+    requestWrite,
+    getSnapshot
   }
 }

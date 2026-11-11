@@ -475,7 +475,10 @@ watch a file instead of calling the server.
 Rules:
 
 - it is off by default and enabled only by `SETRAI_OMARCHY_SNAPSHOT_ENABLED`;
-- it exposes no HTTP endpoint and changes nothing in the client;
+- it exposes one read endpoint, `GET /api/omarchy/snapshot`, which returns
+  `{ snapshot }` built live for plugin hosts that cannot see the file. It
+  requires an API key (section 12.1) and works whether or not the file writer
+  is enabled. It changes nothing in the client;
 - it never owns or mutates training data: it only reads through the session,
   program, body, and recovery service contracts;
 - it imports no other feature. `src/server/index.js` passes the service
@@ -507,6 +510,27 @@ a backwards-compatible way; anything else requires a new `schemaVersion`.
 ```
 
 Every section may be `null`, and consumers must render with partial data.
+
+### 12.1 API keys
+
+`src/server/auth/` owns API keys for other apps (the Omarchy plugin first).
+A key is `setrai_` plus 43 base64url characters, created in Settings, shown
+once, and stored only as a SHA-256 hash with a short visible prefix. Every key
+currently has the `admin` scope: full read and write access to the API.
+
+`src/server/index.js` calls `authRoutes.authenticate(req)` for every `/api/`
+request before routing:
+
+- no `Authorization` header: the request proceeds unauthenticated, as before,
+  because the web app has no login;
+- `Authorization: Bearer <key>` with a valid key: the request proceeds and the
+  key is passed to routes that require one;
+- any other `Authorization` value, or an unknown or revoked key: `401`.
+
+Routes: `GET /api/api-keys` (list, never the key itself), `POST /api/api-keys`
+`{ name }` (returns `{ key, apiKey }` once), `DELETE /api/api-keys/:id`
+(revoke, immediate), and `GET /api/api-keys/current` (describes the presented
+key; `401` without one, so a client can test its key).
 
 - `activeProgram` is the saved program of the most recently started session.
   Setrai has no explicit active-program setting, generated Quick Workout

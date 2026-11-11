@@ -11,6 +11,9 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 ## [Unreleased]
 
+- Added API keys. Settings has a new API keys section to generate a named key for another app, such as the setrai-omarchy plugin, and to revoke it later. A key has full admin access to the Setrai API and is sent as `Authorization: Bearer <key>`. It is shown once when created; Setrai stores only a hash. The web app itself still needs no key, but a request that carries a wrong or revoked key is refused.
+- Added `GET /api/omarchy/snapshot`, which returns the live Omarchy snapshot to a plugin on another machine. It requires an API key.
+
 ## [v0.7.1] — 2026-11-11
 
 - Improved contrast of the orange accent. Orange buttons and banners use a slightly deeper orange so their white text is easier to read in both themes, and orange text in the light theme uses the same shade. The dark theme keeps the brighter orange for text and icons, and share images keep the original brand orange.
