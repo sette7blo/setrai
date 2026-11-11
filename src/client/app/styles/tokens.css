@@ -35,7 +35,12 @@
   --color-primary: #16181a;
   --color-primary-strong: #16181a;
   --color-on-primary: #ffffff;
-  --color-accent: #f03408;
+  /* Brand ember, used by share images. The interface accent is a touch darker so white text on
+     it and accent text on white both clear 4.5:1. */
+  --color-brand: #f03408;
+  --color-accent: #e02f06;
+  /* Behind white text in both themes. */
+  --color-accent-fill: #e02f06;
   --color-accent-soft: #fde5de;
   --color-on-accent: #ffffff;
   --color-success: #3f6b52;
@@ -129,7 +134,8 @@
 }
 
 /* Dark: follows the device unless Settings forces light, and applies outright when Settings forces dark.
-   The two blocks must stay identical. The accent is the same in both themes. */
+   The two blocks must stay identical. Accent text goes back to the brighter brand ember, which reads
+   better on near-black; filled accent surfaces keep --color-accent-fill. */
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     color-scheme: dark;
@@ -145,6 +151,7 @@
     --color-primary: #f1f1ee;
     --color-primary-strong: #f1f1ee;
     --color-on-primary: #16181a;
+    --color-accent: #f03408;
     --color-accent-soft: #3a1a10;
     --color-success: #74b08d;
     --color-warning: #d6a55a;
@@ -175,6 +182,7 @@
   --color-primary: #f1f1ee;
   --color-primary-strong: #f1f1ee;
   --color-on-primary: #16181a;
+  --color-accent: #f03408;
   --color-accent-soft: #3a1a10;
   --color-success: #74b08d;
   --color-warning: #d6a55a;

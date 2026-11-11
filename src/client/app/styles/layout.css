@@ -91,15 +91,15 @@ html[data-section^="/sessions/"]:not(:has(.session-summary)) .top-bar { display:
   padding: 8px 8px 8px 16px;
   border-radius: var(--radius-lg);
   color: var(--color-on-accent);
-  background: var(--color-accent);
-  box-shadow: 0 8px 24px color-mix(in srgb, var(--color-accent) 28%, transparent);
+  background: var(--color-accent-fill);
+  box-shadow: 0 8px 24px color-mix(in srgb, var(--color-accent-fill) 28%, transparent);
   animation: now-training-in var(--duration-slow) var(--ease-out);
 }
 .now-training[hidden] { display: none; }
 .now-training-copy { display: grid; gap: 2px; min-width: 0; }
 .now-training-copy small { font-size: var(--text-caption); font-weight: var(--weight-medium); opacity: .85; }
 .now-training-copy strong { overflow: hidden; font-size: var(--text-body); font-weight: var(--weight-bold); line-height: 1.15; text-overflow: ellipsis; white-space: nowrap; }
-.now-training-action { display: inline-flex; align-items: center; gap: 6px; flex: none; min-height: 36px; padding: 0 14px; border-radius: var(--radius-pill); color: var(--color-accent); background: var(--color-on-accent); font-size: var(--text-meta); font-weight: var(--weight-bold); }
+.now-training-action { display: inline-flex; align-items: center; gap: 6px; flex: none; min-height: 36px; padding: 0 14px; border-radius: var(--radius-pill); color: var(--color-accent-fill); background: var(--color-on-accent); font-size: var(--text-meta); font-weight: var(--weight-bold); }
 .now-training-action svg { width: 14px; height: 14px; fill: currentColor; }
 .now-training:active { transform: scale(.99); }
 /* Today already shows the same workout as its first card. */
