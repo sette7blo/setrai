@@ -8,6 +8,7 @@ import {
   createSessionService
 } from '../sessions/service.js'
 import {
+  getBodyWeightChange,
   getChronologicalBodyWeight
 } from './body-weight.js'
 import {
@@ -61,6 +62,7 @@ export function createStatisticsService(db, options = {}) {
 
   function buildStatistics(sessions) {
     const volumeSets = getVolumeSets(sessions)
+    const bodyWeight = getBodyWeightHistory()
 
     return {
       trainingFrequency: getTrainingFrequency(sessions),
@@ -76,7 +78,8 @@ export function createStatisticsService(db, options = {}) {
         sessions,
         getNow()
       ),
-      bodyWeight: getBodyWeightHistory()
+      bodyWeight,
+      bodyWeightChangeKg: getBodyWeightChange(bodyWeight)
     }
   }
 

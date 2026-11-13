@@ -8,6 +8,7 @@ import {
   calculateRecovery,
   LOOKBACK_DAYS
 } from './calculator.js'
+import { overallReadiness } from './readiness.js'
 
 const SESSION_LIMIT = 500
 
@@ -24,15 +25,18 @@ export function createRecoveryService(db, options = {}) {
       limit: SESSION_LIMIT
     })
 
+    const muscles = calculateRecovery({
+      sessions,
+      exerciseService,
+      now,
+      lookbackDays: LOOKBACK_DAYS
+    })
+
     return {
       generatedAt: now.toISOString(),
       lookbackDays: LOOKBACK_DAYS,
-      muscles: calculateRecovery({
-        sessions,
-        exerciseService,
-        now,
-        lookbackDays: LOOKBACK_DAYS
-      })
+      readiness: overallReadiness({ muscles }),
+      muscles
     }
   }
 
@@ -55,4 +59,4 @@ export function createRecoveryService(db, options = {}) {
   }
 }
 
-export { recoveryMuscleGroup, workoutReadiness } from './readiness.js'
+export { overallReadiness, recoveryMuscleGroup, workoutReadiness } from './readiness.js'

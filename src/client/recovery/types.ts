@@ -10,6 +10,7 @@ export interface RecoveryMuscleApiPayload {
 export interface RecoveryApiPayload {
   generatedAt?: string
   lookbackDays?: number
+  readiness?: number
   muscles?: RecoveryMuscleApiPayload[]
 }
 
@@ -23,5 +24,6 @@ export interface RecoveryMuscle {
 export interface RecoveryOverview {
   generatedAt: string
   lookbackDays: number
+  readiness: number
   muscles: RecoveryMuscle[]
 }

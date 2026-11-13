@@ -8,7 +8,7 @@ import { openDatabase } from '../src/server/db/connection.js'
 import { createExerciseService } from '../src/server/exercises/service.js'
 import { createProgramService } from '../src/server/programs/service.js'
 import { getExerciseMuscleLoads } from '../src/server/recovery/muscle-map.js'
-import { createRecoveryService } from '../src/server/recovery/service.js'
+import { createRecoveryService, overallReadiness } from '../src/server/recovery/service.js'
 import { createSessionService } from '../src/server/sessions/service.js'
 
 const NOW = new Date('2026-10-05T18:00:00.000Z')
@@ -96,6 +96,7 @@ test('returns empty recovery for a fresh database', () => {
     assert.equal(result.generatedAt, NOW.toISOString())
     assert.equal(result.lookbackDays, 7)
     assert.deepEqual(result.muscles, [])
+    assert.equal(result.readiness, 100)
     assert.equal(JSON.stringify(result).includes('NaN'), false)
   } finally {
     cleanupDatabase(db, directory)
@@ -486,6 +487,40 @@ test('stretching does not fatigue and cardio fatigues less than strength', () =>
     }).getRecovery()
     assert.equal(getMuscle(result, 'calves'), undefined)
     assert.ok(getMuscle(result, 'back').recovery > getMuscle(result, 'chest').recovery)
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})
+
+test('overall readiness averages the ten Recovery groups, untrained groups as fresh', () => {
+  const muscles = [
+    { muscle: 'chest', recovery: 0.8 },
+    { muscle: 'back', recovery: 0.5 },
+    { muscle: 'triceps', recovery: 0.2 }
+  ]
+  assert.equal(overallReadiness({ muscles }), 85)
+  assert.equal(overallReadiness({ muscles: [] }), 100)
+})
+
+test('overall readiness folds detailed muscles into their group using the least ready', () => {
+  const muscles = [
+    { muscle: 'anterior-deltoid', recovery: 0.2 },
+    { muscle: 'posterior-deltoid', recovery: 1 }
+  ]
+  // Shoulders at 20%, the other nine groups fresh: (0.2 + 9) / 10.
+  assert.equal(overallReadiness({ muscles }), 92)
+})
+
+test('recovery response carries the overall readiness after training', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    const services = createServices(db)
+    completeSession(services)
+    const result = services.recovery.getRecovery()
+
+    assert.equal(result.readiness, overallReadiness(result))
+    assert.ok(result.readiness < 100)
   } finally {
     cleanupDatabase(db, directory)
   }

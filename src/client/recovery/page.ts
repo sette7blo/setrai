@@ -32,12 +32,6 @@ export function recoveryPartition(recovery: RecoveryOverview): { byRegion: Map<s
   return { byRegion, counts }
 }
 
-export function averageReadiness(recovery: RecoveryOverview): number {
-  const byRegion = recoveryByRegion(recovery)
-  const total = CANONICAL_MUSCLES.reduce((sum, muscle) => sum + (byRegion.get(muscle)?.recovery ?? 1), 0)
-  return Math.round((total / CANONICAL_MUSCLES.length) * 100)
-}
-
 export function recoveryBodyMapMarkup(recovery: RecoveryOverview): string {
   const { byRegion } = recoveryPartition(recovery)
   return EXERCISE_BODY_SVG.replace(/<polygon([^>]*)>/g, (_match, attributes: string) => {
@@ -64,7 +58,7 @@ export function recoverySummary(recovery: RecoveryOverview): HTMLElement {
   const figure = document.createElement('p')
   figure.className = 'recovery-figure'
   const value = document.createElement('strong')
-  value.textContent = String(averageReadiness(recovery))
+  value.textContent = String(recovery.readiness)
   const unit = document.createElement('span')
   unit.textContent = '% ready'
   figure.append(value, unit)

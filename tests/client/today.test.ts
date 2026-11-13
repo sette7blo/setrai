@@ -14,25 +14,26 @@ function stats(weeklyVolume: StatisticsOverview['weeklyVolume']): StatisticsOver
     volumeByMuscle: [],
     personalRecords: [],
     trainingStreak: { currentStreakWeeks: 0 },
-    bodyWeight: []
+    bodyWeight: [],
+    bodyWeightChangeKg: null
   }
 }
 
 test('readiness sentence names only the muscles that still need time', () => {
   const ready = { muscle: 'chest', recovery: 1, status: 'ready' as const, lastTrainedAt: '' }
   assert.equal(
-    readinessSentence({ generatedAt: '', lookbackDays: 7, muscles: [ready] }),
+    readinessSentence({ generatedAt: '', lookbackDays: 7, readiness: 100, muscles: [ready] }),
     'Every muscle group is recovered.'
   )
   assert.equal(
-    readinessSentence({ generatedAt: '', lookbackDays: 7, muscles: [
+    readinessSentence({ generatedAt: '', lookbackDays: 7, readiness: 100, muscles: [
       ready,
       { muscle: 'back', recovery: 0.4, status: 'moderate', lastTrainedAt: '' }
     ] }),
     'Back still needs time.'
   )
   assert.equal(
-    readinessSentence({ generatedAt: '', lookbackDays: 7, muscles: [
+    readinessSentence({ generatedAt: '', lookbackDays: 7, readiness: 100, muscles: [
       { muscle: 'back', recovery: 0.4, status: 'moderate', lastTrainedAt: '' },
       { muscle: 'triceps', recovery: 0.1, status: 'recovering', lastTrainedAt: '' }
     ] }),

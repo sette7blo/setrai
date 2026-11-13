@@ -22,6 +22,8 @@ export function recoveryMuscleGroup(value) {
   return groupByMuscle.get(normalizeMuscle(value)) ?? ''
 }
 
+const RECOVERY_GROUPS = taxonomy.primaryMuscles.map((option) => option.value)
+
 export function workoutReadiness(recovery) {
   const readiness = new Map()
   for (const item of recovery.muscles) {
@@ -29,4 +31,15 @@ export function workoutReadiness(recovery) {
     if (group) readiness.set(group, Math.min(readiness.get(group) ?? 1, item.recovery))
   }
   return readiness
+}
+
+// Mean readiness across the ten Recovery groups as a whole percent. A group
+// with no training in the lookback window counts as fully recovered.
+export function overallReadiness(recovery) {
+  const byGroup = workoutReadiness(recovery)
+  const total = RECOVERY_GROUPS.reduce(
+    (sum, group) => sum + (byGroup.get(group) ?? 1),
+    0
+  )
+  return Math.round((total / RECOVERY_GROUPS.length) * 100)
 }

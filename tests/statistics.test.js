@@ -100,7 +100,8 @@ test('returns empty statistics for a fresh database', () => {
         currentStreakWeeks: 0,
         longestStreakWeeks: 0
       },
-      bodyWeight: []
+      bodyWeight: [],
+      bodyWeightChangeKg: null
     })
   } finally {
     cleanupDatabase(db, directory)
@@ -373,6 +374,8 @@ test('returns body-weight history in chronological order', () => {
         { date: '2026-10-05', weightKg: 82.1 }
       ]
     )
+    // Latest minus first by date, not by insertion order.
+    assert.equal(services.statistics.getOverview().bodyWeightChangeKg, -0.3)
   } finally {
     cleanupDatabase(db, directory)
   }

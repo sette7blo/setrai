@@ -5,7 +5,7 @@ import { normalizeRecovery, recoveryPercent, sortedRecovery, statusLabel, lastTr
 import { recoveryBodyMapMarkup, recoveryContent, recoveryCountsText, recoveryPartition, recoverySummary } from '../../src/client/recovery/page.js'
 
 test('normalizes Recovery API payload', () => {
-  const recovery = normalizeRecovery({ generatedAt: 'now', lookbackDays: 7, muscles: [{ muscle: 'chest', recovery: 0.82, status: 'ready', lastTrainedAt: '2026-10-03T00:00:00.000Z' }] })
+  const recovery = normalizeRecovery({ generatedAt: 'now', lookbackDays: 7, readiness: 100, muscles: [{ muscle: 'chest', recovery: 0.82, status: 'ready', lastTrainedAt: '2026-10-03T00:00:00.000Z' }] })
   assert.equal(recovery.muscles[0].muscle, 'chest')
   assert.equal(recovery.muscles[0].recovery, 0.82)
 })
@@ -31,7 +31,7 @@ test('formats last-trained helper and empty state shape', () => {
 })
 
 test('Recovery body map colors muscles by status and leaves untrained muscles fresh', () => {
-  const markup = recoveryBodyMapMarkup({ generatedAt: '', lookbackDays: 7, muscles: [
+  const markup = recoveryBodyMapMarkup({ generatedAt: '', lookbackDays: 7, readiness: 100, muscles: [
     { muscle: 'chest', recovery: 0.9, status: 'ready', lastTrainedAt: '' },
     { muscle: 'back', recovery: 0.5, status: 'moderate', lastTrainedAt: '' },
     { muscle: 'calves', recovery: 0.2, status: 'recovering', lastTrainedAt: '' }
@@ -75,7 +75,7 @@ test('Recovery summary leads with the readiness figure and counts only what need
       createElementNS: () => new TestElement(),
       createTextNode: (value: string) => Object.assign(new TestElement(), { textContent: value })
     } as unknown as Document
-    const recovery = { generatedAt: '', lookbackDays: 7, muscles: [
+    const recovery = { generatedAt: '', lookbackDays: 7, readiness: 85, muscles: [
       { muscle: 'chest', recovery: 0.8, status: 'ready' as const, lastTrainedAt: '' },
       { muscle: 'back', recovery: 0.5, status: 'moderate' as const, lastTrainedAt: '' },
       { muscle: 'triceps', recovery: 0.2, status: 'recovering' as const, lastTrainedAt: '' }
@@ -84,7 +84,7 @@ test('Recovery summary leads with the readiness figure and counts only what need
     assert.match(rendered, /85\s+% ready/)
     assert.equal(recoveryCountsText(recovery), '1 recovering, 1 moderate, 1 ready, 7 fresh')
     assert.equal(
-      recoveryCountsText({ generatedAt: '', lookbackDays: 7, muscles: [] }),
+      recoveryCountsText({ generatedAt: '', lookbackDays: 7, readiness: 100, muscles: [] }),
       '0 ready, 10 fresh'
     )
   } finally {
@@ -98,7 +98,7 @@ test('Recovery map uses the least ready muscle when aliases share a region, rega
     { muscle: 'posterior-deltoid', recovery: 1, status: 'ready' as const, lastTrainedAt: '' }
   ]
   for (const entries of [muscles, [...muscles].reverse()]) {
-    const markup = recoveryBodyMapMarkup({ generatedAt: '', lookbackDays: 7, muscles: entries })
+    const markup = recoveryBodyMapMarkup({ generatedAt: '', lookbackDays: 7, readiness: 100, muscles: entries })
     assert.match(markup, /class="recovery-map__recovering"/)
     assert.doesNotMatch(markup, /class="recovery-map__ready"/)
   }
@@ -112,7 +112,7 @@ test('Recovery content keeps one partition and omits map label chips', () => {
       createElementNS: () => new TestElement(),
       createTextNode: (value: string) => Object.assign(new TestElement(), { textContent: value })
     } as unknown as Document
-    const recovery = { generatedAt: '', lookbackDays: 7, muscles: [
+    const recovery = { generatedAt: '', lookbackDays: 7, readiness: 100, muscles: [
       { muscle: 'chest', recovery: .9, status: 'ready' as const, lastTrainedAt: '' },
       { muscle: 'back', recovery: .5, status: 'moderate' as const, lastTrainedAt: '' },
       { muscle: 'triceps', recovery: .2, status: 'recovering' as const, lastTrainedAt: '' }

@@ -24,16 +24,14 @@ function shortDate(date: string): string {
   return new Date(`${date}T00:00:00`).toLocaleDateString('en', { month: 'short', day: 'numeric' })
 }
 
-function bodyCards(entries: BodyWeightEntry[], unit: WeightUnit): HTMLElement {
+function bodyCards(entries: BodyWeightEntry[], changeKg: number, unit: WeightUnit): HTMLElement {
   const mount = document.createElement('div')
   mount.id = 'body-cards'
   if (entries.length === 0) return mount
   const sorted = oldestFirst(entries)
-  const first = sorted[0]
   const latest = sorted[sorted.length - 1]
   const last7 = sorted.slice(-7)
   const avg7 = last7.reduce((sum, entry) => sum + entry.weightKg, 0) / last7.length
-  const changeKg = latest.weightKg - first.weightKg
   const displayChange = displayWeightFromKg(changeKg, unit)
   mount.append(statStrip([
     { value: displayWeightFromKg(latest.weightKg, unit).toFixed(1), label: `Current (${unit})` },
@@ -206,14 +204,14 @@ function goalAndHeight(profile: Profile, onRefresh: () => void): HTMLElement {
 }
 
 export function bodyView(context: BodyTabContext): HTMLElement {
-  const { profile, entries, onRefresh } = context
+  const { stats, profile, entries, onRefresh } = context
   const unit = profile.weightUnit
   const section = document.createElement('section')
   section.className = 'stats-body-view'
   section.dataset.statsSection = 'body'
   const trend = trendCard(entries, profile)
   const cards = [
-    entries.length ? bodyCards(entries, unit) : null,
+    entries.length ? bodyCards(entries, stats.bodyWeightChangeKg ?? 0, unit) : null,
     logWeightForm(profile, entries, onRefresh),
     trend.card,
     goalCard(entries, profile.targetWeightKg, unit),

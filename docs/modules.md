@@ -666,7 +666,9 @@ profile service where needed
 Statistics are deterministic. They consume completed session history through the
 Session service, exercise muscle metadata through the Exercise service, and
 body-weight history through the Body service. Statistics must not query feature
-repositories directly while service contracts exist.
+repositories directly while service contracts exist. Derived figures shown in
+the client, such as `bodyWeightChangeKg`, are computed here and returned by the
+API so every consumer shows the same number.
 
 AI may interpret statistics, but statistics must not require AI.
 
@@ -721,7 +723,10 @@ Session service and exercise muscle metadata through the Exercise service.
 Recovery must not query feature repositories directly while service contracts
 exist. The initial model uses a 7-day lookback and a simple stimulus-decay
 calculation; AI may consume recovery state, but Recovery must never require AI
-to function. Readiness becomes ready at 80%. The public `recoveryMuscleGroup`
+to function. Readiness becomes ready at 80%. The recovery response includes
+`readiness`, the overall percent shown on Today and Recovery: the mean of the ten
+Recovery groups with untrained groups counted as fresh. Clients display it and
+must not recompute it. The public `recoveryMuscleGroup`, `overallReadiness`
 and `workoutReadiness` exports in `service.js` (implemented by `readiness.js`)
 canonicalize primary groups and aggregate readiness conservatively for Quick
 Workout; absent groups are treated as fresh by the generator.

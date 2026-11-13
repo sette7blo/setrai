@@ -13,6 +13,7 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 - Added API keys. Settings has a new API keys section to generate a named key for another app, such as the setrai-omarchy plugin, and to revoke it later. A key has full admin access to the Setrai API and is sent as `Authorization: Bearer <key>`. It is shown once when created; Setrai stores only a hash. The web app itself still needs no key, but a request that carries a wrong or revoked key is refused.
 - Added `GET /api/omarchy/snapshot`, which returns the live Omarchy snapshot to a plugin on another machine. It requires an API key.
+- `GET /api/recovery` now returns `readiness`, the overall "% ready" figure, and `GET /api/statistics` returns `bodyWeightChangeKg`, the Body tab's total change. The Today, Recovery and Statistics pages read these values from the server instead of working them out in the browser, so other apps such as the setrai-omarchy plugin get the same numbers.
 
 ## [v0.7.1] — 2026-11-11
 
