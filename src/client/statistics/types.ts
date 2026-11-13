@@ -30,6 +30,7 @@ export interface StatisticsApiPayload {
   personalRecords?: PersonalRecord[]
   trainingStreak?: Partial<TrainingStreak>
   bodyWeight?: BodyWeightPoint[]
+  bodyWeightChangeKg?: number | null
 }
 
 export interface StatisticsOverview {
@@ -41,4 +42,5 @@ export interface StatisticsOverview {
   personalRecords: PersonalRecord[]
   trainingStreak: TrainingStreak
   bodyWeight: BodyWeightPoint[]
+  bodyWeightChangeKg: number | null
 }

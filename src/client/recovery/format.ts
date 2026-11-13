@@ -6,6 +6,7 @@ export function normalizeRecovery(payload: RecoveryApiPayload): RecoveryOverview
   return {
     generatedAt: payload.generatedAt ?? '',
     lookbackDays: Number(payload.lookbackDays ?? 7),
+    readiness: Number(payload.readiness ?? 100),
     muscles: (payload.muscles ?? []).map((item) => ({
       muscle: item.muscle,
       recovery: Number(item.recovery ?? 0),
