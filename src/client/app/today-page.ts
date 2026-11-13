@@ -9,7 +9,7 @@ import type { WeightUnit } from '../profile/types.js'
 import { formatVolumeKg } from '../profile/weight-units.js'
 import { createRecoveryWorkoutPanel } from '../quick-workout/recovery-panel.js'
 import { getRecovery } from '../recovery/api.js'
-import { averageReadiness, recoveryBodyMapMarkup, recoveryPartition } from '../recovery/page.js'
+import { recoveryBodyMapMarkup, recoveryPartition } from '../recovery/page.js'
 import type { RecoveryOverview } from '../recovery/types.js'
 import { getStatistics } from '../statistics/api.js'
 import type { StatisticsOverview } from '../statistics/types.js'
@@ -82,8 +82,8 @@ function readinessCard(recovery: RecoveryOverview): HTMLElement {
   card.setAttribute('aria-label', 'Open muscle recovery')
   const copy = element('div', 'today-readiness-copy')
   const figure = element('p', 'today-figure')
-  const value = element('strong', '', String(averageReadiness(recovery)))
-  countUpOnce(value, averageReadiness(recovery))
+  const value = element('strong', '', String(recovery.readiness))
+  countUpOnce(value, recovery.readiness)
   figure.append(value, element('span', '', '% ready'))
   const more = element('span', 'today-more')
   more.append(document.createTextNode('Muscle detail'), iconElement(ChevronRight))

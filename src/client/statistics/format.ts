@@ -28,7 +28,8 @@ export function normalizeStatistics(payload: StatisticsApiPayload): StatisticsOv
       currentStreakWeeks: Number(payload.trainingStreak?.currentStreakWeeks ?? 0),
       longestStreakWeeks: Number(payload.trainingStreak?.longestStreakWeeks ?? 0)
     },
-    bodyWeight: payload.bodyWeight ?? []
+    bodyWeight: payload.bodyWeight ?? [],
+    bodyWeightChangeKg: payload.bodyWeightChangeKg ?? null
   }
 }
 
