@@ -29,12 +29,18 @@ export function calculateTrainingStreak(sessions, now = new Date()) {
     }
   }
 
+  // A streak is still alive while its period is open: before today's or this
+  // week's first session, count back from the previous day or week.
   let currentDayStreak = 0
   let dayCursor = new Date(Date.UTC(
     now.getUTCFullYear(),
     now.getUTCMonth(),
     now.getUTCDate()
   ))
+
+  if (!completedDays.has(formatDate(dayCursor))) {
+    dayCursor = addDays(dayCursor, -1)
+  }
 
   while (completedDays.has(formatDate(dayCursor))) {
     currentDayStreak += 1
@@ -63,6 +69,10 @@ export function calculateTrainingStreak(sessions, now = new Date()) {
 
   let current = 0
   let cursor = startOfIsoWeek(now)
+
+  if (!completedWeeks.has(formatDate(cursor))) {
+    cursor = addDays(cursor, -7)
+  }
 
   while (completedWeeks.has(formatDate(cursor))) {
     current += 1

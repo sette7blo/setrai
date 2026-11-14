@@ -9,6 +9,7 @@ import { openDatabase } from '../src/server/db/connection.js'
 import { createExerciseService } from '../src/server/exercises/service.js'
 import { createSessionService } from '../src/server/sessions/service.js'
 import { createStatisticsService } from '../src/server/statistics/service.js'
+import { calculateTrainingStreak } from '../src/server/statistics/streak.js'
 
 const NOW = new Date('2026-10-05T12:00:00.000Z')
 
@@ -431,4 +432,45 @@ test('overview does not expose raw database field names', () => {
   } finally {
     cleanupDatabase(db, directory)
   }
+})
+
+test('keeps the current streak alive until its day or week is over', () => {
+  const finished = (...dates) => dates.map((date) => ({ finishedAt: `${date} 10:00:00` }))
+  const streak = (sessions, now) => calculateTrainingStreak(sessions, new Date(now))
+
+  // Monday morning, before the week's first session, after three trained weeks.
+  assert.deepEqual(
+    streak(finished('2026-10-14', '2026-10-21', '2026-10-28'), '2026-11-02T08:00:00.000Z'),
+    { currentStreakDays: 0, longestStreakDays: 1, currentStreakWeeks: 3, longestStreakWeeks: 3 }
+  )
+
+  // The first session of the new week extends it.
+  assert.deepEqual(
+    streak(finished('2026-10-14', '2026-10-21', '2026-10-28', '2026-11-02'), '2026-11-02T20:00:00.000Z'),
+    { currentStreakDays: 1, longestStreakDays: 1, currentStreakWeeks: 4, longestStreakWeeks: 4 }
+  )
+
+  // A fully missed week ends it.
+  assert.deepEqual(
+    streak(finished('2026-10-14', '2026-10-21'), '2026-11-02T08:00:00.000Z'),
+    { currentStreakDays: 0, longestStreakDays: 1, currentStreakWeeks: 0, longestStreakWeeks: 2 }
+  )
+
+  // Trained yesterday and the day before, not yet today.
+  assert.deepEqual(
+    streak(finished('2026-11-03', '2026-11-04'), '2026-11-05T08:00:00.000Z'),
+    { currentStreakDays: 2, longestStreakDays: 2, currentStreakWeeks: 1, longestStreakWeeks: 1 }
+  )
+
+  // Trained today as well.
+  assert.deepEqual(
+    streak(finished('2026-11-03', '2026-11-04', '2026-11-05'), '2026-11-05T20:00:00.000Z'),
+    { currentStreakDays: 3, longestStreakDays: 3, currentStreakWeeks: 1, longestStreakWeeks: 1 }
+  )
+
+  // Two days without a session ends the day streak.
+  assert.deepEqual(
+    streak(finished('2026-11-03', '2026-11-04'), '2026-11-06T08:00:00.000Z'),
+    { currentStreakDays: 0, longestStreakDays: 2, currentStreakWeeks: 1, longestStreakWeeks: 1 }
+  )
 })
