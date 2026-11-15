@@ -11,6 +11,8 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 ## [Unreleased]
 
+## [v0.8.2] — 2026-11-15
+
 - Fixed a standalone app window opened directly on `/statistics` showing Today instead, which is what the setrai-omarchy "Show stats" menu entry ran into. The redirect was meant for home-screen installs made before v0.4.0; such an install now opens on Statistics until its shortcut is added again.
 
 ## [v0.8.1] — 2026-11-15
