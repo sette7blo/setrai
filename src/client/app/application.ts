@@ -118,16 +118,7 @@ async function renderShell(root: HTMLElement, active?: { id: number, programName
   await renderRoute(container)
 }
 
-// Home-screen installs made before Today existed still launch at /statistics.
-function launchedFromOldInstall(): boolean {
-  return window.location.pathname === '/statistics'
-    && window.history.length === 1
-    && window.matchMedia('(display-mode: standalone)').matches
-}
-
 export async function bootSetraiApp(root: HTMLElement): Promise<void> {
-  if (launchedFromOldInstall()) window.history.replaceState({}, '', '/today')
-
   try {
     // Capabilities gate optional integrations; loading them first keeps a
     // dead server from rendering an empty shell.
