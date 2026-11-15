@@ -11,6 +11,8 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 ## [Unreleased]
 
+- Fixed a standalone app window opened directly on `/statistics` showing Today instead, which is what the setrai-omarchy "Show stats" menu entry ran into. The redirect was meant for home-screen installs made before v0.4.0; such an install now opens on Statistics until its shortcut is added again.
+
 ## [v0.8.1] — 2026-11-15
 
 - Fixed the current training streak reading 0 before the day's or week's first session. The day streak now counts back from yesterday until you train today, and the week streak counts back from last week until you train this week; a streak ends only once a full day or week is missed. `currentStreakDays` and `currentStreakWeeks` in `GET /api/statistics` change the same way. The longest streaks are unaffected.
