@@ -11,6 +11,8 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 ## [Unreleased]
 
+- Fixed the current training streak reading 0 before the day's or week's first session. The day streak now counts back from yesterday until you train today, and the week streak counts back from last week until you train this week; a streak ends only once a full day or week is missed. `currentStreakDays` and `currentStreakWeeks` in `GET /api/statistics` change the same way. The longest streaks are unaffected.
+
 ## [v0.8.0] — 2026-11-13
 
 - Added API keys. Settings has a new API keys section to generate a named key for another app, such as the setrai-omarchy plugin, and to revoke it later. A key has full admin access to the Setrai API and is sent as `Authorization: Bearer <key>`. It is shown once when created; Setrai stores only a hash. The web app itself still needs no key, but a request that carries a wrong or revoked key is refused.
