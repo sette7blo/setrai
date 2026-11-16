@@ -118,3 +118,14 @@ Optional: build a local image and smoke-test it — see
 CI (`.github/workflows/docker.yml`) builds and pushes multi-arch images to
 **`dockersette/setrai`** on version tags (`v*.*.*`), `main` (`latest`), or manual
 dispatch. Maintainers do not publish from a casual `docker compose` in the clone.
+
+---
+
+## Support
+
+Setrai is free and self-hosted. If it is useful to you, donations in Monero (XMR)
+are welcome:
+
+```
+42iX2Knyef7Wi4rZxcWMw84DY7x1HUk67LKCqiqB1r5eLicJFvGbpCzUSiAqV8rGzbPW6yzmSGE93ZikU3PUkwnvQopggMB
+```
