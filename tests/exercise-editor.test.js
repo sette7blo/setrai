@@ -10,7 +10,8 @@ import {
   MAX_BYTES,
   parseImageMultipart,
   storeExerciseImage,
-  resolveExerciseMediaFile
+  resolveExerciseMediaFile,
+  sendExerciseMediaFile
 } from '../src/server/exercises/media.js'
 import { createExerciseService } from '../src/server/exercises/service.js'
 import { createExerciseRoutes } from '../src/server/exercises/routes.js'
@@ -224,6 +225,25 @@ test('upload route stores a multipart image and returns its url', async () => {
     assert.equal(bytes, png.length)
     const filePath = resolveExerciseMediaFile(directory, imageUrl.split('/').pop())
     assert.equal(fs.readFileSync(filePath).equals(png), true)
+  } finally {
+    fs.rmSync(directory, { recursive: true, force: true })
+  }
+})
+
+test('uploaded media is served with a sandboxing policy so an SVG cannot run scripts', () => {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'setrai-media-headers-'))
+  try {
+    const svg = Buffer.from('<svg xmlns="http://www.w3.org/2000/svg"><script>alert(1)</script></svg>')
+    const saved = storeExerciseImage(directory, svg, 'image/svg+xml')
+    const filePath = resolveExerciseMediaFile(directory, saved.imageUrl.split('/').pop())
+    let headers = null
+    const res = { writeHead(status, sent) { headers = sent }, end() {} }
+    sendExerciseMediaFile(res, filePath, 'HEAD')
+    assert.equal(headers['Content-Type'], 'image/svg+xml')
+    assert.match(headers['Content-Security-Policy'], /\bsandbox\b/)
+    assert.match(headers['Content-Security-Policy'], /default-src 'none'/)
+    assert.doesNotMatch(headers['Content-Security-Policy'], /script-src/)
+    assert.equal(headers['X-Content-Type-Options'], 'nosniff')
   } finally {
     fs.rmSync(directory, { recursive: true, force: true })
   }
