@@ -465,53 +465,7 @@ AI_ENABLED=false
 
 ---
 
-## 12. Omarchy integration
-
-`src/server/omarchy/` is an optional *outbound* integration, not a core concern.
-It writes a small JSON snapshot of glanceable training state to disk so that
-desktop consumers (the Omarchy bar plugin in `sette7blo/setrai-omarchy`) can
-watch a file instead of calling the server.
-
-Rules:
-
-- it is off by default and enabled only by `SETRAI_OMARCHY_SNAPSHOT_ENABLED`;
-- it exposes one read endpoint, `GET /api/omarchy/snapshot`, which returns
-  `{ snapshot }` built live for plugin hosts that cannot see the file. It
-  requires an API key (section 12.1) and works whether or not the file writer
-  is enabled. It changes nothing in the client;
-- it never owns or mutates training data: it only reads through the session,
-  program, body, and recovery service contracts;
-- it imports no other feature. `src/server/index.js` passes the service
-  contracts in, and reports finished requests to `routes.js`, which decides
-  whether a successful mutation should refresh the snapshot;
-- core features do not know it exists, so removing the directory and its wiring
-  in `index.js` removes the integration completely;
-- a snapshot write failure is logged and never fails a request or startup.
-
-The snapshot is refreshed on startup, after successful requests that can change
-it (debounced), and on a fallback timer so time-driven values such as readiness
-stay current. Writes are atomic: a temp file in the destination directory is
-renamed over the snapshot.
-
-Snapshot schema v1 is a contract consumed by file watchers. Add fields only in
-a backwards-compatible way; anything else requires a new `schemaVersion`.
-
-```json
-{
-  "schemaVersion": 1,
-  "generatedAt": "2026-11-09T12:34:56.000Z",
-  "activeProgram": { "id": 3, "name": "Upper Body A", "weekIndex": null },
-  "resumeWorkout": { "sessionId": 41, "url": "/sessions/41" },
-  "today": { "volumeKg": 0, "sessionsCompleted": 0 },
-  "week": { "volumeKg": 0, "sessions": 0, "readiness": 1 },
-  "lastWorkout": { "finishedAt": "2026-11-09T11:02:00.000Z", "name": "Upper Body A", "durationMin": 52 },
-  "body": { "weightKg": 82.4, "measuredAt": "2026-11-09" }
-}
-```
-
-Every section may be `null`, and consumers must render with partial data.
-
-### 12.1 API keys
+## 12. API keys
 
 `src/server/auth/` owns API keys for other apps (the Omarchy plugin first).
 A key is `setrai_` plus 43 base64url characters, created in Settings, shown

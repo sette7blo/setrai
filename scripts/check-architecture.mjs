@@ -74,7 +74,6 @@ const SERVER_FEATURES = new Set([
   'quick-workout',
   'backup',
   'ai',
-  'omarchy',
   'auth'
 ])
 
@@ -134,10 +133,6 @@ const ALLOWED_SERVER_FEATURE_IMPORTS = {
     'statistics',
     'recovery'
   ]),
-
-  // Outbound integration: receives service contracts from the composition
-  // root and imports no feature directly.
-  omarchy: new Set([]),
 
   auth: new Set([])
 }
@@ -435,7 +430,6 @@ function checkRepositoryAccess(filePath, imports) {
       recovery: new Set([]),
       'quick-workout': new Set([]),
       ai: new Set([]),
-      omarchy: new Set([]),
       auth: new Set(['api-keys'])
     }
 
@@ -560,7 +554,6 @@ function checkRequiredDirectories() {
     'src/server/recovery',
     'src/server/quick-workout',
     'src/server/ai',
-    'src/server/omarchy',
 
     'src/client/app',
     'src/client/exercises',
