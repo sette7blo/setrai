@@ -11,6 +11,9 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 ## [Unreleased]
 
+- Uploaded exercise images are served with a sandboxing Content-Security-Policy and `X-Content-Type-Options: nosniff`, so a script inside an uploaded SVG cannot run when the image's address is opened directly. Images in the app look the same.
+- A request for an exercise image whose file disappears mid-request now ends that request instead of risking a server crash, and `HEAD` requests no longer open the file.
+
 ## [v0.8.3] — 2026-11-21
 
 - Fixed exercise image uploads failing with a server error since v0.2.0: `POST /api/exercises/upload` crashed on every file, so neither the exercise editor nor an API client could attach an image.

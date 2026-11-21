@@ -100,16 +100,23 @@ function contentTypeFor(filePath) {
 }
 
 export function sendExerciseMediaFile(res, filePath, method = 'GET') {
-  const stream = fs.createReadStream(filePath)
+  // Uploaded files may be SVG, which can carry scripts. An <img> never runs
+  // them, but opening the file's URL directly would, on Setrai's origin. The
+  // sandbox policy blocks scripts and forms there; nosniff stops a browser
+  // from reading any upload as something other than its declared type.
   res.writeHead(200, {
     'Content-Type': contentTypeFor(filePath),
-    'Cache-Control': 'public, max-age=31536000, immutable'
+    'Cache-Control': 'public, max-age=31536000, immutable',
+    'Content-Security-Policy': "default-src 'none'; img-src 'self' data:; style-src 'unsafe-inline'; sandbox",
+    'X-Content-Type-Options': 'nosniff'
   })
   if (method === 'HEAD') {
     res.end()
-    stream.destroy()
     return
   }
+  // A file removed after it was resolved must not take the server down.
+  const stream = fs.createReadStream(filePath)
+  stream.on('error', () => res.destroy())
   stream.pipe(res)
 }
 
