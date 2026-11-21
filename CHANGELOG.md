@@ -11,6 +11,8 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 ## [Unreleased]
 
+## [v0.9.0] — 2026-11-21
+
 - Removed the Omarchy snapshot: `GET /api/omarchy/snapshot` (now the normal 404) and the optional snapshot file writer. The setrai-omarchy plugin reads the regular API with an API key and no longer uses either. If you had enabled the snapshot, the file stops updating; you can delete it. The `SETRAI_OMARCHY_SNAPSHOT_*` variables are now ignored and can be removed from `.env`, along with the snapshot bind mount in `compose.yaml`. No data migration is needed.
 
 ## [v0.8.4] — 2026-11-21
