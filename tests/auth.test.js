@@ -8,7 +8,6 @@ import test from 'node:test'
 import { openDatabase } from '../src/server/db/connection.js'
 import { createAuthService } from '../src/server/auth/service.js'
 import { createAuthRoutes } from '../src/server/auth/routes.js'
-import { createOmarchyRoutes } from '../src/server/omarchy/routes.js'
 
 async function withAuth(run) {
   const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'setrai-auth-'))
@@ -100,16 +99,3 @@ test('key routes create, list, describe, and revoke keys', async () => withAuth(
   assert.equal(service.verifyKey(key), null)
   assert.equal(await routes.handle(request('GET'), response(), url('/api/exercises'), null), false)
 }))
-
-test('the Omarchy snapshot endpoint requires an API key', () => {
-  const routes = createOmarchyRoutes({ getSnapshot: () => ({ schemaVersion: 1 }) })
-  const denied = response()
-  assert.equal(routes.handle(request('GET'), denied, url('/api/omarchy/snapshot'), null), true)
-  assert.equal(denied.statusCode, 401)
-
-  const allowed = response()
-  routes.handle(request('GET'), allowed, url('/api/omarchy/snapshot'), { id: 1 })
-  assert.equal(allowed.statusCode, 200)
-  assert.deepEqual(JSON.parse(allowed.body), { snapshot: { schemaVersion: 1 } })
-  assert.equal(routes.handle(request('GET'), response(), url('/api/sessions'), null), false)
-})

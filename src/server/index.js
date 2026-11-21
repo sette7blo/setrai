@@ -44,8 +44,7 @@ import {
   createStatisticsRoutes
 } from './statistics/routes.js'
 import {
-  createRecoveryService,
-  workoutReadiness
+  createRecoveryService
 } from './recovery/service.js'
 import {
   createRecoveryRoutes
@@ -58,8 +57,6 @@ import {
 } from './quick-workout/routes.js'
 import { createBackupService } from './backup/service.js'
 import { createBackupRoutes } from './backup/routes.js'
-import { createOmarchyService } from './omarchy/service.js'
-import { createOmarchyRoutes } from './omarchy/routes.js'
 import { createAuthService } from './auth/service.js'
 import { createAuthRoutes } from './auth/routes.js'
 import { sendJson } from './shared/http.js'
@@ -91,15 +88,6 @@ const quickWorkoutService =
 const backupService =
   createBackupService(db, { dataDir: config.server.dataDir })
 
-const omarchyService =
-  createOmarchyService(config.omarchy, {
-    sessionService,
-    programService,
-    bodyService,
-    getGroupReadiness: (now) =>
-      workoutReadiness(recoveryService.getRecovery({ now }))
-  })
-
 const exerciseRoutes =
   createExerciseRoutes(exerciseService, {
     dataDir: config.server.dataDir
@@ -120,8 +108,6 @@ const quickWorkoutRoutes =
   createQuickWorkoutRoutes(quickWorkoutService)
 const backupRoutes =
   createBackupRoutes(backupService)
-const omarchyRoutes =
-  createOmarchyRoutes(omarchyService)
 const authRoutes =
   createAuthRoutes(createAuthService(db))
 
@@ -137,13 +123,7 @@ const server = http.createServer(
         ? authRoutes.authenticate(req)
         : null
 
-      omarchyRoutes.observe(req, res, url)
-
       if (await authRoutes.handle(req, res, url, apiKey)) {
-        return
-      }
-
-      if (omarchyRoutes.handle(req, res, url, apiKey)) {
         return
       }
 
@@ -325,20 +305,11 @@ server.listen(
     console.log(
       `Database: ${config.server.dbPath}`
     )
-
-    if (config.omarchy.snapshotEnabled) {
-      console.log(
-        `Omarchy snapshot: ${config.omarchy.snapshotPath}`
-      )
-    }
-
-    omarchyService.start()
   }
 )
 
 function shutdown() {
   console.log('Shutting down Setrai...')
-  omarchyService.stop()
 
   server.close(() => {
     db.close()
