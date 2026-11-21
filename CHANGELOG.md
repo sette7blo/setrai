@@ -11,6 +11,8 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 ## [Unreleased]
 
+- Fixed exercise image uploads failing with a server error since v0.2.0: `POST /api/exercises/upload` crashed on every file, so neither the exercise editor nor an API client could attach an image.
+
 ## [v0.8.2] — 2026-11-15
 
 - Fixed a standalone app window opened directly on `/statistics` showing Today instead, which is what the setrai-omarchy "Show stats" menu entry ran into. The redirect was meant for home-screen installs made before v0.4.0; such an install now opens on Statistics until its shortcut is added again.

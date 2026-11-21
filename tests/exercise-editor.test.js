@@ -2,6 +2,7 @@ import assert from 'node:assert/strict'
 import fs from 'node:fs'
 import os from 'node:os'
 import path from 'node:path'
+import { Readable } from 'node:stream'
 import test from 'node:test'
 
 import { openDatabase } from '../src/server/db/connection.js'
@@ -12,6 +13,7 @@ import {
   resolveExerciseMediaFile
 } from '../src/server/exercises/media.js'
 import { createExerciseService } from '../src/server/exercises/service.js'
+import { createExerciseRoutes } from '../src/server/exercises/routes.js'
 import { normalizeExerciseWrite } from '../src/server/exercises/write.js'
 
 function createTestDatabase() {
@@ -186,6 +188,43 @@ test('create/update via service with write normalization and favourite patch', (
     assert.equal(updated.muscle_group, 'chest')
   } finally {
     db.close()
+    fs.rmSync(directory, { recursive: true, force: true })
+  }
+})
+
+test('upload route stores a multipart image and returns its url', async () => {
+  const directory = fs.mkdtempSync(path.join(os.tmpdir(), 'setrai-upload-route-'))
+  try {
+    const png = Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==',
+      'base64'
+    )
+    const boundary = 'setrai-test-boundary'
+    const body = Buffer.concat([
+      Buffer.from(`--${boundary}\r\nContent-Disposition: form-data; name="image"; filename="a.png"\r\nContent-Type: image/png\r\n\r\n`),
+      png,
+      Buffer.from(`\r\n--${boundary}--\r\n`)
+    ])
+    const req = Object.assign(Readable.from([body]), {
+      method: 'POST',
+      headers: { 'content-type': `multipart/form-data; boundary=${boundary}` }
+    })
+    const res = {
+      statusCode: 200,
+      body: '',
+      setHeader() {},
+      writeHead(status) { this.statusCode = status },
+      end(chunk = '') { this.body = String(chunk) }
+    }
+    const routes = createExerciseRoutes(null, { dataDir: directory })
+    const handled = await routes.handle(req, res, new URL('http://setrai.test/api/exercises/upload'))
+    assert.equal(handled, true)
+    assert.equal(res.statusCode, 201)
+    const { imageUrl, bytes } = JSON.parse(res.body)
+    assert.equal(bytes, png.length)
+    const filePath = resolveExerciseMediaFile(directory, imageUrl.split('/').pop())
+    assert.equal(fs.readFileSync(filePath).equals(png), true)
+  } finally {
     fs.rmSync(directory, { recursive: true, force: true })
   }
 })

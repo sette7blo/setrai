@@ -1,5 +1,6 @@
 import {
   parseImageMultipart,
+  readRequestBody,
   resolveExerciseMediaFile,
   sendExerciseMediaFile,
   storeExerciseImage
