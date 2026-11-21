@@ -11,6 +11,8 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 ## [Unreleased]
 
+## [v0.8.3] — 2026-11-21
+
 - Fixed exercise image uploads failing with a server error since v0.2.0: `POST /api/exercises/upload` crashed on every file, so neither the exercise editor nor an API client could attach an image.
 
 ## [v0.8.2] — 2026-11-15
