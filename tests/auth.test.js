@@ -23,7 +23,8 @@ async function withAuth(run) {
 
 function request(method, headers = {}, body) {
   const req = Readable.from(body === undefined ? [] : [JSON.stringify(body)])
-  return Object.assign(req, { method, headers })
+  const contentType = body === undefined ? {} : { 'content-type': 'application/json' }
+  return Object.assign(req, { method, headers: { ...contentType, ...headers } })
 }
 
 function response() {

@@ -19,7 +19,10 @@ export function createExerciseRoutes(exerciseService, { dataDir = './data' } = {
       (req.method === 'GET' || req.method === 'HEAD') &&
       url.pathname.startsWith('/media/exercises/')
     ) {
-      const fileName = decodeURIComponent(url.pathname.slice('/media/exercises/'.length))
+      let fileName = ''
+      try {
+        fileName = decodeURIComponent(url.pathname.slice('/media/exercises/'.length))
+      } catch { /* A malformed escape names no file. */ }
       const filePath = resolveExerciseMediaFile(dataDir, fileName)
       if (!filePath) {
         sendJson(res, 404, { error: 'Image not found' })

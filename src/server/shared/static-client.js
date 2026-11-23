@@ -23,20 +23,33 @@ const MIME_TYPES = new Map([
   ['.webp', 'image/webp']
 ])
 
-function safeClientPath(pathname) {
+function safeClientPath(clientDist, pathname) {
   const requestedPath = pathname === '/'
     ? '/index.html'
     : pathname
-  const normalizedPath = path.normalize(
-    decodeURIComponent(requestedPath)
-  )
-  const filePath = path.join(CLIENT_DIST, normalizedPath)
+  let decodedPath
+  try {
+    decodedPath = decodeURIComponent(requestedPath)
+  } catch {
+    return null
+  }
+  const filePath = path.join(clientDist, path.normalize(decodedPath))
 
-  if (!filePath.startsWith(CLIENT_DIST)) {
+  if (!filePath.startsWith(clientDist + path.sep)) {
     return null
   }
 
   return filePath
+}
+
+// Directories (e.g. /assets) must not be streamed: reading one fails with
+// EISDIR, which would crash the process.
+function isFile(filePath) {
+  try {
+    return fs.statSync(filePath).isFile()
+  } catch {
+    return false
+  }
 }
 
 function cacheControlFor(filePath) {
@@ -64,10 +77,12 @@ function sendFile(res, filePath, method) {
     return
   }
 
-  fs.createReadStream(filePath).pipe(res)
+  const stream = fs.createReadStream(filePath)
+  stream.on('error', () => res.destroy())
+  stream.pipe(res)
 }
 
-export function handleStaticClientRoute(req, res, url) {
+export function handleStaticClientRoute(req, res, url, clientDist = CLIENT_DIST) {
   if (req.method !== 'GET' && req.method !== 'HEAD') {
     return false
   }
@@ -76,18 +91,18 @@ export function handleStaticClientRoute(req, res, url) {
     return false
   }
 
-  if (!fs.existsSync(CLIENT_DIST)) {
+  if (!fs.existsSync(clientDist)) {
     return false
   }
 
-  const filePath = safeClientPath(url.pathname)
+  const filePath = safeClientPath(clientDist, url.pathname)
 
-  if (filePath && fs.existsSync(filePath)) {
+  if (filePath && isFile(filePath)) {
     sendFile(res, filePath, req.method)
     return true
   }
 
-  const fallback = path.join(CLIENT_DIST, 'index.html')
+  const fallback = path.join(clientDist, 'index.html')
 
   if (fs.existsSync(fallback)) {
     sendFile(res, fallback, req.method)

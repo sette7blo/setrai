@@ -11,6 +11,11 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 ## [Unreleased]
 
+- Fixed a crash: requesting a folder of the web app (for example `/assets`) took the whole server down. It now serves the app instead, and malformed `%` escapes in a URL no longer cause a server error.
+- Fixed a security issue: an exercise name containing HTML could run script when its personal record was shared. Exercise and muscle names are now always shown as plain text.
+- Other websites open in your browser can no longer change Setrai data. Write requests that a browser marks as cross-site are refused (`403`), and JSON request bodies must be sent with `Content-Type: application/json` (`415` otherwise). The web app and the setrai-omarchy plugin already do this. If you call the API from your own scripts, add that header to requests with a body.
+- Fixed a startup failure: if you deleted a built-in exercise, a future release adding a built-in workout that uses it would have stopped Setrai from starting. That workout is now skipped, and updates to existing built-in workouts keep your current plan in that case.
+
 ## [v0.9.0] — 2026-11-21
 
 - Removed the Omarchy snapshot: `GET /api/omarchy/snapshot` (now the normal 404) and the optional snapshot file writer. The setrai-omarchy plugin reads the regular API with an API key and no longer uses either. If you had enabled the snapshot, the file stops updating; you can delete it. The `SETRAI_OMARCHY_SNAPSHOT_*` variables are now ignored and can be removed from `.env`, along with the snapshot bind mount in `compose.yaml`. No data migration is needed.

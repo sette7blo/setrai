@@ -202,6 +202,43 @@ test('deleting seeded records creates tombstones and prevents reinstallation', (
   } finally { cleanupDatabase(db, directory) }
 })
 
+test('a new built-in workout that needs a deleted exercise is skipped instead of failing startup', () => {
+  const { db, directory } = createTestDatabase({ seed: true })
+  try {
+    const exercises = createExerciseService(db)
+    exercises.deleteExercise(exercises.getExerciseBySlug('burpees').id)
+    const source = BUILTIN_PROGRAMS.find(item => item.exercises.some(entry => entry.exerciseSeedKey === 'setrai.exercise.burpees'))
+    const programs = [...clone(BUILTIN_PROGRAMS), { ...clone(source), seedKey: 'setrai.workout.test-new', slug: 'test-new', name: 'Test New' }]
+    const result = initializeDatabaseSeeds(db, { exercises: BUILTIN_EXERCISES, programs })
+    assert.equal(result.programs.skipped, 1)
+    assert.equal(createProgramService(db).getProgramBySlug('test-new'), null)
+    assert.equal(Number(db.prepare("SELECT COUNT(*) AS count FROM seed_tombstones WHERE entity_type = 'program'").get().count), 0)
+  } finally { cleanupDatabase(db, directory) }
+})
+
+test('a workout revision that adds a deleted exercise keeps the current plan and still updates fields', () => {
+  const { db, directory } = createTestDatabase({ seed: true })
+  try {
+    const service = createProgramService(db)
+    const program = service.listPrograms().find(item => item.slug === 'upper')
+    const inUpper = new Set(BUILTIN_PROGRAMS.find(item => item.slug === 'upper').exercises.map(entry => entry.exerciseSeedKey))
+    const extra = BUILTIN_EXERCISES.find(item => !inUpper.has(item.seedKey))
+    const exercises = createExerciseService(db)
+    exercises.deleteExercise(exercises.getExerciseBySlug(extra.slug).id)
+    const programs = clone(BUILTIN_PROGRAMS)
+    const next = programs.find(item => item.slug === 'upper')
+    next.revision = 2
+    next.description = 'Revision two with an extra exercise.'
+    next.exercises.push({ ...next.exercises[0], exerciseSeedKey: extra.seedKey, position: next.exercises.length })
+    const result = initializeDatabaseSeeds(db, { exercises: BUILTIN_EXERCISES, programs })
+    const updated = service.getProgram(program.id)
+    assert.equal(result.programs.updated, 1)
+    assert.equal(updated.seedRevision, 2)
+    assert.equal(updated.description, 'Revision two with an extra exercise.')
+    assert.deepEqual(updated.exercises.map(entry => entry.exerciseSlug), program.exercises.map(entry => entry.exerciseSlug))
+  } finally { cleanupDatabase(db, directory) }
+})
+
 test('seeded library remains compatible with Quick Workout, Recovery, and Statistics', () => {
   const { db, directory } = createTestDatabase({ seed: true })
   try {

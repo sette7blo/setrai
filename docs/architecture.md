@@ -486,6 +486,17 @@ Routes: `GET /api/api-keys` (list, never the key itself), `POST /api/api-keys`
 (revoke, immediate), and `GET /api/api-keys/current` (describes the presented
 key; `401` without one, so a client can test its key).
 
+Two request rules guard the unauthenticated API against other websites in the
+user's browser (`src/server/shared/http.js`):
+
+- a write (`POST`, `PATCH`, `DELETE`, `PUT`) to `/api/` whose
+  `Sec-Fetch-Site` header is present and is not `same-origin` or `none` gets
+  `403`. Browsers set this header and pages cannot forge it; curl and other
+  non-browser clients do not send it and are unaffected;
+- a non-empty JSON body must be sent as `Content-Type: application/json`
+  (or `application/*+json`), otherwise `415`. Requests with an empty body need
+  no content type.
+
 - `activeProgram` is the saved program of the most recently started session.
   Setrai has no explicit active-program setting, generated Quick Workout
   programs are skipped, and `weekIndex` is reserved and currently always `null`.

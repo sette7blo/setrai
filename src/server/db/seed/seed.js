@@ -87,20 +87,16 @@ function reconcileExercises(db, seeds = exerciseSeeds) {
   return result
 }
 
-function exerciseBySeedKey(exercises, seedKey) {
-  const exercise = exercises.find(item => item.seed_key === seedKey)
-  if (!exercise) throw new Error(`Missing local exercise for ${seedKey}`)
-  return exercise
-}
-
+// Returns null when the user has deleted an exercise the seed plan needs.
+// Seeding runs at startup, so a missing exercise must never throw.
 function resolvedProgramPlan(seed, exercises) {
-  return {
-    blocks: seed.blocks,
-    exercises: seed.exercises.map(entry => {
-      const exercise = exerciseBySeedKey(exercises, entry.exerciseSeedKey)
-      return { ...entry, exerciseId: exercise.id, exerciseSlug: exercise.slug }
-    })
+  const resolved = []
+  for (const entry of seed.exercises) {
+    const exercise = exercises.find(item => item.seed_key === entry.exerciseSeedKey)
+    if (!exercise) return null
+    resolved.push({ ...entry, exerciseId: exercise.id, exerciseSlug: exercise.slug })
   }
+  return { blocks: seed.blocks, exercises: resolved }
 }
 
 function currentProgramPlan(program, exercises) {
@@ -124,7 +120,7 @@ function currentProgramPlan(program, exercises) {
 function reconcilePrograms(db, seeds = programSeeds) {
   const repository = createProgramRepository(db)
   const exercises = createExerciseRepository(db).list({ status: null })
-  const result = { checked: seeds.length, inserted: 0, adopted: 0, updated: 0, unchanged: 0, tombstoned: 0 }
+  const result = { checked: seeds.length, inserted: 0, adopted: 0, updated: 0, unchanged: 0, tombstoned: 0, skipped: 0 }
   const rows = repository.list()
   const bySeedKey = new Map(rows.filter(row => row.seedKey).map(row => [row.seedKey, row]))
   const unseededBySlug = new Map(rows.filter(row => !row.seedKey).map(row => [row.slug, row]))
@@ -134,6 +130,8 @@ function reconcilePrograms(db, seeds = programSeeds) {
     const baseline = programBaseline(seed)
     if (!existing) {
       const plan = resolvedProgramPlan(seed, exercises)
+      // Not tombstoned, so it is offered again if the exercise comes back.
+      if (!plan) { result.skipped++; continue }
       repository.create({ ...seed, ...plan, seedKey: seed.seedKey, seedRevision: seed.revision,
         seedBaseline: baseline })
       result.inserted++
@@ -152,8 +150,10 @@ function reconcilePrograms(db, seeds = programSeeds) {
       for (const field of PROGRAM_FIELDS) {
         if (same(existing[field], previous[field])) patch[field] = baseline[field]
       }
-      if (same(currentProgramPlan(existing, exercises), previous.plan)) {
-        const plan = resolvedProgramPlan(seed, exercises)
+      const plan = same(currentProgramPlan(existing, exercises), previous.plan)
+        ? resolvedProgramPlan(seed, exercises)
+        : null
+      if (plan) {
         patch.blocks = plan.blocks
         patch.exercises = plan.exercises
       }
