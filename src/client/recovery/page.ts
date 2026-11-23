@@ -80,7 +80,11 @@ function recoveryRows(muscles: RecoveryMuscle[]): HTMLElement {
     row.setAttribute('aria-pressed', 'false')
     const name = document.createElement('div')
     name.className = 'recovery-row-name'
-    name.innerHTML = `<strong>${displayName(item.muscle)}</strong><small>${lastTrainedText(item.lastTrainedAt)}</small>`
+    // Muscle names come from stored exercise data, so they are set as text.
+    name.append(
+      Object.assign(document.createElement('strong'), { textContent: displayName(item.muscle) }),
+      Object.assign(document.createElement('small'), { textContent: lastTrainedText(item.lastTrainedAt) })
+    )
     const meta = document.createElement('div')
     meta.className = 'recovery-row-meta'
     meta.innerHTML = `<strong>${recoveryPercent(item.recovery)}</strong><small>${statusLabel(item.status)}</small>`

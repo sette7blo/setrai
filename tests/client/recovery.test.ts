@@ -126,3 +126,21 @@ test('Recovery content keeps one partition and omits map label chips', () => {
     assert.doesNotMatch(content.innerHTML + rendered, /Not logged in the lookback window/)
   } finally { globalThis.document = originalDocument }
 })
+
+test('Recovery rows render stored muscle names as text, never as markup', () => {
+  const originalDocument = globalThis.document
+  try {
+    globalThis.document = {
+      createElement: () => new TestElement(),
+      createElementNS: () => new TestElement(),
+      createTextNode: (value: string) => Object.assign(new TestElement(), { textContent: value })
+    } as unknown as Document
+    const payload = '<img/src=x/onerror=alert(1)>'
+    const content = recoveryContent({ generatedAt: '', lookbackDays: 7, readiness: 50, muscles: [
+      { muscle: payload, recovery: .2, status: 'recovering' as const, lastTrainedAt: '' }
+    ] }) as unknown as TestElement
+    const markup = (node: TestElement): string => [node.innerHTML, ...node.children.map(markup)].join('')
+    assert.doesNotMatch(markup(content), /onerror/)
+    assert.match(text(content), /onerror/)
+  } finally { globalThis.document = originalDocument }
+})

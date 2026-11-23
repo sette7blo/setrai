@@ -59,7 +59,7 @@ import { createBackupService } from './backup/service.js'
 import { createBackupRoutes } from './backup/routes.js'
 import { createAuthService } from './auth/service.js'
 import { createAuthRoutes } from './auth/routes.js'
-import { sendJson } from './shared/http.js'
+import { assertSameOriginWrite, sendJson } from './shared/http.js'
 import {
   handleStaticClientRoute
 } from './shared/static-client.js'
@@ -118,6 +118,10 @@ const server = http.createServer(
         req.url,
         `http://${req.headers.host || 'localhost'}`
       )
+
+      if (url.pathname.startsWith('/api/')) {
+        assertSameOriginWrite(req)
+      }
 
       const apiKey = url.pathname.startsWith('/api/')
         ? authRoutes.authenticate(req)
@@ -282,6 +286,12 @@ const server = http.createServer(
 
       if (status >= 500) {
         console.error(error)
+      }
+
+      // A second response would throw here and take the process down.
+      if (res.headersSent) {
+        res.destroy()
+        return
       }
 
       sendJson(res, status, {
