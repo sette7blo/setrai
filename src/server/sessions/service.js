@@ -173,12 +173,32 @@ export function createSessionService(db) {
     return true
   }
 
-  function finishSession(id, input = {}) {
-    requireSession(id)
+  // Finishing again without a time keeps the recorded finish, so a retry or a
+  // double submit cannot move a past workout; an explicit time still corrects it.
+  function finishSession(id, input) {
+    const session = requireSession(id)
+    const body = input && typeof input === 'object' ? input : {}
+    const finishedAt = normalizeFinishedAt(body.finishedAt)
+    if (finishedAt && toTime(finishedAt) < toTime(session.startedAt)) {
+      throw clientError('Finish time cannot be before the session started', 400)
+    }
     return repository.finish(id, {
-      ...input,
-      finishedAt: normalizeFinishedAt(input.finishedAt)
+      finishedAt,
+      notes: normalizeFinishNotes(body.notes)
     })
+  }
+
+  // Stored times are UTC 'YYYY-MM-DD HH:MM:SS' without a zone marker.
+  function toTime(value) {
+    return Date.parse(`${value.replace(' ', 'T')}Z`)
+  }
+
+  function normalizeFinishNotes(value) {
+    if (value === undefined || value === null) return null
+    if (typeof value !== 'string' || value.length > 5000) {
+      throw clientError('Notes must be text of at most 5000 characters', 400)
+    }
+    return value
   }
 
   // An explicit finish time is how a session's length gets corrected, so it

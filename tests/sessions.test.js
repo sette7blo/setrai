@@ -28,6 +28,11 @@ function cleanupDatabase(db, directory) {
   })
 }
 
+function minutesAfter(stamp, minutes) {
+  const time = Date.parse(`${stamp.replace(' ', 'T')}Z`) + minutes * 60_000
+  return new Date(time).toISOString().slice(0, 19).replace('T', ' ')
+}
+
 function createServices(db) {
   return {
     exercises: createExerciseService(db),
@@ -471,10 +476,11 @@ test('an explicit finish time corrects duration and must use the stored format',
     const session = services.sessions.startSession({ name: 'Left running' })
     services.sessions.finishSession(session.id)
 
+    const correctedAt = minutesAfter(session.startedAt, 45)
     const corrected = services.sessions.finishSession(session.id, {
-      finishedAt: '2026-10-11 10:15:00'
+      finishedAt: correctedAt
     })
-    assert.equal(corrected.finishedAt, '2026-10-11 10:15:00')
+    assert.equal(corrected.finishedAt, correctedAt)
 
     for (const finishedAt of ['2026-10-11T10:15:00Z', 'yesterday', 42, '2026-13-45 99:99:99']) {
       assert.throws(
@@ -482,6 +488,74 @@ test('an explicit finish time corrects duration and must use the stored format',
         /Finish time is invalid/
       )
     }
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})
+
+test('finishing an already finished session again keeps its finish time', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    const services = createServices(db)
+    const session = services.sessions.startSession({ name: 'Retry' })
+    const finishedAt = minutesAfter(session.startedAt, 30)
+    services.sessions.finishSession(session.id, { finishedAt, notes: 'Good' })
+
+    const again = services.sessions.finishSession(session.id, {})
+    assert.equal(again.finishedAt, finishedAt)
+    assert.equal(again.notes, 'Good')
+
+    const corrected = services.sessions.finishSession(session.id, {
+      finishedAt: minutesAfter(session.startedAt, 50)
+    })
+    assert.equal(corrected.finishedAt, minutesAfter(session.startedAt, 50))
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})
+
+test('a finish time before the start is rejected, equal is allowed', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    const services = createServices(db)
+    const session = services.sessions.startSession({ name: 'Backwards' })
+
+    assert.throws(
+      () => services.sessions.finishSession(session.id, { finishedAt: minutesAfter(session.startedAt, -1) }),
+      (error) => error.statusCode === 400 && /before the session started/.test(error.message)
+    )
+    assert.throws(
+      () => services.sessions.finishSession(session.id, { finishedAt: '2001-01-01 00:00:00' }),
+      (error) => error.statusCode === 400
+    )
+    assert.equal(services.sessions.getSession(session.id).finishedAt, null)
+
+    const same = services.sessions.finishSession(session.id, { finishedAt: session.startedAt })
+    assert.equal(same.finishedAt, session.startedAt)
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})
+
+test('finish notes must be text of at most 5000 characters', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    const services = createServices(db)
+    const session = services.sessions.startSession({ name: 'Notes' })
+
+    for (const notes of [42, { text: 'x' }, ['x'], true, 'x'.repeat(5001)]) {
+      assert.throws(
+        () => services.sessions.finishSession(session.id, { notes }),
+        (error) => error.statusCode === 400 && /Notes must be text/.test(error.message)
+      )
+    }
+    assert.equal(services.sessions.getSession(session.id).finishedAt, null)
+
+    const finished = services.sessions.finishSession(session.id, { notes: 'x'.repeat(5000) })
+    assert.equal(finished.notes.length, 5000)
   } finally {
     cleanupDatabase(db, directory)
   }

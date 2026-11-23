@@ -101,6 +101,7 @@ export function renderStrength(model: LiveModel, controls: LiveActions, body: HT
     const notes = node('label', 'live-session-notes')
     const input = node('textarea', '')
     input.rows = 2
+    input.maxLength = 5000
     input.value = model.session.notes
     input.placeholder = 'Optional workout notes'
     input.addEventListener('input', () => { model.session.notes = input.value })

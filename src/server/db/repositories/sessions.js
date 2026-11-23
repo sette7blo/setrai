@@ -107,7 +107,7 @@ export function createSessionRepository(db) {
       .prepare(`
         UPDATE sessions
         SET
-          finished_at = COALESCE(?, datetime('now')),
+          finished_at = COALESCE(?, finished_at, datetime('now')),
           notes = COALESCE(?, notes)
         WHERE id = ?
       `)
