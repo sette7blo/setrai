@@ -11,6 +11,8 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 ## [Unreleased]
 
+## [v0.9.1] — 2026-11-23
+
 - Fixed a crash: requesting a folder of the web app (for example `/assets`) took the whole server down. It now serves the app instead, and malformed `%` escapes in a URL no longer cause a server error.
 - Fixed a security issue: an exercise name containing HTML could run script when its personal record was shared. Exercise and muscle names are now always shown as plain text.
 - Other websites open in your browser can no longer change Setrai data. Write requests that a browser marks as cross-site are refused (`403`), and JSON request bodies must be sent with `Content-Type: application/json` (`415` otherwise). The web app and the setrai-omarchy plugin already do this. If you call the API from your own scripts, add that header to requests with a body.
