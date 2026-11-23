@@ -36,6 +36,7 @@ function createServices(db) {
   return {
     body: createBodyService(db),
     exercises: createExerciseService(db),
+    db,
     sessions: createSessionService(db),
     statistics: createStatisticsService(db, {
       now: () => NOW
@@ -62,6 +63,10 @@ function completeSession(
   const session = services.sessions.startSession({
     name: 'Stats Session'
   })
+  // Fixtures record past workouts, so the start must precede the finish.
+  services.db
+    .prepare(`UPDATE sessions SET started_at = datetime(?, '-1 hour') WHERE id = ?`)
+    .run(finishedAt, session.id)
 
   for (const set of sets) {
     services.sessions.logSet(session.id, {

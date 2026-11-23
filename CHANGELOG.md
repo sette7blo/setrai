@@ -11,6 +11,8 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 ## [Unreleased]
 
+- Fixed: finishing a workout a second time (a network retry or a double tap) no longer moves its finish time to now. Sending an explicit `finishedAt` still corrects it, but a finish time before the workout started is now refused (`400`), as are notes that are not text or longer than 5000 characters.
+
 ## [v0.9.1] — 2026-11-23
 
 - Fixed a crash: requesting a folder of the web app (for example `/assets`) took the whole server down. It now serves the app instead, and malformed `%` escapes in a URL no longer cause a server error.
