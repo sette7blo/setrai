@@ -1008,6 +1008,8 @@ src/client/workouts/
   and context disposal in `live-audio-context.ts`;
 - live-session screen-awake lifecycle and native/iOS fallback in
   `live-wake-lock.ts`, activated by training interaction and released on cleanup;
+- ordered live-state saves in `live-writes.ts`, where a failed save never blocks
+  the next set log or discard;
 - pure strength/superset planning and EMOM schedule/phase clocks in `live-plan.ts`;
 - full-screen chrome and clock painting in `live-shell.ts`, strength and EMOM
   worksheets in `live-strength-view.ts`/`live-emom-view.ts`, image sizing and

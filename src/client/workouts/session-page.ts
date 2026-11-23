@@ -8,6 +8,7 @@ import { renderLiveShell, updateLiveClocks } from './live-shell.js'
 import { clockValue, compileIntervals, intervalPhase, phaseEndsAt, nextSet, setCount, strengthExercises, supersetNext } from './live-plan.js'
 import { createCountdownAudio } from './live-audio.js'
 import { createLiveWakeLock } from './live-wake-lock.js'
+import { createWriteQueue } from './live-writes.js'
 import type { LiveModel, LiveActions } from './live-model.js'
 import type { LiveRuntime, Program, Session } from './types.js'
 
@@ -46,15 +47,14 @@ function runSession(root: HTMLElement, model: LiveModel): void {
   let timer = 0
   let phaseKey = ''
   let disposed = false
-  let writes: Promise<unknown> = Promise.resolve()
+  const writes = createWriteQueue()
   const audio = createCountdownAudio()
   const wakeLock = createLiveWakeLock()
   const runtime = () => model.session.runtime!
   const report = (error: unknown) => { model.error = readableApiError(error); render() }
   function persist(patch: LiveRuntime): Promise<unknown> {
     Object.assign(runtime(), patch)
-    writes = writes.catch(() => undefined).then(() => saveLiveState(model.session.id, patch))
-    return writes
+    return writes.run(() => saveLiveState(model.session.id, patch))
   }
   function activateMedia() {
     void audio.unlock().then(() => syncAudio())
@@ -158,7 +158,7 @@ function runSession(root: HTMLElement, model: LiveModel): void {
     },
     log(input, exercise) {
       void mutate(async () => {
-        await writes
+        await writes.settled()
         const set = await logSessionSet(model.session.id, input)
         if (!model.session.sets.some((entry) => entry.id === set.id)) model.session.sets.push(set)
         if (!exercise) return
@@ -186,7 +186,7 @@ function runSession(root: HTMLElement, model: LiveModel): void {
     },
     discard() {
       if (!window.confirm('Discard this session and its logged sets?')) return
-      void mutate(async () => { await writes; await discardSession(model.session.id); cleanup(); window.location.assign('/today') })
+      void mutate(async () => { await writes.settled(); await discardSession(model.session.id); cleanup(); window.location.assign('/today') })
     },
     startEmom() {
       const now = Date.now()
