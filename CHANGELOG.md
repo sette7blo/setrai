@@ -12,6 +12,7 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 ## [Unreleased]
 
 - Fixed: finishing a workout a second time (a network retry or a double tap) no longer moves its finish time to now. Sending an explicit `finishedAt` still corrects it, but a finish time before the workout started is now refused (`400`), as are notes that are not text or longer than 5000 characters.
+- Fixed: after a short network drop during a workout, logging the next set kept failing with the old error until you did something else first. It now works on the first tap once the network is back. Discarding the session had the same problem and is fixed too.
 
 ## [v0.9.1] — 2026-11-23
 
