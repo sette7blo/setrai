@@ -15,16 +15,20 @@ export function createBackupRoutes(service) {
       if (url.pathname !== '/api/backup/database') return false
 
       if (req.method === 'GET') {
-        const backup = service.exportBackup()
         const date = new Date().toISOString().slice(0, 10)
         res.writeHead(200, {
           'Content-Type': 'application/vnd.setrai.backup',
           'Content-Disposition': `attachment; filename="setrai-backup-${date}.setrai"`,
-          'Content-Length': backup.length,
           'Cache-Control': 'no-store',
           'X-Content-Type-Options': 'nosniff'
         })
-        res.end(backup)
+        try {
+          await service.exportBackupTo(res)
+        } catch {
+          // Headers are already sent, so a failed or aborted export can only
+          // end the download; the client sees an incomplete file.
+          res.destroy()
+        }
         return true
       }
 
@@ -42,7 +46,7 @@ export function createBackupRoutes(service) {
           maxBytes: MAX_BACKUP_BYTES,
           tooLargeMessage: 'Setrai backup exceeds the 512 MB limit'
         })
-        const result = service.restoreBackup(buffer)
+        const result = await service.restoreBackup(buffer)
         sendJson(res, 200, { restored: true, ...result })
         return true
       }
