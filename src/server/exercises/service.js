@@ -73,12 +73,18 @@ export function createExerciseService(db) {
     }
   }
 
+  // Every image URL an exercise uses, whatever its status.
+  function listImageUrls() {
+    return repository.listImageUrls()
+  }
+
   function getExerciseCount() {
     return repository.count()
   }
 
 
   return {
+    listImageUrls,
     listExercises,
     createLookup,
     getExercise,

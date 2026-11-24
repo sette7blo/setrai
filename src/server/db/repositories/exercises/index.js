@@ -247,6 +247,9 @@ export function createExerciseRepository(db) {
   }
 
   return {
+    listImageUrls() {
+      return db.prepare("SELECT DISTINCT image_url FROM exercises WHERE image_url <> ''").all().map((row) => row.image_url)
+    },
     list,
     getById,
     getBySlug,

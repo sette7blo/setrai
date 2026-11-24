@@ -23,6 +23,7 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 - Fixed: a workout finished near midnight could land on one day in History and on another for streaks and "this week", because statistics used UTC. Days and weeks now follow your time zone everywhere. The profile has a new `timeZone` setting, filled in from your browser the first time you open the app after upgrading; `GET /api/statistics` reports it as `timeZone`. Stored times do not change.
 - Faster app loads: the built JavaScript and CSS files have content hashes in their names and are now cached by the browser for good, instead of being downloaded again on every visit. `index.html` is still checked on every load, so a new release shows up on the next reload.
 - Backups: exporting no longer freezes the app while the archive is built (it is streamed; the file format is unchanged and older archives still restore). Restores copy data by column name, which keeps them correct if a future version reorders a table. Only the newest 5 automatic `setrai-before-restore-*` safety backups in `data/backups` are kept; older ones are deleted on the next restore. The restore screen now notes that API keys come from the backup.
+- Uploaded exercise images that no exercise (or workout in progress) uses any more are now deleted at startup and once a day, after a 24 hour grace period, so `data/media/exercises` and backups stop growing with unused files. Only files Setrai uploaded itself are touched.
 
 ## [v0.9.1] — 2026-11-23
 

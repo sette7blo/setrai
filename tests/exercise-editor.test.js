@@ -248,3 +248,26 @@ test('uploaded media is served with a sandboxing policy so an SVG cannot run scr
     fs.rmSync(directory, { recursive: true, force: true })
   }
 })
+
+test('image URLs in use come from exercises and workouts in progress', async () => {
+  const { openDatabase } = await import('../src/server/db/connection.js')
+  const { createExerciseService } = await import('../src/server/exercises/service.js')
+  const { createProgramService } = await import('../src/server/programs/service.js')
+  const { createSessionService } = await import('../src/server/sessions/service.js')
+  const dir = fs.mkdtempSync(path.join(os.tmpdir(), 'setrai-image-urls-'))
+  const db = openDatabase(path.join(dir, 'test.db'))
+  try {
+    const exercises = createExerciseService(db)
+    const sessions = createSessionService(db)
+    const exercise = exercises.createExercise({ name: 'Pictured', image_url: '/media/exercises/mold-111111111111.png' })
+    const program = createProgramService(db).createProgram({ name: 'P', exercises: [{ exerciseId: exercise.id, sets: 1, reps: '5' }] })
+    sessions.startSession({ programId: program.id })
+    exercises.updateExercise(exercise.id, { image_url: '/media/exercises/mnew-222222222222.png' })
+
+    assert.deepEqual(exercises.listImageUrls(), ['/media/exercises/mnew-222222222222.png'])
+    assert.deepEqual(sessions.listActiveImageUrls(), ['/media/exercises/mold-111111111111.png'])
+  } finally {
+    db.close()
+    fs.rmSync(dir, { recursive: true, force: true })
+  }
+})

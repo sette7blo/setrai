@@ -346,6 +346,9 @@ export function createSessionService(db) {
   }
 
   return {
+    // Uploaded image URLs that workouts in progress still show from their plan.
+    listActiveImageUrls: () => repository.listUnfinishedPlans()
+      .flatMap((plan) => plan.match(/\/media\/exercises\/[A-Za-z0-9._-]+/g) ?? []),
     listFinishedExerciseSets: (slug) => repository.listFinishedExerciseSets(slug),
     startSession,
     getSession,

@@ -13,6 +13,7 @@ import {
 import {
   createExerciseRoutes
 } from './exercises/routes.js'
+import { sweepOrphanedExerciseImages } from './exercises/media.js'
 import {
   createProgramService
 } from './programs/service.js'
@@ -305,6 +306,23 @@ const server = http.createServer(
     }
   }
 )
+
+// Uploaded exercise images nobody uses any more. A daily sweep (plus one at
+// startup) is enough: the 24 hour grace period means an event-driven sweep
+// right after an edit could not delete anything sooner.
+function sweepExerciseImages() {
+  try {
+    const removed = sweepOrphanedExerciseImages(config.server.dataDir, [
+      ...exerciseService.listImageUrls(),
+      ...sessionService.listActiveImageUrls()
+    ])
+    if (removed.length) console.log(`Removed ${removed.length} unused exercise image(s)`)
+  } catch (error) {
+    console.error('Exercise image cleanup failed:', error.message)
+  }
+}
+sweepExerciseImages()
+setInterval(sweepExerciseImages, 24 * 60 * 60 * 1000).unref()
 
 server.listen(
   config.server.port,
