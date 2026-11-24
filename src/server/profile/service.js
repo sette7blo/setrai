@@ -12,7 +12,8 @@ const PROFILE_KEYS = {
   trainingGoal: 'profile.trainingGoal',
   equipment: 'profile.equipment',
   heightCm: 'profile.heightCm',
-  targetWeightKg: 'profile.targetWeightKg'
+  targetWeightKg: 'profile.targetWeightKg',
+  timeZone: 'profile.timeZone'
 }
 
 const DEFAULT_PROFILE = {
@@ -22,7 +23,10 @@ const DEFAULT_PROFILE = {
   trainingGoal: 'general-fitness',
   equipment: [],
   heightCm: null,
-  targetWeightKg: null
+  targetWeightKg: null,
+  // IANA zone that decides which day and week a workout belongs to. Empty
+  // until the web app first sets it from the browser; treated as UTC.
+  timeZone: ''
 }
 
 const ALLOWED_FIELDS = new Set(
@@ -88,6 +92,15 @@ function normalizeOptionalNumber(value, field, { min, max }) {
   return Math.round(number * 10) / 10
 }
 
+export function isTimeZone(zone) {
+  try {
+    new Intl.DateTimeFormat('en-US', { timeZone: zone })
+    return true
+  } catch {
+    return false
+  }
+}
+
 function normalizeField(field, value) {
   if (field === 'displayName') {
     return trimString(value, 'displayName', 80)
@@ -133,6 +146,12 @@ function normalizeField(field, value) {
     })
   }
 
+  if (field === 'timeZone') {
+    const zone = trimString(value, 'timeZone', 64)
+    if (zone && !isTimeZone(zone)) throw clientError('Invalid time zone')
+    return zone
+  }
+
   throw clientError(`Unknown profile field: ${field}`)
 }
 
@@ -165,6 +184,11 @@ export function createProfileService(db) {
     return getProfile()
   }
 
+  function getTimeZone() {
+    const zone = getProfile().timeZone
+    return zone && isTimeZone(zone) ? zone : 'UTC'
+  }
+
   function getEquipment() {
     return getProfile().equipment
   }
@@ -193,6 +217,7 @@ export function createProfileService(db) {
     getProfile,
     updateProfile,
     getEquipment,
+    getTimeZone,
     getWeightUnit,
     getTrainingGoal
   }

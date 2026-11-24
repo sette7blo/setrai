@@ -1,3 +1,4 @@
+import { trainingDayKey, trainingTimeZone, weekStartOfDayKey } from '../shared/training-time-zone.js'
 import { ChevronRight, Play } from 'lucide'
 
 import { readableApiError } from '../shared/api/errors.js'
@@ -37,12 +38,10 @@ export function readinessSentence(recovery: RecoveryOverview): string {
   return `${tired.slice(0, -1).join(', ')} and ${tired[tired.length - 1]} still need time.`
 }
 
-// Volume is bucketed by UTC week on the server, so the newest bucket is only
-// "this week" when it starts on the current UTC Monday.
+// The server buckets volume by week in the profile's time zone, so "this
+// week" is the bucket starting on the current Monday in that zone.
 export function currentWeekVolume(stats: StatisticsOverview, now = new Date()): number {
-  const monday = new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate()))
-  monday.setUTCDate(monday.getUTCDate() - ((monday.getUTCDay() || 7) - 1))
-  const key = monday.toISOString().slice(0, 10)
+  const key = weekStartOfDayKey(trainingDayKey(now, stats.timeZone || trainingTimeZone()))
   return stats.weeklyVolume.find(point => point.weekStart === key)?.volume ?? 0
 }
 

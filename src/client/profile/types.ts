@@ -8,6 +8,7 @@ export interface ProfileApiPayload {
   equipment?: string[]
   heightCm?: number | null
   targetWeightKg?: number | null
+  timeZone?: string
 }
 
 export interface Profile {
@@ -18,6 +19,7 @@ export interface Profile {
   equipment: string[]
   heightCm: number | null
   targetWeightKg: number | null
+  timeZone: string
 }
 
 export type ProfilePatch = Partial<Profile>

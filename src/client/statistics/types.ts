@@ -22,6 +22,7 @@ export interface TrainingStreak {
 export interface BodyWeightPoint { date: string, weightKg: number }
 
 export interface StatisticsApiPayload {
+  timeZone?: string
   trainingFrequency?: Partial<TrainingFrequency>
   totalVolume?: number
   weeklyVolume?: WeeklyVolumePoint[]
@@ -34,6 +35,7 @@ export interface StatisticsApiPayload {
 }
 
 export interface StatisticsOverview {
+  timeZone?: string
   trainingFrequency: TrainingFrequency
   totalVolume: number
   weeklyVolume: WeeklyVolumePoint[]

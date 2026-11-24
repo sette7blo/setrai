@@ -1,3 +1,4 @@
+import { trainingDayKey } from '../shared/training-time-zone.js'
 import { ChevronLeft, ChevronRight } from 'lucide'
 import { iconElement } from '../app/navigation.js'
 import type { Session } from './types.js'
@@ -45,7 +46,7 @@ function startOfWeek(key: string): string {
 function sessionDay(session: Session): string | null {
   const stamp = session.finishedAt ?? session.startedAt
   const date = new Date(stamp.endsWith('Z') ? stamp : `${stamp}Z`)
-  return Number.isNaN(date.getTime()) ? null : dateKey(date)
+  return Number.isNaN(date.getTime()) ? null : trainingDayKey(date)
 }
 
 
@@ -141,9 +142,9 @@ export function createHistoryCalendar(
   onSelect: (date: string | null) => void,
   onMonthChange?: (month: string) => void,
 ): HTMLElement {
-  const today = dateKey(new Date())
+  const today = trainingDayKey(new Date())
   const params = new URLSearchParams(window.location.search)
-  let month = /^\d{4}-\d{2}$/.test(params.get('month') ?? '') ? params.get('month')! : monthKey(new Date())
+  let month = /^\d{4}-\d{2}$/.test(params.get('month') ?? '') ? params.get('month')! : today.slice(0, 7)
   let activeDate = selected
   const days = groupSessions(sessions)
   const root = document.createElement('section')
@@ -165,10 +166,10 @@ export function createHistoryCalendar(
     goToday.type = 'button'
     goToday.className = 'history-cal-today'
     goToday.textContent = 'Today'
-    goToday.hidden = month === monthKey(new Date())
+    goToday.hidden = month === trainingDayKey(new Date()).slice(0, 7)
     prev.addEventListener('click', () => { month = addMonths(month, -1); render() })
     next.addEventListener('click', () => { month = addMonths(month, 1); render() })
-    goToday.addEventListener('click', () => { month = monthKey(new Date()); activeDate = null; onSelect(null); render() })
+    goToday.addEventListener('click', () => { month = trainingDayKey(new Date()).slice(0, 7); activeDate = null; onSelect(null); render() })
     titleGroup.append(title, goToday)
     head.append(prev, titleGroup, next)
 

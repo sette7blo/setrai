@@ -20,6 +20,7 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 - Fixed: History (calendar, list and monthly recap) only showed your newest 50 workouts. It now shows all of them and loads in a single request instead of one per workout. `GET /api/sessions` accepts optional `from`, `to`, `limit` and `includeSets=1`; without them it behaves as before.
 - New: during a strength workout, the current set shows what you did for that set last time (for example "Last time: 80 kg x 8") and a simple progression hint: when every set last time reached the top of the rep range, it suggests 2.5 kg (5 lb) more, otherwise to repeat the weight. The hint is advisory and does not change the pre-filled values.
 - New: an exercise's page shows a Progress section once you have logged it: a trend chart (estimated 1RM, or reps or duration for bodyweight and timed exercises), your bests, and the last five sessions. New endpoint `GET /api/statistics/exercises/:slug`.
+- Fixed: a workout finished near midnight could land on one day in History and on another for streaks and "this week", because statistics used UTC. Days and weeks now follow your time zone everywhere. The profile has a new `timeZone` setting, filled in from your browser the first time you open the app after upgrading; `GET /api/statistics` reports it as `timeZone`. Stored times do not change.
 
 ## [v0.9.1] — 2026-11-23
 
