@@ -13,6 +13,11 @@ async function withStaticServer(run) {
   fs.mkdirSync(path.join(clientDist, 'assets'), { recursive: true })
   fs.writeFileSync(path.join(clientDist, 'index.html'), '<!doctype html><title>app</title>')
   fs.writeFileSync(path.join(clientDist, 'assets', 'app.js'), 'console.log(1)')
+  for (const name of ['index-DgTG7xN6.js', 'index-DgTG7xN6.js.map', 'index-MXIjpkmy.css', 'inter-a1B2c3_D.woff2']) {
+    fs.writeFileSync(path.join(clientDist, 'assets', name), 'x')
+  }
+  fs.writeFileSync(path.join(clientDist, 'manifest.webmanifest'), '{}')
+  fs.writeFileSync(path.join(clientDist, 'app-DgTG7xN6.js'), 'x')
   fs.writeFileSync(path.join(directory, 'secret.txt'), 'outside')
   const server = http.createServer((req, res) => {
     const url = new URL(req.url, 'http://localhost')
@@ -52,6 +57,28 @@ test('malformed escapes and traversal attempts never read outside the client bui
       const body = await response.text()
       assert.doesNotMatch(body, /outside/, pathname)
       assert.match(body, /<title>app<\/title>/, pathname)
+    }
+  })
+})
+
+test('hashed build assets are cached for good, everything else revalidates', async () => {
+  await withStaticServer(async (base) => {
+    const cases = {
+      '/assets/index-DgTG7xN6.js': 'public, max-age=31536000, immutable',
+      '/assets/index-MXIjpkmy.css': 'public, max-age=31536000, immutable',
+      '/assets/inter-a1B2c3_D.woff2': 'public, max-age=31536000, immutable',
+      '/assets/index-DgTG7xN6.js.map': 'no-cache',
+      '/assets/app.js': 'no-store, max-age=0',
+      '/app-DgTG7xN6.js': 'no-store, max-age=0',
+      '/': 'no-store, max-age=0',
+      '/index.html': 'no-store, max-age=0',
+      '/statistics/history': 'no-store, max-age=0',
+      '/manifest.webmanifest': 'no-cache'
+    }
+    for (const [pathname, expected] of Object.entries(cases)) {
+      const response = await fetch(base + pathname)
+      await response.arrayBuffer()
+      assert.equal(response.headers.get('cache-control'), expected, pathname)
     }
   })
 })
