@@ -1,6 +1,7 @@
 import { displayWeightFromKg, inputWeightToKg } from '../profile/weight-units.js'
 import { action, node, exerciseHero, instructions, numberInput, loadLabel, glyph, iconAction, labeledAction } from './live-components.js'
 import { nextSet, setCount, strengthSets, supersetNext } from './live-plan.js'
+import { lastTimeSet, lastTimeText, progressionHint } from './live-progression.js'
 import type { LiveModel, LiveActions } from './live-model.js'
 
 const ARRIVAL_MS = 200
@@ -93,6 +94,11 @@ export function renderStrength(model: LiveModel, controls: LiveActions, body: HT
       row.append(status)
     }
     plan.append(row)
+    const last = current ? lastTimeSet(exercise.lastPerformance, i) : null
+    if (last) {
+      const hint = progressionHint(exercise.lastPerformance, exercise.reps, model.unit)
+      plan.append(node('p', 'live-last-time', hint ? `${lastTimeText(last, model.unit)} · ${hint}` : lastTimeText(last, model.unit)))
+    }
   }
   const add = labeledAction('plus', 'Add set', () => controls.addSet(exercise), 'live-add')
   plan.append(add)

@@ -26,7 +26,8 @@ export function normalizeProgramExercise(payload: ProgramExerciseApiPayload): Pr
     restSec: Number(payload.restSec ?? payload.restSeconds ?? payload.rest_sec ?? 90),
     weight: payload.weight ?? payload.targetWeight ?? null,
     notes: payload.notes ?? '',
-    exercise: payload.exercise ? normalizeExercise(payload.exercise) : undefined
+    exercise: payload.exercise ? normalizeExercise(payload.exercise) : undefined,
+    ...(payload.lastPerformance !== undefined ? { lastPerformance: payload.lastPerformance } : {})
   }
 }
 

@@ -18,6 +18,7 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 - Fixed: every Quick Workout left a hidden program behind in the database. It is now removed when the workout is finished or discarded, and leftovers from earlier versions are cleared at startup. Finished Quick Workouts still show in History with their full plan.
 - Statistics now include all of your history: totals, personal records and streaks used to ignore everything older than the newest 1000 sessions. Statistics and recovery also load much faster on large histories.
 - Fixed: History (calendar, list and monthly recap) only showed your newest 50 workouts. It now shows all of them and loads in a single request instead of one per workout. `GET /api/sessions` accepts optional `from`, `to`, `limit` and `includeSets=1`; without them it behaves as before.
+- New: during a strength workout, the current set shows what you did for that set last time (for example "Last time: 80 kg x 8") and a simple progression hint: when every set last time reached the top of the rep range, it suggests 2.5 kg (5 lb) more, otherwise to repeat the weight. The hint is advisory and does not change the pre-filled values.
 
 ## [v0.9.1] — 2026-11-23
 

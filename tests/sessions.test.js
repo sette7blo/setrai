@@ -621,3 +621,53 @@ test('session list query: date range, all sessions and sets in one call', () => 
     cleanupDatabase(db, directory)
   }
 })
+
+test('a started session carries last time\'s sets for each planned exercise', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    const services = createServices(db)
+    const { sessions } = services
+    const bench = services.exercises.createExercise({ name: 'Bench Press', muscle_group: 'chest' })
+    const row = services.exercises.createExercise({ name: 'Barbell Row', muscle_group: 'back' })
+    const program = services.programs.createProgram({ name: 'Upper', exercises: [
+      { exerciseId: bench.id, sets: 3, reps: '6-8' }, { exerciseId: row.id, sets: 3, reps: '8' }
+    ] })
+    const workout = (sets, finishedAt) => {
+      const session = sessions.startSession({ programId: program.id })
+      for (const [setNumber, reps, weight, done = true] of sets) sessions.logSet(session.id, { exerciseId: bench.id, setNumber, reps, weight, done })
+      if (finishedAt) {
+        sessions.finishSession(session.id, {})
+        db.prepare("UPDATE sessions SET started_at = datetime(?, '-1 hour'), finished_at = ? WHERE id = ?").run(finishedAt, finishedAt, session.id)
+      }
+      return session
+    }
+
+    const first = workout([[1, 8, 75], [2, 8, 75]], null)
+    assert.equal(first.plannedExercises[0].lastPerformance, null)
+    sessions.finishSession(first.id, {})
+    db.prepare("UPDATE sessions SET started_at = '2026-11-01 09:00:00', finished_at = '2026-11-01 10:00:00' WHERE id = ?").run(first.id)
+    workout([[1, 8, 80], [2, 8, 80], [3, 7, 80], [4, 5, 90, false]], '2026-11-10 10:00:00')
+    const unfinished = workout([[1, 3, 100]], null)
+    sessions.discardSession(unfinished.id)
+    workout([[1, 2, 120]], null)
+
+    const next = sessions.startSession({ programId: program.id })
+    const [benchPlan, rowPlan] = next.plannedExercises
+    assert.deepEqual(benchPlan.lastPerformance, {
+      finishedAt: '2026-11-10 10:00:00',
+      sets: [
+        { setNumber: 1, reps: 8, weight: 80, durationSec: null },
+        { setNumber: 2, reps: 8, weight: 80, durationSec: null },
+        { setNumber: 3, reps: 7, weight: 80, durationSec: null }
+      ]
+    })
+    assert.equal(rowPlan.lastPerformance, null)
+
+    // Captured in the plan: later workouts do not change it.
+    workout([[1, 10, 85]], '2026-11-20 10:00:00')
+    assert.deepEqual(sessions.getSession(next.id).plannedExercises[0].lastPerformance, benchPlan.lastPerformance)
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})
