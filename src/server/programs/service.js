@@ -105,6 +105,10 @@ export function createProgramService(db) {
     return repository.duplicate(id)
   }
 
+  function removeUnusedTemporaryPrograms() {
+    return repository.removeUnusedTemporary()
+  }
+
   function getProgramCount() {
     return repository.count()
   }
@@ -169,6 +173,7 @@ export function createProgramService(db) {
     deleteProgram,
     duplicateProgram,
     getProgramCount,
+    removeUnusedTemporaryPrograms,
     requireProgram
   }
 }

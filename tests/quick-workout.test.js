@@ -403,3 +403,65 @@ test('starts exact Quick Workout preview without relying on client-only Session 
     assert.equal(result.session.programId, 12)
   })
 })
+
+test('temporary programs are removed once their quick workout ends', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    seedBuiltinExercises(db)
+    const service = createQuickWorkoutService(db)
+    const programs = createProgramService(db)
+    const sessions = createSessionService(db)
+    const temporaryCount = () => Number(db.prepare('SELECT COUNT(*) AS count FROM programs WHERE is_temporary = 1').get().count)
+
+    const finished = service.start({ durationMinutes: 15 })
+    const exercise = finished.session.plannedExercises[0]
+    sessions.logSet(finished.session.id, { exerciseId: exercise.exerciseId, setNumber: 1, reps: 8, weight: 20 })
+    const inProgress = service.start({ durationMinutes: 15 })
+    const discarded = service.start({ durationMinutes: 15 })
+    assert.equal(temporaryCount(), 3)
+
+    sessions.finishSession(finished.session.id, {})
+    sessions.discardSession(discarded.session.id)
+
+    assert.equal(temporaryCount(), 1)
+    assert.equal(programs.getProgram(inProgress.program.id).isTemporary, true)
+    assert.equal(programs.getProgram(finished.program.id), null)
+
+    const summary = sessions.getSession(finished.session.id)
+    assert.equal(summary.programId, null)
+    assert.equal(summary.programName, finished.session.programName)
+    assert.equal(summary.plannedExercises.length, finished.workout.exercises.length)
+    assert.equal(summary.sets.length, 1)
+    assert.ok(sessions.listCompletedSessions().some((session) => session.id === finished.session.id))
+
+    const live = sessions.getSession(inProgress.session.id)
+    sessions.logSet(inProgress.session.id, { exerciseId: live.plannedExercises[0].exerciseId, setNumber: 1, reps: 8, weight: 20 })
+    assert.equal(db.prepare('SELECT COUNT(*) AS count FROM seed_tombstones').get().count, 0)
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})
+
+test('the temporary program sweep keeps programs that sessions still read', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    seedBuiltinExercises(db)
+    const programs = createProgramService(db)
+    const sessions = createSessionService(db)
+    const orphan = programs.createTemporaryProgram({ name: 'Orphan' })
+    const legacy = programs.createTemporaryProgram({ name: 'Legacy' })
+    const regular = programs.createProgram({ name: 'Regular' })
+    const legacySession = sessions.startSession({ programId: legacy.id })
+    // Sessions from before plan_json existed still look the program up.
+    db.prepare("UPDATE sessions SET plan_json = NULL, finished_at = datetime('now') WHERE id = ?").run(legacySession.id)
+
+    assert.equal(programs.removeUnusedTemporaryPrograms(), 1)
+    assert.equal(programs.getProgram(orphan.id), null)
+    assert.ok(programs.getProgram(legacy.id))
+    assert.ok(programs.getProgram(regular.id))
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})

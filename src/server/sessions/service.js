@@ -185,10 +185,12 @@ export function createSessionService(db) {
     if (finishedAt && toTime(finishedAt) < toTime(session.startedAt)) {
       throw clientError('Finish time cannot be before the session started', 400)
     }
-    return repository.finish(id, {
+    const finished = repository.finish(id, {
       finishedAt,
       notes: normalizeFinishNotes(body.notes)
     })
+    programService.removeUnusedTemporaryPrograms()
+    return finished
   }
 
   function normalizeSessionName(value) {
@@ -314,7 +316,9 @@ export function createSessionService(db) {
     discardSession(id) {
       const session = requireSession(id)
       if (session.finishedAt) throw clientError('Completed sessions cannot be discarded', 409)
-      return repository.remove(id)
+      const removed = repository.remove(id)
+      programService.removeUnusedTemporaryPrograms()
+      return removed
     }
   }
 }
