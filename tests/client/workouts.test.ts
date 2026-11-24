@@ -6,6 +6,7 @@ import {
   finishSession,
   logSessionSet,
   startProgramSession,
+  listSessionHistory,
   updateSessionSet
 } from '../../src/client/workouts/api.js'
 import {
@@ -62,6 +63,34 @@ test('normalizes and orders Program exercises', () => {
 test('normalizes rest aliases in Program Exercise payloads', () => {
   assert.equal(normalizeProgramExercise({ exerciseId: 1, restSeconds: 75 }).restSec, 75)
   assert.equal(normalizeProgramExercise({ exerciseId: 1, restSec: 60 }).restSec, 60)
+})
+
+test('History loads every session with its sets in one request', async () => {
+  const originalFetch = globalThis.fetch
+  const calls: string[] = []
+  const sessions = Array.from({ length: 120 }, (_, index) => {
+    const day = new Date(Date.UTC(2026, 4, 1) + index * 36 * 3600 * 1000).toISOString().slice(0, 10)
+    return { id: index + 1, programName: 'A', startedAt: `${day} 10:00:00`, finishedAt: `${day} 11:00:00`,
+      sets: [{ id: index + 1, sessionId: index + 1, exerciseSlug: 'bench-press', exerciseName: 'Bench Press', setNumber: 1, reps: 5, weight: 50, done: true }],
+      plannedExercises: [{ exerciseId: 1, exerciseSlug: 'bench-press', exerciseName: 'Bench Press', exercise: { id: 1, slug: 'bench-press', name: 'Bench Press', muscle_group: 'chest', muscles: ['triceps'] } }] }
+  }).reverse()
+  try {
+    globalThis.fetch = async (url) => {
+      calls.push(String(url))
+      return new Response(JSON.stringify({ sessions }), { status: 200 })
+    }
+    const loaded = await listSessionHistory(new ApiClient())
+    assert.deepEqual(calls, ['/api/sessions?includeSets=1&limit=all'])
+    assert.equal(loaded.length, 120)
+    assert.equal(loaded[119].sets.length, 1)
+    assert.equal(loaded[119].plannedExercises[0].exercise?.muscleGroup, 'chest')
+    // May 2026 holds the oldest sessions, far beyond the newest 50.
+    const may = monthlyRecap(loaded, [], '2026-05')
+    assert.ok(may.workoutCount >= 20)
+    assert.equal(may.totalVolume, may.workoutCount * 250)
+  } finally {
+    globalThis.fetch = originalFetch
+  }
 })
 
 test('Session API sends start Program payload', async () => {

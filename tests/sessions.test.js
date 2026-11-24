@@ -576,3 +576,48 @@ test('rejects malformed session start input with 400', () => {
     cleanupDatabase(db, directory)
   }
 })
+
+test('session list query: date range, all sessions and sets in one call', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    const services = createServices(db)
+    const { sessions } = services
+    const exercise = services.exercises.createExercise({ name: 'Bench Press', muscle_group: 'chest' })
+    const program = services.programs.createProgram({ name: 'Plan', exercises: [{ exerciseId: exercise.id, sets: 3, reps: '5' }] })
+    const first = sessions.startSession({ programId: program.id })
+    sessions.logSet(first.id, { exerciseId: exercise.id, setNumber: 1, reps: 5, weight: 60 })
+    sessions.finishSession(first.id, {})
+    db.exec(`
+      WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i + 1 FROM n WHERE i < 69)
+      INSERT INTO sessions (program_name, started_at, finished_at)
+      SELECT 'Old', datetime('2025-01-01', '+' || i || ' days'), datetime('2025-01-01', '+' || i || ' days', '+1 hour') FROM n
+    `)
+    db.prepare("UPDATE sessions SET started_at = '2025-06-01 08:00:00', finished_at = '2025-06-01 09:00:00' WHERE id = ?").run(first.id)
+
+    const plain = sessions.listSessions()
+    assert.equal(plain.length, 50)
+    assert.deepEqual(plain, sessions.listSessions({}))
+    assert.ok(plain.every((session) => session.sets.length === 0))
+
+    const all = sessions.listSessions({ includeSets: '1', limit: 'all' })
+    assert.equal(all.length, 70)
+    const withPlan = all.find((session) => session.id === first.id)
+    assert.equal(withPlan.sets.length, 1)
+    assert.equal(withPlan.plan, undefined)
+    assert.equal(withPlan.plannedExercises[0].exerciseSlug, 'bench-press')
+    assert.deepEqual(Object.keys(withPlan.plannedExercises[0].exercise).sort(), ['id', 'muscle_group', 'muscles', 'name', 'slug'])
+
+    const january = sessions.listSessions({ from: '2025-01-01', to: '2025-01-31' })
+    assert.equal(january.length, 30)
+    assert.ok(january.every((session) => session.startedAt.startsWith('2025-01')))
+    assert.equal(sessions.listSessions({ from: '2025-06-01', to: '2025-06-01', includeSets: '1' })[0].id, first.id)
+    assert.equal(sessions.listSessions({ limit: '5' }).length, 5)
+
+    for (const query of [{ from: '2025-13-01' }, { to: 'yesterday' }, { from: '2025-02-01', to: '2025-01-01' }, { limit: '0' }, { limit: '-1' }, { limit: 'many' }, { includeSets: 'yes' }]) {
+      assert.throws(() => sessions.listSessions(query), (error) => error.statusCode === 400, JSON.stringify(query))
+    }
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})

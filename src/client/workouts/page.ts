@@ -8,7 +8,7 @@ import { getRecovery } from '../recovery/api.js'
 import { recoveryContent } from '../recovery/page.js'
 import type { WeightUnit } from '../profile/types.js'
 import type { Exercise } from '../exercises/types.js'
-import { getSession, listSessions } from './api.js'
+import { listSessionHistory } from './api.js'
 
 import { renderProgramLibrary } from './program-library.js'
 import { createHistoryCalendar } from './history-calendar.js'
@@ -106,8 +106,7 @@ export async function renderWorkoutsPage(
       return
     }
     if (history) {
-      const [sessionList, exercises, profile] = await Promise.all([listSessions(), listExercises(), getProfile().catch(() => ({ weightUnit: 'kg' as const }))])
-      const sessions = await Promise.all(sessionList.map(async session => session.finishedAt ? getSession(session.id).catch(() => session) : session))
+      const [sessions, exercises, profile] = await Promise.all([listSessionHistory(), listExercises(), getProfile().catch(() => ({ weightUnit: 'kg' as const }))])
       loaded()
       renderHistoryView(page, sessions, exercises, profile.weightUnit)
       return
