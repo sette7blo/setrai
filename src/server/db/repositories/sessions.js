@@ -230,6 +230,36 @@ export function createSessionRepository(db) {
     return result.changes > 0
   }
 
+  // Sessions with their sets in two queries. Same order and shape as
+  // list() followed by getById() per session.
+  function listWithSets({ finishedOnly = false, finishedAfter = null, startedFrom = null, startedBefore = null, limit = null } = {}) {
+    const where = []
+    const parameters = []
+    if (finishedOnly) where.push('finished_at IS NOT NULL')
+    if (finishedAfter) { where.push('finished_at >= ?'); parameters.push(finishedAfter) }
+    if (startedFrom) { where.push('started_at >= ?'); parameters.push(startedFrom) }
+    if (startedBefore) { where.push('started_at < ?'); parameters.push(startedBefore) }
+    if (limit !== null) parameters.push(limit)
+    const rows = db.prepare(`
+      SELECT *
+      FROM sessions
+      ${where.length ? `WHERE ${where.join(' AND ')}` : ''}
+      ORDER BY started_at DESC, id DESC
+      ${limit !== null ? 'LIMIT ?' : ''}
+    `).all(...parameters)
+    if (!rows.length) return []
+
+    const setsBySession = new Map(rows.map((row) => [row.id, []]))
+    const setRows = db.prepare(`
+      SELECT *
+      FROM session_sets
+      WHERE session_id IN (SELECT value FROM json_each(?))
+      ORDER BY logged_at ASC, id ASC
+    `).all(JSON.stringify(rows.map((row) => row.id)))
+    for (const row of setRows) setsBySession.get(row.session_id).push(mapSetRow(row))
+    return rows.map((row) => mapSessionRow(row, setsBySession.get(row.id)))
+  }
+
   function listSets(sessionId) {
     return readSets(db, sessionId)
   }
@@ -260,6 +290,7 @@ export function createSessionRepository(db) {
   return {
     create,
     getById,
+    listWithSets,
     list,
     finish,
     insertSet,

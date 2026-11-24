@@ -29,8 +29,6 @@ import {
   getVolumeSets
 } from './volume.js'
 
-const DEFAULT_SESSION_LIMIT = 1000
-
 export function createStatisticsService(db, options = {}) {
   const sessionService =
     options.sessionService ?? createSessionService(db)
@@ -41,9 +39,7 @@ export function createStatisticsService(db, options = {}) {
   const getNow = options.now ?? (() => new Date())
 
   function getCompletedSessions() {
-    return sessionService.listCompletedSessions({
-      limit: DEFAULT_SESSION_LIMIT
-    })
+    return sessionService.listCompletedSessions()
   }
 
   function getTrainingFrequency(sessions = getCompletedSessions()) {
@@ -71,7 +67,7 @@ export function createStatisticsService(db, options = {}) {
       volumeByExercise: calculateVolumeByExercise(volumeSets),
       volumeByMuscle: calculateVolumeByMuscle(
         volumeSets,
-        exerciseService
+        exerciseService.createLookup()
       ),
       personalRecords: calculatePersonalRecords(volumeSets),
       trainingStreak: calculateTrainingStreak(
@@ -102,7 +98,7 @@ export function createStatisticsService(db, options = {}) {
   function getVolumeByMuscle() {
     return calculateVolumeByMuscle(
       getVolumeSets(getCompletedSessions()),
-      exerciseService
+      exerciseService.createLookup()
     )
   }
 

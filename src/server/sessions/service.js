@@ -116,13 +116,10 @@ export function createSessionService(db) {
     return repository.list(filters)
   }
 
-  function listCompletedSessions(filters = {}) {
-    return repository
-      .list({
-        limit: filters.limit ?? 500
-      })
-      .filter((session) => session.finishedAt)
-      .map((session) => repository.getById(session.id))
+  // Newest first. limit counts finished sessions; finishedAfter is a stored
+  // UTC time or date prefix ('YYYY-MM-DD'), compared as text.
+  function listCompletedSessions({ limit = null, finishedAfter = null } = {}) {
+    return repository.listWithSets({ finishedOnly: true, limit, finishedAfter })
   }
 
   function logSet(sessionId, input) {
