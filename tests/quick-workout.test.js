@@ -385,9 +385,9 @@ test('starts exact Quick Workout preview without relying on client-only Session 
     const service = makeService(db, {
       exercises: library,
       programService: {
-        createProgram: (input) => {
-          created.push(input)
-          return { id: 12, ...input }
+        createTemporaryProgram: (input) => {
+          created.push({ ...input, isTemporary: true })
+          return { id: 12, ...input, isTemporary: true }
         }
       },
       sessionService: {

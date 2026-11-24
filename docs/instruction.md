@@ -360,6 +360,13 @@ A program may contain:
 - notes;
 - structured blocks where required.
 
+The API validates blocks: each is a `straight` block (`rounds`, `steps`,
+optional `restAfterRoundSec`) or an `emom` block (`rounds`, `intervals` of
+`durationSec` plus `steps`). Every step names an `exerciseSlug` from the
+program's own exercise list. `slug`, `isTemporary` and the `seed*` fields are
+set by Setrai (seeding, Quick Workout, duplication); create and update
+requests that include them have them ignored.
+
 Users must be able to:
 
 - create programs;

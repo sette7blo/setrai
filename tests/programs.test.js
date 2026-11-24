@@ -7,6 +7,7 @@ import test from 'node:test'
 import { openDatabase } from '../src/server/db/connection.js'
 import { createExerciseService } from '../src/server/exercises/service.js'
 import { createProgramService } from '../src/server/programs/service.js'
+import { initializeDatabaseSeeds } from '../src/server/db/seed/seed.js'
 
 function createTestDatabase() {
   const directory = fs.mkdtempSync(
@@ -67,7 +68,7 @@ test('creates and retrieves a program', () => {
       description: 'Pressing day',
       difficulty: 'intermediate',
       tags: ['strength'],
-      blocks: [{ name: 'Main' }],
+      blocks: [{ type: 'straight', rounds: 4, steps: [{ exerciseSlug: 'bench-press', targetReps: '6-8' }] }],
       exercises: [
         {
           exerciseId: bench.id,
@@ -83,7 +84,7 @@ test('creates and retrieves a program', () => {
     assert.equal(created.slug, 'upper-body-a')
     assert.equal(created.isTemporary, false)
     assert.deepEqual(created.tags, ['strength'])
-    assert.deepEqual(created.blocks, [{ name: 'Main' }])
+    assert.deepEqual(created.blocks, [{ type: 'straight', rounds: 4, steps: [{ exerciseSlug: 'bench-press', targetReps: '6-8' }] }])
     assert.equal(created.exercises.length, 1)
     assert.equal(
       created.exercises[0].exerciseSlug,
@@ -279,27 +280,143 @@ test('converts JSON fields at the repository boundary', () => {
 
   try {
     const { programs } = createServices(db)
-    const program = programs.createProgram({
+    const program = programs.createTemporaryProgram({
       name: 'JSON Program',
       tags: ['hypertrophy', 'home'],
-      blocks: [
-        {
-          name: 'Superset',
-          rounds: 3
-        }
-      ],
-      isTemporary: true
+      blocks: []
     })
 
     assert.deepEqual(
       program.tags,
       ['hypertrophy', 'home']
     )
-    assert.deepEqual(
-      program.blocks,
-      [{ name: 'Superset', rounds: 3 }]
-    )
+    assert.deepEqual(program.blocks, [])
     assert.equal(program.isTemporary, true)
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})
+
+function blockError(pattern) {
+  return (error) => error.statusCode === 400 && pattern.test(error.message)
+}
+
+test('rejects malformed program blocks', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    const { exercises, programs } = createServices(db)
+    const { bench } = seedExercises(exercises)
+    const base = { name: 'Blocks', exercises: [{ exerciseId: bench.id, sets: 3, reps: '8' }] }
+    const step = { exerciseSlug: 'bench-press' }
+    const cases = [
+      ['garbage', /blocks must be a list/],
+      [[{ type: 'emom', rounds: 2 }], /intervals must be a list/],
+      [[{ type: 'circuit', rounds: 2, steps: [step] }], /type must be/],
+      [[{ type: 'straight', rounds: 0, steps: [step] }], /rounds must be/],
+      [[{ type: 'straight', rounds: 2 }], /steps must be a list/],
+      [[{ type: 'straight', rounds: 2, steps: [{}] }], /needs an exerciseSlug/],
+      [[{ type: 'straight', rounds: 2, steps: [{ exerciseSlug: 'back-squat' }] }], /not in the program's exercises/],
+      [[{ type: 'emom', rounds: 2, intervals: [{ durationSec: 0, steps: [step] }] }], /durationSec must be/],
+      [[{ type: 'emom', rounds: 2, intervals: [{ durationSec: 30, steps: [{ ...step, targetDurationSec: 40 }] }] }], /targetDurationSec/],
+      [[{ type: 'straight', rounds: 2, steps: [{ ...step, weight: 'heavy' }] }], /invalid weight/],
+      [[{ type: 'straight', rounds: 2, steps: [{ ...step, notes: { a: 1 } }] }], /invalid notes/]
+    ]
+    for (const [blocks, pattern] of cases) {
+      assert.throws(() => programs.createProgram({ ...base, blocks }), blockError(pattern), JSON.stringify(blocks))
+    }
+    assert.equal(programs.listPrograms().length, 0)
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})
+
+test('update checks blocks against the resulting exercise list', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    const { exercises, programs } = createServices(db)
+    const { bench, squat } = seedExercises(exercises)
+    const program = programs.createProgram({ name: 'Swap', exercises: [{ exerciseId: bench.id, sets: 3, reps: '8' }] })
+    const squatBlock = [{ type: 'straight', rounds: 2, steps: [{ exerciseSlug: 'back-squat' }] }]
+
+    assert.throws(() => programs.updateProgram(program.id, { blocks: squatBlock }), blockError(/not in the program's exercises/))
+    const updated = programs.updateProgram(program.id, { blocks: squatBlock, exercises: [{ exerciseId: squat.id, sets: 2, reps: '5' }] })
+    assert.deepEqual(updated.blocks, squatBlock)
+    assert.equal(updated.exercises[0].exerciseSlug, 'back-squat')
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})
+
+test('public create and update ignore internal program fields', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    const { programs } = createServices(db)
+    const internal = { slug: 'chosen', isTemporary: true, seedKey: 'setrai.workout.x', seedRevision: 9, seedBaseline: { a: 1 } }
+    const created = programs.createProgram({ name: 'Plain', ...internal })
+
+    assert.equal(created.slug, 'plain')
+    assert.equal(created.isTemporary, false)
+    assert.equal(created.seedKey, null)
+    assert.equal(created.seedRevision, 0)
+    assert.equal(created.seedBaseline, null)
+
+    const updated = programs.updateProgram(created.id, { name: 'Plain 2', ...internal })
+    assert.equal(updated.name, 'Plain 2')
+    assert.equal(updated.slug, 'plain')
+    assert.equal(updated.isTemporary, false)
+    assert.equal(updated.seedKey, null)
+    assert.equal(programs.listPrograms().length, 1)
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})
+
+test('a failed exercise list leaves the program unchanged', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    const { exercises, programs } = createServices(db)
+    const { bench } = seedExercises(exercises)
+    const program = programs.createProgram({ name: 'Atomic', exercises: [{ exerciseId: bench.id, sets: 3, reps: '8' }] })
+
+    assert.throws(() => programs.updateProgram(program.id, { name: 'Changed', exercises: [{ exerciseId: 99999, sets: 3, reps: '8' }] }))
+    const loaded = programs.getProgram(program.id)
+    assert.equal(loaded.name, 'Atomic')
+    assert.equal(loaded.exercises.length, 1)
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})
+
+test('every built-in program and a web-builder program pass block validation', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    initializeDatabaseSeeds(db)
+    const { programs } = createServices(db)
+    const builtins = programs.listPrograms().filter((program) => program.seedKey)
+    assert.equal(builtins.length, 7)
+
+    for (const program of builtins) {
+      const resaved = programs.updateProgram(program.id, { blocks: program.blocks })
+      assert.deepEqual(resaved.blocks, program.blocks, program.name)
+    }
+
+    // Shape produced by buildProgramInput in src/client/workouts/builder-plan.ts.
+    const [first, second, third] = builtins.flatMap((program) => program.exercises)
+    const step = (entry, extra = {}) => ({ exerciseSlug: entry.exerciseSlug, exerciseName: entry.exerciseName, targetReps: '8-12', ...extra, weight: null, notes: '' })
+    const blocks = [
+      { type: 'straight', rounds: 3, restAfterRoundSec: 90, steps: [step(first), step(second)] },
+      { type: 'emom', rounds: 5, intervals: [{ durationSec: 60, steps: [step(third, { targetDurationSec: 40 })] }], totalDurationSec: 300 }
+    ]
+    const built = programs.createProgram({
+      name: 'Builder', description: '', difficulty: '', tags: [], blocks,
+      exercises: [first, second, third].map((entry, position) => ({ exerciseId: entry.exerciseId, exerciseSlug: entry.exerciseSlug, position, sets: 3, reps: '8-12', restSeconds: 60, targetWeight: null, notes: '' }))
+    })
+    assert.deepEqual(built.blocks, blocks)
   } finally {
     cleanupDatabase(db, directory)
   }

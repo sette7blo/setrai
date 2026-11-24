@@ -14,6 +14,7 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 - Fixed: finishing a workout a second time (a network retry or a double tap) no longer moves its finish time to now. Sending an explicit `finishedAt` still corrects it, but a finish time before the workout started is now refused (`400`), as are notes that are not text or longer than 5000 characters.
 - Fixed: after a short network drop during a workout, logging the next set kept failing with the old error until you did something else first. It now works on the first tap once the network is back. Discarding the session had the same problem and is fixed too.
 - Fixed: several kinds of invalid API input returned a server error (`500`) instead of a clear `400`: a JSON body that is not an object, body-weight notes that are not text, a non-list `equipment` for Quick Workout, and session names or notes that are not text. Body weight is now capped at 1000 kg, and moving a body-weight entry onto a date that already has one returns `409`.
+- Programs API: `blocks` are now validated (`400` with the reason when a block is malformed or names an exercise that is not in the program), and `slug`, `isTemporary` and the `seed*` fields in create or update requests are ignored instead of stored. Creating or updating a program is now all-or-nothing.
 
 ## [v0.9.1] — 2026-11-23
 
