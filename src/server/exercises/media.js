@@ -81,6 +81,40 @@ export function storeExerciseImage(dataDir, buffer, declaredType = '') {
   }
 }
 
+// Names storeExerciseImage gives uploads: "<base36 time>-<12 hex>.<ext>".
+const UPLOAD_NAME = /^[a-z0-9]+-[0-9a-f]{12}\.(jpg|png|webp|gif|svg)$/
+export const ORPHAN_GRACE_MS = 24 * 60 * 60 * 1000
+
+// Deletes uploads nothing refers to. Only regular files directly inside the
+// exercise media folder with an upload name are considered (no symlinks, no
+// subfolders), and only once they are older than the grace period, so an
+// image uploaded in an editor that is still open survives until it is saved.
+export function sweepOrphanedExerciseImages(dataDir, referencedUrls, { graceMs = ORPHAN_GRACE_MS, now = Date.now() } = {}) {
+  const root = exerciseMediaRoot(dataDir)
+  const referenced = new Set([...referencedUrls].map((url) => String(url).split(/[?#]/)[0]))
+  let entries
+  try {
+    entries = fs.readdirSync(root, { withFileTypes: true })
+  } catch {
+    return []
+  }
+  const removed = []
+  for (const entry of entries) {
+    if (!entry.isFile() || !UPLOAD_NAME.test(entry.name)) continue
+    if (referenced.has(`/media/exercises/${entry.name}`)) continue
+    const filePath = path.join(root, entry.name)
+    try {
+      const stat = fs.lstatSync(filePath)
+      if (!stat.isFile() || now - stat.mtimeMs < graceMs) continue
+      fs.unlinkSync(filePath)
+      removed.push(entry.name)
+    } catch {
+      // Gone already or not removable: leave it for the next sweep.
+    }
+  }
+  return removed
+}
+
 export function resolveExerciseMediaFile(dataDir, fileName) {
   if (!fileName || typeof fileName !== 'string') return null
   if (!/^[a-zA-Z0-9._-]+$/.test(fileName)) return null

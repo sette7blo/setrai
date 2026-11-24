@@ -307,6 +307,10 @@ export function createSessionRepository(db) {
     `).all(exerciseSlug).map((row) => ({ ...mapSetRow(row), sessionFinishedAt: row.session_finished_at }))
   }
 
+  function listUnfinishedPlans() {
+    return db.prepare('SELECT plan_json FROM sessions WHERE finished_at IS NULL AND plan_json IS NOT NULL').all().map((row) => row.plan_json)
+  }
+
   function latestCompletedSet(exerciseSlug) {
     return mapSetRow(db.prepare(`
       SELECT session_sets.*
@@ -335,6 +339,7 @@ export function createSessionRepository(db) {
     getById,
     listWithSets,
     lastPerformance,
+    listUnfinishedPlans,
     listFinishedExerciseSets,
     list,
     finish,

@@ -414,6 +414,11 @@ Exercises remain local. Bundled content is reconciled by database seeds;
 image uploads are stored on the Setrai server. No exercise service contract
 fetches or publishes external content.
 
+Uploads that no exercise and no workout in progress references are deleted by
+`sweepOrphanedExerciseImages` (`media.js`) at startup and daily, once older
+than 24 hours. It only touches regular files directly in `media/exercises/`
+whose names match the upload pattern.
+
 ---
 
 # 11. Programs server feature
