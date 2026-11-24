@@ -144,7 +144,7 @@ export function apiKeysSection(): HTMLDetailsElement {
     if (small) small.textContent = summary(state.keys)
     const notice = document.createElement('p')
     notice.className = 'section-help'
-    notice.textContent = 'An API key gives another app, such as the setrai-omarchy plugin, full admin access to the Setrai API: it can read all data and create exercises and programs. Send it as "Authorization: Bearer <key>".'
+    notice.textContent = 'An API key gives another app, such as the setrai-omarchy plugin, full admin access to the Setrai API: it can read all data and create exercises and programs. Send it as "Authorization: Bearer <key>". Keys identify other apps; they do not lock Setrai. The web app and the API stay open to anyone who can reach this server, so keep it on a trusted network or behind a VPN.'
     const children: HTMLElement[] = [notice]
     if (state.revealed) children.push(revealBox(state, render))
     children.push(createForm(state, render))

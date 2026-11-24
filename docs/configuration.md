@@ -206,6 +206,9 @@ Authentication is separate from:
 
 ## `SETRAI_AUTH_ENABLED`
 
+**Not implemented yet: this setting has no effect.** Setrai has no login; see
+the API keys note under Deployment and keep Setrai on a trusted network.
+
 Example:
 
 ```env
@@ -239,6 +242,8 @@ Yes
 ---
 
 ## `SETRAI_AUTH_PASSWORD`
+
+**Not implemented yet: this setting has no effect.**
 
 Example:
 
@@ -286,6 +291,10 @@ The initial preferred provider is self-hosted Ollama.
 ---
 
 ## `AI_ENABLED`
+
+**No AI feature exists yet, so this setting has no effect** and
+`GET /api/capabilities` reports `"ai": false`. The rest of this section
+describes the intended behaviour. The example `.env` uses `false`.
 
 Example:
 

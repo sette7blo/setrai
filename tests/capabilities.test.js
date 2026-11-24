@@ -7,6 +7,10 @@ test('capabilities expose only supported optional integrations', () => {
   const config = loadConfig()
   assert.deepEqual(Object.keys(config).sort(), ['ai', 'auth', 'server'])
   assert.deepEqual(getCapabilities(config), {
-    ai: config.ai.enabled
+    ai: false
   })
+})
+
+test('ai stays false while no AI feature exists, even when AI_ENABLED is true', () => {
+  assert.deepEqual(getCapabilities({ ai: { enabled: true } }), { ai: false })
 })

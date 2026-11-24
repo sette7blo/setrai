@@ -92,6 +92,13 @@ are failing.
 
 Add or update tests for behavior changes.
 
+## Versions
+
+Release versions come from git tags (`vX.Y.Z`); CI turns a tag into the
+versioned Docker image tags. The app does not read a
+`VERSION` file, so none is baked into the image, and the `version` in
+`package.json` is unused and stays `0.0.0`.
+
 ## Scope discipline
 
 Prefer the smallest change that correctly solves the requested problem.
