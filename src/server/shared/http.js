@@ -48,9 +48,16 @@ export async function readJsonBody(req, { maxBytes = DEFAULT_MAX_JSON_BYTES, too
   if (!isJsonContentType(req.headers?.['content-type'])) {
     throw httpError('Request body must be JSON (Content-Type: application/json)', 415)
   }
+  let body
   try {
-    return JSON.parse(buffer.toString('utf8'))
+    body = JSON.parse(buffer.toString('utf8'))
   } catch {
     throw httpError('Invalid JSON body', 400)
   }
+  // Every JSON route takes an object; null, arrays and scalars would otherwise
+  // reach the services and fail as 500s on property access.
+  if (!body || typeof body !== 'object' || Array.isArray(body)) {
+    throw httpError('Request body must be a JSON object', 400)
+  }
+  return body
 }

@@ -56,3 +56,12 @@ test('cross-site browser writes are refused while same-origin and non-browser cl
     assert.doesNotThrow(() => assertSameOriginWrite(req(method, 'cross-site')))
   }
 })
+
+test('readJsonBody rejects JSON that is not an object', async () => {
+  for (const raw of ['null', '42', '"text"', '[1,2]', 'true']) {
+    await assert.rejects(
+      readJsonBody(request([raw], 'application/json')),
+      error => error.statusCode === 400 && /JSON object/.test(error.message)
+    )
+  }
+})

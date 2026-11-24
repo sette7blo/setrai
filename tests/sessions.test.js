@@ -560,3 +560,19 @@ test('finish notes must be text of at most 5000 characters', () => {
     cleanupDatabase(db, directory)
   }
 })
+
+test('rejects malformed session start input with 400', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    const { sessions: sessionService } = createServices(db)
+    const isBadRequest = (error) => error.statusCode === 400
+
+    assert.throws(() => sessionService.startSession(null), isBadRequest)
+    assert.throws(() => sessionService.startSession({ notes: { a: 1 } }), isBadRequest)
+    assert.throws(() => sessionService.startSession({ name: ['x'] }), isBadRequest)
+    assert.equal(sessionService.startSession({}).programName, 'Ad-hoc Session')
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})
