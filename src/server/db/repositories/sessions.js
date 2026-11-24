@@ -264,6 +264,36 @@ export function createSessionRepository(db) {
     return readSets(db, sessionId)
   }
 
+  // Done sets of an exercise from the most recent finished session that has any.
+  function lastPerformance(exerciseSlug) {
+    const rows = db.prepare(`
+      SELECT session_sets.*, sessions.finished_at AS session_finished_at
+      FROM session_sets
+      JOIN sessions ON sessions.id = session_sets.session_id
+      WHERE session_sets.exercise_slug = ?
+        AND session_sets.done = 1
+        AND session_sets.session_id = (
+          SELECT sessions.id
+          FROM sessions
+          JOIN session_sets AS done_sets ON done_sets.session_id = sessions.id
+          WHERE done_sets.exercise_slug = ?
+            AND done_sets.done = 1
+            AND sessions.finished_at IS NOT NULL
+          ORDER BY sessions.finished_at DESC, sessions.id DESC
+          LIMIT 1
+        )
+      ORDER BY session_sets.set_number ASC, session_sets.logged_at ASC, session_sets.id ASC
+    `).all(exerciseSlug, exerciseSlug)
+    if (!rows.length) return null
+    return {
+      finishedAt: rows[0].session_finished_at,
+      sets: rows.map((row) => {
+        const set = mapSetRow(row)
+        return { setNumber: set.setNumber, reps: set.reps, weight: set.weight, durationSec: set.durationSec ?? null }
+      })
+    }
+  }
+
   function latestCompletedSet(exerciseSlug) {
     return mapSetRow(db.prepare(`
       SELECT session_sets.*
@@ -291,6 +321,7 @@ export function createSessionRepository(db) {
     create,
     getById,
     listWithSets,
+    lastPerformance,
     list,
     finish,
     insertSet,

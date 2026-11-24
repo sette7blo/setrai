@@ -18,6 +18,14 @@ export interface ProgramExerciseApiPayload {
   targetWeight?: number | null
   weight?: number | null
   notes?: string
+  lastPerformance?: LastPerformance | null
+}
+
+// The done sets of this exercise from its most recent finished session,
+// captured when the session started.
+export interface LastPerformance {
+  finishedAt: string
+  sets: { setNumber: number, reps: number, weight: number | null, durationSec: number | null }[]
 }
 
 export interface ProgramApiPayload {
@@ -72,6 +80,7 @@ export interface ProgramExercise {
   weight: number | null
   notes: string
   exercise?: Exercise
+  lastPerformance?: LastPerformance | null
 }
 
 export interface Program {

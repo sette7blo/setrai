@@ -123,6 +123,7 @@ body:has(.live-overlay) { overflow: hidden; }
 .live-target > div { min-width: 0; display: grid; gap: 3px; }
 .live-target strong { color: var(--live-ink); font-size: var(--text-title); font-weight: var(--weight-medium); line-height: 1; letter-spacing: -.02em; white-space: nowrap; font-variant-numeric: tabular-nums; }
 .live-target span:not(.live-target-icon) { color: var(--live-muted); font-size: var(--text-caption); line-height: 1; }
+.live-last-time { margin: 2px 0 6px; padding-left: 44px; color: var(--live-muted); font-size: var(--text-meta); line-height: 1.4; }
 .live-note { margin: 0 0 16px; color: var(--live-muted); font-size: var(--text-meta); line-height: 1.5; }
 .live-set-plan { padding-top: 12px; border-top: 1px solid var(--live-line); }
 .live-set-plan h2 { display: flex; align-items: center; gap: 8px; margin: 0 0 8px; font-size: var(--text-title); font-weight: var(--weight-medium); letter-spacing: -.02em; }

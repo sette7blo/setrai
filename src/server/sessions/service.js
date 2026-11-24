@@ -75,6 +75,8 @@ export function createSessionService(db) {
       return {
         ...entry,
         targetWeight: entry.targetWeight ?? lastSet?.weight ?? null,
+        // Captured in the plan so a reload or a later session cannot change it.
+        lastPerformance: repository.lastPerformance(entry.exerciseSlug),
         exercise: exerciseService.getExercise(entry.exerciseId)
       }
     })
