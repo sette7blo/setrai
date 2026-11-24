@@ -2,13 +2,18 @@ import fs from 'node:fs'
 import path from 'node:path'
 import { randomUUID } from 'node:crypto'
 import { DatabaseSync } from 'node:sqlite'
-import { gunzipSync, gzipSync } from 'node:zlib'
+import { Writable } from 'node:stream'
+import { gunzipSync } from 'node:zlib'
 
 import { openDatabase } from '../db/connection.js'
+import { writeArchive } from './archive-stream.js'
 
 const SQLITE_HEADER = Buffer.from('SQLite format 3\0')
 const ARCHIVE_FORMAT = 'setrai-backup'
 const MAX_UNPACKED_BYTES = 768 * 1024 * 1024
+// Each restore first saves the current data; only the newest few are kept.
+const SAFETY_BACKUPS_KEPT = 5
+const SAFETY_BACKUP_PATTERN = /^setrai-before-restore-.+\.setrai$/
 const REQUIRED_TABLES = new Set([
   'schema_migrations', 'settings', 'exercises', 'programs',
   'program_exercises', 'sessions', 'session_sets', 'body_log'
@@ -55,23 +60,6 @@ function backupStamp() {
   return new Date().toISOString().replaceAll(':', '').replaceAll('-', '').replace('.', '')
 }
 
-function listMedia(mediaDir) {
-  if (!fs.existsSync(mediaDir)) return []
-  const files = []
-  function visit(directory) {
-    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
-      const absolute = path.join(directory, entry.name)
-      if (entry.isDirectory()) visit(absolute)
-      else if (entry.isFile()) {
-        const relative = path.relative(mediaDir, absolute).split(path.sep).join('/')
-        files.push({ path: relative, data: fs.readFileSync(absolute).toString('base64') })
-      }
-    }
-  }
-  visit(mediaDir)
-  return files.sort((a, b) => a.path.localeCompare(b.path))
-}
-
 function safeMediaPath(relative) {
   if (typeof relative !== 'string' || !relative || relative.includes('\\')) {
     throw clientError('The backup contains an invalid media path.')
@@ -104,6 +92,19 @@ function decodeArchive(buffer) {
   }
 }
 
+function columnNames(db, schema, table) {
+  return db.prepare(`PRAGMA ${schema}.table_info(${quoteIdentifier(table)})`).all().map(column => column.name)
+}
+
+// Rows are copied by column name, never by position, so a table whose columns
+// are in a different order in the backup still restores correctly.
+function copyTable(db, name) {
+  const restored = new Set(columnNames(db, 'restore', name))
+  const columns = columnNames(db, 'main', name).filter(column => restored.has(column)).map(quoteIdentifier).join(', ')
+  const table = quoteIdentifier(name)
+  db.exec(`INSERT INTO main.${table} (${columns}) SELECT ${columns} FROM restore.${table}`)
+}
+
 function copyDatabase(db, sourcePath) {
   db.prepare('ATTACH DATABASE ? AS restore').run(sourcePath)
   db.exec('PRAGMA foreign_keys = OFF')
@@ -118,14 +119,11 @@ function copyDatabase(db, sourcePath) {
       for (const name of [...tables].reverse()) {
         db.exec(`DELETE FROM main.${quoteIdentifier(name)}`)
       }
-      for (const name of tables) {
-        const table = quoteIdentifier(name)
-        db.exec(`INSERT INTO main.${table} SELECT * FROM restore.${table}`)
-      }
+      for (const name of tables) copyTable(db, name)
       const hasSequence = db.prepare("SELECT 1 FROM main.sqlite_schema WHERE type = 'table' AND name = 'sqlite_sequence'").get()
         && db.prepare("SELECT 1 FROM restore.sqlite_schema WHERE type = 'table' AND name = 'sqlite_sequence'").get()
       if (hasSequence) {
-        db.exec('DELETE FROM main.sqlite_sequence; INSERT INTO main.sqlite_sequence SELECT * FROM restore.sqlite_sequence')
+        db.exec('DELETE FROM main.sqlite_sequence; INSERT INTO main.sqlite_sequence (name, seq) SELECT name, seq FROM restore.sqlite_sequence')
       }
       if (db.prepare('PRAGMA foreign_key_check').all().length) {
         throw clientError('The backup contains invalid data relationships.')
@@ -146,14 +144,27 @@ export function createBackupService(db, { dataDir }) {
   const mediaDir = path.join(dataDir, 'media')
   fs.mkdirSync(backupDir, { recursive: true })
 
-  function exportDatabase() {
+  // VACUUM INTO takes a consistent snapshot; the archive is then streamed
+  // from that file.
+  async function exportBackupTo(output) {
     const target = path.join(backupDir, `.export-${randomUUID()}.db`)
     try {
       vacuumInto(db, target)
-      return fs.readFileSync(target)
+      await writeArchive(output, { format: ARCHIVE_FORMAT, databaseFile: target, mediaDir, createdAt: new Date().toISOString() })
     } finally {
       fs.rmSync(target, { force: true })
     }
+  }
+
+  async function exportBackup() {
+    const chunks = []
+    await exportBackupTo(new Writable({ write(chunk, _encoding, done) { chunks.push(chunk); done() } }))
+    return Buffer.concat(chunks)
+  }
+
+  function pruneSafetyBackups() {
+    const names = fs.readdirSync(backupDir).filter(name => SAFETY_BACKUP_PATTERN.test(name)).sort()
+    for (const name of names.slice(0, -SAFETY_BACKUPS_KEPT)) fs.rmSync(path.join(backupDir, name), { force: true })
   }
 
   function restoreDatabase(buffer) {
@@ -183,22 +194,18 @@ export function createBackupService(db, { dataDir }) {
     }
   }
 
-  function exportBackup() {
-    const archive = {
-      format: ARCHIVE_FORMAT,
-      version: 1,
-      createdAt: new Date().toISOString(),
-      database: exportDatabase().toString('base64'),
-      media: listMedia(mediaDir)
-    }
-    return gzipSync(Buffer.from(JSON.stringify(archive)), { level: 6 })
-  }
-
-  function restoreBackup(buffer) {
+  async function restoreBackup(buffer) {
     const isLegacyDatabase = buffer.subarray(0, SQLITE_HEADER.length).equals(SQLITE_HEADER)
     const incoming = isLegacyDatabase ? { database: buffer, media: null } : decodeArchive(buffer)
     const safetyName = `setrai-before-restore-${backupStamp()}-${randomUUID().slice(0, 8)}.setrai`
-    fs.writeFileSync(path.join(backupDir, safetyName), exportBackup(), { mode: 0o600 })
+    const safetyPath = path.join(backupDir, safetyName)
+    try {
+      await exportBackupTo(fs.createWriteStream(safetyPath, { mode: 0o600 }))
+    } catch (error) {
+      fs.rmSync(safetyPath, { force: true })
+      throw error
+    }
+    pruneSafetyBackups()
 
     let stage = null
     let previous = null
@@ -231,5 +238,5 @@ export function createBackupService(db, { dataDir }) {
     }
   }
 
-  return { exportBackup, restoreBackup }
+  return { exportBackup, exportBackupTo, restoreBackup }
 }

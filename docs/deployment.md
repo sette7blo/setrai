@@ -132,6 +132,14 @@ profile, exercises, workouts, and sessions remain in the named volume. Ordinary
 deletes the installation's data.** Do not blindly downgrade after database
 migrations; restore the matching backup if a rollback needs an earlier schema.
 
+Settings -> Backup also exports a `.setrai` archive (database and uploaded
+images) while Setrai runs, and imports one to replace all data. A restore
+replaces everything, API keys included: keys created after the backup stop
+working, and keys from the backup work again, so plugins may need a new key.
+Before each restore Setrai saves the current data as
+`data/backups/setrai-before-restore-<time>.setrai`; only the newest 5 of these
+are kept.
+
 To make a consistent backup, stop Setrai while archiving the entire data volume,
 including any SQLite WAL files:
 

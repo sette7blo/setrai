@@ -229,7 +229,7 @@ function backupSection(state: ProfileState, rerender: () => void): HTMLDetailsEl
   body.append(
     notice,
     row('Export full backup', 'Download the database and uploaded exercise images.', download),
-    row('Import backup', 'Restore a .setrai archive or legacy .db file.', upload),
+    row('Import backup', 'Restore a .setrai archive or legacy .db file. Replaces all data, including API keys.', upload),
     picker
   )
   if (state.message) {
