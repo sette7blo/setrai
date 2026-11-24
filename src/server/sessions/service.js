@@ -346,6 +346,7 @@ export function createSessionService(db) {
   }
 
   return {
+    listFinishedExerciseSets: (slug) => repository.listFinishedExerciseSets(slug),
     startSession,
     getSession,
     listSessions,

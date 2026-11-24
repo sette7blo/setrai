@@ -533,3 +533,55 @@ test('statistics count every finished session, beyond the newest 1000', () => {
     cleanupDatabase(db, directory)
   }
 })
+
+test('exercise progress: finished sessions only, newest first, with bests', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    const services = createServices(db)
+    const bench = createExercise(services)
+    const plank = createExercise(services, { name: 'Plank', muscleGroup: 'core' })
+    completeSession(services, { finishedAt: '2026-10-01 10:00:00', exercise: bench, sets: [{ reps: 8, weight: 80 }, { setNumber: 2, reps: 10, weight: 70 }] })
+    completeSession(services, { finishedAt: '2026-10-08 10:00:00', exercise: bench, sets: [{ reps: 6, weight: 90 }, { setNumber: 2, reps: 5, weight: 95, done: false }] })
+    completeSession(services, { finishedAt: '2026-10-15 10:00:00', exercise: bench, sets: [{ reps: 8, weight: 80 }] })
+    const open = services.sessions.startSession({ name: 'Open' })
+    services.sessions.logSet(open.id, { exerciseId: bench.id, setNumber: 1, reps: 3, weight: 120 })
+
+    const progress = services.statistics.getExerciseProgress('bench-press')
+    assert.deepEqual(progress.exercise, { id: bench.id, slug: 'bench-press', name: 'Bench Press' })
+    assert.deepEqual(progress.sessions.map((session) => session.finishedAt), ['2026-10-15 10:00:00', '2026-10-08 10:00:00', '2026-10-01 10:00:00'])
+    const oldest = progress.sessions[2]
+    assert.deepEqual(oldest.sets, [{ setNumber: 1, reps: 8, weight: 80, durationSec: null }, { setNumber: 2, reps: 10, weight: 70, durationSec: null }])
+    assert.deepEqual(oldest.topSet, { setNumber: 1, reps: 8, weight: 80, durationSec: null })
+    assert.equal(oldest.bestEstimated1RM, 101.33)
+    assert.equal(oldest.volume, 1340)
+    assert.equal(progress.sessions[1].sets.length, 1)
+    assert.equal(progress.sessions[1].bestEstimated1RM, 108)
+    assert.deepEqual(progress.best.heaviestWeight, { value: 90, date: '2026-10-08 10:00:00', reps: 6 })
+    assert.deepEqual(progress.best.estimated1RM, { value: 108, date: '2026-10-08 10:00:00', weight: 90, reps: 6 })
+    // Reached first on 1 October; the later tie does not move it.
+    assert.deepEqual(progress.best.mostReps, { value: 10, date: '2026-10-01 10:00:00', weight: 70 })
+    assert.equal(progress.best.longestDurationSec, null)
+
+    assert.deepEqual(services.statistics.getExerciseProgress('plank').sessions, [])
+    assert.equal(services.statistics.getExerciseProgress(plank.slug).best.estimated1RM, null)
+    assert.equal(services.statistics.getExerciseProgress('no-such-exercise'), null)
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})
+
+test('exercise progress for timed and bodyweight sets', async () => {
+  const { calculateExerciseProgress } = await import('../src/server/statistics/exercise-progress.js')
+  const set = (sessionId, finishedAt, reps, weight, durationSec) => ({ sessionId, sessionFinishedAt: finishedAt, setNumber: 1, reps, weight, durationSec })
+  const timed = calculateExerciseProgress([set(2, '2026-10-02', 0, null, 60), set(1, '2026-10-01', 0, null, 45)])
+  assert.equal(timed.sessions[0].bestEstimated1RM, null)
+  assert.equal(timed.sessions[0].topSet.durationSec, 60)
+  assert.deepEqual(timed.best.longestDurationSec, { value: 60, date: '2026-10-02' })
+  assert.equal(timed.best.heaviestWeight, null)
+
+  const bodyweight = calculateExerciseProgress([set(1, '2026-10-01', 15, null), set(1, '2026-10-01', 12, null)])
+  assert.equal(bodyweight.sessions[0].topSet.reps, 15)
+  assert.equal(bodyweight.sessions[0].volume, 0)
+  assert.deepEqual(bodyweight.best.mostReps, { value: 15, date: '2026-10-01', weight: null })
+})

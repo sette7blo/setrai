@@ -645,7 +645,11 @@ Derived training statistics such as:
 - estimated 1RM;
 - personal records;
 - training streak;
-- body-weight trends.
+- body-weight trends;
+- per-exercise progress (`GET /api/statistics/exercises/:slug` in
+  `exercise-progress.js`: finished sessions newest first with sets, top set,
+  best estimated 1RM and volume, plus all-time bests; `404` for an unknown
+  slug). The exercise detail page shows it in `src/client/exercises/progress-view.ts`.
 
 ## Typical files
 
@@ -654,6 +658,7 @@ routes.ts
 service.ts
 volume.ts
 records.ts
+exercise-progress.ts
 streak.ts
 body-weight.ts
 ```

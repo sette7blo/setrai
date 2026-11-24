@@ -44,3 +44,19 @@ export interface StatisticsOverview {
   bodyWeight: BodyWeightPoint[]
   bodyWeightChangeKg: number | null
 }
+
+export interface ExerciseProgressSet { setNumber: number, reps: number, weight: number | null, durationSec: number | null }
+export interface ExerciseProgressSession {
+  sessionId: number
+  finishedAt: string
+  sets: ExerciseProgressSet[]
+  topSet: ExerciseProgressSet
+  bestEstimated1RM: number | null
+  volume: number
+}
+export interface ExerciseBest { value: number, date: string, weight?: number | null, reps?: number }
+export interface ExerciseProgress {
+  exercise: { id: number, slug: string, name: string }
+  sessions: ExerciseProgressSession[]
+  best: { heaviestWeight: ExerciseBest | null, estimated1RM: ExerciseBest | null, mostReps: ExerciseBest | null, longestDurationSec: ExerciseBest | null }
+}
