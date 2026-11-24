@@ -6,6 +6,7 @@ import { renderExerciseLibrary } from '../exercises/page.js'
 import { renderSessionPage } from '../workouts/session-page.js'
 import { renderWorkoutsPage } from '../workouts/page.js'
 import { listSessions } from '../workouts/api.js'
+import { syncTrainingTimeZone } from '../profile/api.js'
 import { renderStatisticsPage } from '../statistics/page.js'
 import { renderProfilePage } from '../profile/page.js'
 import { currentPath, primaryNavPath } from './router.js'
@@ -124,7 +125,8 @@ export async function bootSetraiApp(root: HTMLElement): Promise<void> {
     // dead server from rendering an empty shell.
     const [, sessions] = await Promise.all([
       loadCapabilities(),
-      listSessions().catch(() => [])
+      listSessions().catch(() => []),
+      syncTrainingTimeZone().catch(() => {})
     ])
     await renderShell(root, sessions.find(session => !session.finishedAt))
   } catch (error) {

@@ -34,7 +34,7 @@ export function calculateTotalVolume(volumeSets) {
   )
 }
 
-export function calculateWeeklyVolume(volumeSets) {
+export function calculateWeeklyVolume(volumeSets, timeZone = 'UTC') {
   const weeks = new Map()
 
   for (const item of volumeSets) {
@@ -46,7 +46,7 @@ export function calculateWeeklyVolume(volumeSets) {
       continue
     }
 
-    const key = weekStartKey(completedAt)
+    const key = weekStartKey(completedAt, timeZone)
     weeks.set(key, (weeks.get(key) ?? 0) + item.volume)
   }
 

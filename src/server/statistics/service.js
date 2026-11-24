@@ -8,6 +8,9 @@ import {
   createSessionService
 } from '../sessions/service.js'
 import {
+  createProfileService
+} from '../profile/service.js'
+import {
   getBodyWeightChange,
   getChronologicalBodyWeight
 } from './body-weight.js'
@@ -37,14 +40,17 @@ export function createStatisticsService(db, options = {}) {
     options.exerciseService ?? createExerciseService(db)
   const bodyService =
     options.bodyService ?? createBodyService(db)
+  const profileService =
+    options.profileService ?? createProfileService(db)
   const getNow = options.now ?? (() => new Date())
+  const getTimeZone = () => profileService.getTimeZone()
 
   function getCompletedSessions() {
     return sessionService.listCompletedSessions()
   }
 
-  function getTrainingFrequency(sessions = getCompletedSessions()) {
-    const currentWeek = weekStartKey(getNow())
+  function getTrainingFrequency(sessions = getCompletedSessions(), timeZone = getTimeZone()) {
+    const currentWeek = weekStartKey(getNow(), timeZone)
 
     return {
       totalSessions: sessions.length,
@@ -52,7 +58,7 @@ export function createStatisticsService(db, options = {}) {
         const finishedAt = parseSetraiDateTime(
           session.finishedAt
         )
-        return finishedAt && weekStartKey(finishedAt) === currentWeek
+        return finishedAt && weekStartKey(finishedAt, timeZone) === currentWeek
       }).length
     }
   }
@@ -60,11 +66,13 @@ export function createStatisticsService(db, options = {}) {
   function buildStatistics(sessions) {
     const volumeSets = getVolumeSets(sessions)
     const bodyWeight = getBodyWeightHistory()
+    const timeZone = getTimeZone()
 
     return {
-      trainingFrequency: getTrainingFrequency(sessions),
+      timeZone,
+      trainingFrequency: getTrainingFrequency(sessions, timeZone),
       totalVolume: calculateTotalVolume(volumeSets),
-      weeklyVolume: calculateWeeklyVolume(volumeSets),
+      weeklyVolume: calculateWeeklyVolume(volumeSets, timeZone),
       volumeByExercise: calculateVolumeByExercise(volumeSets),
       volumeByMuscle: calculateVolumeByMuscle(
         volumeSets,
@@ -73,7 +81,8 @@ export function createStatisticsService(db, options = {}) {
       personalRecords: calculatePersonalRecords(volumeSets),
       trainingStreak: calculateTrainingStreak(
         sessions,
-        getNow()
+        getNow(),
+        timeZone
       ),
       bodyWeight,
       bodyWeightChangeKg: getBodyWeightChange(bodyWeight)
@@ -86,7 +95,8 @@ export function createStatisticsService(db, options = {}) {
 
   function getWeeklyVolume() {
     return calculateWeeklyVolume(
-      getVolumeSets(getCompletedSessions())
+      getVolumeSets(getCompletedSessions()),
+      getTimeZone()
     )
   }
 
@@ -112,7 +122,8 @@ export function createStatisticsService(db, options = {}) {
   function getTrainingStreak() {
     return calculateTrainingStreak(
       getCompletedSessions(),
-      getNow()
+      getNow(),
+      getTimeZone()
     )
   }
 

@@ -1,3 +1,4 @@
+import { weekStartOfDayKey } from '../shared/training-time-zone.js'
 import type { Exercise } from '../exercises/types.js'
 import { displayName } from '../exercises/format.js'
 import type { Session } from './types.js'
@@ -29,12 +30,6 @@ function previousMonth(month: string): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`
 }
 
-function weekStart(key: string): string {
-  const date = new Date(`${key}T00:00:00`)
-  const day = date.getDay() || 7
-  date.setDate(date.getDate() - day + 1)
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
-}
 
 function completedInMonth(sessions: Session[], month: string): Session[] {
   return sessions.filter(session => session.finishedAt && sessionDateKey(session)?.startsWith(month))
@@ -57,7 +52,7 @@ export function monthlyRecap(sessions: Session[], exercises: Exercise[], month: 
     if (!key) return
     days.add(key)
     dayCounts.set(Number(key.slice(8, 10)), (dayCounts.get(Number(key.slice(8, 10))) ?? 0) + 1)
-    const week = weekStart(key)
+    const week = weekStartOfDayKey(key)
     weeks.set(week, (weeks.get(week) ?? 0) + sessionVolume(session))
     session.sets.filter(set => set.done && set.weight && set.reps > 0).forEach(set => {
       const exercise = exercises.find(item => item.id === set.exerciseId || item.slug === set.exerciseSlug)

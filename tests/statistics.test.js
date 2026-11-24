@@ -91,6 +91,7 @@ test('returns empty statistics for a fresh database', () => {
     const overview = statistics.getOverview()
 
     assert.deepEqual(overview, {
+      timeZone: 'UTC',
       trainingFrequency: {
         totalSessions: 0,
         thisWeek: 0
@@ -584,4 +585,48 @@ test('exercise progress for timed and bodyweight sets', async () => {
   assert.equal(bodyweight.sessions[0].topSet.reps, 15)
   assert.equal(bodyweight.sessions[0].volume, 0)
   assert.deepEqual(bodyweight.best.mostReps, { value: 15, date: '2026-10-01', weight: null })
+})
+
+test('days and weeks follow the profile time zone on both sides of midnight', async () => {
+  const { createProfileService } = await import('../src/server/profile/service.js')
+  // Monday 2026-11-23. Sessions just before and after local midnight.
+  const cases = [
+    // East of UTC (UTC+1 in winter): 00:30 local Tuesday is 23:30 UTC Monday.
+    { zone: 'Europe/Berlin', finished: ['2026-11-23 22:30:00', '2026-11-23 23:30:00'], days: ['2026-11-23', '2026-11-24'] },
+    // West of UTC (UTC-5): 23:30 local Monday is 04:30 UTC Tuesday.
+    { zone: 'America/New_York', finished: ['2026-11-24 04:30:00', '2026-11-24 05:30:00'], days: ['2026-11-23', '2026-11-24'] }
+  ]
+  for (const { zone, finished, days } of cases) {
+    const { db, directory } = createTestDatabase()
+    try {
+      createProfileService(db).updateProfile({ timeZone: zone })
+      const services = createServices(db)
+      for (const finishedAt of finished) completeSession(services, { finishedAt, sets: [{ reps: 5, weight: 100 }] })
+      const now = new Date(Date.parse(`${days[1]}T12:00:00Z`))
+      const statistics = createStatisticsService(db, { now: () => now })
+      const overview = statistics.getOverview()
+
+      assert.equal(overview.timeZone, zone)
+      // Two consecutive local days, both in the local week of Monday the 23rd.
+      assert.equal(overview.trainingStreak.currentStreakDays, 2, zone)
+      assert.equal(overview.trainingFrequency.thisWeek, 2, zone)
+      assert.deepEqual(overview.weeklyVolume, [{ weekStart: '2026-11-23', volume: 1000 }], zone)
+    } finally {
+      cleanupDatabase(db, directory)
+    }
+  }
+})
+
+test('a Sunday-night session stays in its local week across a DST change', async () => {
+  const { weekStartKey, dayKey } = await import('../src/server/statistics/dates.js')
+  // Europe/Berlin leaves DST on Sunday 2026-10-25.
+  const lateSunday = new Date('2026-10-25T22:30:00Z') // 23:30 local Sunday (UTC+1)
+  assert.equal(dayKey(lateSunday, 'Europe/Berlin'), '2026-10-25')
+  assert.equal(weekStartKey(lateSunday, 'Europe/Berlin'), '2026-10-19')
+  const earlyMonday = new Date('2026-10-25T23:30:00Z') // 00:30 local Monday
+  assert.equal(weekStartKey(earlyMonday, 'Europe/Berlin'), '2026-10-26')
+  // US clocks spring forward on Sunday 2026-03-08.
+  assert.equal(dayKey(new Date('2026-03-09T03:30:00Z'), 'America/New_York'), '2026-03-08')
+  assert.equal(weekStartKey(new Date('2026-03-09T03:30:00Z'), 'America/New_York'), '2026-03-02')
+  assert.equal(weekStartKey(new Date('2026-03-09T05:30:00Z'), 'America/New_York'), '2026-03-09')
 })

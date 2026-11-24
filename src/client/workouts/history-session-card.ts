@@ -1,3 +1,4 @@
+import { trainingDayKey } from '../shared/training-time-zone.js'
 import { ChevronDown } from 'lucide'
 import { displayName } from '../exercises/format.js'
 import { muscleMapMarkupForMuscles } from '../exercises/muscle-map.js'
@@ -20,7 +21,7 @@ export function sessionDateKey(session: Session): string | null {
   const stamp = session.finishedAt ?? session.startedAt
   const date = new Date(stamp.endsWith('Z') ? stamp : `${stamp}Z`)
   if (Number.isNaN(date.getTime())) return null
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+  return trainingDayKey(date)
 }
 
 export function sessionDuration(session: Session): string {

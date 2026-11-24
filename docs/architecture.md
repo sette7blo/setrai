@@ -565,6 +565,23 @@ Statistics should not modify training data.
 
 The statistics module is read-oriented.
 
+### Day and week boundaries
+
+Decision (issue #53): the profile's `timeZone` (an IANA name such as
+`Europe/Berlin`) defines which calendar day and Monday-based week a workout
+belongs to, by its finish time. The web app sets it from the browser on first
+load when it is empty; until then the server uses UTC. Timestamps stay UTC in
+the database; only the bucketing uses the zone.
+
+- Server: `src/server/statistics/dates.js` (`dayKey`, `weekStartKey`) drives
+  streaks, `trainingFrequency.thisWeek` and `weeklyVolume`. `GET /api/statistics`
+  reports the zone it used as `timeZone`.
+- Client: `src/client/shared/training-time-zone.ts` drives the History
+  calendar, the monthly recap and Today's current week. Every profile read
+  updates it.
+- Week arithmetic runs on calendar dates, so DST changes cannot move a day.
+- Recovery works from elapsed hours and does not use calendar days.
+
 ---
 
 ## 17. Module size policy

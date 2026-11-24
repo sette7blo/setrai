@@ -18,25 +18,32 @@ export function parseSetraiDateTime(value) {
     : parsed
 }
 
-export function formatDate(date) {
-  return date.toISOString().slice(0, DATE_ONLY_LENGTH)
+const dayFormatters = new Map()
+
+// The calendar day ('YYYY-MM-DD') an instant falls on in the training time
+// zone. Stored times stay UTC; only this bucketing uses the zone.
+export function dayKey(date, timeZone = 'UTC') {
+  let formatter = dayFormatters.get(timeZone)
+  if (!formatter) {
+    formatter = new Intl.DateTimeFormat('en-CA', { timeZone, year: 'numeric', month: '2-digit', day: '2-digit' })
+    dayFormatters.set(timeZone, formatter)
+  }
+  const parts = Object.fromEntries(formatter.formatToParts(date).map((part) => [part.type, part.value]))
+  return `${parts.year}-${parts.month}-${parts.day}`
 }
 
-export function startOfIsoWeek(value) {
-  const date = new Date(Date.UTC(
-    value.getUTCFullYear(),
-    value.getUTCMonth(),
-    value.getUTCDate()
-  ))
-  const day = date.getUTCDay() || 7
-  date.setUTCDate(date.getUTCDate() - day + 1)
-  return date
+// Calendar arithmetic on day keys is done in UTC, where every day has 24
+// hours, so DST changes in the training zone cannot shift a key.
+export function addDaysToKey(key, days) {
+  return new Date(Date.parse(`${key}T00:00:00Z`) + days * DAY_MS).toISOString().slice(0, DATE_ONLY_LENGTH)
 }
 
-export function weekStartKey(value) {
-  return formatDate(startOfIsoWeek(value))
+// Monday of the week containing a day key.
+export function weekOfDayKey(key) {
+  const weekday = new Date(`${key}T00:00:00Z`).getUTCDay() || 7
+  return addDaysToKey(key, 1 - weekday)
 }
 
-export function addDays(value, days) {
-  return new Date(value.getTime() + days * DAY_MS)
+export function weekStartKey(date, timeZone = 'UTC') {
+  return weekOfDayKey(dayKey(date, timeZone))
 }

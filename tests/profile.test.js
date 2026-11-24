@@ -32,7 +32,8 @@ const DEFAULT_PROFILE = {
   trainingGoal: 'general-fitness',
   equipment: [],
   heightCm: null,
-  targetWeightKg: null
+  targetWeightKg: null,
+  timeZone: ''
 }
 
 test('returns default profile on a fresh database', () => {
@@ -317,9 +318,27 @@ test('profile does not expose raw settings storage format', () => {
       'equipment',
       'heightCm',
       'targetWeightKg',
+      'timeZone',
       'trainingGoal',
       'weightUnit'
     ])
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})
+
+test('stores a valid IANA time zone and treats an unset one as UTC', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    const service = createProfileService(db)
+    assert.equal(service.getTimeZone(), 'UTC')
+    assert.equal(service.updateProfile({ timeZone: 'America/New_York' }).timeZone, 'America/New_York')
+    assert.equal(service.getTimeZone(), 'America/New_York')
+    assert.throws(() => service.updateProfile({ timeZone: 'Mars/Olympus' }), /Invalid time zone/)
+    assert.throws(() => service.updateProfile({ timeZone: 42 }), /timeZone must be a string/)
+    assert.equal(service.updateProfile({ timeZone: '' }).timeZone, '')
+    assert.equal(service.getTimeZone(), 'UTC')
   } finally {
     cleanupDatabase(db, directory)
   }

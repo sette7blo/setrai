@@ -1,24 +1,43 @@
 import {
-  addDays,
-  formatDate,
+  addDaysToKey,
+  dayKey,
   parseSetraiDateTime,
-  startOfIsoWeek,
-  weekStartKey
+  weekOfDayKey
 } from './dates.js'
 
-export function calculateTrainingStreak(sessions, now = new Date()) {
+// Counts back from the current period while each earlier one has a session.
+// A streak is still alive while its period is open: before today's or this
+// week's first session, counting starts at the previous day or week.
+function currentRun(keys, current, step) {
+  let cursor = keys.has(current) ? current : addDaysToKey(current, -step)
+  let run = 0
+  while (keys.has(cursor)) {
+    run += 1
+    cursor = addDaysToKey(cursor, -step)
+  }
+  return run
+}
+
+function longestRun(keys, step) {
+  let longest = 0
+  let run = 0
+  let previous = null
+  for (const key of [...keys].sort()) {
+    run = previous && addDaysToKey(previous, step) === key ? run + 1 : 1
+    longest = Math.max(longest, run)
+    previous = key
+  }
+  return longest
+}
+
+export function calculateTrainingStreak(sessions, now = new Date(), timeZone = 'UTC') {
   const completedDays = new Set(
     sessions
       .map((session) => parseSetraiDateTime(session.finishedAt))
       .filter(Boolean)
-      .map(formatDate)
+      .map((finishedAt) => dayKey(finishedAt, timeZone))
   )
-  const completedWeeks = new Set(
-    sessions
-      .map((session) => parseSetraiDateTime(session.finishedAt))
-      .filter(Boolean)
-      .map(weekStartKey)
-  )
+  const completedWeeks = new Set([...completedDays].map(weekOfDayKey))
 
   if (completedWeeks.size === 0) {
     return {
@@ -29,80 +48,11 @@ export function calculateTrainingStreak(sessions, now = new Date()) {
     }
   }
 
-  // A streak is still alive while its period is open: before today's or this
-  // week's first session, count back from the previous day or week.
-  let currentDayStreak = 0
-  let dayCursor = new Date(Date.UTC(
-    now.getUTCFullYear(),
-    now.getUTCMonth(),
-    now.getUTCDate()
-  ))
-
-  if (!completedDays.has(formatDate(dayCursor))) {
-    dayCursor = addDays(dayCursor, -1)
-  }
-
-  while (completedDays.has(formatDate(dayCursor))) {
-    currentDayStreak += 1
-    dayCursor = addDays(dayCursor, -1)
-  }
-
-  const orderedDays = [...completedDays].sort()
-  let longestDayStreak = 0
-  let dayRun = 0
-  let previousDay = null
-
-  for (const day of orderedDays) {
-    const currentDay = parseSetraiDateTime(day)
-
-    if (
-      previousDay &&
-      formatDate(addDays(previousDay, 1)) !== day
-    ) {
-      dayRun = 0
-    }
-
-    dayRun += 1
-    longestDayStreak = Math.max(longestDayStreak, dayRun)
-    previousDay = currentDay
-  }
-
-  let current = 0
-  let cursor = startOfIsoWeek(now)
-
-  if (!completedWeeks.has(formatDate(cursor))) {
-    cursor = addDays(cursor, -7)
-  }
-
-  while (completedWeeks.has(formatDate(cursor))) {
-    current += 1
-    cursor = addDays(cursor, -7)
-  }
-
-  const orderedWeeks = [...completedWeeks].sort()
-  let longest = 0
-  let run = 0
-  let previous = null
-
-  for (const week of orderedWeeks) {
-    const currentWeek = parseSetraiDateTime(week)
-
-    if (
-      previous &&
-      formatDate(addDays(previous, 7)) !== week
-    ) {
-      run = 0
-    }
-
-    run += 1
-    longest = Math.max(longest, run)
-    previous = currentWeek
-  }
-
+  const today = dayKey(now, timeZone)
   return {
-    currentStreakDays: currentDayStreak,
-    longestStreakDays: longestDayStreak,
-    currentStreakWeeks: current,
-    longestStreakWeeks: longest
+    currentStreakDays: currentRun(completedDays, today, 1),
+    longestStreakDays: longestRun(completedDays, 1),
+    currentStreakWeeks: currentRun(completedWeeks, weekOfDayKey(today), 7),
+    longestStreakWeeks: longestRun(completedWeeks, 7)
   }
 }

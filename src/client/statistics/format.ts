@@ -13,6 +13,7 @@ const RANGE_WEEKS: Record<Exclude<TrainingRange, 'all'>, number> = {
 
 export function normalizeStatistics(payload: StatisticsApiPayload): StatisticsOverview {
   return {
+    ...(typeof payload.timeZone === 'string' && payload.timeZone ? { timeZone: payload.timeZone } : {}),
     trainingFrequency: {
       totalSessions: Number(payload.trainingFrequency?.totalSessions ?? 0),
       thisWeek: Number(payload.trainingFrequency?.thisWeek ?? 0)
