@@ -66,7 +66,6 @@ export function createQuickWorkoutService(db, options = {}) {
       description: `Generated from your recovery, equipment, and training goal for ${plan.durationMinutes || 30} minutes.`,
       difficulty: plan.goal || '',
       tags: ['quick-workout'],
-      isTemporary: true,
       exercises: plan.exercises.map((exercise, index) => ({
         exerciseId: exercise.exerciseId,
         position: index,
@@ -114,7 +113,7 @@ export function createQuickWorkoutService(db, options = {}) {
 
   function start(input = {}) {
     const workout = input.workout ?? generate(input)
-    const program = programService.createProgram(
+    const program = programService.createTemporaryProgram(
       programInputFromWorkout(workout)
     )
     const session = sessionService.startSession({

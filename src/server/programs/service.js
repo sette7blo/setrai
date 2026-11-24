@@ -4,7 +4,19 @@ import {
 import {
   createExerciseService
 } from '../exercises/service.js'
+import { normalizeProgramBlocks } from './blocks.js'
 import { validateProgramInput } from './validation.js'
+
+// Set only by Setrai itself (seeding, Quick Workout, duplication). Public
+// create and update requests may echo them back from a GET, so they are
+// ignored rather than rejected.
+const INTERNAL_FIELDS = ['slug', 'isTemporary', 'seedKey', 'seedRevision', 'seedBaseline']
+
+function withoutInternalFields(input) {
+  const result = { ...input }
+  for (const field of INTERNAL_FIELDS) delete result[field]
+  return result
+}
 
 function validationError(message) {
   const error = new Error(message)
@@ -41,12 +53,22 @@ export function createProgramService(db) {
 
   function createProgram(input) {
     validateProgramInput(input)
-    return repository.create({
-      ...input,
-      exercises: validateProgramExercises(
-        input.exercises ?? []
-      )
-    })
+    return insertProgram(withoutInternalFields(input))
+  }
+
+  // Quick Workout's generated plan: hidden from the library.
+  function createTemporaryProgram(input) {
+    validateProgramInput(input)
+    return insertProgram({ ...withoutInternalFields(input), isTemporary: true })
+  }
+
+  function insertProgram(input) {
+    const exercises = validateProgramExercises(input.exercises ?? [])
+    const createInput = { ...input, exercises }
+    if (input.blocks !== undefined) {
+      createInput.blocks = normalizeProgramBlocks(input.blocks, exercises.map((entry) => entry.exerciseSlug))
+    }
+    return repository.importWithExercises(() => createInput)
   }
 
   function updateProgram(id, input) {
@@ -57,9 +79,7 @@ export function createProgramService(db) {
       return null
     }
 
-    const updateInput = {
-      ...input
-    }
+    const updateInput = withoutInternalFields(input)
 
     if (Array.isArray(input.exercises)) {
       updateInput.exercises = validateProgramExercises(
@@ -67,7 +87,14 @@ export function createProgramService(db) {
       )
     }
 
-    return repository.update(id, updateInput)
+    // Blocks are checked against the exercise list the program ends up with.
+    // An exercises-only update leaves existing blocks as they are.
+    if (input.blocks !== undefined) {
+      const exercises = updateInput.exercises ?? existing.exercises
+      updateInput.blocks = normalizeProgramBlocks(input.blocks, exercises.map((entry) => entry.exerciseSlug))
+    }
+
+    return repository.importWithExercises(() => updateInput, id)
   }
 
   function deleteProgram(id) {
@@ -137,7 +164,7 @@ export function createProgramService(db) {
     getProgram,
     getProgramBySlug,
     createProgram,
-
+    createTemporaryProgram,
     updateProgram,
     deleteProgram,
     duplicateProgram,
