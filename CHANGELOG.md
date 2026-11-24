@@ -16,6 +16,7 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 - Fixed: several kinds of invalid API input returned a server error (`500`) instead of a clear `400`: a JSON body that is not an object, body-weight notes that are not text, a non-list `equipment` for Quick Workout, and session names or notes that are not text. Body weight is now capped at 1000 kg, and moving a body-weight entry onto a date that already has one returns `409`.
 - Programs API: `blocks` are now validated (`400` with the reason when a block is malformed or names an exercise that is not in the program), and `slug`, `isTemporary` and the `seed*` fields in create or update requests are ignored instead of stored. Creating or updating a program is now all-or-nothing.
 - Fixed: every Quick Workout left a hidden program behind in the database. It is now removed when the workout is finished or discarded, and leftovers from earlier versions are cleared at startup. Finished Quick Workouts still show in History with their full plan.
+- Statistics now include all of your history: totals, personal records and streaks used to ignore everything older than the newest 1000 sessions. Statistics and recovery also load much faster on large histories.
 
 ## [v0.9.1] — 2026-11-23
 

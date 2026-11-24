@@ -56,6 +56,23 @@ export function createExerciseService(db) {
     return repository.remove(id)
   }
 
+  // Per-request memo for callers that look up the same exercises once per
+  // logged set (statistics, recovery). Not for anything that writes.
+  function createLookup() {
+    const byId = new Map()
+    const bySlug = new Map()
+    return {
+      getExercise(id) {
+        if (!byId.has(id)) byId.set(id, getExercise(id))
+        return byId.get(id)
+      },
+      getExerciseBySlug(slug) {
+        if (!bySlug.has(slug)) bySlug.set(slug, getExerciseBySlug(slug))
+        return bySlug.get(slug)
+      }
+    }
+  }
+
   function getExerciseCount() {
     return repository.count()
   }
@@ -63,6 +80,7 @@ export function createExerciseService(db) {
 
   return {
     listExercises,
+    createLookup,
     getExercise,
     getExerciseBySlug,
     createExercise,

@@ -10,7 +10,7 @@ import {
 } from './calculator.js'
 import { overallReadiness } from './readiness.js'
 
-const SESSION_LIMIT = 500
+const DAY_MS = 24 * 60 * 60 * 1000
 
 export function createRecoveryService(db, options = {}) {
   const sessionService =
@@ -21,13 +21,14 @@ export function createRecoveryService(db, options = {}) {
 
   function getRecovery(input = {}) {
     const now = input.now ?? getNow()
-    const sessions = sessionService.listCompletedSessions({
-      limit: SESSION_LIMIT
-    })
+    // Coarse date filter with a day of slack for any stored time format; the
+    // calculator applies the exact cutoff.
+    const finishedAfter = new Date(now.getTime() - (LOOKBACK_DAYS + 1) * DAY_MS).toISOString().slice(0, 10)
+    const sessions = sessionService.listCompletedSessions({ finishedAfter })
 
     const muscles = calculateRecovery({
       sessions,
-      exerciseService,
+      exerciseService: exerciseService.createLookup(),
       now,
       lookbackDays: LOOKBACK_DAYS
     })

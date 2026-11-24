@@ -479,3 +479,57 @@ test('keeps the current streak alive until its day or week is over', () => {
     { currentStreakDays: 0, longestStreakDays: 2, currentStreakWeeks: 1, longestStreakWeeks: 1 }
   )
 })
+
+test('batched completed sessions match one lookup per session', async () => {
+  const { createSessionRepository } = await import('../src/server/db/repositories/sessions.js')
+  const { db, directory } = createTestDatabase()
+
+  try {
+    const services = createServices(db)
+    const bench = createExercise(services)
+    const squat = createExercise(services, { name: 'Back Squat', muscleGroup: 'legs' })
+    for (let day = 1; day <= 12; day += 1) {
+      completeSession(services, {
+        finishedAt: `2026-10-${String(day).padStart(2, '0')} 10:00:00`,
+        exercise: day % 2 ? bench : squat,
+        sets: [{ reps: 8, weight: 60 + day }, { setNumber: 2, reps: 6, weight: 70 + day, done: day % 3 !== 0 }]
+      })
+    }
+    const open = services.sessions.startSession({ name: 'Open' })
+    services.sessions.logSet(open.id, { exerciseId: bench.id, setNumber: 1, reps: 5, weight: 100 })
+    services.sessions.startSession({ name: 'Empty finished' })
+    db.prepare("UPDATE sessions SET finished_at = '2026-10-20 09:00:00' WHERE program_name = 'Empty finished'").run()
+
+    const repository = createSessionRepository(db)
+    const reference = repository.list({ limit: 1000 })
+      .filter((session) => session.finishedAt)
+      .map((session) => repository.getById(session.id))
+
+    assert.equal(reference.length, 13)
+    assert.deepEqual(services.sessions.listCompletedSessions(), reference)
+    assert.deepEqual(services.sessions.listCompletedSessions({ limit: 3 }), reference.slice(0, 3))
+    assert.deepEqual(
+      services.sessions.listCompletedSessions({ finishedAfter: '2026-10-10' }),
+      reference.filter((session) => session.finishedAt >= '2026-10-10')
+    )
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})
+
+test('statistics count every finished session, beyond the newest 1000', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    const { statistics } = createServices(db)
+    db.exec(`
+      WITH RECURSIVE n(i) AS (SELECT 1 UNION ALL SELECT i + 1 FROM n WHERE i < 1005)
+      INSERT INTO sessions (program_name, started_at, finished_at)
+      SELECT 'Old', datetime('2020-01-01', '+' || i || ' hours'), datetime('2020-01-01', '+' || i || ' hours', '+30 minutes') FROM n
+    `)
+
+    assert.equal(statistics.getOverview().trainingFrequency.totalSessions, 1005)
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})
