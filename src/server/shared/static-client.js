@@ -52,8 +52,19 @@ function isFile(filePath) {
   }
 }
 
-function cacheControlFor(filePath) {
+// Vite names build output in /assets/ "<name>-<8 character hash>.<ext>", so
+// the content at such a URL never changes and can be cached for good.
+// index.html still revalidates on every load, which is how a new release (with
+// new hashed names) is picked up. Source maps are only revalidated.
+const HASHED_ASSET = /^[\w.-]+-[A-Za-z0-9_-]{8}\.[a-z0-9]+$/
+
+function cacheControlFor(filePath, clientDist) {
   const extension = path.extname(filePath)
+  const relative = path.relative(clientDist, filePath).split(path.sep)
+
+  if (relative.length === 2 && relative[0] === 'assets' && extension !== '.map' && HASHED_ASSET.test(relative[1])) {
+    return 'public, max-age=31536000, immutable'
+  }
 
   if (extension === '.html' || extension === '.css' || extension === '.js') {
     return 'no-store, max-age=0'
@@ -62,14 +73,14 @@ function cacheControlFor(filePath) {
   return 'no-cache'
 }
 
-function sendFile(res, filePath, method) {
+function sendFile(res, filePath, method, clientDist) {
   const extension = path.extname(filePath)
   const contentType = MIME_TYPES.get(extension) ??
     'application/octet-stream'
 
   res.writeHead(200, {
     'Content-Type': contentType,
-    'Cache-Control': cacheControlFor(filePath)
+    'Cache-Control': cacheControlFor(filePath, clientDist)
   })
 
   if (method === 'HEAD') {
@@ -98,14 +109,14 @@ export function handleStaticClientRoute(req, res, url, clientDist = CLIENT_DIST)
   const filePath = safeClientPath(clientDist, url.pathname)
 
   if (filePath && isFile(filePath)) {
-    sendFile(res, filePath, req.method)
+    sendFile(res, filePath, req.method, clientDist)
     return true
   }
 
   const fallback = path.join(clientDist, 'index.html')
 
   if (fs.existsSync(fallback)) {
-    sendFile(res, fallback, req.method)
+    sendFile(res, fallback, req.method, clientDist)
     return true
   }
 
