@@ -110,7 +110,7 @@ export function createExerciseProgress(progress: ExerciseProgress, unit: WeightU
   if (bests.children.length) section.append(bests)
 
   const metricLabel = metric === 'estimated1RM' ? `Estimated 1RM per session (${unit})` : metric === 'durationSec' ? 'Longest set per session (seconds)' : 'Most reps per session'
-  if (points.length > 1) section.append(chart(points.map(point => metric === 'estimated1RM' ? { ...point, value: displayWeightFromKg(point.value, unit) } : point), metricLabel))
+  if (points.length > 1) section.append(element('p', 'exercise-progress__caption', metricLabel), chart(points.map(point => metric === 'estimated1RM' ? { ...point, value: displayWeightFromKg(point.value, unit) } : point), metricLabel))
 
   const list = element('ol', 'exercise-progress__rows')
   list.setAttribute('aria-label', 'Recent sessions')
