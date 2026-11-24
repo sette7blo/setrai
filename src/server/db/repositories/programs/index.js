@@ -196,6 +196,23 @@ export function createProgramRepository(db) {
     )
   }
 
+  // A temporary program is only needed while its session is in progress:
+  // finished sessions replay their copy in sessions.plan_json. Sessions from
+  // before plan_json existed still read the program, so those keep it.
+  // Temporary programs never have a seed key, so no tombstone is involved.
+  function removeUnusedTemporary() {
+    return Number(db.prepare(`
+      DELETE FROM programs
+      WHERE is_temporary = 1
+        AND seed_key IS NULL
+        AND NOT EXISTS (
+          SELECT 1 FROM sessions
+          WHERE sessions.program_id = programs.id
+            AND (sessions.finished_at IS NULL OR sessions.plan_json IS NULL)
+        )
+    `).run().changes)
+  }
+
   function count() {
     return Number(
       db
@@ -230,6 +247,7 @@ export function createProgramRepository(db) {
     duplicate,
     getExercises,
     replaceExercises,
+    removeUnusedTemporary,
     count
   }
 }

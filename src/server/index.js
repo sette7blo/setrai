@@ -73,6 +73,8 @@ const exerciseService =
   createExerciseService(db)
 const programService =
   createProgramService(db)
+// Clears Quick Workout plans left by earlier versions; see removeUnusedTemporary.
+programService.removeUnusedTemporaryPrograms()
 const sessionService =
   createSessionService(db)
 const bodyService =
