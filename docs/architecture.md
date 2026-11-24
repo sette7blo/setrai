@@ -481,6 +481,11 @@ request before routing:
   key is passed to routes that require one;
 - any other `Authorization` value, or an unknown or revoked key: `401`.
 
+Keys identify other apps; they do not restrict access. A request with no
+`Authorization` header can do everything a key can, including creating keys,
+because the web app has no login. Access control is the network's job (trusted
+LAN, VPN, or an authenticating proxy) until application authentication exists.
+
 Routes: `GET /api/api-keys` (list, never the key itself), `POST /api/api-keys`
 `{ name }` (returns `{ key, apiKey }` once), `DELETE /api/api-keys/:id`
 (revoke, immediate), and `GET /api/api-keys/current` (describes the presented
@@ -496,21 +501,6 @@ user's browser (`src/server/shared/http.js`):
 - a non-empty JSON body must be sent as `Content-Type: application/json`
   (or `application/*+json`), otherwise `415`. Requests with an empty body need
   no content type.
-
-- `activeProgram` is the saved program of the most recently started session.
-  Setrai has no explicit active-program setting, generated Quick Workout
-  programs are skipped, and `weekIndex` is reserved and currently always `null`.
-- `resumeWorkout` is the most recent unfinished session; `url` is a path
-  relative to the Setrai base URL.
-- `today` and `week` count completed sessions by UTC day and Monday-based UTC
-  week, matching Statistics. Volume is weight times reps over completed sets.
-- `week.readiness` is the mean recovery (0 to 1) across all primary muscle
-  groups, where a group not trained recently counts as fully ready. It matches
-  the "% ready" figure on the Recovery page.
-- `lastWorkout.name` is the session's program name and `durationMin` is whole
-  minutes from start to finish.
-- `generatedAt` advances at least once per configured interval while the
-  server runs; a much older value means Setrai is not running.
 
 ---
 
