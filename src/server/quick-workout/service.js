@@ -26,6 +26,9 @@ import {
 const RECENT_SESSION_LIMIT = 5
 
 function normalizeEquipment(equipment) {
+  if (!Array.isArray(equipment)) {
+    throw Object.assign(new Error('equipment must be an array'), { statusCode: 400 })
+  }
   return equipment
     .map((item) => normalizeToken(item, 'equipment'))
     .filter(Boolean)

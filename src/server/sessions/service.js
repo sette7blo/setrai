@@ -45,14 +45,17 @@ export function createSessionService(db) {
   const programService = createProgramService(db)
 
   function startSession(input = {}) {
+    if (!input || typeof input !== 'object' || Array.isArray(input)) {
+      throw clientError('Session request must be an object', 400)
+    }
     if (input.programId !== undefined && input.programId !== null) {
       return startProgramSession(input)
     }
 
     return repository.create({
       programId: null,
-      programName: input.name ?? 'Ad-hoc Session',
-      notes: input.notes ?? ''
+      programName: normalizeSessionName(input.name),
+      notes: normalizeFinishNotes(input.notes) ?? ''
     })
   }
 
@@ -78,7 +81,7 @@ export function createSessionService(db) {
     const session = repository.create({
       programId: program.id,
       programName: program.name,
-      notes: input.notes ?? '',
+      notes: normalizeFinishNotes(input.notes) ?? '',
       plan: {
         exercises: plannedExercises,
         blocks: program.blocks ?? []
@@ -186,6 +189,14 @@ export function createSessionService(db) {
       finishedAt,
       notes: normalizeFinishNotes(body.notes)
     })
+  }
+
+  function normalizeSessionName(value) {
+    if (value === undefined || value === null) return 'Ad-hoc Session'
+    if (typeof value !== 'string' || value.length > 200) {
+      throw clientError('Session name must be text of at most 200 characters', 400)
+    }
+    return value
   }
 
   // Stored times are UTC 'YYYY-MM-DD HH:MM:SS' without a zone marker.

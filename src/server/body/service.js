@@ -3,6 +3,8 @@ import {
 } from '../db/repositories/body.js'
 
 const DATE_ONLY_PATTERN = /^\d{4}-\d{2}-\d{2}$/
+const MAX_WEIGHT_KG = 1000
+const MAX_NOTES_LENGTH = 5000
 
 function clientError(message, statusCode = 400) {
   const error = new Error(message)
@@ -51,10 +53,26 @@ function normalizeWeight(weightKg) {
     throw clientError('Weight must be greater than zero')
   }
 
+  if (weight > MAX_WEIGHT_KG) {
+    throw clientError(`Weight must be at most ${MAX_WEIGHT_KG} kg`)
+  }
+
   return weight
 }
 
+function normalizeNotes(notes) {
+  if (notes === undefined || notes === null) return ''
+  if (typeof notes !== 'string' || notes.length > MAX_NOTES_LENGTH) {
+    throw clientError(`Notes must be text of at most ${MAX_NOTES_LENGTH} characters`)
+  }
+  return notes
+}
+
 function normalizeBodyInput(input, { partial = false } = {}) {
+  if (!input || typeof input !== 'object' || Array.isArray(input)) {
+    throw clientError('Body-weight entry must be an object')
+  }
+
   const result = {}
 
   if (!partial || 'date' in input) {
@@ -70,7 +88,7 @@ function normalizeBodyInput(input, { partial = false } = {}) {
   }
 
   if ('notes' in input || !partial) {
-    result.notes = input.notes ?? ''
+    result.notes = normalizeNotes(input.notes)
   }
 
   return result
@@ -107,6 +125,13 @@ export function createBodyService(db) {
       input,
       { partial: true }
     )
+
+    if (normalized.date) {
+      const clash = repository.getByDate(normalized.date)
+      if (clash && clash.id !== entryId) {
+        throw clientError('A body-weight entry already exists for that date', 409)
+      }
+    }
 
     const updated = repository.update(
       entryId,

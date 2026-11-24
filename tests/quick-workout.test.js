@@ -350,6 +350,10 @@ test('validates duration, goal, target muscles, and malformed input', () => {
       () => service.generate(null),
       /Quick Workout request must be an object/
     )
+    assert.throws(
+      () => service.generate({ equipment: 'dumbbell' }),
+      (error) => error.statusCode === 400 && /equipment must be an array/.test(error.message)
+    )
   })
 })
 

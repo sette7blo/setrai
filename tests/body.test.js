@@ -297,3 +297,38 @@ test('filters history by date range', () => {
     cleanupDatabase(db, directory)
   }
 })
+
+test('rejects malformed body-weight input with client errors', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    const service = createBodyService(db)
+    const isClientError = (status) => (error) => error.statusCode === status
+
+    assert.throws(() => service.saveBodyWeight(null), isClientError(400))
+    assert.throws(() => service.saveBodyWeight({ date: '2026-10-05', weightKg: 80, notes: { a: 1 } }), isClientError(400))
+    assert.throws(() => service.saveBodyWeight({ date: '2026-10-05', weightKg: 80, notes: 'x'.repeat(5001) }), isClientError(400))
+    assert.throws(() => service.saveBodyWeight({ date: '2026-10-05', weightKg: 1001 }), isClientError(400))
+    assert.equal(service.saveBodyWeight({ date: '2026-10-05', weightKg: 1000, notes: null }).notes, '')
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})
+
+test('moving an entry onto a date that already has one is a conflict', () => {
+  const { db, directory } = createTestDatabase()
+
+  try {
+    const service = createBodyService(db)
+    const first = service.saveBodyWeight({ date: '2026-10-05', weightKg: 80 })
+    service.saveBodyWeight({ date: '2026-10-06', weightKg: 81 })
+
+    assert.throws(
+      () => service.updateBodyWeight(first.id, { date: '2026-10-06' }),
+      (error) => error.statusCode === 409 && /already exists for that date/.test(error.message)
+    )
+    assert.equal(service.updateBodyWeight(first.id, { date: '2026-10-05', weightKg: 79 }).weightKg, 79)
+  } finally {
+    cleanupDatabase(db, directory)
+  }
+})
