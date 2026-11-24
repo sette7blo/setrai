@@ -49,6 +49,12 @@ export async function listSessions(client: ApiClient = apiClient): Promise<Sessi
   return response.sessions.map(normalizeSession)
 }
 
+// Every session with its sets in one request, for History's calendar and recap.
+export async function listSessionHistory(client: ApiClient = apiClient): Promise<Session[]> {
+  const response = await client.get<SessionListResponse>('/api/sessions?includeSets=1&limit=all')
+  return response.sessions.map(normalizeSession)
+}
+
 export async function getSession(id: number, client: ApiClient = apiClient): Promise<Session> {
   const response = await client.get<SessionResponse>(`/api/sessions/${id}`)
   return normalizeSession(response.session)

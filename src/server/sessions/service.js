@@ -112,8 +112,56 @@ export function createSessionService(db) {
     }
   }
 
-  function listSessions(filters = {}) {
-    return repository.list(filters)
+  // No query keeps the original contract (newest 50, no sets) for the plugin
+  // and the Today page. includeSets returns History's shape: sets plus the
+  // planned exercises, with each embedded exercise cut to what History reads.
+  function listSessions(query = {}) {
+    const { from, to, limit, includeSets } = normalizeListQuery(query)
+    if (!from && !to && limit === 50 && !includeSets) return repository.list({ limit })
+    const sessions = repository.listWithSets({ startedFrom: from, startedBefore: to && nextDay(to), limit, withSets: includeSets })
+    if (!includeSets) return sessions
+    const programs = new Map()
+    return sessions.map(({ plan, ...session }) => {
+      let planned = plan
+      if (!planned && session.programId) {
+        if (!programs.has(session.programId)) programs.set(session.programId, programService.getProgram(session.programId))
+        planned = programs.get(session.programId)
+      }
+      return {
+        ...session,
+        plannedExercises: (planned?.exercises ?? []).map(({ exercise, ...entry }) => (
+          exercise ? { ...entry, exercise: { id: exercise.id, slug: exercise.slug, name: exercise.name, muscle_group: exercise.muscle_group, muscles: exercise.muscles } } : entry
+        )),
+        blocks: planned?.blocks ?? []
+      }
+    })
+  }
+
+  function normalizeListQuery(query) {
+    const date = (value, name) => {
+      if (value === undefined || value === null || value === '') return null
+      const time = typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value) ? Date.parse(`${value}T00:00:00Z`) : NaN
+      const valid = !Number.isNaN(time) && new Date(time).toISOString().slice(0, 10) === value
+      if (!valid) throw clientError(`${name} must be a date (YYYY-MM-DD)`, 400)
+      return value
+    }
+    const from = date(query.from, 'from')
+    const to = date(query.to, 'to')
+    if (from && to && from > to) throw clientError('from must not be after to', 400)
+    let limit = from || to ? null : 50
+    if (query.limit !== undefined && query.limit !== null && query.limit !== '') {
+      if (query.limit === 'all') limit = null
+      else {
+        limit = Number(query.limit)
+        if (!/^\d+$/.test(String(query.limit)) || limit < 1 || limit > 100000) throw clientError('limit must be a number from 1 to 100000, or "all"', 400)
+      }
+    }
+    if (![undefined, null, '', '0', '1'].includes(query.includeSets)) throw clientError('includeSets must be 0 or 1', 400)
+    return { from, to, limit, includeSets: query.includeSets === '1' }
+  }
+
+  function nextDay(date) {
+    return new Date(Date.parse(`${date}T00:00:00Z`) + 86400000).toISOString().slice(0, 10)
   }
 
   // Newest first. limit counts finished sessions; finishedAfter is a stored

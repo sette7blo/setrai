@@ -231,8 +231,8 @@ export function createSessionRepository(db) {
   }
 
   // Sessions with their sets in two queries. Same order and shape as
-  // list() followed by getById() per session.
-  function listWithSets({ finishedOnly = false, finishedAfter = null, startedFrom = null, startedBefore = null, limit = null } = {}) {
+  // list() followed by getById() per session (withSets: false skips the sets).
+  function listWithSets({ finishedOnly = false, finishedAfter = null, startedFrom = null, startedBefore = null, limit = null, withSets = true } = {}) {
     const where = []
     const parameters = []
     if (finishedOnly) where.push('finished_at IS NOT NULL')
@@ -247,7 +247,7 @@ export function createSessionRepository(db) {
       ORDER BY started_at DESC, id DESC
       ${limit !== null ? 'LIMIT ?' : ''}
     `).all(...parameters)
-    if (!rows.length) return []
+    if (!rows.length || !withSets) return rows.map((row) => mapSessionRow(row))
 
     const setsBySession = new Map(rows.map((row) => [row.id, []]))
     const setRows = db.prepare(`

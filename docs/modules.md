@@ -487,6 +487,16 @@ src/server/sessions/
 - additive session-plan, clock and timed-set persistence through migration 2 and
   the Session repository; `PATCH /api/sessions/:id` saves live state and `DELETE`
   discards active sessions only.
+- `GET /api/sessions` with no query returns the newest 50 sessions without
+  sets (the contract the plugin and Today use). Optional query: `from` / `to`
+  (`YYYY-MM-DD`, inclusive, on `started_at`; a range returns every match),
+  `limit` (1-100000 or `all`) and `includeSets=1`, which adds each session's
+  sets, `plannedExercises` (embedded exercise cut to id, slug, name,
+  muscle_group, muscles) and `blocks` from two queries. History uses
+  `?includeSets=1&limit=all`. Bad values return `400`.
+- `listCompletedSessions` loads finished sessions and their sets in two
+  queries; Statistics reads all of them, Recovery only those inside its
+  lookback window.
 
 ## Typical files
 

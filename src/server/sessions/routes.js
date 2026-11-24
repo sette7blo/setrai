@@ -38,7 +38,7 @@ export function createSessionRoutes(sessionService) {
       url.pathname === '/api/sessions'
     ) {
       sendJson(res, 200, {
-        sessions: sessionService.listSessions()
+        sessions: sessionService.listSessions(Object.fromEntries(url.searchParams))
       })
       return true
     }
