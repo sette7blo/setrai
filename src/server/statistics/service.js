@@ -18,6 +18,7 @@ import {
 import {
   calculatePersonalRecords
 } from './records.js'
+import { calculateExerciseProgress } from './exercise-progress.js'
 import {
   calculateTrainingStreak
 } from './streak.js'
@@ -115,6 +116,16 @@ export function createStatisticsService(db, options = {}) {
     )
   }
 
+  // null when no exercise has this slug.
+  function getExerciseProgress(slug) {
+    const exercise = exerciseService.getExerciseBySlug(slug)
+    if (!exercise) return null
+    return {
+      exercise: { id: exercise.id, slug: exercise.slug, name: exercise.name },
+      ...calculateExerciseProgress(sessionService.listFinishedExerciseSets(slug))
+    }
+  }
+
   function getBodyWeightHistory() {
     return getChronologicalBodyWeight(bodyService)
   }
@@ -127,6 +138,7 @@ export function createStatisticsService(db, options = {}) {
     getVolumeByMuscle,
     getPersonalRecords,
     getTrainingStreak,
+    getExerciseProgress,
     getBodyWeightHistory
   }
 }

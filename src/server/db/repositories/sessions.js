@@ -294,6 +294,19 @@ export function createSessionRepository(db) {
     }
   }
 
+  // Every done set of an exercise across finished sessions, in one query.
+  function listFinishedExerciseSets(exerciseSlug) {
+    return db.prepare(`
+      SELECT session_sets.*, sessions.finished_at AS session_finished_at
+      FROM session_sets
+      JOIN sessions ON sessions.id = session_sets.session_id
+      WHERE session_sets.exercise_slug = ?
+        AND session_sets.done = 1
+        AND sessions.finished_at IS NOT NULL
+      ORDER BY sessions.finished_at DESC, sessions.id DESC, session_sets.set_number ASC, session_sets.id ASC
+    `).all(exerciseSlug).map((row) => ({ ...mapSetRow(row), sessionFinishedAt: row.session_finished_at }))
+  }
+
   function latestCompletedSet(exerciseSlug) {
     return mapSetRow(db.prepare(`
       SELECT session_sets.*
@@ -322,6 +335,7 @@ export function createSessionRepository(db) {
     getById,
     listWithSets,
     lastPerformance,
+    listFinishedExerciseSets,
     list,
     finish,
     insertSet,

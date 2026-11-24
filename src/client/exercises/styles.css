@@ -615,3 +615,18 @@
 /* Wide screens fit more of the library per row. */
 @media (min-width: 1200px) { .exercise-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
 @media (min-width: 1600px) { .exercise-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
+
+.exercise-progress { display: grid; gap: var(--space-3); min-width: 0; }
+.exercise-progress h2 { margin: 0; }
+.exercise-progress__bests { display: grid; grid-template-columns: repeat(auto-fit, minmax(5.5rem, 1fr)); gap: var(--space-2); }
+.exercise-progress__best { display: grid; gap: 2px; padding: var(--space-3); border: 1px solid var(--color-border); border-radius: var(--radius-lg); }
+.exercise-progress__best strong { font-size: var(--text-body); }
+.exercise-progress__best span, .exercise-progress__best small { color: var(--color-muted-strong); font-size: var(--text-meta); }
+.exercise-progress__caption { margin: 0; color: var(--color-muted-strong); font-size: var(--text-meta); }
+.exercise-progress__chart { display: block; width: 100%; height: auto; max-height: 160px; }
+.exercise-progress__line { fill: none; stroke: var(--color-primary); stroke-width: 2.5; stroke-linejoin: round; stroke-linecap: round; vector-effect: non-scaling-stroke; }
+.exercise-progress__dot { fill: var(--color-primary); }
+.exercise-progress .exercise-progress__rows { display: grid; gap: var(--space-2); margin: 0; padding: 0; list-style: none; }
+.exercise-progress__row { display: flex; justify-content: space-between; gap: var(--space-3); min-width: 0; font-size: var(--text-meta); }
+.exercise-progress__date { flex: none; color: var(--color-muted-strong); }
+.exercise-progress__sets { min-width: 0; overflow-wrap: anywhere; text-align: right; }
