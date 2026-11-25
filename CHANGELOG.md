@@ -11,6 +11,8 @@ Versions follow [Semantic Versioning](https://semver.org): `MAJOR.MINOR.PATCH`
 
 ## [Unreleased]
 
+## [v0.11.0] — 2026-11-25
+
 - Statistics API: `trainingFrequency.thisWeekStart` gives the Monday of the current week in the profile time zone, the same key `weeklyVolume` uses, so integrations such as the Omarchy plugin can find this week's volume without their own date math.
 
 ## [v0.10.0] — 2026-11-24
