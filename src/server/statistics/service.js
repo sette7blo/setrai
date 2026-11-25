@@ -54,6 +54,7 @@ export function createStatisticsService(db, options = {}) {
 
     return {
       totalSessions: sessions.length,
+      thisWeekStart: currentWeek,
       thisWeek: sessions.filter((session) => {
         const finishedAt = parseSetraiDateTime(
           session.finishedAt
