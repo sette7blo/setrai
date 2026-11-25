@@ -94,6 +94,7 @@ test('returns empty statistics for a fresh database', () => {
       timeZone: 'UTC',
       trainingFrequency: {
         totalSessions: 0,
+        thisWeekStart: '2026-10-05',
         thisWeek: 0
       },
       totalVolume: 0,
@@ -147,6 +148,7 @@ test('counts completed sessions and ignores unfinished sessions', () => {
       services.statistics.getTrainingFrequency(),
       {
         totalSessions: 2,
+        thisWeekStart: '2026-10-05',
         thisWeek: 1
       }
     )
@@ -610,6 +612,7 @@ test('days and weeks follow the profile time zone on both sides of midnight', as
       // Two consecutive local days, both in the local week of Monday the 23rd.
       assert.equal(overview.trainingStreak.currentStreakDays, 2, zone)
       assert.equal(overview.trainingFrequency.thisWeek, 2, zone)
+      assert.equal(overview.trainingFrequency.thisWeekStart, '2026-11-23', zone)
       assert.deepEqual(overview.weeklyVolume, [{ weekStart: '2026-11-23', volume: 1000 }], zone)
     } finally {
       cleanupDatabase(db, directory)

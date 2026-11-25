@@ -565,7 +565,9 @@ the database; only the bucketing uses the zone.
 
 - Server: `src/server/statistics/dates.js` (`dayKey`, `weekStartKey`) drives
   streaks, `trainingFrequency.thisWeek` and `weeklyVolume`. `GET /api/statistics`
-  reports the zone it used as `timeZone`.
+  reports the zone it used as `timeZone`, and the Monday of the current week
+  as `trainingFrequency.thisWeekStart` (the key of this week's `weeklyVolume`
+  entry), so clients without time-zone support need no date math.
 - Client: `src/client/shared/training-time-zone.ts` drives the History
   calendar, the monthly recap and Today's current week. Every profile read
   updates it.
